@@ -20,7 +20,7 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
     QRMDataService.riskID = 0;
 
     $scope.project = QRMDataService.project;
-    
+
 
     $scope.gridOptions = {
         enableSorting: true,
@@ -111,6 +111,7 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         inactive: true,
         active: true,
         pending: true,
+        filterMatrix:false,
         riskCode: ""
 
     };
@@ -181,10 +182,10 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                 var man = $scope.filterOptions.manager.name;
                 var ownPass = false;
                 var manPass = false;
-                
+
                 ownPass = (own == r.owner || own == undefined || own == null);
                 manPass = (man == r.manager || man == undefined || man == null);
-                if (ownPass && manPass ) {
+                if (ownPass && manPass) {
                     pass = true;
                 }
 
@@ -253,7 +254,39 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
             matrixImpact: impact,
             matrixTreated: treated,
             filterMatrix: true,
+            inactive: true,
+            active: true,
+            pending: true
+
         };
+
+        var resetClassName = "tol" + QRMDataService.selectedCellTol + " qrmMatElementID" + QRMDataService.selectedCellImpact + QRMDataService.selectedCellProb;
+        if (QRMDataService.selectedCellTreated) {
+            resetClassName = resetClassName + "T";
+        } else {
+            resetClassName = resetClassName + "U";
+        }
+
+        d3.select("rect.selectedMatCell").attr("class", resetClassName);
+
+
+        // Record and Highlight the cell
+
+        QRMDataService.selectedCellProb = prob;
+        QRMDataService.selectedCellImpact = impact;
+        QRMDataService.selectedCellTol = tol;
+        QRMDataService.selectedCellTreated = treated;
+
+        var selectedCellSelector = "rect.qrmMatElementID" + impact + prob;
+
+        if (treated) {
+            selectedCellSelector = selectedCellSelector + "T";
+        } else {
+            selectedCellSelector = selectedCellSelector + "U";
+        }
+
+        d3.select(selectedCellSelector).attr("class", "selectedMatCell");
+
 
         $scope.filterRisks();
         $scope.$apply();
@@ -268,6 +301,15 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
 
     $scope.clearFilters = function () {
 
+
+        var resetClassName = "tol" + QRMDataService.selectedCellTol + " qrmMatElementID" + QRMDataService.selectedCellImpact + QRMDataService.selectedCellProb;
+        if (QRMDataService.selectedCellTreated) {
+            resetClassName = resetClassName + "T";
+        } else {
+            resetClassName = resetClassName + "U";
+        }
+
+        d3.select("rect.selectedMatCell").attr("class", resetClassName);
         $scope.filterOptions = {
             owner: "",
             manager: "",
