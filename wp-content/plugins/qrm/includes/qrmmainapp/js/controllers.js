@@ -19,6 +19,9 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
 
     QRMDataService.riskID = 0;
 
+    $scope.project = QRMDataService.project;
+    
+
     $scope.gridOptions = {
         enableSorting: true,
         minRowsToShow: 10,
@@ -105,6 +108,9 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         tolSig: true,
         tolModerate: true,
         tolLow: true,
+        inactive: true,
+        active: true,
+        pending: true,
         riskCode: ""
 
     };
@@ -113,7 +119,7 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
 
     $scope.ignoreOptionChange = false;
     $scope.$watch("filterOptions", function () {
-        if (!$scope.ignoreOptionChange ){
+        if (!$scope.ignoreOptionChange) {
             $scope.filterRisks();
         }
     }, true);
@@ -135,8 +141,8 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         $scope.rawRisks.forEach(function (r) {
             // Reject the risk until it's passes
             var pass = false;
-            
-           if ($scope.filterOptions.filterMatrix) {
+
+            if ($scope.filterOptions.filterMatrix) {
 
                 var i;
                 var p;
@@ -152,7 +158,7 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                 if (i == $scope.filterOptions.matrixImpact && p == $scope.filterOptions.matrixProb) {
                     pass = true;
                 }
-                
+
             } else {
 
                 if ($scope.filterOptions.treated && r.treated) pass = true;
@@ -166,6 +172,21 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                 if ($scope.filterOptions.tolSig && Number(r.currentTolerance) == 3) pass = true;
                 if ($scope.filterOptions.tolModerate && Number(r.currentTolerance) == 2) pass = true;
                 if ($scope.filterOptions.tolLow && Number(r.currentTolerance) == 1) pass = true;
+
+                if (!pass) return;
+                pass = false;
+
+                debugger;
+                var own = $scope.filterOptions.owner.name;
+                var man = $scope.filterOptions.manager.name;
+                var ownPass = false;
+                var manPass = false;
+                
+                ownPass = (own == r.owner || own == undefined || own == null);
+                manPass = (man == r.manager || man == undefined || man == null);
+                if (ownPass && manPass ) {
+                    pass = true;
+                }
 
             }
 
@@ -233,16 +254,16 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
             matrixTreated: treated,
             filterMatrix: true,
         };
-        
-        $scope.filterRisks();        
+
+        $scope.filterRisks();
         $scope.$apply();
-        
+
         //Unset the matrix filtering option, without initiating a re filter because of the change
         $scope.ignoreOptionChange = true;
         $scope.filterOptions.filterMatrix = false;
         $scope.$apply();
         $scope.ignoreOptionChange = false;
-        
+
     }
 
     $scope.clearFilters = function () {
@@ -262,7 +283,11 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
             tolModerate: true,
             tolLow: true,
             riskCode: "",
-            filterMatrix: false
+            filterMatrix: false,
+            inactive: true,
+            active: true,
+            pending: true
+
 
         };
     }
