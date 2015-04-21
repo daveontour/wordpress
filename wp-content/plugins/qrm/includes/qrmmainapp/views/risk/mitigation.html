@@ -1,0 +1,60 @@
+<div class="panel panel-success">
+    <div class="panel-heading">Mitigation
+        <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.open('mitigation','lg')"></i>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+
+            <div class="col-lg-6">
+                <h4>Mitigation Plan Summary</h4> {{ctl.risk.mitigation.mitPlanSummary}}
+            </div>
+            <div class="col-lg-6">
+                <h4>Mitigation Plan Summary Update</h4> {{ctl.risk.mitigation.mitPlanSummaryUpdate}}
+            </div>
+
+
+        </div>
+        <div class="row">
+           <div class="col-lg-12">
+                <h4>Detail Mitigation Plan</h4>
+            </div>           <div class="col-12-lg">
+<!--                <div id="grid1" ui-grid="ctl.gridOptions" class="grid"></div>-->
+               <div><strong>Description: </strong>{{ctl.risk.description}}</div>
+               <div style = "float:left;margin-right:15px"><strong>Responsible: </strong>{{ctl.risk.owner.name}}</div>
+               <div style = "float:left;margin-right:15px"><strong>Cost: </strong>$9,000</div>
+               <div style = "float:left;margin-right:15px"><strong>Due: </strong>Next Week</div>
+               <div style = "float:left;margin-right:15px"><strong>Complete: </strong>75%</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-success">
+    <div class="panel-heading">Response
+        <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.open('response','lg')"></i>
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-lg-6">
+                <h4>Reponse Plan Summary</h4> {{ctl.risk.response.respPlanSummary}}
+            </div>
+            <div class="col-lg-6">
+                <h4>Response Plan Summary Update</h4> {{ctl.risk.response.respPlanSummaryUpdate}}
+            </div>
+
+
+            <div class="col-lg-12">
+                <h4>Detail Response Plan</h4>
+            </div>
+            <div class="col-12-lg">
+                <div id="grid1" ui-grid="{ data: ctl.risk.response.respPlan }" class="grid"></div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,52 @@
+.explorerGrid{
+    width:100%;
+    height:100%;
+    font-size:9pt;
+}
+
+.header-hidden span{
+    display:none
+} 
+.explorerGrid i{
+    font-size:15pt;
+}
+
+.explorerGrid .cellCentered{
+    text-align: center;
+    padding: 5px;
+}
+
+.explorerGrid .compact{
+    padding: 2px;
+}
+
+.green {
+    text-align: center;
+    color:green;
+    padding: 5px;
+}
+.blue {
+    text-align: center;
+    color:blue;
+    padding: 5px;
+}
+.yellow {
+    text-align: center;
+    color:yellow;
+    padding: 5px;
+}
+
+.orange {
+    text-align: center;
+    color:orange;
+    padding: 5px;
+}
+.red {
+    text-align: center;
+    color:red;
+    padding: 5px;
+}
+
+.ui-grid-cell-contents {
+    padding:2px;
+}

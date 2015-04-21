@@ -1,0 +1,43 @@
+<div class="row">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Description<div style="float:right" ><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.open('description','lg')"></i></div></div>
+                    <div class="panel-body">
+                        <p>{{ctl.risk.description}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Causes<div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.open('cause','lg')"></i></div></div>
+                    <div class="panel-body">
+                        <p>{{ctl.risk.cause}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Consequences<div  style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.open('consequence','lg')"></i></div></div>
+                    <div class="panel-body">
+                        <p>{{ctl.risk.consequence}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Project Objectives Impacted</div>
+                    <div class="panel-body">
+                        <p>{{ctl.risk.consequence}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div ng-include="'views/risk/riskdata.html'"></div>
+    </div>
+
+
+</div>

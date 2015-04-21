@@ -1,0 +1,980 @@
+.css_btn_class {
+	font-size: 16px;
+	font-family: Arial;
+	font-weight: normal;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	border-radius: 12px;
+	border: 1px solid #84bbf3;
+	padding: 9px;
+	text-decoration: none;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #79bbff),
+		color-stop(100%, #378de5));
+	background: -moz-linear-gradient(center top, #79bbff 5%, #378de5 100%);
+	background: -ms-linear-gradient(top, #79bbff 5%, #378de5 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff',
+		endColorstr='#378de5');
+	background-color: #79bbff;
+	color: #ffffff;
+	display: inline-block;
+	text-shadow: 1px 1px 0px #528ecc;
+	-webkit-box-shadow: inset 1px 1px 0px 0px #bbdaf7;
+	-moz-box-shadow: inset 1px 1px 0px 0px #bbdaf7;
+	box-shadow: inset 1px 1px 0px 0px #bbdaf7;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.css_btn_class:hover {
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(5%, #378de5),
+		color-stop(100%, #79bbff));
+	background: -moz-linear-gradient(center top, #378de5 5%, #79bbff 100%);
+	background: -ms-linear-gradient(top, #378de5 5%, #79bbff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5',
+		endColorstr='#79bbff');
+	background-color: #378de5;
+}
+
+.css_btn_class:active {
+	position: relative;
+	top: 1px;
+}
+
+button.qrmReportButton {
+	width: 150px;
+	font-weight: bold;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 8px;
+}
+
+.whiteText,.whiteTextFocused,.whiteTextError,.whiteTextDisabled {
+	color: white;
+	font-family: Arial, Verdana, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.matrixWidgetUnTreated {
+	border: 2px solid #000000;
+	color: red;
+	padding: 2px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	background-color: white;
+}
+
+.matrixWidgetTreated {
+	border: 2px solid #000000;
+	color: blue;
+	padding: 2px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	background-color: white;
+}
+
+.matrixWidgetUnTreatedOver {
+	border: 2px solid #000000;
+	color: red;
+	padding: 2px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: white;
+}
+
+.matrixWidgetTreatedOver {
+	border: 2px solid #000000;
+	color: blue;
+	padding: 2px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: white;
+}
+
+.matrixWidgetHighLight {
+	border: 6px solid #000000;
+}
+
+.rankItem5,.rankItem5Dark {
+	border: 1px solid #cdc8b1;
+	color: white;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FF0000;
+}
+
+.field-container-label {
+	font-weight: bold
+}
+
+.rank5 .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: white;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FF0000;
+}
+
+.rank4 .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: white;
+	cursor: pointer;
+	cursor: hand;
+	font-weight: normal;
+	background-color: #FFA500;
+}
+
+.rank3 .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: black;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FFFF00;
+}
+
+.rank2 .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: black;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #00FF00;
+}
+
+.rank1 .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: black;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #00FFFF;
+}
+
+.dirtyMove .x-change-cell {
+	border: 1px solid #cdc8b1;
+	color: black;
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FFFACD;
+}
+
+.objectiveActive {
+	color: red;
+	font-weight: bold;
+}
+
+.objectiveInActive {
+	color: black;
+	font-weight: normal;
+}
+
+.redText {
+	color: red;
+}
+
+.blueText {
+	color: blue;
+}
+
+.rankItem5Over,.rankItem5OverDark,.rankItem5Selected,.rankItem5SelectedDark,.rankItem5SelectedOver,.rankItem5SelectedOverDark,.rankItem5FocusedOver,.rankItem5FocusedOverDark,.rankItem5SelectedFocused,.rankItem5SelectedFocusedDark,.rankItem5SelectedFocusedOver,.rankItem5SelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: white;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #FF0000;
+}
+
+.rankItem4,.rankItem4Dark {
+	border: 1px solid #cdc8b1;
+	color: white;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FFA500;
+}
+
+.rankItem4Over,.rankItem4OverDark,.rankItem4Selected,.rankItem4SelectedDark,.rankItem4SelectedOver,.rankItem4SelectedOverDark,.rankItem4FocusedOver,.rankItem4FocusedOverDark,.rankItem4SelectedFocused,.rankItem4SelectedFocusedDark,.rankItem4SelectedFocusedOver,.rankItem4SelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: white;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #FFA500;
+}
+
+.rankItem3,.rankItem3Dark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FFFF00;
+}
+
+.rankItem3Over,.rankItem3OverDark,.rankItem3Selected,.rankItem3SelectedDark,.rankItem3SelectedOver,.rankItem3SelectedOverDark,.rankItem3FocusedOver,.rankItem3FocusedOverDark,.rankItem3SelectedFocused,.rankItem3SelectedFocusedDark,.rankItem3SelectedFocusedOver,.rankItem3SelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #FFFF00;
+}
+
+.rankItem2,.rankItem2Dark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #00FF00;
+}
+
+.rankItem2Over,.rankItem2OverDark,.rankItem2Selected,.rankItem2SelectedDark,.rankItem2SelectedOver,.rankItem2SelectedOverDark,.rankItem2FocusedOver,.rankItem2FocusedOverDark,.rankItem2SelectedFocused,.rankItem2SelectedFocusedDark,.rankItem2SelectedFocusedOver,.rankItem2SelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #00FF00;
+}
+
+.rankItem1,.rankItem1Dark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #00FFFF;
+}
+
+.rankItem1Over,.rankItem1OverDark,.rankItem1Selected,.rankItem1SelectedDark,.rankItem1SelectedOver,.rankItem1SelectedOverDark,.rankItem1FocusedOver,.rankItem1FocusedOverDark,.rankItem1SelectedFocused,.rankItem1SelectedFocusedDark,.rankItem1SelectedFocusedOver,.rankItem1SelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #00FFFF;
+}
+
+.consqCostWarning,.consqCostWarningDark,.consqCostWarningOver,.consqCostWarningOverDark,.consqCostWarningSelected,.consqCostWarningSelectedDark,.consqCostWarningSelectedOver,.consqCostWarningSelectedOverDark,.consqCostWarningFocusedOver,.consqCostWarningFocusedOverDark,.consqCostWarningSelectedFocused,.consqCostWarningSelectedFocusedDark,.consqCostWarningSelectedFocusedOver,.consqCostWarningSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FFFF00;
+}
+
+.qrmMinorTitle {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: bold;
+	text-align: right
+}
+
+.qrmMinorTableContent {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: black;
+	text-align: left;
+	padding-left: 10px;
+	vertical-align: top
+}
+
+.qrmMinorTitle12 {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	color: black;
+	font-weight: bold;
+	text-align: right
+}
+
+.qrmMinorTableContent12 {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	color: black;
+	text-align: left;
+	padding-left: 10px;
+	vertical-align: top
+}
+
+a.qrmLink {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	color: rgb(0, 0, 153);
+	cursor: pointer;
+	color: #3b5998;
+	text-decoration: none
+}
+
+a.qrmLink:hover {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 12px;
+	color: rgb(0, 0, 153);
+	text-decoration: underline
+}
+
+.qrmMinorTitle2 {
+	color: #666;
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	font-family: 'Myriad Pro', 'Myriad Web Pro Regular', 'Lucida Grande',
+		Geneva, 'Trebuchet MS', sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	image-rendering: auto;
+}
+
+.qrmMinorTitle2Normal {
+	color: #666;
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	font-family: 'Myriad Pro', 'Myriad Web Pro Regular', 'Lucida Grande',
+		Geneva, 'Trebuchet MS', sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	image-rendering: auto;
+}
+
+.qrmMajorTitle {
+	color: #666;
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	color-rendering: auto;
+	cursor: auto;
+	direction: ltr;
+	display: block;
+	dominant-baseline: auto;
+	empty-cells: show;
+	fill: black;
+	fill-opacity: 1;
+	fill-rule: nonzero;
+	filter: none;
+	float: none;
+	flood-color: black;
+	flood-opacity: 1;
+	font-family: 'Myriad Pro', 'Myriad Web Pro Regular', 'Lucida Grande',
+		Geneva, 'Trebuchet MS', sans-serif;
+	font-size: 22px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	glyph-orientation-horizontal: 0deg;
+	glyph-orientation-vertical: auto;
+	height: 26px;
+	image-rendering: auto;
+	kerning:;
+	left: auto;
+	letter-spacing: normal;
+	lighting-color: white;
+	line-height: 26px;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: disc;
+	margin-bottom: 5px;
+}
+
+.qrmSemiMajorTitle {
+	color: #666;
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	color-rendering: auto;
+	cursor: auto;
+	direction: ltr;
+	display: block;
+	dominant-baseline: auto;
+	empty-cells: show;
+	fill: black;
+	fill-opacity: 1;
+	fill-rule: nonzero;
+	filter: none;
+	float: none;
+	flood-color: black;
+	flood-opacity: 1;
+	font-family: 'Myriad Pro', 'Myriad Web Pro Regular', 'Lucida Grande',
+		Geneva, 'Trebuchet MS', sans-serif;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	glyph-orientation-horizontal: 0deg;
+	glyph-orientation-vertical: auto;
+	height: 26px;
+	image-rendering: auto;
+	kerning:;
+	left: auto;
+	letter-spacing: normal;
+	lighting-color: white;
+	line-height: 26px;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: disc;
+	margin-bottom: 5px;
+}
+
+.qrmRedHeader {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: red;
+	font-weight: bold;
+	text-align: center
+}
+
+.qrmYellowHeader {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: bold;
+	text-align: center
+}
+
+.qrmGreenHeader {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: #00FF00;
+	font-weight: bold;
+	text-align: center
+}
+
+.qrmGrayHeader {
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: bold;
+	text-align: center
+}
+
+.qrmGreenRange,.qrmGreenRangeDark,.qrmGreenRangeOver,.qrmGreenRangeOverDark,.qrmGreenRangeSelected,.qrmGreenRangeSelectedDark,.qrmGreenRangeSelectedOver,.qrmGreenRangeSelectedOverDark,.qrmGreenRangeDisabled,.qrmGreenRangeDisabledDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #00FF00;
+}
+
+.qrmYellowRange,.qrmYellowRangeDark,.qrmYellowRangeOver,.qrmYellowRangeOverDark,.qrmYellowRangeSelected,.qrmYellowRangeSelectedDark,.qrmYellowRangeSelectedOver,.qrmYellowRangeSelectedOverDark,.qrmYellowRangeDisabled,.qrmYellowRangeDisabledDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FFFF00;
+}
+
+.qrmRedRange,.qrmRedRangeDark,.qrmRedRangeOver,.qrmRedRangeOverDark,.qrmRedRangeSelected,.qrmRedRangeSelectedDark,.qrmRedRangeSelectedOver,.qrmRedRangeSelectedOverDark,.qrmRedRangeDisabled,.qrmRedRangeDisabledDark
+	{
+	border: 1px solid #cdc8b1;
+	color: white;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FF0000;
+}
+
+.qrmGrayRange,.qrmGrayRangeDark,.qrmGrayRangeOver,.qrmGrayRangeOverDark,.qrmGrayRangeSelected,.qrmGrayRangeSelectedDark,.qrmGrayRangeSelectedOver,.qrmGrayRangeSelectedOverDark,.qrmGrayRangeDisabled,.qrmGrayRangeDisabledDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #C0C0C0;
+}
+
+.canEdit,.canEditDark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #00FF00;
+}
+
+.canEditOver,.canEditOverDark,.canEditSelected,.canEditSelectedDark,.canEditSelectedOver,.canEditSelectedOverDark,.canEditFocusedOver,.canEditFocusedOverDark,.canEditSelectedFocused,.canEditSelectedFocusedDark,.canEditSelectedFocusedOver,.canEditSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	font-color: white;
+	background-color: #00FF00;
+	opacity: 0.8;
+}
+
+.canNotEdit,.canNotEditDark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FF0000;
+}
+
+.canNotEditOver,.canNotEditOverDark,.canNotEditSelected,.canNotEditSelectedDark,.canNotEditSelectedOver,.canNotEditSelectedOverDark,.canNotEditFocusedOver,.canNotEditFocusedOverDark,.canNotEditSelectedFocused,.canNotEditSelectedFocusedDark,.canNotEditSelectedFocusedOver,.canNotEditSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #FF0000;
+	opacity: 0.8;
+}
+
+.newRecord,.newRecordDark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #FFFF00;
+	opacity: 0.8;
+}
+
+.newRecordOver,.newRecordOverDark,.newRecordSelected,.newRecordSelectedDark,.newRecordSelectedOver,.newRecordSelectedOverDark,.newRecordFocusedOver,.newRecordFocusedOverDark,.newRecordSelectedFocused,.newRecordSelectedFocusedDark,.newRecordSelectedFocusedOver,.newRecordSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: #FFFF00;
+	opacity: 1.0;
+}
+
+.normalRecord,.normalRecordDark {
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: white;
+	opacity: 0.8;
+}
+
+.normalRecordOver,.normalRecordOverDark,.normalRecordSelected,.normalRecordSelectedDark,.normalRecordSelectedOver,.normalRecordSelectedOverDark,.normalRecordFocusedOver,.normalRecordFocusedOverDark,.normalRecordSelectedFocused,.normalRecordSelectedFocusedDark,.normalRecordSelectedFocusedOver,.normalRecordSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	background-color: white;
+	opacity: 1.0;
+}
+
+.alertAudit,.alertAuditDark,.alertAuditOver,.alertAuditOverDark,.alertAuditSelected,.alertAuditSelectedDark,.alertAuditSelectedOver,.alertAuditSelectedOverDark,.alertAuditFocusedOver,.alertAuditFocusedOverDark,.alertAuditSelectedFocused,.alertAuditSelectedFocusedDark,.alertAuditSelectedFocusedOver,.alertAuditSelectedFocusedOverDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	background-color: #FF9999;
+}
+
+.cellExtreme,.cellExtreme:link,.cellExtreme:visited {
+	text-align: center;
+	background-color: #F00;
+	cursor: default;
+}
+
+.cellHigh,.cellHigh:link,.cellHigh:visited {
+	text-align: center;
+	background-color: orange;
+	cursor: pointer;
+	cursor: hand
+}
+
+.cellSignificant,.cellSignificant:link,.cellSignificant:visited {
+	text-align: center;
+	background-color: #FF0;
+	cursor: default;
+}
+
+.cellModerate,.cellModerate:link,.cellModerate:visited {
+	text-align: center;
+	background-color: #0F0;
+	cursor: default;
+}
+
+.cellLow,.cellLow:link,.cellLow:visited {
+	text-align: center;
+	background-color: #0FF;
+	cursor: default;
+}
+
+.cellLow:hover,.cellModerate:hover,.cellSignificant:hover,.cellHigh:hover,.cellExtreme:hover,.qrmCellSelected,.matCellHighLight
+	{
+	text-align: center;
+	background-color: #9CC;
+	cursor: pointer;
+	cursor: hand
+}
+
+.matText {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 12px;
+	cursor: pointer;
+	cursor: hand
+}
+
+.qrmRiskExportEntry,.qrmRiskExportEntryDark,.qrmRiskExportEntryOver,.qrmRiskExportEntryOverDark,.qrmRiskExportEntrySelected,.qrmRiskExportEntrySelectedDark,.qrmRiskExportEntrySelectedOver,.qrmRiskExportEntrySelectedOverDark,.qrmRiskExportEntryDisabled,.qrmRiskExportEntryDisabledDark
+	{
+	border: 1px solid #cdc8b1;
+	color: black;
+	padding: 4px;
+	font-family: Verdana, Bitstream Vera Sans, sans-serif;
+	font-size: 11px;
+	background-color: #B0E0E6;
+}
+
+.qrmToolBarButton,.qrmToolBarButtonDisabled {
+	background-color: red
+}
+
+td.wrap-text div {
+	white-space: normal;
+	vertical-align: top;
+}
+
+td.wrap-text {
+	vertical-align: top;
+}
+
+td.top-text {
+	vertical-align: top;
+}
+
+.x-grid-row-editor .x-panel-body {
+	height: 68px !important;
+}
+
+.x-grid-editor {
+	height: 85px !important;
+}
+
+.x-grid-row-editor-buttons-default-bottom {
+	top: 78px !important;
+}
+
+.x-grid-row-editor-buttons-default-top {
+	bottom: 84px !important;
+}
+
+.dice {
+	background-image: url( /images/icons/16/dice.png ) !important;
+}
+
+.pdf {
+	background-image: url( /images/icons/16/icon-pdf.png ) !important;
+}
+
+.addRisk {
+	background-image: url( /images/icons/16/document_plain_new.png )
+		!important;
+}
+
+.deleteRisk {
+	background-image: url( /images/icons/16/close.png ) !important;
+}
+
+.export {
+	background-image: url( /images/icons/16/export1.png ) !important;
+}
+
+.schedule {
+	background-image: url( /images/icons/16/person.png ) !important;
+}
+
+.associate {
+	background-image: url( /images/icons/16/icon_add_files.png ) !important;
+}
+
+.bluedisk {
+	background-image: url( /images/icons/16/disk_blue.png ) !important;
+}
+
+.uparrow {
+	background-image: url( /images/icons/16/uparrow.png ) !important;
+}
+
+.import {
+	background-image: url( /images/icons/16/import.png ) !important;
+}
+
+.chart {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+.axis path,.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.bar {
+	fill: #33b5e5;
+}
+
+.future {
+	fill: #ff9900;
+}
+
+.past {
+	fill: #33b5e5;
+}
+
+.now {
+	fill: #ff3300;
+}
+
+.now:hover,.past:hover,.future:hover {
+	fill: #DB70b8;
+}
+
+text.heading {
+	font-weight: bold;
+	font-size: 18px;
+	font-family: sans-serif;
+}
+
+text {
+	font-size: 14px;
+	font-family: Arial;
+	fill: #000;
+}
+
+text.tolText {
+	font-size: 16px;
+	font-family: Arial;
+	font-weight: bold;
+	fill: #000;
+}
+
+g.tolCell:hover,
+text.tolText:hover,
+rect.tolText:hover,
+rect.tol1:hover,
+rect.tol2:hover,
+rect.tol3:hover,
+rect.tol4:hover,
+rect.tol5:hover	{
+	fill: #157fcc;
+}
+
+
+
+rect.tol1,
+rect.tolNoHover1 {
+	fill: #00ffff;
+	stroke: #E6E6E6;
+	stroke-width: 2px;
+}
+
+rect.tol2,
+rect.tolNoHover2 {
+	fill: #00ff00;
+	stroke: #E6E6E6;
+	stroke-width: 2px;
+}
+
+rect.tol3,
+rect.tolNoHover3 {
+	fill: #ffff00;
+	stroke: #E6E6E6;
+	stroke-width: 2px;
+}
+
+rect.tol4,
+rect.tolNoHover4 {
+	fill: #ffa500;
+	stroke: #E6E6E6;
+	stroke-width: 2px;
+}
+
+rect.tol5,
+rect.tolNoHover5 {
+	fill: #ff0000;
+	stroke: #E6E6E6;
+	stroke-width: 2px;
+}
+
+.selectedMatCell{
+	fill:#9999ff;
+	stroke: black;
+	stroke-width: 2px;
+}
+
+
+
+g.state circle {
+    stroke  : gray;
+    cursor  : pointer;
+}
+
+g.state circle.inner {
+    fill    : white;
+}
+
+g.state circle.outer {
+    display         : none;
+    stroke-dasharray: 4px;
+    stroke-opacity  : 0.5;
+    fill            : transparent;
+}
+
+g.state.selected circle.outer {
+    display         : inline;
+}
+
+g.state text.treated {
+	fill:blue;
+	font                : 12px sans-serif;
+    font-weight         : bold;
+    pointer-events      : none;
+}
+g.state text.untreated {
+	fill:red;
+    font                : 12px sans-serif;
+    font-weight         : bold;
+    pointer-events      : none;
+}
+
+    /* disable text selection */
+svg *::selection {
+    background : transparent;
+}
+
+svg *::-moz-selection {
+    background:transparent;
+}
+
+svg *::-webkit-selection {
+    background:transparent;
+}
+
+            .compass{fill: #fff; stroke: #000;stroke-width:   1.5; }
+            .compass-button{ fill: #225EA8; stroke: #0C2C84; stroke-miterlimit: 6; stroke-linecap:  round; }
+            .compass-button:hover{ stroke-width: 2; }
+            .plus-minus{ fill: #fff; pointer-events: none; }
+            
+            
+            
+//Test Stuff for tree
+
+.node rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: .5;
+    stroke: #3182bd;
+    stroke-width: 1.5px;
+}
+
+
+.node text {
+    font: 10px sans-serif;
+    pointer-events: none;
+}
+
+.parentnode rect,
+.node rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: .5;
+    stroke: #3182bd;
+    stroke-width: 1.5px;
+}
+
+
+.parentnode text {
+    font: 10px sans-serif;
+    pointer-events: none;
+}
+
+g.parentnode polygon.children {
+    fill:black;
+}
+
+g.parentnode polygon.nochildren {
+    fill:none;
+}
+
+path.link {
+    fill: none;
+    stroke: #9ecae1;
+    stroke-width: 1.5px;
+}
+
+circle.tol5{
+    fill:red;
+    stroke:black;
+    stroke-width:1px;
+}
+circle.tol4{
+    fill:orange;
+    stroke:black;
+    stroke-width:1px;
+}
+circle.tol3{
+    fill:yellow;
+    stroke:black;
+    stroke-width:1px;
+}
+circle.tol2{
+    fill:lime;
+    stroke:black;
+    stroke-width:1px;
+}
+circle.tol1{
+    fill:lightblue;
+    stroke:black;
+    stroke-width:1px;
+}
