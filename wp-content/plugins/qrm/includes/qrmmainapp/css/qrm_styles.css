@@ -623,31 +623,46 @@ a.qrmLink:hover {
 	text-align: center;
 	background-color: #F00;
 	cursor: default;
+    font-weight:bold;
+    font-size:14pt;
+    color:black;
 }
 
 .cellHigh,.cellHigh:link,.cellHigh:visited {
 	text-align: center;
 	background-color: orange;
 	cursor: pointer;
-	cursor: hand
+	cursor: hand;
+    font-weight:bold;
+    font-size:14pt;
+    color:black;
 }
 
 .cellSignificant,.cellSignificant:link,.cellSignificant:visited {
 	text-align: center;
 	background-color: #FF0;
 	cursor: default;
+    font-weight:bold;
+    font-size:14pt;
+    color:black;
 }
 
 .cellModerate,.cellModerate:link,.cellModerate:visited {
 	text-align: center;
 	background-color: #0F0;
 	cursor: default;
+    font-weight:bold;
+    font-size:14pt;
+    color:black;
 }
 
 .cellLow,.cellLow:link,.cellLow:visited {
 	text-align: center;
 	background-color: #0FF;
 	cursor: default;
+    font-weight:bold;
+    font-size:14pt;
+    color:black;
 }
 
 .cellLow:hover,.cellModerate:hover,.cellSignificant:hover,.cellHigh:hover,.cellExtreme:hover,.qrmCellSelected,.matCellHighLight

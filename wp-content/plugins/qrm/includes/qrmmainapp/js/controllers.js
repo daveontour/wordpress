@@ -18,9 +18,10 @@ function MainCtrl() {
 function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService) {
 
     QRMDataService.riskID = 0;
-
     $scope.project = QRMDataService.project;
 
+    $scope.valPre = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    $scope.valPost = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     $scope.gridOptions = {
         enableSorting: true,
@@ -94,49 +95,93 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
     ]
     };
 
-    $scope.defaultFilters = {
-        owner: "",
-        manager: "",
-        category: "",
-        expActive: true,
-        expPending: true,
-        expInactive: true,
-        treated: true,
-        untreated: true,
-        tolEx: true,
-        tolHigh: true,
-        tolSig: true,
-        tolModerate: true,
-        tolLow: true,
-        inactive: true,
-        active: true,
-        pending: true,
-        filterMatrix:false,
-        riskCode: ""
+    $scope.ignoreOptionChange = false;
 
+
+    $scope.resetFilter = function () {
+        // used for flagging clearance of matrix highlights
+        $scope.filterMatrix = false;
+        return {
+            owner: "",
+            manager: "",
+            category: "",
+            expActive: true,
+            expPending: true,
+            expInactive: true,
+            treated: true,
+            untreated: true,
+            tolEx: true,
+            tolHigh: true,
+            tolSig: true,
+            tolModerate: true,
+            tolLow: true,
+            inactive: true,
+            active: true,
+            pending: true,
+            filterMatrix: false,
+            riskCode: "",
+            inactive: true,
+            active: true,
+            pending: true
+        }
     };
 
-    $scope.filterOptions = $scope.defaultFilters;
-
-    $scope.ignoreOptionChange = false;
+    $scope.filterOptions = $scope.resetFilter();
     $scope.$watch("filterOptions", function () {
         if (!$scope.ignoreOptionChange) {
             $scope.filterRisks();
         }
     }, true);
 
+    // General purpose functions
     $scope.editRisk = function (riskID) {
         QRMDataService.riskID = riskID;
         $state.go('index.risk');
     }
-
     $scope.deleteRisk = function (riskID) {
         QRMDataService.riskID = riskID;
         alert("Delete Risk: " + riskID);
     }
+    $scope.getRisks = function () {
+        riskService.getRisks(QRMDataService.url)
+            .then(function (response) {
 
+                $scope.rawRisks = response.data.data;
+                $scope.gridOptions.data = response.data.data;
+
+                var maxImpact = Number(QRMDataService.project.matrix.maxImpact);
+                var maxProb = Number(QRMDataService.project.matrix.maxProb);
+
+
+                for (var i = 0; i < maxImpact * maxProb; i++) {
+                    $scope.valPre[i] = 0;
+                    $scope.valPost[i] = 0;
+                }
+
+
+                response.data.data.forEach(function (el) {
+                    var iP = Math.floor(Number(el.inherentProb));
+                    var iI = Math.floor(Number(el.inherentImpact));
+                    var tP = Math.floor(Number(el.treatedProb));
+                    var tI = Math.floor(Number(el.treatedImpact));
+
+
+                    $scope.valPre[((iP - 1) * maxImpact) + iI - 1] ++;
+                    $scope.valPost[((tP - 1) * maxImpact) + tI - 1] ++;
+
+                });
+
+                //                setMatrix(QRMDataService.project.matrix.tolString, maxImpact, maxProb, valPre, "#svgDIVPreMit", false, $scope.matrixFilter);
+                //                setMatrix(QRMDataService.project.matrix.tolString, maxImpact, maxProb, valPost, "#svgDIVPostMit", true, $scope.matrixFilter);
+                $scope.filterRisks();
+            });
+
+    }
+
+    // Filtering functions
     $scope.filterRisks = function () {
 
+        $scope.filterMatrix = $scope.filterOptions.filterMatrix;
 
         $scope.gridOptions.data = [];
         $scope.rawRisks.forEach(function (r) {
@@ -144,6 +189,8 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
             var pass = false;
 
             if ($scope.filterOptions.filterMatrix) {
+
+                debugger;
 
                 var i;
                 var p;
@@ -177,7 +224,6 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                 if (!pass) return;
                 pass = false;
 
-                debugger;
                 var own = $scope.filterOptions.owner.name;
                 var man = $scope.filterOptions.manager.name;
                 var ownPass = false;
@@ -196,100 +242,49 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
             if (pass) $scope.gridOptions.data.push(r);
         });
     }
+    $scope.matrixFilter = function (impact, prob, treated) {
 
-    $scope.getRisks = function () {
-        riskService.getRisks(QRMDataService.url + "?feed=allRisks&post_type=risk")
-            .then(function (response) {
-                $scope.rawRisks = response.data.data;
-                $scope.gridOptions.data = response.data.data;
+        $scope.filterOptions = $scope.resetFilter()
 
-                var maxImpact = Number(QRMDataService.project.matrix.maxImpact);
-                var maxProb = Number(QRMDataService.project.matrix.maxProb);
+        $scope.filterOptions.matrixProb = prob;
+        $scope.filterOptions.matrixImpact = impact;
+        $scope.filterOptions.matrixTreated = treated;
+        $scope.filterOptions.filterMatrix = true;
 
-
-                var valPre = [];
-                var valPost = [];
-                for (var i = 0; i < maxImpact; i++) {
-                    for (var j = 1; j <= maxProb; j++) {
-                        valPre.push(0);
-                        valPost.push(0);
-                    }
-                }
-
-                response.data.data.forEach(function (el) {
-                    var iP = Math.floor(Number(el.inherentProb));
-                    var iI = Math.floor(Number(el.inherentImpact));
-                    var tP = Math.floor(Number(el.treatedProb));
-                    var tI = Math.floor(Number(el.treatedImpact));
-
-
-                    valPre[((iP - 1) * maxImpact) + iI - 1] ++;
-                    valPost[((tP - 1) * maxImpact) + tI - 1] ++;
-
-                });
-
-                setMatrix(QRMDataService.project.matrix.tolString, maxImpact, maxProb, valPre, "#svgDIVPreMit", false, $scope.matrixFilter);
-                setMatrix(QRMDataService.project.matrix.tolString, maxImpact, maxProb, valPost, "#svgDIVPostMit", true, $scope.matrixFilter);
-                $scope.filterRisks();
-            });
-    }
-
-    $scope.matrixFilter = function (impact, prob, treated, tol) {
-        $scope.filterOptions = {
-            owner: "",
-            manager: "",
-            category: "",
-            expActive: true,
-            expPending: true,
-            expInactive: true,
-            treated: true,
-            untreated: true,
-            tolEx: true,
-            tolHigh: true,
-            tolSig: true,
-            tolModerate: true,
-            tolLow: true,
-            riskCode: "",
-            matrixProb: prob,
-            matrixImpact: impact,
-            matrixTreated: treated,
-            filterMatrix: true,
-            inactive: true,
-            active: true,
-            pending: true
-
-        };
-
-        var resetClassName = "tol" + QRMDataService.selectedCellTol + " qrmMatElementID" + QRMDataService.selectedCellImpact + QRMDataService.selectedCellProb;
-        if (QRMDataService.selectedCellTreated) {
-            resetClassName = resetClassName + "T";
-        } else {
-            resetClassName = resetClassName + "U";
-        }
-
-        d3.select("rect.selectedMatCell").attr("class", resetClassName);
-
-
-        // Record and Highlight the cell
-
-        QRMDataService.selectedCellProb = prob;
-        QRMDataService.selectedCellImpact = impact;
-        QRMDataService.selectedCellTol = tol;
-        QRMDataService.selectedCellTreated = treated;
-
-        var selectedCellSelector = "rect.qrmMatElementID" + impact + prob;
-
-        if (treated) {
-            selectedCellSelector = selectedCellSelector + "T";
-        } else {
-            selectedCellSelector = selectedCellSelector + "U";
-        }
-
-        d3.select(selectedCellSelector).attr("class", "selectedMatCell");
+        $scope.filterMatrix = true;
+        //
+        //
+        //
+        //        var resetClassName = "tol" + QRMDataService.selectedCellTol + " qrmMatElementID" + QRMDataService.selectedCellImpact + QRMDataService.selectedCellProb;
+        //        if (QRMDataService.selectedCellTreated) {
+        //            resetClassName = resetClassName + "T";
+        //        } else {
+        //            resetClassName = resetClassName + "U";
+        //        }
+        //
+        //        d3.select("rect.selectedMatCell").attr("class", resetClassName);
+        //
+        //
+        //        // Record and Highlight the cell
+        //
+        //        QRMDataService.selectedCellProb = prob;
+        //        QRMDataService.selectedCellImpact = impact;
+        //        QRMDataService.selectedCellTol = tol;
+        //        QRMDataService.selectedCellTreated = treated;
+        //
+        //        var selectedCellSelector = "rect.qrmMatElementID" + impact + prob;
+        //
+        //        if (treated) {
+        //            selectedCellSelector = selectedCellSelector + "T";
+        //        } else {
+        //            selectedCellSelector = selectedCellSelector + "U";
+        //        }
+        //
+        //        d3.select(selectedCellSelector).attr("class", "selectedMatCell");
 
 
         $scope.filterRisks();
-        $scope.$apply();
+        //        $scope.$apply();
 
         //Unset the matrix filtering option, without initiating a re filter because of the change
         $scope.ignoreOptionChange = true;
@@ -298,7 +293,6 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         $scope.ignoreOptionChange = false;
 
     }
-
     $scope.clearFilters = function () {
 
 
@@ -310,30 +304,32 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         }
 
         d3.select("rect.selectedMatCell").attr("class", resetClassName);
-        $scope.filterOptions = {
-            owner: "",
-            manager: "",
-            category: "",
-            expActive: true,
-            expPending: true,
-            expInactive: true,
-            treated: true,
-            untreated: true,
-            tolEx: true,
-            tolHigh: true,
-            tolSig: true,
-            tolModerate: true,
-            tolLow: true,
-            riskCode: "",
-            filterMatrix: false,
-            inactive: true,
-            active: true,
-            pending: true
-
-
-        };
+        $scope.filterOptions = $scope.resetFilter();
     }
 
+
+    // Control the appearance of the matrix cells
+    $scope.getCellValue = function (prob, impact, treated) {
+        if (treated) {
+            var val = $scope.valPost[(prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1];
+            return (val == 0) ? "" : val
+        } else {
+            var val = $scope.valPre[(prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1];
+            return (val == 0) ? "" : val
+        }
+
+    }
+    $scope.cellHighlight = function (prob, impact, treated) {
+        return ($scope.filterMatrix && $scope.filterOptions.matrixProb == prob &&
+            $scope.filterOptions.matrixImpact == impact && $scope.filterOptions.matrixTreated == treated)
+    }
+    $scope.cellClass = function (prob, impact, tol) {
+        var index = (prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1;
+        return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol) 
+    }
+
+    
+    // Initial filling of the grid
     $scope.getRisks();
 
 }
@@ -401,7 +397,7 @@ function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update
 
 var app = angular.module('qrm');
 
-app.factory('riskService', function ($http) {
+app.service('riskService', function ($http) {
     return {
         getRisk: function (url, riskID) {
             return $http({
@@ -422,12 +418,13 @@ app.factory('riskService', function ($http) {
             });
         },
 
-        getRisks: function (url, riskID) {
+        getRisks: function (url) {
             return $http({
                 method: 'POST',
-                url: url,
-                cache: false,
-                data: riskID
+                url: url + "?qrmfn=getAllRisks",
+                cache: false
+            }).error(function (data, status, headers, config) {
+                alert(data.msg);
             });
         },
     }
@@ -510,7 +507,7 @@ app.service('QRMDataService', function () {
         matrix: {
             maxProb: 5,
             maxImpact: 5,
-            tolString: "1111122222333334444455555",
+            tolString: "1122311222333334444455551",
             probVal1: 20,
             probVal2: 40,
             probVal3: 60,
@@ -649,7 +646,6 @@ app.service('QRMDataService', function () {
 
 
 });
-
 app.filter('currencyFilter', function () {
     return function (value) {
         return '$' + Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');

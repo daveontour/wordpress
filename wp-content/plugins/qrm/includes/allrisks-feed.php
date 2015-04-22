@@ -18,6 +18,18 @@ require plugin_dir_path ( __FILE__ ) . 'class-data.php';
 // 	echo $user->get_error_message();
 // echo "null(".json_encode($user, JSON_PRETTY_PRINT).");";
 
+$current_user = wp_get_current_user();
+$roles = wp_get_current_user()->roles;
+
+if ( !is_user_logged_in() ){
+	wp_die("Not Logged In");
+	exit;
+}
+if ( !in_array("risk_owner", wp_get_current_user()->roles) ){
+	wp_die("Not Authorized");
+	exit;
+}
+
 $risks = array();
 
 while( have_posts()) : the_post();

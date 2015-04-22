@@ -181,3 +181,21 @@ angular
     .directive('minimalizaSidebar', minimalizaSidebar)
     .directive('qrmEdit', qrmEdit)
     .directive('icheck', icheck)
+    .directive('riskmat', function () {
+        return {
+            restrict: "E",
+            compile: function (element, attrs) {
+                debugger;
+                var mat = "<table border='1' cellspacing='0' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
+                for (var prob = 5; prob > 0; prob--) {
+                    mat = mat + "<tr>";
+                    for (var impact = 1; impact <= 5; impact++) {
+                        mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='matrixFilter(" + impact + "," + prob + ","+attrs.treated+")' ng-class='{cellLow: cellClass(" + prob + "," + impact + ",1), cellModerate:cellClass(" + prob + "," + impact + ",2), cellSignificant:cellClass(" + prob + "," + impact + ",3), cellHigh:cellClass(" + prob + "," + impact + ",4), cellExtreme:cellClass(" + prob + "," + impact + ",5), matCellHighLight:cellHighlight(" + prob + "," + impact + ","+attrs.treated+")}'>{{getCellValue(" + prob + "," + impact + ","+attrs.treated+")}}</td>";
+                    }
+                    mat = mat + "</tr>";
+                }
+                mat = mat + "</table>";
+                element.replaceWith(mat);
+            }
+        };
+    });

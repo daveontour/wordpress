@@ -1,4 +1,6 @@
-<?php /** * Plugin Name: Quay Systems Risk Manager * Description: Quay Risk Manager * Version: The plugin's version number. Example: 1.0.0
+<?php 
+/*** 
+ * Plugin Name: Quay Systems Risk Manager * Description: Quay Risk Manager * Version: The plugin's version number. Example: 1.0.0
  * Author: Dave Burton
  * License: A short license name. Example: GPL2
  */
@@ -15,6 +17,8 @@ require plugin_dir_path ( __FILE__ ) .'includes/class-post-type-metaboxes.php';
 
 require plugin_dir_path ( __FILE__ ) .'includes/class-custom-feed.php';
 require plugin_dir_path ( __FILE__ ) .'includes/class-risk.php';
+
+require plugin_dir_path ( __FILE__ ) . 'includes/class-data.php';
 
 
 //Initiallise the page templater (allows us to provide page templates in plugin)
@@ -48,11 +52,38 @@ function my_plugin_admin_init() {
 	
 }
 
+function add_qrm_roles_on_plugin_activation() {
+	add_role( 'risk_admin', 'Risk Administrator', array( 'read' => true ) );
+	add_role( 'risk_owner', 'Risk Owner', array( 'read' => true ) );
+	add_role( 'risk_manager', 'Risk Manager', array( 'read' => true ) );
+	add_role( 'risk_user', 'Risk User', array( 'read' => true ) );
+}
+register_activation_hook( __FILE__, 'add_qrm_roles_on_plugin_activation' );
+
 
 add_action ('parse_request','my_plugin_parse_request' );
 function my_plugin_parse_request($wp) {
 	if (array_key_exists ('qrmfn', $wp->query_vars )) {
 		
+		// Overall QRM security check. User needs to be logged in to Wordpress, and have and approriate role
+		if ( !is_user_logged_in() ){
+			http_response_code(400);
+			echo '{"error":true,"msg":"Not Logged In"}';
+			exit;
+		}
+		
+		$roles = wp_get_current_user()->roles;
+		
+		if ( !in_array("risk_owner", $roles) 
+				&& !in_array("risk_manager", $roles) 
+				&& !in_array("risk_user", $roles)
+				&& !in_array("risk_admin", $roles)){
+			http_response_code(400);
+			echo '{"error":true,"msg":"Not Authorised"}';
+			exit;
+		}
+		
+		// Pass to the specific function
 		switch ($wp->query_vars ['qrmfn']) {
 			
 			case "saveRisk" :
@@ -60,6 +91,9 @@ function my_plugin_parse_request($wp) {
 				break;
 			case "getRisk" :
    				getRisk();
+				break;
+			case "getAllRisks" :
+				getAllRisks();
 				break;
 				
 			default :
@@ -69,13 +103,47 @@ function my_plugin_parse_request($wp) {
 }
 
 function getRisk (){
-
 	$riskID = json_decode(file_get_contents("php://input"));
 	$risk = get_post_meta($riskID, "riskdata", true);
 	echo $risk;
 	exit;
+}
+function getAllRisks(){
 	
+	global $post;
+	$args = array(
+			'post_type' => 'risk'
+	);
 	
+	$the_query = new WP_Query($args);
+	$risks = array();
+	
+	while( $the_query->have_posts()) : $the_query->the_post();
+	
+	$risk = json_decode(get_post_meta($post->ID, "riskdata", true));
+	
+	//echo var_dump($post);
+	
+	$r = new SmallRisk();
+	$r->description = $risk->description;
+	$r->title = $risk->title;
+	$r->id = $risk->id;
+	$r->owner = $risk->owner->name;
+	$r->manager = $risk->manager->name;
+	$r->currentTolerance = $risk->currentTolerance;
+	$r->inherentProb = $risk->inherentProb;
+	$r->inherentImpact = $risk->inherentImpact;
+	$r->treatedProb = $risk->treatedProb;
+	$r->treatedImpact = $risk->treatedImpact;
+	$r->treated = $risk->treated;
+	
+	array_push($risks, $r);
+	endwhile;
+	
+	$data = new Data();
+	$data->data = $risks;
+	echo json_encode($data, JSON_PRETTY_PRINT);
+	exit;
 }
 function saveRisk (){
 	 $postdata = file_get_contents("php://input");
