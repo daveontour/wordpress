@@ -1,21 +1,4 @@
-function MainCtrl() {
-
-    this.risk = {
-        title: "Risk Title",
-        description: "Description of the Risk",
-        cause: "Possible causes of the risk"
-    };
-    this.hello = function () {
-        alert("Hello");
-    };
-    this.test = "Initial Setting";
-    this.userName = 'Example user';
-    this.helloText = 'Welcome in SeedProject';
-    this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
-
-}
-
-function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService) {
+function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     QRMDataService.riskID = 0;
     $scope.project = QRMDataService.project;
@@ -57,28 +40,39 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                 cellClass: 'compact'
 
             },
-            {
-                name: "inherentProb"
-            },
-            {
-                name: "inherentImpact"
-            },
-            {
-                name: "treatedProb"
-            },
-            {
-                name: "treatedImpact"
-            },
+//             {
+//                name: "currentProb"
+//            },
+//            {
+//                name: "currentImpact"
+//            },
+//              {
+//                name: "treated"
+//            },
+//          {
+//                name: "inherentProb"
+//            },
+//            {
+//                name: "inherentImpact"
+//            },
+//            {
+//                name: "treatedProb"
+//            },
+//            {
+//                name: "treatedImpact"
+//            },
             {
                 name: 'owner',
-                width: 150,
-                cellClass: 'compact'
+                width: 140,
+                cellClass: 'compact',
+                field: 'owner.name'
 
             },
             {
                 name: 'manager',
-                width: 150,
-                cellClass: 'compact'
+                width: 140,
+                cellClass: 'compact',
+                field: 'manager.name'
             },
             {
                 name: 'id',
@@ -235,10 +229,27 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
                     pass = true;
                 }
 
-            }
+                if (!pass) return;
+
+                pass = false;
+
+                debugger;
+                //Filter on exposure;
+
+                var now = moment();
+                
+                var endDiff = now.diff(moment(r.end));
+                var startDiff = now.diff(moment(r.start));
+
+                if ($scope.filterOptions.expInactive && endDiff > 0) pass = true;
+                if ($scope.filterOptions.expPending && startDiff < 0) pass = true;
+                if ($scope.filterOptions.expActive && startDiff > 0 && endDiff < 0) pass = true;
+                
+                }
+
+
 
             if (!pass) return;
-
             if (pass) $scope.gridOptions.data.push(r);
         });
     }
@@ -252,39 +263,8 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
         $scope.filterOptions.filterMatrix = true;
 
         $scope.filterMatrix = true;
-        //
-        //
-        //
-        //        var resetClassName = "tol" + QRMDataService.selectedCellTol + " qrmMatElementID" + QRMDataService.selectedCellImpact + QRMDataService.selectedCellProb;
-        //        if (QRMDataService.selectedCellTreated) {
-        //            resetClassName = resetClassName + "T";
-        //        } else {
-        //            resetClassName = resetClassName + "U";
-        //        }
-        //
-        //        d3.select("rect.selectedMatCell").attr("class", resetClassName);
-        //
-        //
-        //        // Record and Highlight the cell
-        //
-        //        QRMDataService.selectedCellProb = prob;
-        //        QRMDataService.selectedCellImpact = impact;
-        //        QRMDataService.selectedCellTol = tol;
-        //        QRMDataService.selectedCellTreated = treated;
-        //
-        //        var selectedCellSelector = "rect.qrmMatElementID" + impact + prob;
-        //
-        //        if (treated) {
-        //            selectedCellSelector = selectedCellSelector + "T";
-        //        } else {
-        //            selectedCellSelector = selectedCellSelector + "U";
-        //        }
-        //
-        //        d3.select(selectedCellSelector).attr("class", "selectedMatCell");
-
 
         $scope.filterRisks();
-        //        $scope.$apply();
 
         //Unset the matrix filtering option, without initiating a re filter because of the change
         $scope.ignoreOptionChange = true;
@@ -325,341 +305,18 @@ function ExplorerCtrl($scope, $modal, QRMDataService, $http, $state, riskService
     }
     $scope.cellClass = function (prob, impact, tol) {
         var index = (prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1;
-        return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol) 
+        return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
 
-    
+
     // Initial filling of the grid
     $scope.getRisks();
 
 }
 
-function ModalInstanceCtrl($scope, $modalInstance, text, item) {
-
-    debugger;
-
-    switch (item) {
-    case 'description':
-        $scope.text = text[0];
-        $scope.title = "Risk Title and Description";
-        $scope.risktitle = text[3];
-        break;
-    case 'cause':
-        $scope.text = text[1];
-        $scope.title = "Risk Cause";
-        break;
-    case 'consequence':
-        $scope.text = text[2];
-        $scope.title = "Risk Consequences";
-        break;
-    }
-
-
-    $scope.ok = function () {
-        $modalInstance.close({
-            text: $scope.text,
-            title: $scope.risktitle
-        });
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update) {
-
-    debugger;
-
-    switch (title) {
-    case 'Response Plan':
-        $scope.title = "Response Plan";
-        break;
-    case 'Mitigation Plan':
-        $scope.title = "Mitigation Plan";
-        break;
-    }
-
-    $scope.plan = plan;
-    $scope.update = update;
-
-    $scope.ok = function () {
-        $modalInstance.close({
-            plan: $scope.plan,
-            update: $scope.update
-        });
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
 var app = angular.module('qrm');
 
-app.service('riskService', function ($http) {
-    return {
-        getRisk: function (url, riskID) {
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=getRisk",
-                cache: false,
-                data: riskID
-            });
-        },
-
-        saveRisk: function (url, risk) {
-
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=saveRisk",
-                cache: false,
-                data: risk
-            });
-        },
-
-        getRisks: function (url) {
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=getAllRisks",
-                cache: false
-            }).error(function (data, status, headers, config) {
-                alert(data.msg);
-            });
-        },
-    }
-});
-app.service('QRMDataService', function () {
-    var loc = window.location.href;
-    this.url = loc.slice(0, loc.indexOf("wp-content"));
-    this.lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur"
-    this.matrixDisplayConfig = {
-        width: 200,
-        height: 200,
-        radius: 15
-    };
-    this.project = {
-        riskOwners: [
-            {
-                name: "David Burton",
-                email: "dave_on_tour@yahoo.com"
-            },
-            {
-                name: "Fionna Millikan",
-                email: "fionna_on_tour@yahoo.com"
-            },
-            {
-                name: "Kerri Whitney",
-                email: "kerri_on_tour@yahoo.com"
-            }
-        ],
-        riskManagers: [
-            {
-                name: "David Burton",
-                email: "dave_on_tour@yahoo.com"
-            },
-            {
-                name: "Fionna Millikan",
-                email: "fionna_on_tour@yahoo.com"
-            },
-            {
-                name: "Kerri Whitney",
-                email: "kerri_on_tour@yahoo.com"
-            }
-        ],
-        categories: [
-            {
-                name: "Financial",
-                id: 100000,
-                sec: [
-                    {
-                        name: "Regulatory",
-                        id: 200000
-                    },
-                    {
-                        name: "Accounting",
-                        id: 300000
-                    },
-                    {
-                        name: "Management",
-                        id: 400000
-                    },
-                    {
-                        name: "Cash Flow",
-                        id: 500000
-                    }]
-
-            },
-            {
-                name: "Vendor",
-                id: 600000,
-
-                sec: [{
-                    name: "Performance",
-                    id: 700000
-                }, {
-                    name: "Relatioship",
-                    id: 800000
-                }]
-
-            }
-             ],
-        matrix: {
-            maxProb: 5,
-            maxImpact: 5,
-            tolString: "1122311222333334444455551",
-            probVal1: 20,
-            probVal2: 40,
-            probVal3: 60,
-            probVal4: 80,
-            probVal5: 100,
-            probVal6: 100,
-            probVal7: 100,
-            probVal8: 100
-        }
-
-    };
-    this.risk = {
-        title: this.url,
-        description: this.lorem,
-        cause: this.lorem,
-        consequence: this.lorem,
-        owner: {
-            name: "Fionna Millikan",
-            email: "fionna_on_tour@yahoo.com"
-        },
-        manager: {
-            name: "Kerri Whitney",
-            email: "kerri_on_tour@yahoo.com"
-        },
-        inherentProb: 5.5,
-        inherentImpact: 4.5,
-        treatedProb: 2.5,
-        treatedImpact: 1.5,
-        riskProjectCode: "RK1",
-        impRep: true,
-        impSafety: false,
-        impEnviron: true,
-        impCost: true,
-        impTime: true,
-        impSpec: true,
-        treatAvoid: true,
-        treatRetention: false,
-        treatTransfer: true,
-        treatMinimise: true,
-        treated: true,
-        summaryRisk: true,
-        useCalContingency: true,
-        useCalcProb: false,
-        likeType: 1,
-        likeAlpha: 1,
-        likeT: 365,
-        likePostType: 1,
-        likePostAlpha: 1,
-        likePostT: 365,
-        estContingency: 500000,
-        start: moment().subtract(1, 'week'),
-        end: moment().add(1, 'month'),
-        primcat: {
-            name: "Vendor"
-        },
-        seccat: {
-            name: "Performance"
-        },
-        mitigation: {
-            mitPlanSummary: "Summary of the Mitigation Plan",
-            mitPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
-            mitPlan: [
-                {
-                    description: "Do something kjfdlkdsf jdslkjf sdfkj sklf dkfj hdslkfhd fkjds hfkdsjf hdskjf hsdkjf hdskfj dskfj dskjfhds kfjdsh kdsj hfkdsjf hdskjf dskfj hdskf hdskfj dskfjdsh fkds hfkdsfh skdf kdsf sdkf hskd",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                }
-            ]
-        },
-        response: {
-            respPlanSummary: "Summary of the Mitigation Plan",
-            respPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
-            respPlan: [
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                },
-                {
-                    description: "Do something",
-                    update: "I did somrthing",
-                    person: "Kezza",
-                    cost: "123456",
-                    complete: 50,
-                    due: moment().add(1, "week").toString
-                }
-            ]
-        }
-    };
-
-
-});
-app.filter('currencyFilter', function () {
-    return function (value) {
-        return '$' + Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-
-    };
-});
-app.filter('percentFilter', function () {
-    return function (value) {
-        return Number(value).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "%";
-
-    };
-});
-app.controller('MainCtrl', MainCtrl);
-app.controller('ExplorerCtrl', ['$scope', '$modal', 'QRMDataService', '$http', '$state', 'riskService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$http', '$state', '$stateParams', 'riskService', RiskCtrl]);
+app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
+app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', RiskCtrl]);
 app.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'text', 'item', ModalInstanceCtrl]);
 app.controller('ModalInstanceCtrlMitigation', ['$scope', '$modalInstance', 'title', 'plan', 'update', ModalInstanceCtrlMitigation]);

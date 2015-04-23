@@ -182,11 +182,13 @@ angular
     .directive('qrmEdit', qrmEdit)
     .directive('icheck', icheck)
     .directive('riskmat', function () {
+    
+    //Creates the risk matrices onthe explorer page
         return {
             restrict: "E",
             compile: function (element, attrs) {
-                debugger;
-                var mat = "<table border='1' cellspacing='0' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
+                
+                var mat = "<table border='1' cellspacing='5' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
                 for (var prob = 5; prob > 0; prob--) {
                     mat = mat + "<tr>";
                     for (var impact = 1; impact <= 5; impact++) {

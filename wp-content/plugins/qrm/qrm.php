@@ -137,7 +137,7 @@ function getAllRisks(){
 	$r->treatedImpact = $risk->treatedImpact;
 	$r->treated = $risk->treated;
 	
-	array_push($risks, $r);
+	array_push($risks, $risk);
 	endwhile;
 	
 	$data = new Data();
