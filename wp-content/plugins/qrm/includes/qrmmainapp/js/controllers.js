@@ -247,8 +247,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
                 
                 }
 
-
-
             if (!pass) return;
             if (pass) $scope.gridOptions.data.push(r);
         });

@@ -35,7 +35,8 @@ app.service('riskService', function ($http) {
 app.service('QRMDataService', function () {
     var loc = window.location.href;
     this.url = loc.slice(0, loc.indexOf("wp-content"));
-    this.lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur"
+    this.lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur";
+    this.loremSmall = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipis";
     this.matrixDisplayConfig = {
         width: 200,
         height: 200,
@@ -170,7 +171,28 @@ app.service('QRMDataService', function () {
                 mitPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
                 mitPlan: [
                     {
-                        description: "Do something ",
+                        description: this.loremSmall,
+                        update: "I did somrthing",
+                        person: "Kezza",
+                        cost: "123456",
+                        complete: 50,
+                        due: moment().add(1, "week").toString
+                }, {
+                        description: this.loremSmall,
+                        update: "I did somrthing",
+                        person: "Kezza",
+                        cost: "123456",
+                        complete: 50,
+                        due: moment().add(1, "week").toString
+                }, {
+                        description: this.loremSmall,
+                        update: "I did somrthing",
+                        person: "Kezza",
+                        cost: "123456",
+                        complete: 50,
+                        due: moment().add(1, "week").toString
+                }, {
+                        description: this.loremSmall,
                         update: "I did somrthing",
                         person: "Kezza",
                         cost: "123456",

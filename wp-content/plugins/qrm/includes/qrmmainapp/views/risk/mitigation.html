@@ -4,9 +4,9 @@
         </div>
     </div>
     <div class="panel-body">
-        <div class="row">
+        <div style="margin-bottom:10px" class="row">
 
-            <div class="col-lg-6">
+            <div style="margin-bottom:15px" class="col-lg-6">
                 <h4>Mitigation Plan Summary</h4> {{ctl.risk.mitigation.mitPlanSummary}}
             </div>
             <div class="col-lg-6">
@@ -16,19 +16,42 @@
 
         </div>
         <div class="row">
-           <div class="col-lg-12">
+            <div class="col-lg-12" style="margin-top:15px">
                 <h4>Detail Mitigation Plan</h4>
-            </div>           <div class="col-12-lg">
-<!--                <div id="grid1" ui-grid="ctl.gridOptions" class="grid"></div>-->
-               <div><strong>Description: </strong>{{ctl.risk.description}}</div>
-               <div style = "float:left;margin-right:15px"><strong>Responsible: </strong>{{ctl.risk.owner.name}}</div>
-               <div style = "float:left;margin-right:15px"><strong>Cost: </strong>$9,000</div>
-               <div style = "float:left;margin-right:15px"><strong>Due: </strong>Next Week</div>
-               <div style = "float:left;margin-right:15px"><strong>Complete: </strong>75%</div>
             </div>
+            <table class="table table-striped">
+
+                <tr ng-repeat="step in ctl.risk.mitigation.mitPlan" style="margin-top:15px">
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+                                    <strong>Description: </strong>{{step.description}}
+                                </td>
+                                <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:130px">
+                                    <button style="float:left" class="btn btn-primary btn-sm">Edit</button>
+                                    <button style="float:right" class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+
+                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Cost: </strong>{{step.cost | currency}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Due: </strong>{{step.due}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Complete: </strong>{{step.complete}}%</div>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </div>
 
     </div>
+
+</div>
 </div>
 
 <div class="panel panel-success">
@@ -50,9 +73,32 @@
             <div class="col-lg-12">
                 <h4>Detail Response Plan</h4>
             </div>
-            <div class="col-12-lg">
-                <div id="grid1" ui-grid="{ data: ctl.risk.response.respPlan }" class="grid"></div>
-            </div>
+         <table class="table table-striped">
+
+                <tr ng-repeat="step in ctl.risk.mitigation.mitPlan" style="margin-top:15px">
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+                                    <strong>Description: </strong>{{step.description}}
+                                </td>
+                                <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:130px">
+                                    <button style="float:left" class="btn btn-primary btn-sm">Edit</button>
+                                    <button style="float:right" class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+
+                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person}}</div>
+                                    <div style="float:left;margin-left"><strong>Estimated Cost: </strong>{{step.cost | currency}}</div>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </div>
 
 
