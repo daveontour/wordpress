@@ -206,6 +206,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 
     }
 
+    this.impactChange = function() {
+        this.updateRisk();
+    }
     this.probChange = function () {
 
         switch (Number(this.risk.likeType)) {
