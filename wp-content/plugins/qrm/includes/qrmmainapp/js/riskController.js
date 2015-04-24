@@ -310,6 +310,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         riskCtl.risk.likepostType = 4;
 
     }
+    
+    this.drag = function(){
+    
+    }
 
 
     //Mitigation and Response Editing
