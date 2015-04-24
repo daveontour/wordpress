@@ -2,6 +2,34 @@
     <div class="panel-heading">Controls</div>
     <div class="panel-body">
         <div class="row">
+            <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
+                <h4 style="float:left">Risk Controls</h4>
+                <button style="float:left;margin-left:15px" ng-click="ctl.addControl()" class="btn btn-primary btn-sm">Add Control</button>
+            </div>
+            <table class="table table-striped">
+
+                <tr ng-repeat="control in ctl.risk.controls" style="margin-top:15px">
+                    <td>
+                        <table style="width:100%">
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+                                    <strong>Control: </strong>{{control.description}}
+                                </td>
+                                <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:130px">
+                                    <button style="float:left" ng-click="ctl.editControl(control)" class="btn btn-primary btn-sm">Edit</button>
+                                    <button style="float:right" ng-click="ctl.deleteControl(control)"  class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom:5px;padding-left:15px">
+                                    <div style="float:left;clear:both;margin-right:15px"><strong>Effectiveness: </strong>{{control.effectiveness}}</div>
+                                    <div style="float:left;clear:both;margin-right:15px"><strong>Contribution: </strong>{{control.contribution}}</div>
+                                 </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

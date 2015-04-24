@@ -16,29 +16,30 @@
 
         </div>
         <div class="row">
-            <div class="col-lg-12" style="margin-top:15px">
-                <h4>Detail Mitigation Plan</h4>
+            <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
+                <h4 style="float:left">Detail Mitigation Plan</h4>
+                <button style="float:left;margin-left:15px" ng-click="ctl.addMit()" class="btn btn-primary btn-sm">Add Mitigation Action</button>
             </div>
             <table class="table table-striped">
 
                 <tr ng-repeat="step in ctl.risk.mitigation.mitPlan" style="margin-top:15px">
                     <td>
-                        <table>
+                        <table style="width:100%">
                             <tr>
                                 <td style="padding-bottom:5px;padding-left:15px">
                                     <strong>Description: </strong>{{step.description}}
                                 </td>
                                 <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:130px">
-                                    <button style="float:left" class="btn btn-primary btn-sm">Edit</button>
-                                    <button style="float:right" class="btn btn-danger btn-sm">Delete</button>
+                                    <button style="float:left" ng-click="ctl.editMitStep(step)" class="btn btn-primary btn-sm">Edit</button>
+                                    <button style="float:right" ng-click="ctl.deleteMitStep(step)"  class="btn btn-danger btn-sm">Delete</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td style="padding-bottom:5px;padding-left:15px">
 
                                     <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person}}</div>
-                                    <div style="float:left;margin-right:15px"><strong>Cost: </strong>{{step.cost | currency}}</div>
-                                    <div style="float:left;margin-right:15px"><strong>Due: </strong>{{step.due}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Cost: </strong>${{step.cost}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Due: </strong>{{step.due | date:'MMM d, y'}}</div>
                                     <div style="float:left;margin-right:15px"><strong>Complete: </strong>{{step.complete}}%</div>
 
                                 </td>
@@ -62,7 +63,7 @@
     <div class="panel-body">
 
         <div class="row">
-            <div class="col-lg-6">
+            <div style="margin-bottom:15px" class="col-lg-6">
                 <h4>Reponse Plan Summary</h4> {{ctl.risk.response.respPlanSummary}}
             </div>
             <div class="col-lg-6">
@@ -70,21 +71,23 @@
             </div>
 
 
-            <div class="col-lg-12">
-                <h4>Detail Response Plan</h4>
-            </div>
-         <table class="table table-striped">
+                       <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
+                <h4 style="float:left">Detail Response Plan</h4>
+                <button style="float:left;margin-left:15px"   ng-click="ctl.addResp()" class="btn btn-primary btn-sm">Add Response Action</button>
 
-                <tr ng-repeat="step in ctl.risk.mitigation.mitPlan" style="margin-top:15px">
+            </div>
+            <table class="table table-striped">
+
+                <tr ng-repeat="step in ctl.risk.response.respPlan" style="margin-top:15px">
                     <td>
-                        <table>
+                        <table style="width:100%">
                             <tr>
                                 <td style="padding-bottom:5px;padding-left:15px">
                                     <strong>Description: </strong>{{step.description}}
                                 </td>
                                 <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:130px">
-                                    <button style="float:left" class="btn btn-primary btn-sm">Edit</button>
-                                    <button style="float:right" class="btn btn-danger btn-sm">Delete</button>
+                                     <button style="float:left" ng-click="ctl.editRespStep(step)" class="btn btn-primary btn-sm">Edit</button>
+                                    <button style="float:right" ng-click="ctl.deleteRespStep(step)"  class="btn btn-danger btn-sm">Delete</button>
                                 </td>
                             </tr>
                             <tr>

@@ -285,7 +285,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         $scope.filterOptions = $scope.resetFilter();
     }
 
-
+    
     // Control the appearance of the matrix cells
     $scope.getCellValue = function (prob, impact, treated) {
         if (treated) {
@@ -318,3 +318,6 @@ app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskServi
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', RiskCtrl]);
 app.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'text', 'item', ModalInstanceCtrl]);
 app.controller('ModalInstanceCtrlMitigation', ['$scope', '$modalInstance', 'title', 'plan', 'update', ModalInstanceCtrlMitigation]);
+app.controller('MitController', ['$scope', '$modalInstance', 'step','ref', MitController]);
+app.controller('RespController', ['$scope', '$modalInstance', 'resp','ref', RespController]);
+app.controller('ControlController', ['$scope', '$modalInstance', 'control', ControlController]);

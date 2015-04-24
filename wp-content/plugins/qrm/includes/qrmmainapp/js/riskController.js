@@ -1,4 +1,4 @@
-function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskService) {
+function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService) {
 
     var riskCtl = this;
     this.riskID = QRMDataService.riskID;
@@ -7,43 +7,6 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
     this.url = QRMDataService.url;
     this.project = QRMDataService.project;
     this.risk = QRMDataService.getTemplateRisk();
-
-    this.gridOptions = {
-        enableSorting: false,
-        data: this.risk.mitigation.mitPlan,
-        columnDefs: [
-            {
-                name: 'description',
-                width: "*",
-                enableCellEdit: true,
-                type: 'text'
-            },
-            {
-                name: 'person',
-                width: 180
-            },
-            {
-                name: 'cost',
-                width: 100,
-                cellFilter: 'currencyFilter'
-            },
-            {
-                name: 'due',
-                width: 150
-            },
-            {
-                name: 'complete',
-                width: 100,
-                cellFilter: 'percentFilter'
-            },
-            {
-                name: 'update',
-                width: "*",
-                cellTemplate: "<div><button ng-click='ctl.test()'>Delete</div>"
-            }
-
-    ]
-    }
 
     //Opens Modal Dialog box
     this.open = function (item, size) {
@@ -222,15 +185,15 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
             this.risk.inherentTolerance = this.project.matrix.tolString.substring(index, index + 1);
 
             if (this.risk.treated) {
-                this.risk.currentProb =  this.risk.treatedProb;
+                this.risk.currentProb = this.risk.treatedProb;
                 this.risk.currentImpact = this.risk.treatedImpact;
-                this.risk.currentTolerance =  this.risk.treatedTolerance;
+                this.risk.currentTolerance = this.risk.treatedTolerance;
 
 
             } else {
-                this.risk.currentProb =  this.risk.inherentProb;
-                this.risk.currentImpact =  this.risk.inherentImpact;
-                this.risk.currentTolerance =  this.risk.inherentTolerance;
+                this.risk.currentProb = this.risk.inherentProb;
+                this.risk.currentImpact = this.risk.inherentImpact;
+                this.risk.currentTolerance = this.risk.inherentTolerance;
             }
 
 
@@ -247,15 +210,12 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
 
         switch (Number(this.risk.likeType)) {
         case 1:
-        case "1":
             this.risk.likeT = 365;
             break;
         case 2:
-        case '2':
             this.risk.likeT = 30;
             break;
         case 3:
-        case "3":
             //do nothing, will already be set by model
             break;
         default:
@@ -263,15 +223,12 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
         }
         switch (Number(this.risk.likePostType)) {
         case 1:
-        case "1":
             this.risk.likePostT = 365;
             break;
         case 2:
-        case "2":
             this.risk.likePostT = 30;
             break;
         case 3:
-        case "3":
             //do nothing, will already be set by model
             break;
         default:
@@ -323,10 +280,10 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
         QRMDataService.matrixDIVID = matrixDIVID;
     }
     this.setRiskMatrix = function () {
-        // Calls function in qrm-common.js
-        setRiskEditorMatrix(this.risk, this.project.matrix, QRMDataService.matrixDIVID, QRMDataService.matrixDisplayConfig, this.dragStart, this.drag, this.dragEnd);
-    }
-    //Callbacks for start and finish of dragging an item inthe probability matrix
+            // Calls function in qrm-common.js
+            setRiskEditorMatrix(this.risk, this.project.matrix, QRMDataService.matrixDIVID, QRMDataService.matrixDisplayConfig, this.dragStart, this.drag, this.dragEnd);
+        }
+        //Callbacks for start and finish of dragging an item inthe probability matrix
     this.dragEnd = function (d) {
 
         riskCtl.risk.useCalProb = false;
@@ -352,6 +309,121 @@ function RiskCtrl($scope, $modal, QRMDataService,  $state, $stateParams, riskSer
         riskCtl.risk.liketype = 4;
         riskCtl.risk.likepostType = 4;
 
+    }
+
+
+    //Mitigation and Response Editing
+
+    this.addMit = function () {
+        this.risk.mitigation.mitPlan.push({
+            description: "No Description of the Action Entered ",
+            person: "No Assigned Responsibility",
+            cost: 0,
+            complete: 0,
+            due: moment().add(1, "week").toString
+        });
+    }
+    this.addResp = function () {
+        this.risk.response.respPlan.push({
+            description: "No Description of the Action Entered ",
+            person: "No Assigned Responsibility",
+            cost: "No Cost Allocated"
+        });
+    }
+    this.addControl = function () {
+        var control = {
+            description: "No Description of the Control Entered ",
+            effectiveness: "No Assigned Effectiveness",
+            contribution: "No Contribution Entered"
+        }
+
+        if (this.risk.controls) {
+            this.risk.controls.push(control);
+
+        } else {
+            this.risk.controls = [control]
+        }
+
+    }
+    this.editMitStep = function (s) {
+        var modalInstance = $modal.open({
+            templateUrl: "myModalContentEditMit.html",
+            controller: MitController,
+            size: "lg",
+            resolve: {
+                step: function () {
+                    // Date input requires a Date object, so convert string to object
+                    s.due = new Date(s.due);
+                    return s;
+                },
+                ref: function () {
+                    return riskCtl.stakeholders;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (o) {
+            // Object will be updated, but need to signal change TODO
+        });
+    }
+    this.deleteMitStep = function (s) {
+        for (var i = 0; i < this.risk.mitigation.mitPlan.length; i++) {
+            if (this.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
+                this.risk.mitigation.mitPlan.splice(i, 1);
+                break;
+            }
+        }
+    }
+    this.editControl = function (s) {
+                var modalInstance = $modal.open({
+            templateUrl: "myModalContentEditControl.html",
+            controller: ControlController,
+            size: "lg",
+            resolve: {
+                control: function () {
+                     return s;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (o) {
+            // Object will be updated, but need to signal change TODO
+        });
+    }
+    this.deleteRespStep = function (s) {
+        for (var i = 0; i < this.risk.response.respPlan.length; i++) {
+            if (this.risk.response.respPlan[i].$$hashKey == s.$$hashKey) {
+                this.risk.response.respPlan.splice(i, 1);
+                break;
+            }
+        }
+    }
+    this.editRespStep = function (s) {
+        var modalInstance = $modal.open({
+            templateUrl: "myModalContentEditResp.html",
+            controller: RespController,
+            size: "lg",
+            resolve: {
+                resp: function () {
+                     return s;
+                },
+                ref: function () {
+                    return riskCtl.stakeholders;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (o) {
+            // Object will be updated, but need to signal change TODO
+        });
+    }
+    this.deleteControl = function (s) {
+        for (var i = 0; i < this.risk.controls.length; i++) {
+            if (this.risk.controls[i].$$hashKey == s.$$hashKey) {
+                this.risk.controls.splice(i, 1);
+                break;
+            }
+        }
     }
 
     this.getRisk();
@@ -394,8 +466,6 @@ function ModalInstanceCtrl($scope, $modalInstance, text, item) {
 
 function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update) {
 
-    debugger;
-
     switch (title) {
     case 'Response Plan':
         $scope.title = "Response Plan";
@@ -413,6 +483,57 @@ function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update
             plan: $scope.plan,
             update: $scope.update
         });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function MitController($scope, $modalInstance, step, ref) {
+
+    $scope.step = step;
+    $scope.ref = ref;
+
+    // Need to convert the date object back to a string
+    $scope.ok = function () {
+        if (typeof ($scope.step.due) == "Date") {
+            $scope.step.due = $scope.step.due.toString();
+        }
+        $modalInstance.close($scope.step);
+    };
+
+    $scope.cancel = function () {
+        if (typeof ($scope.step.due) == "Date") {
+            $scope.step.due = $scope.step.due.toString();
+        }
+        $modalInstance.dismiss('cancel');
+    };
+}
+function RespController($scope, $modalInstance, resp, ref) {
+
+    $scope.resp = resp;
+    $scope.ref = ref;
+
+    // Need to convert the date object back to a string
+    $scope.ok = function () {
+        $modalInstance.close($scope.resp);
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function ControlController($scope, $modalInstance, control) {
+
+    $scope.control = control;
+    $scope.effectArray = ["Ad Hoc","Repeatable","Defined","Managed","Optimising" ];
+    $scope.contribArray = ["Minimal","Minor", "Significant", "Major"];
+
+    // Need to convert the date object back to a string
+    $scope.ok = function () {
+        $modalInstance.close($scope.resp);
     };
 
     $scope.cancel = function () {

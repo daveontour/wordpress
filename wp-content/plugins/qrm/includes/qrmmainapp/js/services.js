@@ -214,7 +214,36 @@ app.service('QRMDataService', function () {
                         due: moment().add(1, "week").toString
                 }
             ]
-            }
+            },
+            controls: [
+                {
+                    description: this.loremSmall,
+                    effectiveness: "Ad Hoc",
+                    contribution: "Minor"
+
+                },
+                {
+                    description: this.loremSmall,
+                    effectiveness: "Ad Hoc",
+                    contribution: "Minor"
+
+                }, {
+                    description: this.loremSmall,
+                    effectiveness: "Ad Hoc",
+                    contribution: "Minor"
+
+                }, {
+                    description: this.loremSmall,
+                    effectiveness: "Ad Hoc",
+                    contribution: "Minor"
+
+                }, {
+                    description: this.loremSmall,
+                    effectiveness: "Ad Hoc",
+                    contribution: "Minor"
+
+                }
+            ]
         }
     };
 

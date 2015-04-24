@@ -1,5 +1,5 @@
 <div class="wrapper wrapper-content">
-    
+
     <!--Controller would normally go inthe above div definition, but the 
         controller is created in the router now
     -->
@@ -66,12 +66,12 @@
             <div class="modal-header">
                 <h4 class="modal-title">{{title}}</h4>
             </div>
-            
+
             <div class="modal-body" style="height:100px">
                 <h4>Risk Title</h4>
                 <textarea ng-model="risktitle" style="width:100%;height:100%" />
             </div>
-            
+
             <div class="modal-body" style="height:200px">
                 <h4>Risk Description</h4>
                 <textarea ng-model="text" style="width:100%;height:100%" />
@@ -82,21 +82,170 @@
             </div>
         </div>
     </script>
-        <script type="text/ng-template" id="myModalContentMitigationResponse.html">
+    <script type="text/ng-template" id="myModalContentMitigationResponse.html">
         <div class="inmodal">
             <div class="modal-header">
                 <h4 class="modal-title">{{title}}</h4>
             </div>
-            
+
             <div class="modal-body" style="height:200px">
                 <h4>Plan Summary</h4>
                 <textarea ng-model="plan" style="width:100%;height:100%" />
             </div>
-            
+
             <div class="modal-body" style="height:200px">
                 <h4>Plan Update</h4>
                 <textarea ng-model="update" style="width:100%;height:100%" />
             </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="myModalContentEditMit.html">
+        <div class="inmodal">
+            <div class="modal-header">
+                <h4 class="modal-title">Mitigation Action</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+
+                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="step.description" class="form-control" style="height:200px" name="owner"></textarea>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="step.person" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control" name="owner" style="width:230px"></select>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Due Date</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input type="date" ng-model="step.due" class="form-control" style="width:230px"></input>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Cost</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" step="10" ng-model="step.cost" class="form-control" type="number" style="width:120px"></input>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Percent Complete</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" max="100" type="number" ng-model="step.complete" class="form-control" step="1" style="width:120px"></input>
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+
+
+
+    </script>
+    <script type="text/ng-template" id="myModalContentEditResp.html">
+        <div class="inmodal">
+            <div class="modal-header">
+                <h4 class="modal-title">Response Action</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+
+                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="resp.description" class="form-control" style="height:200px" name="owner"></textarea>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="resp.person" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control" name="owner" style="width:230px"></select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Estimated Cost</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" step="10" ng-model="resp.cost" class="form-control" type="number" style="width:120px"></input>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="myModalContentEditControl.html">
+        <div class="inmodal">
+            <div class="modal-header">
+                <h4 class="modal-title">Control Action</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+
+                        <label class="col-xs-4 col-sm-3 control-label">Control Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="control.description" class="form-control" style="height:200px"></textarea>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Effectiveness</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="control.effectiveness" ng-options="effect for effect in effectArray" class="form-control" style="width:230px"></select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Contribution</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="control.contribution" ng-options="contrib for contrib in contribArray" class="form-control" style="width:230px"></select>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
             <div class="modal-footer">
                 <button class="btn btn-primary" ng-click="ok()">OK</button>
                 <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
