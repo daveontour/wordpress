@@ -95,17 +95,47 @@ function my_plugin_parse_request($wp) {
 			case "getAllRisks" :
 				getAllRisks();
 				break;
-				
+			case "addComment" :
+				addComments();
+				break;				
 			default :
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
 	}
 }
 
+function addComments(){
+	
+	$comment = json_decode(file_get_contents("php://input"));	
+	$time = current_time('mysql');
+	
+	global $user_identity, $user_email,$user_ID, $current_user;
+	get_currentuserinfo();
+	
+	$data = array(
+			'comment_post_ID' => $comment->riskID,
+ 			'comment_author' => $current_user->display_name,
+ 			'comment_author_email' => $current_user->user_email,
+			'comment_content' => $comment->comment,
+			'comment_type' => '',
+			'comment_parent' => 0,
+			'user_id' => $user_ID,
+			'comment_date' => $time,
+			'comment_approved' => 1,
+	);
+	
+	wp_insert_comment($data);
+	
+	$emptyRisk = new Risk();
+	$emptyRisk->comments = get_comments(array('ID' => $comment->riskID));
+	echo json_encode($emptyRisk, JSON_PRETTY_PRINT);	exit;	
+}
+
 function getRisk (){
 	$riskID = json_decode(file_get_contents("php://input"));
-	$risk = get_post_meta($riskID, "riskdata", true);
-	echo $risk;
+	$risk = json_decode(get_post_meta($riskID, "riskdata", true));
+	$risk->comments = get_comments(array('ID' => $riskID));
+	echo json_encode($risk, JSON_PRETTY_PRINT);
 	exit;
 }
 function getAllRisks(){
@@ -157,12 +187,12 @@ function saveRisk (){
          // Update the existing post
 	 	$post['ID'] = $risk->id;
 	 	wp_update_post(array(
+	 		'ID' => $risk->id,
             'post_content' => $risk->description,
             'post_title' => $risk->title,
             'post_status'   =>'publish',
             'post_type' =>'risk', 
-            'tags_input' => array($risk->primcat->name, $risk->seccat->name),
-           'post_author'   => 1			
+            'post_author'   => 1			
          ));
 	 	$postID = $risk->id;
 	 } else {
@@ -172,13 +202,16 @@ function saveRisk (){
             'post_title' => $risk->title,
 	 		'post_type' => 'risk',
             'post_status'   =>'publish',
-            'tags_input' => array($risk->primcat->name, $risk->seccat->name),
             'post_author'   => 1			
          ));
 	 	$risk->id = $postID;
 	 }
     // The Bulk of the data is held in the post's meta data
 	 update_post_meta( $postID, "riskdata", json_encode($risk) );
+	 
+	 // Add any comments to the returned object
+	 $risk->comments = get_comments(array('ID' => $riskID));
+	 
 	echo json_encode($risk);
 	exit;
 }

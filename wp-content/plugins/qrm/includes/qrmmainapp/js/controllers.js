@@ -40,38 +40,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
                 cellClass: 'compact'
 
             },
-//             {
-//                name: "currentProb"
-//            },
-//            {
-//                name: "currentImpact"
-//            },
-//              {
-//                name: "treated"
-//            },
-//          {
-//                name: "inherentProb"
-//            },
-//            {
-//                name: "inherentImpact"
-//            },
-//            {
-//                name: "treatedProb"
-//            },
-//            {
-//                name: "treatedImpact"
-//            },
             {
                 name: 'owner',
                 width: 140,
-                cellClass: 'compact',
                 field: 'owner.name'
 
             },
             {
                 name: 'manager',
                 width: 140,
-                cellClass: 'compact',
                 field: 'manager.name'
             },
             {
@@ -82,7 +59,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
                 cellTemplate: '<i class="fa fa-edit" style="cursor:pointer;color:green;"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteRisk(grid.getCellValue(row, col))"></i>',
                 width: 60,
                 headerCellClass: 'header-hidden',
-                cellClass: 'cellCentered compact'
+                cellClass: 'cellCentered'
 
             }
 
@@ -184,8 +161,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
             if ($scope.filterOptions.filterMatrix) {
 
-                debugger;
-
                 var i;
                 var p;
 
@@ -216,24 +191,17 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
                 if ($scope.filterOptions.tolLow && Number(r.currentTolerance) == 1) pass = true;
 
                 if (!pass) return;
+                
                 pass = false;
 
                 var own = $scope.filterOptions.owner.name;
                 var man = $scope.filterOptions.manager.name;
-                var ownPass = false;
-                var manPass = false;
 
-                ownPass = (own == r.owner || own == undefined || own == null);
-                manPass = (man == r.manager || man == undefined || man == null);
-                if (ownPass && manPass) {
-                    pass = true;
+                if (!(own == r.owner.name || own == undefined || own == null) 
+                    || !(man == r.manager.name || man == undefined || man == null)) {
+                    return;
                 }
 
-                if (!pass) return;
-
-                pass = false;
-
-                debugger;
                 //Filter on exposure;
 
                 var now = moment();
@@ -315,9 +283,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 var app = angular.module('qrm');
 
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', RiskCtrl]);
+app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService','notify', RiskCtrl]);
 app.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'text', 'item', ModalInstanceCtrl]);
 app.controller('ModalInstanceCtrlMitigation', ['$scope', '$modalInstance', 'title', 'plan', 'update', ModalInstanceCtrlMitigation]);
-app.controller('MitController', ['$scope', '$modalInstance', 'step','ref', MitController]);
-app.controller('RespController', ['$scope', '$modalInstance', 'resp','ref', RespController]);
+app.controller('MitController', ['$scope', '$modalInstance', 'step','stakeholders', MitController]);
+app.controller('RespController', ['$scope', '$modalInstance', 'resp','stakeholders', RespController]);
 app.controller('ControlController', ['$scope', '$modalInstance', 'control', ControlController]);
+app.controller('CommentController', ['$scope', '$modalInstance', CommentController]);

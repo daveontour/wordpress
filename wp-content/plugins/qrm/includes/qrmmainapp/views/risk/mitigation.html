@@ -37,7 +37,7 @@
                             <tr>
                                 <td style="padding-bottom:5px;padding-left:15px">
 
-                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person.name}}</div>
                                     <div style="float:left;margin-right:15px"><strong>Cost: </strong>${{step.cost}}</div>
                                     <div style="float:left;margin-right:15px"><strong>Due: </strong>{{step.due | date:'MMM d, y'}}</div>
                                     <div style="float:left;margin-right:15px"><strong>Complete: </strong>{{step.complete}}%</div>
@@ -93,7 +93,7 @@
                             <tr>
                                 <td style="padding-bottom:5px;padding-left:15px">
 
-                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person}}</div>
+                                    <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person.name}}</div>
                                     <div style="float:left;margin-left"><strong>Estimated Cost: </strong>{{step.cost | currency}}</div>
 
                                 </td>

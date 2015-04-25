@@ -170,7 +170,7 @@ function Map() {
 
 function calcProb(risk, preMit) {
 
-       
+
     debugger;
 
     var startMom = moment(risk.start);
@@ -376,7 +376,9 @@ function setMatrix(tolString, maxImpact, maxProb, val, svgDivID, treated, clkCal
         .attr("class", "tolText")
         .attr('pointer-events', 'none')
         .style("text-anchor", "middle")
-        .on("click", function(d){clkCallBack (d.impact, d.prob, d.treated, d.tol);})
+        .on("click", function (d) {
+            clkCallBack(d.impact, d.prob, d.treated, d.tol);
+        })
         .text(function (d) {
             return (d.val > 0) ? d.val : "";
         });
@@ -717,6 +719,38 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
         .style("font-weight", "normal")
         .attr("transform", "translate(" + [width / 2, height + 20] + ")")
         .text("Impact");
+
+
+}
+
+function getProjectStakeholders(p) {
+
+    debugger;
+    var s = [];
+    // Create a list of stakeholders
+    try {
+
+        p.riskOwners.forEach(function (e) {
+            s.push(e)
+        });
+        p.riskManagers.forEach(function (e) {
+            s.push(e)
+        });
+
+    } catch (e) {
+        console.log(e.message);
+    }
+
+    // Remove any Duplicate 
+    var arr = {};
+    for (var i = 0; i < s.length; i++)
+        arr[s[i]['email']] = s[i];
+
+    var temp = new Array();
+    for (var key in arr)
+        temp.push(arr[key]);
+
+    return temp;
 
 
 }

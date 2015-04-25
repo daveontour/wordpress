@@ -21,6 +21,19 @@ app.service('riskService', function ($http) {
             });
         },
 
+        addComment: function (url, comment, riskID) {
+            data = {
+                comment:comment,
+                riskID:riskID
+            }
+            return $http({
+                method: 'POST',
+                url: url + "?qrmfn=addComment",
+                cache: false,
+                data: JSON.stringify(data)
+            });
+        },
+
         getRisks: function (url) {
             return $http({
                 method: 'POST',
@@ -126,7 +139,7 @@ app.service('QRMDataService', function () {
     this.getTemplateRisk = function () {
 
         return {
-            title: this.url,
+            title: "Title of Risk (Edit 'Description' to change)",
             description: "Description",
             cause: "Cause",
             consequence: "Consequence",
@@ -136,7 +149,6 @@ app.service('QRMDataService', function () {
             inherentImpact: 5.5,
             treatedProb: 1.5,
             treatedImpact: 1.5,
-            riskProjectCode: "RK1",
             impRep: true,
             impSafety: true,
             impEnviron: true,
@@ -158,92 +170,25 @@ app.service('QRMDataService', function () {
             likePostAlpha: 1,
             likePostT: 365,
             estContingency: 0,
-            start: moment().subtract(1, 'week'),
+            start: moment(),
             end: moment().add(1, 'month'),
             primcat: {
-                name: "Vendor"
+                name: ""
             },
             seccat: {
-                name: "Performance"
+                name: ""
             },
             mitigation: {
                 mitPlanSummary: "Summary of the Mitigation Plan",
                 mitPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
-                mitPlan: [
-                    {
-                        description: this.loremSmall,
-                        update: "I did somrthing",
-                        person: "Kezza",
-                        cost: "123456",
-                        complete: 50,
-                        due: moment().add(1, "week").toString
-                }, {
-                        description: this.loremSmall,
-                        update: "I did somrthing",
-                        person: "Kezza",
-                        cost: "123456",
-                        complete: 50,
-                        due: moment().add(1, "week").toString
-                }, {
-                        description: this.loremSmall,
-                        update: "I did somrthing",
-                        person: "Kezza",
-                        cost: "123456",
-                        complete: 50,
-                        due: moment().add(1, "week").toString
-                }, {
-                        description: this.loremSmall,
-                        update: "I did somrthing",
-                        person: "Kezza",
-                        cost: "123456",
-                        complete: 50,
-                        due: moment().add(1, "week").toString
-                }
-            ]
+                mitPlan: []
             },
             response: {
                 respPlanSummary: "Summary of the Response Plan",
                 respPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
-                respPlan: [
-                    {
-                        description: "Do something",
-                        update: "I did somrthing",
-                        person: "Kezza",
-                        cost: "123456",
-                        complete: 50,
-                        due: moment().add(1, "week").toString
-                }
-            ]
+                respPlan: []
             },
-            controls: [
-                {
-                    description: this.loremSmall,
-                    effectiveness: "Ad Hoc",
-                    contribution: "Minor"
-
-                },
-                {
-                    description: this.loremSmall,
-                    effectiveness: "Ad Hoc",
-                    contribution: "Minor"
-
-                }, {
-                    description: this.loremSmall,
-                    effectiveness: "Ad Hoc",
-                    contribution: "Minor"
-
-                }, {
-                    description: this.loremSmall,
-                    effectiveness: "Ad Hoc",
-                    contribution: "Minor"
-
-                }, {
-                    description: this.loremSmall,
-                    effectiveness: "Ad Hoc",
-                    contribution: "Minor"
-
-                }
-            ]
+            controls: []
         }
     };
 

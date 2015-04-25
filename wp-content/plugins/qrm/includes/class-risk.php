@@ -54,6 +54,8 @@ class Risk {
 	
 	public $mitigationPlanID;
 	
+	public $comments;
+	
 	
 	public static function postSave($post_id) {
 		;

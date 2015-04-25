@@ -9,7 +9,8 @@
         'oc.lazyLoad',                  // ocLazyLoad
         'ui.bootstrap',                 // Ui Bootstrap
         'ui.grid',
-        'ui.grid.moveColumns'
+        'ui.grid.moveColumns',
+        'cgNotify'
     ])
 })();
 

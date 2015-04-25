@@ -2,6 +2,30 @@
     <div class="panel-heading">Comments</div>
     <div class="panel-body">
         <div class="row">
+            <div class="col-lg-12" style="margin-bottom:15px">
+                <button style="float:left" style="margin-left:20px" ng-click="ctl.addComment()" class="btn btn-primary btn-sm">Add Comment</button>
+            </div>
+
+            <div class="col-lg-12">
+                <table class="table table-striped">
+                    <tr ng-repeat="comment in ctl.risk.comments" style="margin-top:15px">
+                        <td>
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
+                                        <strong>{{comment.comment_author}}</strong><br/>
+                                        {{comment.comment_author_email}}
+                                    </td>
+                                    <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                        <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span></div>
+                                        <div style="float:left;clear:both">{{comment.comment_content}}</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>

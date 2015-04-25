@@ -1,4 +1,4 @@
-function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService) {
+function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService, notify) {
 
     var riskCtl = this;
     this.riskID = QRMDataService.riskID;
@@ -7,6 +7,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
     this.url = QRMDataService.url;
     this.project = QRMDataService.project;
     this.risk = QRMDataService.getTemplateRisk();
+
+    this.testVar = "DAVE WAS HERE";
 
     //Opens Modal Dialog box
     this.open = function (item, size) {
@@ -36,7 +38,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             controller = 'ModalInstanceCtrlMitigation';
             resolve = {
                 title: function () {
-                    return "Mitigation Plan"
+                    return "Response Plan"
                 },
                 plan: function () {
                     return riskCtl.risk.response.respPlanSummary
@@ -141,13 +143,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             });
             this.risk.mitigation.mitPlan.forEach(function (e) {
                 riskCtl.stakeholders.push({
-                    name: e.person,
+                    name: e.person.name,
                     role: "Mitigation Owner"
                 })
             });
             this.risk.response.respPlan.forEach(function (e) {
                 riskCtl.stakeholders.push({
-                    name: e.person,
+                    name: e.person.name,
                     role: "Response Owner"
                 })
             });
@@ -170,8 +172,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         //Sort out the probs and impact
 
         try {
-
-            debugger;
 
             var index = (Math.floor(this.risk.treatedProb - 1)) * this.project.matrix.maxImpact + Math.floor(this.risk.treatedImpact - 1);
             index = Math.min(index, this.project.matrix.tolString.length - 1);
@@ -206,7 +206,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 
     }
 
-    this.impactChange = function() {
+    this.impactChange = function () {
         this.updateRisk();
     }
     this.probChange = function () {
@@ -255,6 +255,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         }
         riskService.getRisk(QRMDataService.url, this.riskID)
             .then(function (response) {
+                debugger;
                 riskCtl.risk = response.data;
                 riskCtl.updateRisk();
             });
@@ -262,11 +263,19 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
     this.saveRisk = function () {
         // Ensure all the changes have been made
         this.updateRisk();
+        //Zero out the comments as these are managed separately
+        this.risk.comments=[];
         riskService.saveRisk(QRMDataService.url, this.risk)
             .then(function (response) {
                 riskCtl.risk = response.data;
                 // Update the risk with changes that may have been made by the host.
                 riskCtl.updateRisk();
+                notify({
+                    message: 'Risk Saved',
+                    classes: 'alert-info',
+                    duration: 1000,
+                    templateUrl: "views/common/notify.html"
+                });
             });
     };
 
@@ -313,9 +322,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         riskCtl.risk.likepostType = 4;
 
     }
-    
-    this.drag = function(){
-    
+
+    this.drag = function () {
+
     }
 
 
@@ -327,7 +336,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             person: "No Assigned Responsibility",
             cost: 0,
             complete: 0,
-            due: moment().add(1, "week").toString
+            due: new Date()
         });
     }
     this.addResp = function () {
@@ -363,8 +372,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
                     s.due = new Date(s.due);
                     return s;
                 },
-                ref: function () {
-                    return riskCtl.stakeholders;
+                stakeholders: function () {
+                    return getProjectStakeholders(riskCtl.project);
                 }
             }
         });
@@ -373,6 +382,22 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             // Object will be updated, but need to signal change TODO
         });
     }
+
+    this.addComment = function (s) {
+        var modalInstance = $modal.open({
+            templateUrl: "myModalContentAddComment.html",
+            controller: CommentController,
+            size: "lg"
+        });
+
+        modalInstance.result.then(function (comment) {
+            riskService.addComment(QRMDataService.url,comment,QRMDataService.riskID)
+                .then(function (response) {
+                riskCtl.risk.comments = response.data.comments;
+            });
+        });
+    }
+
     this.deleteMitStep = function (s) {
         for (var i = 0; i < this.risk.mitigation.mitPlan.length; i++) {
             if (this.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
@@ -382,13 +407,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         }
     }
     this.editControl = function (s) {
-                var modalInstance = $modal.open({
+        var modalInstance = $modal.open({
             templateUrl: "myModalContentEditControl.html",
             controller: ControlController,
             size: "lg",
             resolve: {
                 control: function () {
-                     return s;
+                    return s;
                 }
             }
         });
@@ -412,10 +437,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             size: "lg",
             resolve: {
                 resp: function () {
-                     return s;
+                    return s;
                 },
-                ref: function () {
-                    return riskCtl.stakeholders;
+                stakeholders: function () {
+                    return getProjectStakeholders(riskCtl.project);
                 }
             }
         });
@@ -439,8 +464,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 
 // Controllers for the modal dialog box editors
 function ModalInstanceCtrl($scope, $modalInstance, text, item) {
-
-    debugger;
 
     switch (item) {
     case 'description':
@@ -497,10 +520,12 @@ function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update
     };
 }
 
-function MitController($scope, $modalInstance, step, ref) {
+function MitController($scope, $modalInstance, step, stakeholders) {
+
+    debugger;
 
     $scope.step = step;
-    $scope.ref = ref;
+    $scope.stakeholders = stakeholders;
 
     // Need to convert the date object back to a string
     $scope.ok = function () {
@@ -517,10 +542,11 @@ function MitController($scope, $modalInstance, step, ref) {
         $modalInstance.dismiss('cancel');
     };
 }
-function RespController($scope, $modalInstance, resp, ref) {
+
+function RespController($scope, $modalInstance, resp, stakeholders) {
 
     $scope.resp = resp;
-    $scope.ref = ref;
+    $scope.stakeholders = stakeholders;
 
     // Need to convert the date object back to a string
     $scope.ok = function () {
@@ -535,12 +561,26 @@ function RespController($scope, $modalInstance, resp, ref) {
 function ControlController($scope, $modalInstance, control) {
 
     $scope.control = control;
-    $scope.effectArray = ["Ad Hoc","Repeatable","Defined","Managed","Optimising" ];
-    $scope.contribArray = ["Minimal","Minor", "Significant", "Major"];
+    $scope.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
+    $scope.contribArray = ["Minimal", "Minor", "Significant", "Major"];
 
     // Need to convert the date object back to a string
     $scope.ok = function () {
         $modalInstance.close($scope.resp);
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}
+
+function CommentController($scope, $modalInstance) {
+
+    $scope.comment = "";
+
+    // Need to convert the date object back to a string
+    $scope.ok = function () {
+        $modalInstance.close($scope.comment);
     };
 
     $scope.cancel = function () {
