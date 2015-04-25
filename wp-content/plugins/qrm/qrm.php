@@ -127,14 +127,14 @@ function addComments(){
 	wp_insert_comment($data);
 	
 	$emptyRisk = new Risk();
-	$emptyRisk->comments = get_comments(array('ID' => $comment->riskID));
+	$emptyRisk->comments = get_comments(array('post_id' => $comment->riskID));
 	echo json_encode($emptyRisk, JSON_PRETTY_PRINT);	exit;	
 }
 
 function getRisk (){
 	$riskID = json_decode(file_get_contents("php://input"));
 	$risk = json_decode(get_post_meta($riskID, "riskdata", true));
-	$risk->comments = get_comments(array('ID' => $riskID));
+	$risk->comments = get_comments(array('post_id' => $riskID));
 	echo json_encode($risk, JSON_PRETTY_PRINT);
 	exit;
 }
