@@ -72,9 +72,6 @@ function iboxTools($timeout) {
     };
 };
 
-/**
- * minimalizaSidebar - Directive for minimalize sidebar
- */
 function minimalizaSidebar($timeout) {
     return {
         restrict: 'A',
@@ -182,22 +179,40 @@ angular
     .directive('qrmEdit', qrmEdit)
     .directive('icheck', icheck)
     .directive('riskmat', function () {
-    
-    //Creates the risk matrices onthe explorer page
+
+        //Creates the risk matrices onthe explorer page
         return {
             restrict: "E",
             compile: function (element, attrs) {
-                
+
                 var mat = "<table border='1' cellspacing='5' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
                 for (var prob = 5; prob > 0; prob--) {
                     mat = mat + "<tr>";
                     for (var impact = 1; impact <= 5; impact++) {
-                        mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='matrixFilter(" + impact + "," + prob + ","+attrs.treated+")' ng-class='{cellLow: cellClass(" + prob + "," + impact + ",1), cellModerate:cellClass(" + prob + "," + impact + ",2), cellSignificant:cellClass(" + prob + "," + impact + ",3), cellHigh:cellClass(" + prob + "," + impact + ",4), cellExtreme:cellClass(" + prob + "," + impact + ",5), matCellHighLight:cellHighlight(" + prob + "," + impact + ","+attrs.treated+")}'>{{getCellValue(" + prob + "," + impact + ","+attrs.treated+")}}</td>";
+                        mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='matrixFilter(" + impact + "," + prob + "," + attrs.treated + ")' ng-class='{cellLow: cellClass(" + prob + "," + impact + ",1), cellModerate:cellClass(" + prob + "," + impact + ",2), cellSignificant:cellClass(" + prob + "," + impact + ",3), cellHigh:cellClass(" + prob + "," + impact + ",4), cellExtreme:cellClass(" + prob + "," + impact + ",5), matCellHighLight:cellHighlight(" + prob + "," + impact + "," + attrs.treated + ")}'>{{getCellValue(" + prob + "," + impact + "," + attrs.treated + ")}}</td>";
                     }
                     mat = mat + "</tr>";
                 }
                 mat = mat + "</table>";
                 element.replaceWith(mat);
             }
+        };
+    })
+    .directive('dropzone', function () {
+        return function (scope, element, attrs) {
+
+            var config, dropzone;
+
+            config = scope.$parent[attrs.dropzone];
+
+            // create a Dropzone for the element with the given options
+            dropzone = new Dropzone(element[0], config.options);
+
+            // bind the given event handlers
+            angular.forEach(config.eventHandlers, function (handler, event) {
+                dropzone.on(event, handler);
+            });
+
+
         };
     });

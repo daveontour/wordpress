@@ -8,7 +8,46 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
     this.project = QRMDataService.project;
     this.risk = QRMDataService.getTemplateRisk();
 
-    this.testVar = "DAVE WAS HERE";
+    $scope.dropzoneConfig = {
+        options: { // passed into the Dropzone constructor
+            url: QRMDataService.url+"?qrmfn=uploadFile",
+            previewTemplate: document.querySelector('#preview-template').innerHTML,
+            parallelUploads: 1,
+            thumbnailHeight: 120,
+            thumbnailWidth: 120,
+            maxFilesize: 3,
+            filesizeBase: 1000,
+            autoProcessQueue: false,
+            params:{riskID:QRMDataService.riskID},
+            thumbnail: function (file, dataUrl) {
+                if (file.previewElement) {
+                    file.previewElement.classList.remove("dz-file-preview");
+                    var images = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
+                    for (var i = 0; i < images.length; i++) {
+                        var thumbnailElement = images[i];
+                        thumbnailElement.alt = file.name;
+                        thumbnailElement.src = dataUrl;
+                    }
+                    setTimeout(function () {
+                        file.previewElement.classList.add("dz-image-preview");
+                    }, 1);
+                }
+            },
+            init: function () {
+                this.on("addedfile", function (file) {
+                    riskCtl.riskAttachmentReady(this, file);
+                });
+                this.on('complete', function (file) {
+                    file.previewElement.classList.add('dz-complete');
+                    this.removeFile(file);
+                });
+            }
+        },
+    };
+
+    this.riskAttachmentReady = function (dropzone, file) {
+      dropzone.processFile(file);
+    }
 
     //Opens Modal Dialog box
     this.open = function (item, size) {
@@ -264,7 +303,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         // Ensure all the changes have been made
         this.updateRisk();
         //Zero out the comments as these are managed separately
-        this.risk.comments=[];
+        this.risk.comments = [];
         riskService.saveRisk(QRMDataService.url, this.risk)
             .then(function (response) {
                 riskCtl.risk = response.data;
@@ -391,10 +430,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         });
 
         modalInstance.result.then(function (comment) {
-            riskService.addComment(QRMDataService.url,comment,QRMDataService.riskID)
+            riskService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
                 .then(function (response) {
-                riskCtl.risk.comments = response.data.comments;
-            });
+                    riskCtl.risk.comments = response.data.comments;
+                });
         });
     }
 
