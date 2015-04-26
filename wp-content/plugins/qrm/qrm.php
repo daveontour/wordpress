@@ -101,6 +101,9 @@ function my_plugin_parse_request($wp) {
 			case "uploadFile" :
 				uploadFile();
 				break;
+			case "getRiskAttachments":
+				getRiskAttachments();
+				break;
 			default :
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
@@ -188,7 +191,12 @@ function addComments(){
 	$emptyRisk->comments = get_comments(array('post_id' => $comment->riskID));
 	echo json_encode($emptyRisk, JSON_PRETTY_PRINT);	exit;	
 }
-
+function getRiskAttachments (){
+	$riskID = json_decode(file_get_contents("php://input"));
+	$attachments = get_children(array("post_parent"=>$riskID, "post_type"=>"attachment"));
+	echo json_encode($attachments, JSON_PRETTY_PRINT);
+	exit;
+}
 function getRisk (){
 	$riskID = json_decode(file_get_contents("php://input"));
 	$risk = json_decode(get_post_meta($riskID, "riskdata", true));
