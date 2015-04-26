@@ -304,6 +304,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         this.updateRisk();
         //Zero out the comments as these are managed separately
         this.risk.comments = [];
+        this.risk.attachments = [];
         riskService.saveRisk(QRMDataService.url, this.risk)
             .then(function (response) {
                 riskCtl.risk = response.data;

@@ -193,6 +193,7 @@ function getRisk (){
 	$riskID = json_decode(file_get_contents("php://input"));
 	$risk = json_decode(get_post_meta($riskID, "riskdata", true));
 	$risk->comments = get_comments(array('post_id' => $riskID));
+	$risk->attachments = get_children(array("post_parent"=>$riskID, "post_type"=>"attachment"));
 	echo json_encode($risk, JSON_PRETTY_PRINT);
 	exit;
 }
@@ -269,6 +270,7 @@ function saveRisk (){
 	 
 	 // Add any comments to the returned object
 	 $risk->comments = get_comments(array('ID' => $riskID));
+	 $risk->attachments = get_children(array("post_parent"=>$riskID, "post_type"=>"attachment"));
 	 
 	echo json_encode($risk);
 	exit;
