@@ -16,9 +16,9 @@
                 <label class=" control-label">Status</label>
                 <div class="">
                     <label class="checkbox-inline" style="padding-left:0px">
-                        <input icheck type="checkbox" ng-model="filterOptions.treated"> Treated </label>
+                        <input icheck type="checkbox" ng-model="exp.filterOptions.treated"> Treated </label>
                     <label class="checkbox-inline" style="padding-left:0px">
-                        <input icheck type="checkbox" ng-model="filterOptions.untreated"> Un Treated </label>
+                        <input icheck type="checkbox" ng-model="exp.filterOptions.untreated"> Un Treated </label>
                 </div>
 
                 <label class="control-label">Tolerance</label>
@@ -28,28 +28,28 @@
                         <tr>
                             <td>
                                 <label class="checkbox-inline" style="padding-left:0px">
-                                    <input icheck type="checkbox" ng-model="filterOptions.tolEx"> Extreme </label>
+                                    <input icheck type="checkbox" ng-model="exp.filterOptions.tolEx"> Extreme </label>
                             </td>
                             <td>
                                 <label class="checkbox-inline">
-                                    <input icheck type="checkbox" ng-model="filterOptions.tolHigh"> High </label>
+                                    <input icheck type="checkbox" ng-model="exp.filterOptions.tolHigh"> High </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <label class="checkbox-inline" style="padding-left:0px">
-                                    <input icheck type="checkbox" ng-model="filterOptions.tolSig"> Significant </label>
+                                    <input icheck type="checkbox" ng-model="exp.filterOptions.tolSig"> Significant </label>
                             </td>
 
                             <td>
                                 <label class="checkbox-inline">
-                                    <input icheck type="checkbox" ng-model="filterOptions.tolModerate"> Moderate </label>
+                                    <input icheck type="checkbox" ng-model="exp.filterOptions.tolModerate"> Moderate </label>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <label class="checkbox-inline" style="padding-left:0px">
-                                    <input icheck type="checkbox" ng-model="filterOptions.tolLow"> Low </label>
+                                    <input icheck type="checkbox" ng-model="exp.filterOptions.tolLow"> Low </label>
                             </td>
 
                         </tr>
@@ -64,28 +64,28 @@
                 <label class=" control-label">Exposure</label>
                 <div class="">
                     <label class="checkbox-inline" style="padding-left:0px">
-                        <input icheck type="checkbox" ng-model="filterOptions.expInactive"> Inactive</label>
+                        <input icheck type="checkbox" ng-model="exp.filterOptions.expInactive"> Inactive</label>
                     <label class="checkbox-inline" style="padding-left:0px">
-                        <input icheck type="checkbox" ng-model="filterOptions.expActive"> Active</label>
+                        <input icheck type="checkbox" ng-model="exp.filterOptions.expActive"> Active</label>
                     <label class="checkbox-inline" style="padding-left:0px">
-                        <input icheck type="checkbox" ng-model="filterOptions.expPending"> Pending</label>
+                        <input icheck type="checkbox" ng-model="exp.filterOptions.expPending"> Pending</label>
                 </div>
                 <label class="control-label">Risk Owner</label>
                 <div>
-                    <select ng-model="filterOptions.owner" ng-options="person.name for person in project.riskOwners track by person.email" class="form-control" name="owner"></select>
+                    <select ng-model="exp.filterOptions.owner" ng-options="person.name for person in exp.project.riskOwners track by person.email" class="form-control"></select>
                 </div>
                 <label class="control-label" style="clear:both">Risk Manager</label>
                 <div class="">
-                    <select ng-model="filterOptions.manager" ng-options="person.name for person in project.riskManagers track by person.email" class="form-control" name="manager"></select>
+                    <select ng-model="exp.filterOptions.manager" ng-options="person.name for person in exp.project.riskManagers track by person.email" class="form-control"></select>
                 </div>
             </form>
         </div>
 
     </div>
     <div class="col-lg-12">
-        <button style="float:right" ng-click="clearFilters()">Clear Filters</button>
+        <button style="float:right" ng-click="exp.clearFilters()">Clear Filters</button>
     </div>
     <div class="col-lg-12" style="margin-top:10px">
-        <div id="explorerGrid" ui-grid="gridOptions" class="explorerGrid" ui-grid-move-columns></div>
+        <div id="explorerGrid" ui-grid="exp.gridOptions" class="explorerGrid" ui-grid-move-columns></div>
     </div>
 </div>

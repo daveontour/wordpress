@@ -1,13 +1,3 @@
-/**
- * INSPINIA - Responsive Admin Theme
- * Copyright 2015 Webapplayers.com
- *
- */
-
-
-/**
- * pageTitle - Directive for set Page title - mata title
- */
 function pageTitle($rootScope, $timeout) {
     return {
         link: function (scope, element) {
@@ -25,9 +15,6 @@ function pageTitle($rootScope, $timeout) {
     }
 };
 
-/**
- * sideNavigation - Directive for run metsiMenu on sidebar navigation
- */
 function sideNavigation($timeout) {
     return {
         restrict: 'A',
@@ -40,9 +27,6 @@ function sideNavigation($timeout) {
     };
 };
 
-/**
- * iboxTools - Directive for iBox tools elements in right corner of ibox
- */
 function iboxTools($timeout) {
     return {
         restrict: 'A',
@@ -102,35 +86,6 @@ function minimalizaSidebar($timeout) {
     };
 };
 
-function qrmEdit($timeout) {
-    return {
-        restrict: 'A',
-        scope: true,
-        templateUrl: 'views/common/qrmedit.html',
-        controller: function ($scope, $element) {
-            // Function for collapse ibox
-            $scope.showhide = function () {
-                    var ibox = $element.closest('div.ibox');
-                    var icon = $element.find('i:first');
-                    var content = ibox.find('div.ibox-content');
-                    content.slideToggle(200);
-                    // Toggle icon from up to down
-                    icon.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
-                    ibox.toggleClass('').toggleClass('border-bottom');
-                    $timeout(function () {
-                        ibox.resize();
-                        ibox.find('[id^=map-]').resize();
-                    }, 50);
-                },
-                // Function for close ibox
-                $scope.closebox = function () {
-                    var ibox = $element.closest('div.ibox');
-                    ibox.remove();
-                }
-        }
-    };
-};
-
 function icheck($timeout) {
     return {
         restrict: 'A',
@@ -165,22 +120,8 @@ function icheck($timeout) {
     };
 }
 
-
-/**
- *
- * Pass all functions into module
- */
-angular
-    .module('qrm')
-    .directive('pageTitle', pageTitle)
-    .directive('sideNavigation', sideNavigation)
-    .directive('iboxTools', iboxTools)
-    .directive('minimalizaSidebar', minimalizaSidebar)
-    .directive('qrmEdit', qrmEdit)
-    .directive('icheck', icheck)
-    .directive('riskmat', function () {
-
-        //Creates the risk matrices onthe explorer page
+function riskmat(){
+            //Creates the risk matrices onthe explorer page
         return {
             restrict: "E",
             compile: function (element, attrs) {
@@ -189,7 +130,7 @@ angular
                 for (var prob = 5; prob > 0; prob--) {
                     mat = mat + "<tr>";
                     for (var impact = 1; impact <= 5; impact++) {
-                        mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='matrixFilter(" + impact + "," + prob + "," + attrs.treated + ")' ng-class='{cellLow: cellClass(" + prob + "," + impact + ",1), cellModerate:cellClass(" + prob + "," + impact + ",2), cellSignificant:cellClass(" + prob + "," + impact + ",3), cellHigh:cellClass(" + prob + "," + impact + ",4), cellExtreme:cellClass(" + prob + "," + impact + ",5), matCellHighLight:cellHighlight(" + prob + "," + impact + "," + attrs.treated + ")}'>{{getCellValue(" + prob + "," + impact + "," + attrs.treated + ")}}</td>";
+                        mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='exp.matrixFilter(" + impact + "," + prob + "," + attrs.treated + ")' ng-class='{cellLow: exp.cellClass(" + prob + "," + impact + ",1), cellModerate:exp.cellClass(" + prob + "," + impact + ",2), cellSignificant:exp.cellClass(" + prob + "," + impact + ",3), cellHigh:exp.cellClass(" + prob + "," + impact + ",4), cellExtreme:exp.cellClass(" + prob + "," + impact + ",5), matCellHighLight:exp.cellHighlight(" + prob + "," + impact + "," + attrs.treated + ")}'>{{exp.getCellValue(" + prob + "," + impact + "," + attrs.treated + ")}}</td>";
                     }
                     mat = mat + "</tr>";
                 }
@@ -197,9 +138,10 @@ angular
                 element.replaceWith(mat);
             }
         };
-    })
-    .directive('dropzone', function () {
-        return function (scope, element, attrs) {
+}
+
+function dropzone(QRMDataService){
+            return function (scope, element, attrs) {
 
             var config, dropzone;
 
@@ -212,7 +154,14 @@ angular
             angular.forEach(config.eventHandlers, function (handler, event) {
                 dropzone.on(event, handler);
             });
-
-
         };
-    });
+}
+
+angular.module('qrm')
+    .directive('pageTitle', pageTitle)
+    .directive('sideNavigation', sideNavigation)
+    .directive('iboxTools', iboxTools)
+    .directive('minimalizaSidebar', minimalizaSidebar)
+    .directive('icheck', icheck)
+    .directive('riskmat', riskmat)
+    .directive('dropzone', ['QRMDataService',dropzone]);

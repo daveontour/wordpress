@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+</head>
+
+<body>
+
+    <div ng-app="myApp">
+        <dave></dave>
+    </div>
+
+    <script>
+        var app = angular.module('myApp', []);
+
+        app.service('service', function ($http) {
+            return {
+                getTitle: function () {
+                    return "THIS IS THE TITLE";
+                }
+            }
+        });
+
+        app.directive('dave', ['$compile', '$http', 'service', function ($compile, $http, service) {
+            var tpl = "testDave.html";
+            return {
+                restrict: 'E',
+                template: "<h1>{{ctl.test}}</h1>",
+                controller: function () {
+                    this.test = "HELLO WORLD";
+                },
+                controllerAs: "ctl",
+                link: function (scope, element, attrs, controller) {
+
+                    $http.get(tpl)
+                        .then(function (response) {
+                            element.html('').append($compile(response.data)(scope));
+                        });
+                    //                    
+                    //                    var template = "<h1>DAVE WAS HERE</h1>"+service.getTitle();
+                    //                    element.html('').append($compile(template)(scope));
+                }
+            }
+
+        }]);
+                app.directive('burton', ['$compile', '$http', 'service', function ($compile, $http, service) {
+            return {
+                restrict: 'E',
+                template: "<h1>{{ctl.test}}</h1>",
+                controller: function () {
+                    this.test = "HELLO WORLD";
+                },
+                controllerAs: "ctl"
+            }
+
+        }])
+    </script>
+
+</body>
+
+</html>

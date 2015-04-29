@@ -1,6 +1,6 @@
 function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService, notify) {
 
-    var riskCtl = this;
+    var vm = this;
     this.riskID = QRMDataService.riskID;
     this.stakeholders = [];
     this.additionalHolders = [];
@@ -18,9 +18,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             maxFilesize: 3,
             filesizeBase: 1000,
             autoProcessQueue: false,
-            params: {
-                riskID: QRMDataService.riskID
-            },
             thumbnail: function (file, dataUrl) {
                 if (file.previewElement) {
                     file.previewElement.classList.remove("dz-file-preview");
@@ -37,142 +34,318 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             },
             init: function () {
                 this.on("addedfile", function (file) {
-                    riskCtl.riskAttachmentReady(this, file);
+                    vm.riskAttachmentReady(this, file);
                 });
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
-                    this.removeFile(file);
-                    
-                    riskService.getRiskAttachments(QRMDataService.url, riskCtl.riskID).then(function (response){
-                        riskCtl.risk.attachments = response.data;
+                    vm.cancelAttachment()
+                    notify({
+                        message: 'Attachment added to risk',
+                        classes: 'alert-info',
+                        duration: 300,
+                        templateUrl: "views/common/notify.html"
                     });
+
+                    riskService.getRiskAttachments(QRMDataService.url, vm.riskID)
+                        .then(function (response) {
+                            debugger;
+                            vm.risk.attachments = response.data;
+                        });
                 });
+            },
+            sending: function (file, xhr, formData) {
+                formData.append("riskID", QRMDataService.riskID);
+                formData.append("description", vm.uploadAttachmentDescription);
             }
         },
     };
 
     this.riskAttachmentReady = function (dropzone, file) {
-        this.dropzone = dropzone;
-        this.dzfile = file;
-        this.enableUploadButton = true;
+        vm.dropzone = dropzone;
+        vm.dzfile = file;
+        vm.disableAttachmentButon = false;
+        $scope.$apply();
     }
 
-    this.uploadAttachmentComment = "";
-    this.enableUploadButton = false;
+    this.uploadAttachmentDescription = "";
+    this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadAttachment = function () {
-        
-            $scope.dropzoneConfig.options.params = {riskID: QRMDataService.riskID, description:this.uploadAttachmentComment}
-            this.dropzone.processFile(this.dzfile);
-        
+        vm.dropzone.processFile(vm.dzfile);
+    }
+    this.cancelAttachment = function () {
+        vm.dropzone.removeAllFiles(true);
+        vm.uploadAttachmentDescription = null;
+        vm.disableAttachmentButon = true;
+        vm.dropzone = null;
+        vm.dzfile = null;
+        $scope.$apply();
     }
 
-    //Opens Modal Dialog box
-    this.open = function (item, size) {
+    this.openDescriptionEditor = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentDescription.html',
+            controller: function ($modalInstance, description, title, riskTitle) {
+                var vm = this;
 
-        var templateUrl;
-        var controller;
-        var reslove;
+                vm.description = description;
+                vm.title = title;
+                vm.riskTitle = riskTitle;
 
-        switch (item) {
-        case 'mitigation':
-            templateUrl = 'myModalContentMitigationResponse.html';
-            controller = 'ModalInstanceCtrlMitigation';
-            resolve = {
+                vm.ok = function () {
+                    $modalInstance.close({
+                        description: vm.description,
+                        riskTitle: vm.riskTitle
+                    });
+                };
+                vm.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                description: function () {
+                    return vm.risk.description
+                },
+                title: function () {
+                    return "Risk Title and Description"
+                },
+                riskTitle: function () {
+                    return vm.risk.title
+                },
+            },
+            size: "lg"
+        });
+
+        modalInstance.result.then(function (response) {
+            vm.risk.description = response.description;
+            vm.risk.title = response.riskTitle;
+        });
+    }
+    this.openConsequenceEditor = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentConsequence.html',
+            size: "lg",
+            controller: function ($modalInstance, consequence) {
+
+                this.consequence = consequence;
+                this.ok = function () {
+                    $modalInstance.close({
+                        d: this.consequence
+                    });
+                };
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                consequence: function () {
+                    return vm.risk.consequence;
+                }
+            }
+
+        });
+
+        modalInstance.result.then(function (r) {
+            vm.risk.consequence = r.d;
+        });
+    }
+    this.openCauseEditor = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentCause.html',
+            size: "lg",
+            controller: function ($modalInstance, cause) {
+
+                this.cause = cause;
+                this.ok = function () {
+                    $modalInstance.close({
+                        d: this.cause
+                    });
+                };
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                cause: function () {
+                    return vm.risk.cause;
+                }
+            }
+
+        });
+
+        modalInstance.result.then(function (r) {
+            vm.risk.cause = r.d;
+        });
+    }
+    this.openMitEditor = function () {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentMitigationResponse.html',
+            size: "lg",
+            controller: function ($modalInstance, title, plan, update) {
+
+                this.title = title;
+                this.plan = plan;
+                this.update = update;
+
+                this.ok = function () {
+
+                    $modalInstance.close({
+                        plan: this.plan,
+                        update: this.update
+                    });
+                };
+
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
                 title: function () {
                     return "Mitigation Plan"
                 },
                 plan: function () {
-                    return riskCtl.risk.mitigation.mitPlanSummary
+                    return vm.risk.mitigation.mitPlanSummary
                 },
                 update: function () {
-                    return riskCtl.risk.mitigation.mitPlanSummaryUpdate
+                    return vm.risk.mitigation.mitPlanSummaryUpdate
                 }
             }
-            break;
-        case 'response':
-            templateUrl = 'myModalContentMitigationResponse.html';
-            controller = 'ModalInstanceCtrlMitigation';
-            resolve = {
+
+        });
+
+        modalInstance.result.then(function (r) {
+
+            vm.risk.mitigation.mitPlanSummary = r.plan;
+            vm.risk.mitigation.mitPlanSummaryUpdate = r.update;
+        });
+    }
+    this.openRespEditor = function () {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentMitigationResponse.html',
+            size: "lg",
+            controller: function ($modalInstance, title, plan, update) {
+
+                this.title = title;
+                this.plan = plan;
+                this.update = update;
+
+                this.ok = function () {
+                    $modalInstance.close({
+                        plan: this.plan,
+                        update: this.update
+                    });
+                };
+
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
                 title: function () {
                     return "Response Plan"
                 },
                 plan: function () {
-                    return riskCtl.risk.response.respPlanSummary
+                    return vm.risk.response.respPlanSummary
                 },
                 update: function () {
-                    return riskCtl.risk.response.respPlanSummaryUpdate
+                    return vm.risk.response.respPlanSummaryUpdate
                 }
             }
-            break;
-        case 'description':
-            templateUrl = 'myModalContentDescription.html';
-            controller = 'ModalInstanceCtrl';
-            resolve = {
-                text: function () {
-                    return [riskCtl.risk.description, riskCtl.risk.cause, riskCtl.risk.consequence, riskCtl.risk.title];
-                },
-                item: function () {
-                    return item;
-                }
-            }
-            break;
-        default:
-            templateUrl = 'myModalContent.html';
-            controller = 'ModalInstanceCtrl';
-            resolve = {
-                text: function () {
-                    return [riskCtl.risk.description, riskCtl.risk.cause, riskCtl.risk.consequence, riskCtl.risk.title];
-                },
-                item: function () {
-                    return item;
-                }
-            }
-        }
 
-        var modalInstance = $modal.open({
-            templateUrl: templateUrl,
-            controller: controller,
-            size: size,
-            resolve: resolve
         });
 
-        modalInstance.result.then(function (o) {
-
-
-            switch (item) {
-            case 'description':
-                riskCtl.risk.description = o.text;
-                riskCtl.risk.title = o.title;
-                break;
-            case 'cause':
-                riskCtl.risk.cause = o.text;
-                break;
-            case 'consequence':
-                riskCtl.risk.consequence = o.text;
-                break;
-            case 'mititgation':
-                riskCtl.risk.mitigation.mitPlanSummary = o.plan;
-                riskCtl.risk.mitigation.mitPlanSummaryUpdate = o.update;
-                break;
-            case 'response':
-                riskCtl.risk.response.respPlanSummary = o.plan;
-                riskCtl.risk.response.respPlanSummaryUpdate = o.update;
-                break;
-            }
-
+        modalInstance.result.then(function (r) {
+            vm.risk.response.respPlanSummary = r.plan;
+            vm.risk.response.respPlanSummaryUpdate = r.update;
         });
     }
 
+    this.impactChange = function () {
+        vm.updateRisk();
+    }
+    this.probChange = function () {
+
+        switch (Number(vm.risk.likeType)) {
+        case 1:
+            vm.risk.likeT = 365;
+            break;
+        case 2:
+            vm.risk.likeT = 30;
+            break;
+        case 3:
+            //do nothing, will already be set by model
+            break;
+        default:
+            vm.risk.likeT = 0;
+        }
+        switch (Number(vm.risk.likePostType)) {
+        case 1:
+            vm.risk.likePostT = 365;
+            break;
+        case 2:
+            vm.risk.likePostT = 30;
+            break;
+        case 3:
+            //do nothing, will already be set by model
+            break;
+        default:
+            vm.risk.likePostT = 0;
+        }
+
+
+        // This caculates the 1-8 prob based on the calculated prob and the matrix config
+        vm.risk.inherentProb = probToMatrix(calcProb(vm.risk, true), vm.project.matrix);
+        vm.risk.treatedProb = probToMatrix(calcProb(vm.risk, false), vm.project.matrix);
+
+        // This will update the matrix
+        vm.updateRisk();
+    }
+
+
+    this.getRisk = function () {
+
+        if (isNaN(vm.riskID) || vm.riskID == 0) {
+            return;
+        }
+        riskService.getRisk(QRMDataService.url, vm.riskID)
+            .then(function (response) {
+                vm.risk = response.data;
+                vm.updateRisk();
+            });
+    };
+    this.saveRisk = function () {
+        // Ensure all the changes have been made
+        vm.updateRisk();
+        //Zero out the comments as these are managed separately
+        vm.risk.comments = [];
+        vm.risk.attachments = [];
+        riskService.saveRisk(QRMDataService.url, vm.risk)
+            .then(function (response) {
+                vm.risk = response.data;
+                // Update the risk with changes that may have been made by the host.
+                QRMDataService.riskID = vm.risk.riskID;
+                vm.updateRisk();
+                notify({
+                    message: 'Risk Saved',
+                    classes: 'alert-info',
+                    duration: 1500,
+                    templateUrl: "views/common/notify.html"
+                });
+            });
+    };
     this.updateRisk = function () {
-
-        //Static Definitions
-
 
         // secondary risk category
         try {
-            this.secCatArray = jQuery.grep(this.project.categories, function (e) {
-                return e.name == riskCtl.risk.primcat.name
+            vm.secCatArray = jQuery.grep(vm.project.categories, function (e) {
+                return e.name == vm.risk.primcat.name
             })[0].sec;
         } catch (e) {
             console.log(e.message);
@@ -180,169 +353,95 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 
         //Update the Matrix
         try {
-            this.setRiskMatrix(this.matrixDIVID);
+            vm.setRiskMatrix(vm.matrixDIVID);
         } catch (e) {
             console.log(e.message);
         }
 
         // Create a list of stakeholders
         try {
-            this.stakeholders = [];
-            this.stakeholders.push({
-                name: this.risk.owner.name,
-                email: this.risk.owner.email,
+            vm.stakeholders = [];
+            vm.stakeholders.push({
+                name: vm.risk.owner.name,
+                email: vm.risk.owner.email,
                 role: "Risk Owner"
             });
-            this.stakeholders.push({
-                name: this.risk.manager.name,
-                email: this.risk.manager.email,
+            vm.stakeholders.push({
+                name: vm.risk.manager.name,
+                email: vm.risk.manager.email,
                 role: "Risk Manager"
             });
-            this.risk.mitigation.mitPlan.forEach(function (e) {
-                riskCtl.stakeholders.push({
+            vm.risk.mitigation.mitPlan.forEach(function (e) {
+                vm.stakeholders.push({
                     name: e.person.name,
                     role: "Mitigation Owner"
                 })
             });
-            this.risk.response.respPlan.forEach(function (e) {
-                riskCtl.stakeholders.push({
+            vm.risk.response.respPlan.forEach(function (e) {
+                vm.stakeholders.push({
                     name: e.person.name,
                     role: "Response Owner"
                 })
             });
-            this.stakeholders = this.stakeholders.concat(this.additionalHolders);
+            vm.stakeholders = vm.stakeholders.concat(vm.additionalHolders);
         } catch (e) {
             console.log(e.message);
         }
 
         // Remove any Duplicate 
         var arr = {};
-        for (var i = 0; i < this.stakeholders.length; i++)
-            arr[this.stakeholders[i]['name'] + this.stakeholders[i]['role']] = this.stakeholders[i];
+        for (var i = 0; i < vm.stakeholders.length; i++)
+            arr[vm.stakeholders[i]['name'] + vm.stakeholders[i]['role']] = vm.stakeholders[i];
 
         var temp = new Array();
         for (var key in arr)
             temp.push(arr[key]);
 
-        this.stakeholders = temp;
+        vm.stakeholders = temp;
 
         //Sort out the probs and impact
 
         try {
 
-            var index = (Math.floor(this.risk.treatedProb - 1)) * this.project.matrix.maxImpact + Math.floor(this.risk.treatedImpact - 1);
-            index = Math.min(index, this.project.matrix.tolString.length - 1);
+            var index = (Math.floor(vm.risk.treatedProb - 1)) * vm.project.matrix.maxImpact + Math.floor(vm.risk.treatedImpact - 1);
+            index = Math.min(index, vm.project.matrix.tolString.length - 1);
 
-            this.risk.treatedTolerance = this.project.matrix.tolString.substring(index, index + 1);
+            vm.risk.treatedTolerance = vm.project.matrix.tolString.substring(index, index + 1);
 
 
-            index = (Math.floor(this.risk.inherentProb - 1)) * this.project.matrix.maxImpact + Math.floor(this.risk.inherentImpact - 1);
-            index = Math.min(index, this.project.matrix.tolString.length - 1);
+            index = (Math.floor(vm.risk.inherentProb - 1)) * vm.project.matrix.maxImpact + Math.floor(vm.risk.inherentImpact - 1);
+            index = Math.min(index, vm.project.matrix.tolString.length - 1);
 
-            this.risk.inherentTolerance = this.project.matrix.tolString.substring(index, index + 1);
+            vm.risk.inherentTolerance = vm.project.matrix.tolString.substring(index, index + 1);
 
-            if (this.risk.treated) {
-                this.risk.currentProb = this.risk.treatedProb;
-                this.risk.currentImpact = this.risk.treatedImpact;
-                this.risk.currentTolerance = this.risk.treatedTolerance;
+            if (vm.risk.treated) {
+                vm.risk.currentProb = vm.risk.treatedProb;
+                vm.risk.currentImpact = vm.risk.treatedImpact;
+                vm.risk.currentTolerance = vm.risk.treatedTolerance;
 
 
             } else {
-                this.risk.currentProb = this.risk.inherentProb;
-                this.risk.currentImpact = this.risk.inherentImpact;
-                this.risk.currentTolerance = this.risk.inherentTolerance;
+                vm.risk.currentProb = vm.risk.inherentProb;
+                vm.risk.currentImpact = vm.risk.inherentImpact;
+                vm.risk.currentTolerance = vm.risk.inherentTolerance;
             }
 
 
 
-            this.treatedAbsProb = probFromMatrix(this.risk.treatedProb, this.project.matrix);
-            this.inherentAbsProb = probFromMatrix(this.risk.inherentProb, this.project.matrix);
+            vm.treatedAbsProb = probFromMatrix(vm.risk.treatedProb, vm.project.matrix);
+            vm.inherentAbsProb = probFromMatrix(vm.risk.inherentProb, vm.project.matrix);
         } catch (e) {
             alert("Error" + e.message);
         }
 
     }
 
-    this.impactChange = function () {
-        this.updateRisk();
-    }
-    this.probChange = function () {
-
-        switch (Number(this.risk.likeType)) {
-        case 1:
-            this.risk.likeT = 365;
-            break;
-        case 2:
-            this.risk.likeT = 30;
-            break;
-        case 3:
-            //do nothing, will already be set by model
-            break;
-        default:
-            this.risk.likeT = 0;
-        }
-        switch (Number(this.risk.likePostType)) {
-        case 1:
-            this.risk.likePostT = 365;
-            break;
-        case 2:
-            this.risk.likePostT = 30;
-            break;
-        case 3:
-            //do nothing, will already be set by model
-            break;
-        default:
-            this.risk.likePostT = 0;
-        }
-
-
-        // This caculates the 1-8 prob based on the calculated prob and the matrix config
-        this.risk.inherentProb = probToMatrix(calcProb(this.risk, true), this.project.matrix);
-        this.risk.treatedProb = probToMatrix(calcProb(this.risk, false), this.project.matrix);
-
-        // This will update the matrix
-        this.updateRisk();
-    }
-
-
-    this.getRisk = function () {
-
-        if (isNaN(this.riskID) || this.riskID == 0) {
-            return;
-        }
-        riskService.getRisk(QRMDataService.url, this.riskID)
-            .then(function (response) {
-                debugger;
-                riskCtl.risk = response.data;
-                riskCtl.updateRisk();
-            });
-    };
-    this.saveRisk = function () {
-        // Ensure all the changes have been made
-        this.updateRisk();
-        //Zero out the comments as these are managed separately
-        this.risk.comments = [];
-        this.risk.attachments = [];
-        riskService.saveRisk(QRMDataService.url, this.risk)
-            .then(function (response) {
-                riskCtl.risk = response.data;
-                // Update the risk with changes that may have been made by the host.
-                riskCtl.updateRisk();
-                notify({
-                    message: 'Risk Saved',
-                    classes: 'alert-info',
-                    duration: 1000,
-                    templateUrl: "views/common/notify.html"
-                });
-            });
-    };
-
     //Called by listener set by jQuery on the date-range control
     this.updateDates = function (start, end) {
-        this.risk.start = start;
-        this.risk.end = end;
+        vm.risk.start = start;
+        vm.risk.end = end;
 
-        this.updateRisk();
+        vm.updateRisk();
     }
 
     // The probability matrix
@@ -350,46 +449,42 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         QRMDataService.matrixDIVID = matrixDIVID;
     }
     this.setRiskMatrix = function () {
-            // Calls function in qrm-common.js
-            setRiskEditorMatrix(this.risk, this.project.matrix, QRMDataService.matrixDIVID, QRMDataService.matrixDisplayConfig, this.dragStart, this.drag, this.dragEnd);
-        }
-        //Callbacks for start and finish of dragging an item inthe probability matrix
+        // Calls function in qrm-common.js
+        setRiskEditorMatrix(vm.risk, vm.project.matrix, QRMDataService.matrixDIVID, QRMDataService.matrixDisplayConfig, vm.dragStart, vm.drag, vm.dragEnd);
+    }
     this.dragEnd = function (d) {
 
-        riskCtl.risk.useCalProb = false;
-        riskCtl.risk.liketype = 4;
-        riskCtl.risk.likepostType = 4;
+        vm.risk.useCalProb = false;
+        vm.risk.liketype = 4;
+        vm.risk.likepostType = 4;
 
         if (d.treated) {
-            riskCtl.risk.treatedProb = Number(d.prob);
-            riskCtl.risk.treatedImpact = Number(d.impact);
+            vm.risk.treatedProb = Number(d.prob);
+            vm.risk.treatedImpact = Number(d.impact);
         } else {
-            riskCtl.risk.inherentProb = Number(d.prob);
-            riskCtl.risk.inherentImpact = Number(d.impact);
+            vm.risk.inherentProb = Number(d.prob);
+            vm.risk.inherentImpact = Number(d.impact);
         }
 
-        riskCtl.updateRisk();
+        vm.updateRisk();
 
         $scope.$apply();
 
     }
     this.dragStart = function (d) {
-        riskCtl.risk.useCalProb = false;
-        riskCtl.risk.useCalProb = false;
-        riskCtl.risk.liketype = 4;
-        riskCtl.risk.likepostType = 4;
+        vm.risk.useCalProb = false;
+        vm.risk.useCalProb = false;
+        vm.risk.liketype = 4;
+        vm.risk.likepostType = 4;
 
     }
-
     this.drag = function () {
 
     }
 
 
-    //Mitigation and Response Editing
-
     this.addMit = function () {
-        this.risk.mitigation.mitPlan.push({
+        vm.risk.mitigation.mitPlan.push({
             description: "No Description of the Action Entered ",
             person: "No Assigned Responsibility",
             cost: 0,
@@ -398,7 +493,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         });
     }
     this.addResp = function () {
-        this.risk.response.respPlan.push({
+        vm.risk.response.respPlan.push({
             description: "No Description of the Action Entered ",
             person: "No Assigned Responsibility",
             cost: "No Cost Allocated"
@@ -411,18 +506,65 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             contribution: "No Contribution Entered"
         }
 
-        if (this.risk.controls) {
-            this.risk.controls.push(control);
+        if (vm.risk.controls) {
+            vm.risk.controls.push(control);
 
         } else {
-            this.risk.controls = [control]
+            vm.risk.controls = [control]
         }
 
     }
+    this.addComment = function (s) {
+        var modalInstance = $modal.open({
+            templateUrl: "myModalContentAddComment.html",
+            controller: function ($modalInstance) {
+
+                this.comment = "";
+
+                this.ok = function () {
+                    $modalInstance.close(this.comment);
+                };
+
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            size: "lg"
+        });
+
+        modalInstance.result.then(function (comment) {
+            riskService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
+                .then(function (response) {
+                    vm.risk.comments = response.data.comments;
+                });
+        });
+    }
+
     this.editMitStep = function (s) {
         var modalInstance = $modal.open({
             templateUrl: "myModalContentEditMit.html",
-            controller: MitController,
+            controller: function ($modalInstance, step, stakeholders) {
+
+                this.step = step;
+                this.stakeholders = stakeholders;
+
+                // Need to convert the date object back to a string
+                this.ok = function () {
+                    if (typeof (this.step.due) == "Date") {
+                        this.step.due = vm.step.due.toString();
+                    }
+                    $modalInstance.close(this.step);
+                };
+
+                vm.cancel = function () {
+                    if (typeof (this.step.due) == "Date") {
+                        this.step.due = this.step.due.toString();
+                    }
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
             size: "lg",
             resolve: {
                 step: function () {
@@ -431,7 +573,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
                     return s;
                 },
                 stakeholders: function () {
-                    return getProjectStakeholders(riskCtl.project);
+                    return getProjectStakeholders(vm.project);
                 }
             }
         });
@@ -440,34 +582,24 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             // Object will be updated, but need to signal change TODO
         });
     }
-
-    this.addComment = function (s) {
-        var modalInstance = $modal.open({
-            templateUrl: "myModalContentAddComment.html",
-            controller: CommentController,
-            size: "lg"
-        });
-
-        modalInstance.result.then(function (comment) {
-            riskService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
-                .then(function (response) {
-                    riskCtl.risk.comments = response.data.comments;
-                });
-        });
-    }
-
-    this.deleteMitStep = function (s) {
-        for (var i = 0; i < this.risk.mitigation.mitPlan.length; i++) {
-            if (this.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
-                this.risk.mitigation.mitPlan.splice(i, 1);
-                break;
-            }
-        }
-    }
     this.editControl = function (s) {
         var modalInstance = $modal.open({
             templateUrl: "myModalContentEditControl.html",
-            controller: ControlController,
+            controller: function ($modalInstance, control) {
+
+                this.control = control;
+                this.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
+                this.contribArray = ["Minimal", "Minor", "Significant", "Major"];
+
+                this.ok = function () {
+                    $modalInstance.close();
+                };
+
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
             size: "lg",
             resolve: {
                 control: function () {
@@ -480,25 +612,32 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             // Object will be updated, but need to signal change TODO
         });
     }
-    this.deleteRespStep = function (s) {
-        for (var i = 0; i < this.risk.response.respPlan.length; i++) {
-            if (this.risk.response.respPlan[i].$$hashKey == s.$$hashKey) {
-                this.risk.response.respPlan.splice(i, 1);
-                break;
-            }
-        }
-    }
     this.editRespStep = function (s) {
         var modalInstance = $modal.open({
             templateUrl: "myModalContentEditResp.html",
-            controller: RespController,
+            controller: function ($modalInstance, resp, stakeholders) {
+
+
+                this.resp = resp;
+                this.stakeholders = stakeholders;
+
+                // Need to convert the date object back to a string
+                this.ok = function () {
+                    $modalInstance.close($scope.resp);
+                };
+
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
             size: "lg",
             resolve: {
                 resp: function () {
                     return s;
                 },
                 stakeholders: function () {
-                    return getProjectStakeholders(riskCtl.project);
+                    return getProjectStakeholders(vm.project);
                 }
             }
         });
@@ -507,10 +646,27 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
             // Object will be updated, but need to signal change TODO
         });
     }
+
+    this.deleteMitStep = function (s) {
+        for (var i = 0; i < vm.risk.mitigation.mitPlan.length; i++) {
+            if (vm.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
+                vm.risk.mitigation.mitPlan.splice(i, 1);
+                break;
+            }
+        }
+    }
+    this.deleteRespStep = function (s) {
+        for (var i = 0; i < vm.risk.response.respPlan.length; i++) {
+            if (vm.risk.response.respPlan[i].$$hashKey == s.$$hashKey) {
+                vm.risk.response.respPlan.splice(i, 1);
+                break;
+            }
+        }
+    }
     this.deleteControl = function (s) {
-        for (var i = 0; i < this.risk.controls.length; i++) {
-            if (this.risk.controls[i].$$hashKey == s.$$hashKey) {
-                this.risk.controls.splice(i, 1);
+        for (var i = 0; i < vm.risk.controls.length; i++) {
+            if (vm.risk.controls[i].$$hashKey == s.$$hashKey) {
+                vm.risk.controls.splice(i, 1);
                 break;
             }
         }
@@ -518,130 +674,4 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 
     this.getRisk();
 
-}
-
-// Controllers for the modal dialog box editors
-function ModalInstanceCtrl($scope, $modalInstance, text, item) {
-
-    switch (item) {
-    case 'description':
-        $scope.text = text[0];
-        $scope.title = "Risk Title and Description";
-        $scope.risktitle = text[3];
-        break;
-    case 'cause':
-        $scope.text = text[1];
-        $scope.title = "Risk Cause";
-        break;
-    case 'consequence':
-        $scope.text = text[2];
-        $scope.title = "Risk Consequences";
-        break;
-    }
-
-
-    $scope.ok = function () {
-        $modalInstance.close({
-            text: $scope.text,
-            title: $scope.risktitle
-        });
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function ModalInstanceCtrlMitigation($scope, $modalInstance, title, plan, update) {
-
-    switch (title) {
-    case 'Response Plan':
-        $scope.title = "Response Plan";
-        break;
-    case 'Mitigation Plan':
-        $scope.title = "Mitigation Plan";
-        break;
-    }
-
-    $scope.plan = plan;
-    $scope.update = update;
-
-    $scope.ok = function () {
-        $modalInstance.close({
-            plan: $scope.plan,
-            update: $scope.update
-        });
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function MitController($scope, $modalInstance, step, stakeholders) {
-
-    debugger;
-
-    $scope.step = step;
-    $scope.stakeholders = stakeholders;
-
-    // Need to convert the date object back to a string
-    $scope.ok = function () {
-        if (typeof ($scope.step.due) == "Date") {
-            $scope.step.due = $scope.step.due.toString();
-        }
-        $modalInstance.close($scope.step);
-    };
-
-    $scope.cancel = function () {
-        if (typeof ($scope.step.due) == "Date") {
-            $scope.step.due = $scope.step.due.toString();
-        }
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function RespController($scope, $modalInstance, resp, stakeholders) {
-
-    $scope.resp = resp;
-    $scope.stakeholders = stakeholders;
-
-    // Need to convert the date object back to a string
-    $scope.ok = function () {
-        $modalInstance.close($scope.resp);
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function ControlController($scope, $modalInstance, control) {
-
-    $scope.control = control;
-    $scope.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
-    $scope.contribArray = ["Minimal", "Minor", "Significant", "Major"];
-
-    // Need to convert the date object back to a string
-    $scope.ok = function () {
-        $modalInstance.close($scope.resp);
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}
-
-function CommentController($scope, $modalInstance) {
-
-    $scope.comment = "";
-
-    // Need to convert the date object back to a string
-    $scope.ok = function () {
-        $modalInstance.close($scope.comment);
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
 }

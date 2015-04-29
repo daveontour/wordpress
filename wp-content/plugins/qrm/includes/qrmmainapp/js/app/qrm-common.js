@@ -171,8 +171,6 @@ function Map() {
 function calcProb(risk, preMit) {
 
 
-    debugger;
-
     var startMom = moment(risk.start);
     var endMom = moment(risk.end);
     var days = (new Date(risk.end).getTime() - new Date(risk.start).getTime()) / (1000 * 60 * 60 * 24);
@@ -725,7 +723,6 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
 
 function getProjectStakeholders(p) {
 
-    debugger;
     var s = [];
     // Create a list of stakeholders
     try {
