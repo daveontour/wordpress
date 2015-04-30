@@ -62,25 +62,7 @@ function minimalizaSidebar($timeout) {
         template: '<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="" ng-click="minimalize()"><i class="fa fa-bars"></i></a>',
         controller: function ($scope, $element) {
             $scope.minimalize = function () {
-                $("body").toggleClass("mini-navbar");
-                if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
-                    // Hide menu in order to smoothly turn on when maximize menu
-                    $('#side-menu').hide();
-                    // For smoothly turn on menu
-                    setTimeout(
-                        function () {
-                            $('#side-menu').fadeIn(500);
-                        }, 100);
-                } else if ($('body').hasClass('fixed-sidebar')) {
-                    $('#side-menu').hide();
-                    setTimeout(
-                        function () {
-                            $('#side-menu').fadeIn(500);
-                        }, 300);
-                } else {
-                    // Remove all inline style from jquery fadeIn function to reset menu state
-                    $('#side-menu').removeAttr('style');
-                }
+                minimiseSideBar();   //In qrm_common.js
             }
         }
     };
@@ -157,6 +139,47 @@ function dropzone(QRMDataService){
         };
 }
 
+
+function treeModel($compile,QRMDataService){
+		return {
+			restrict: 'A',
+			link: function ( scope, element, attrs ) {
+               
+				//tree id
+				var treeId = attrs.treeId;
+			
+				//tree model
+				var treeModel = attrs.treeModel;
+
+				//tree template
+				var template =
+					'<ul style="list-style-type:none">' +
+						'<li data-ng-repeat="node in ' + treeModel + '">' +
+				            '<label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px"> <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.name}} </label>'+
+							'<div data-tree-id="' + treeId + '" data-tree-model="node.children"</div>' +
+						'</li>' +
+					'</ul>';
+
+
+				//check tree id, tree model
+				if( treeId && treeModel ) {
+
+					//root node
+					if( attrs.angularTreeview ) {
+					
+						//create tree object if not exists
+                        scope[treeId] = scope[treeId] || {};
+
+					}
+
+					//Rendering template.
+					element.html('').append( $compile( template )( scope ) );
+				}
+			}
+		};
+    
+
+}
 angular.module('qrm')
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
@@ -164,4 +187,5 @@ angular.module('qrm')
     .directive('minimalizaSidebar', minimalizaSidebar)
     .directive('icheck', icheck)
     .directive('riskmat', riskmat)
-    .directive('dropzone', ['QRMDataService',dropzone]);
+    .directive('dropzone', ['QRMDataService',dropzone])
+    .directive('treeModel', ['$compile','QRMDataService',treeModel])

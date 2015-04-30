@@ -102,7 +102,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
     this.filterOptions = this.resetFilter();
 
     $scope.$watch("exp.filterOptions", function () {
-         exp.filterRisks();
+        exp.filterRisks();
     }, true);
 
     // General purpose functions
@@ -152,14 +152,14 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     // Filtering functions
     this.filterRisks = function () {
-       
+
         if (this.rawRisks == null) return;
-        
-       this.gridOptions.data = [];
+
+        this.gridOptions.data = [];
         this.rawRisks.forEach(function (r) {
             // Reject the risk until it's passes
             var pass = false;
- 
+
             if (exp.filterMatrixFlag) {
 
                 var i;
@@ -180,7 +180,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
 
             } else {
-                
+
                 exp.filterMatrixHighlightFlag = false;
 
                 if (exp.filterOptions.treated && r.treated) pass = true;
@@ -237,7 +237,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         this.filterOptions.matrixProb = prob;
         this.filterOptions.matrixImpact = impact;
         this.filterOptions.matrixTreated = treated;
-        
+
         //The watch on the filterOptions will kick off the filtering
 
     }
@@ -258,9 +258,9 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     }
     this.cellHighlight = function (prob, impact, treated) {
-        var r =  ( this.filterMatrixHighlightFlag && this.filterOptions.matrixProb == prob &&
+        var r = (this.filterMatrixHighlightFlag && this.filterOptions.matrixProb == prob &&
             this.filterOptions.matrixImpact == impact && this.filterOptions.matrixTreated == treated);
-        
+
 
         return r;
     }
@@ -275,7 +275,61 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
 }
 
+
+function CalenderController($scope, QRMDataService, $state, riskService) {
+
+    
+    var cal = this;
+    this.editRisk = function(id){
+        QRMDataService.riskID = id;
+        $state.go('index.risk');
+    }
+    this.getRisks = function () {
+        riskService.getRisks(QRMDataService.url)
+            .then(function (response) {
+
+                var tasks = new Array();
+                var taskNames = new Array();
+                var index = 0;
+                response.data.data.forEach(function (risk) {
+                    debugger;
+                    tasks.push({
+                        "startDate": moment(risk.start),
+                        "endDate": moment(risk.end),
+                        "taskName": "RISKID"+index,
+                        "status": "RUNNING",
+                        "riskID":risk.id
+                    });
+                    index++;
+                });
+            
+                          var now = new Date();
+              tasks.sort(function(a, b) {return a.startDate - b.startDate; });
+              tasks.forEach(function(task){
+                 if (task.startDate > now){
+                    task.className = 'future';
+                 } else if( task.endDate < now){
+                    task.className = 'past';
+                 } else {
+                    task.className = 'now';
+                 }
+                
+                 taskNames.push(task.taskName);
+              });
+            
+            debugger;
+              d3.select("#svgcalID").selectAll("svg").remove();
+            
+              var gantt = d3.gantt(cal.editRisk).taskTypes(taskNames).tickFormat("%b %Y");
+              gantt(tasks, "#svgcalID",$('#svgcalIDPanel').width(), $('#svgcalIDPanel').height());
+            });
+
+    }
+
+    this.getRisks();
+}
 var app = angular.module('qrm');
 
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
+app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'riskService', CalenderController]);
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify', RiskCtrl]);

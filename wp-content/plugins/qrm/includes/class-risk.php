@@ -56,6 +56,7 @@ class Risk {
 	
 	public $comments;
 	public $attachments;
+	public $objectives;
 	
 	
 	public static function postSave($post_id) {

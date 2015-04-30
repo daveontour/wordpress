@@ -23,8 +23,8 @@ app.service('riskService', function ($http) {
 
         addComment: function (url, comment, riskID) {
             data = {
-                comment:comment,
-                riskID:riskID
+                comment: comment,
+                riskID: riskID
             }
             return $http({
                 method: 'POST',
@@ -41,9 +41,9 @@ app.service('riskService', function ($http) {
                 cache: false
             }).error(function (data, status, headers, config) {
                 alert(data.msg);
-            });    
+            });
         },
-        
+
         getRiskAttachments: function (url, riskID) {
             return $http({
                 method: 'POST',
@@ -130,6 +130,21 @@ app.service('QRMDataService', function () {
 
             }
              ],
+        objectives: [
+        { "name" : "Maintain IT Security", "id" : "role1", "children" : [
+          { "name" : "Prevent Unauthorised access to systems from external", "id" : "role11", "children" : [] },
+          { "name" : "Prevent internal access to un authorised users", "id" : "role12", "children" : [
+            { "name" : "Every User will have unique password", "id" : "role121", "children" : [
+              { "name" : "subUser2-1-1", "id" : "role1211", "children" : [] },
+              { "name" : "subUser2-1-2", "id" : "role1212", "children" : [] }
+            ]}
+          ]}
+        ]},
+
+        { "name" : "Admin", "id" : "role2", "children" : [] },
+
+        { "name" : "Guest", "id" : "role3", "children" : [] }
+      ],
         matrix: {
             maxProb: 5,
             maxImpact: 5,
@@ -197,7 +212,8 @@ app.service('QRMDataService', function () {
                 respPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",
                 respPlan: []
             },
-            controls: []
+            controls: [],
+            objectives:{},
         }
     };
 

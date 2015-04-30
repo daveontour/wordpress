@@ -308,7 +308,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         vm.updateRisk();
     }
 
-
+    this.cancelRisk = function () {
+        $state.go('index.explorer');
+    }
     this.getRisk = function () {
 
         if (isNaN(vm.riskID) || vm.riskID == 0) {
@@ -433,6 +435,11 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         } catch (e) {
             alert("Error" + e.message);
         }
+
+        //Set the date controll
+        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
+        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
+
 
     }
 

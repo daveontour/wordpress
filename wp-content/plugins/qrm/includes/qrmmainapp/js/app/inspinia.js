@@ -21,7 +21,7 @@ $(document).ready(function () {
         }
 
         if(navbarHeigh < wrapperHeigh){
-            $('#page-wrapper').css("min-height", $(window).height()  + "px");
+            $('#page-wrapper').css("min-height", $(window).height() -62 + "px");
         }
 
     }

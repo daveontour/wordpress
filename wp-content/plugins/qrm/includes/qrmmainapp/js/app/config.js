@@ -38,7 +38,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             resolve: {
                 loadPlugin2: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
-                        files: ["js/app/qrm-common.js","js/d3/d3.min.js",'css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
+                        files: ['css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
                         cache: false
                     });
                 }]
@@ -48,21 +48,25 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/risk",
             templateUrl: "views/risk.html",
             controller: "RiskCtrl as ctl",
+            onEnter: function () {
+                minimiseSideBar();
+            },
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
-                        files: ["css/qrm_styles.css", "js/d3/d3.min.js", "js/daterangepicker.js", "css/daterangepicker-bs3.css", 'css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
+                        files: ["js/daterangepicker.js", "css/daterangepicker-bs3.css", 'css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
                         cache: true
-                    });
-                }],
-                loadPlugin2: ['$ocLazyLoad', function ($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        files: ["js/app/qrm-common.js"],
-                        cache: false
                     });
                 }]
             }
         })
+
+    .state('index.calender', {
+        url: "/calender",
+        controller: 'CalenderController',
+        controllerAs:'cal',
+        template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
+    })
 }
 
 
