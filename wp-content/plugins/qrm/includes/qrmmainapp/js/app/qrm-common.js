@@ -780,7 +780,7 @@ function minimiseSideBar() {
         }, 250);
 }
 
-d3.gantt = function (clickCallBack) {
+d3.gantt = function (calController) {
     var FIT_TIME_DOMAIN_MODE = "fit";
 
     var margin = {
@@ -819,8 +819,7 @@ d3.gantt = function (clickCallBack) {
         if (timeDomainMode === FIT_TIME_DOMAIN_MODE) {
             if (tasks === undefined || tasks.length < 1) {
                 timeDomainStart = d3.time.day.offset(new Date(), -3);
-                timeDomainEnd = d3.time.hour.offset(new Date(), +3);
-                return;
+                timeDomainEnd = d3.time.hour.offset(new Date(), +3);          return;
             }
             tasks.sort(function (a, b) {
                 return a.endDate - b.endDate;
@@ -894,7 +893,7 @@ d3.gantt = function (clickCallBack) {
                 return tooltipProb.style("visibility", "hidden");
             })
             .on("click", function (d) {
-                clickCallBack(d.riskID);
+                calController.edirRisk(d.riskID);
             });
 
         svg.append("g")
@@ -903,13 +902,12 @@ d3.gantt = function (clickCallBack) {
             .transition()
             .call(xAxis);
 
-        var title = "Project Title";
         svg.append("text")
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [width / 2, 4] + ")")
-            .text(title);
+            .text(calController.project.title);
 
 
 
@@ -1280,13 +1278,12 @@ function SorterLayout(rankCtl){
     
    this.preLayout = function(){
       
-       debugger;
       var numItems = this.items.length;
-      
       var totalItemHeight = (numItems+1.5)*this.itemHeight;
       
       var colNum = 1;
       var scaleFactor = 0;
+       
       do {
          var columnHeight = totalItemHeight/colNum;
          scaleFactor = this.height/columnHeight;
@@ -1301,9 +1298,7 @@ function SorterLayout(rankCtl){
       this.numItemsPerColumn = Math.floor(this.layoutHeight/this.itemHeight);
       
       colNum = Math.ceil(numItems/this.numItemsPerColumn);      
-      this.setItemWidth((this.width-10-this.transMatrix[4])/(colNum));
-      
-        
+      this.setItemWidth((this.width-10-this.transMatrix[4])/(colNum)); 
    };
 
    this.layoutTable = function(){
@@ -1324,7 +1319,7 @@ function SorterLayout(rankCtl){
       .style("font-size", "20px")
       .style("font-weight", "normal")
       .attr("transform", "translate(" + [ this.width/2, 20 ] + ")")
-      .text( "PROJECT TITLE");
+      .text(rankCtl.project.title);
 
       this.svg = this.topSVG
       .append("g")

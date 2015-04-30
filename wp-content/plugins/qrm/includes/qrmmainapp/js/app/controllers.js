@@ -280,6 +280,7 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
 
     
     var cal = this;
+    this.project = QRMDataService.project;
     this.editRisk = function(id){
         QRMDataService.riskID = id;
         $state.go('index.risk');
@@ -320,7 +321,7 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
             debugger;
               d3.select("#svgcalID").selectAll("svg").remove();
             
-              var gantt = d3.gantt(cal.editRisk).taskTypes(taskNames).tickFormat("%b %Y");
+              var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
               gantt(tasks, "#svgcalID",$('#svgcalIDPanel').width(), $('#svgcalIDPanel').height());
             
 //              $('rect').tooltip({'placement':'top'});
@@ -335,6 +336,7 @@ function RankController($scope, QRMDataService, $state, riskService) {
 
     
     var rank = this;
+    this.project = QRMDataService.project;
     this.editRisk = function(id){
         QRMDataService.riskID = id;
         $state.go('index.risk');
@@ -348,7 +350,7 @@ function RankController($scope, QRMDataService, $state, riskService) {
             var risks = response.data.data;
             rank.dirty = false;
             rank.risks = risks;
-            rank.layout = new SorterLayout();
+            rank.layout = new SorterLayout(rank);
             
             var html = "<div style='valign:top'><br><hr><br/>Rearrange the rank order of the risks by dragging and droping the risks. <br/><br/>The risks are initially arranged in rank order from top to bottom, left to right<br/><br/></strong><hr></div>";
         //    $('#qrm-rankDetail').html(html);

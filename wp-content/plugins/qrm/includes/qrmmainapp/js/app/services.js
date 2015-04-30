@@ -65,6 +65,7 @@ app.service('QRMDataService', function () {
         radius: 15
     };
     this.project = {
+        title:"Sample Risk Project Name",
         riskOwners: [
             {
                 name: "David Burton",
