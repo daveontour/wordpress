@@ -67,6 +67,12 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         controllerAs:'cal',
         template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
     })
+        .state('index.rank', {
+        url: "/rank",
+        controller: 'RankController',
+        controllerAs:'rank',
+        template: '<div id="qrm-SubRankPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "subRankSVGDiv"></div></div>'
+    })
 }
 
 

@@ -322,14 +322,57 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
             
               var gantt = d3.gantt(cal.editRisk).taskTypes(taskNames).tickFormat("%b %Y");
               gantt(tasks, "#svgcalID",$('#svgcalIDPanel').width(), $('#svgcalIDPanel').height());
+            
+//              $('rect').tooltip({'placement':'top'});
             });
 
     }
 
     this.getRisks();
 }
+
+function RankController($scope, QRMDataService, $state, riskService) {
+
+    
+    var rank = this;
+    this.editRisk = function(id){
+        QRMDataService.riskID = id;
+        $state.go('index.risk');
+    }
+    
+    
+    this.loadGrid = function(){
+        
+        riskService.getRisks(QRMDataService.url)
+            .then(function (response) {
+            var risks = response.data.data;
+            rank.dirty = false;
+            rank.risks = risks;
+            rank.layout = new SorterLayout();
+            
+            var html = "<div style='valign:top'><br><hr><br/>Rearrange the rank order of the risks by dragging and droping the risks. <br/><br/>The risks are initially arranged in rank order from top to bottom, left to right<br/><br/></strong><hr></div>";
+        //    $('#qrm-rankDetail').html(html);
+
+            debugger;
+            myLayout = rank.layout;
+            myLayout.setHeight($('#qrm-SubRankPanel').height());
+            myLayout.setWidth($('#qrm-SubRankPanel').width());
+            myLayout.setItemHeight(35);
+            myLayout.setItemWidth($('#qrm-SubRankPanel').width()/2);
+            myLayout.scale(1,1);
+            myLayout.setItems(rank.risks);
+            myLayout.setSVGDiv("subRankSVGDiv");
+            myLayout.setDirtyListener(function(){rank.dirty = true;});
+            myLayout.layoutTable();
+        });      
+
+   }
+ 
+    this.loadGrid();
+}
 var app = angular.module('qrm');
 
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'riskService', CalenderController]);
+app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'riskService', RankController]);
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify', RiskCtrl]);
