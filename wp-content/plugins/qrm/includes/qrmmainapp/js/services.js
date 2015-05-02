@@ -1,4 +1,4 @@
-var app = angular.module('qrm');
+var app = angular.module('inspinia');
 
 app.service('riskService', function ($http) {
     return {

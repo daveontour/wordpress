@@ -8,6 +8,11 @@
 $(document).ready(function () {
 
 
+        // Append config box / Only for demo purpose
+    $.get("views/skin-config.html", function (data) {
+        $('body').append(data);
+    });
+    
     // Full height of sidebar
     function fix_height() {
         var heightWithoutNavbar = $("body > #wrapper").height() - 61;
@@ -21,7 +26,7 @@ $(document).ready(function () {
         }
 
         if(navbarHeigh < wrapperHeigh){
-            $('#page-wrapper').css("min-height", $(window).height() -62 + "px");
+            $('#page-wrapper').css("min-height", $(window).height()  + "px");
         }
 
     }

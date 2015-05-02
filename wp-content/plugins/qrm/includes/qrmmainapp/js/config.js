@@ -8,14 +8,31 @@
  *
  */
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-
-    $urlRouterProvider.otherwise("/index/explorer");
+    $urlRouterProvider.otherwise("/index/main");
 
     $ocLazyLoadProvider.config({
-        debug: true
+        // Set to true if you want to see what and when is dynamically loaded
+        debug: false
     });
 
     $stateProvider
+
+    //        .state('index', {
+    //            abstract: true,
+    //            url: "/index",
+    //            templateUrl: "views/common/content.html",
+    //        })
+    //        .state('index.main', {
+    //            url: "/main",
+    //            templateUrl: "views/main.html",
+    //            data: { pageTitle: 'Example view' }
+    //        })
+    //        .state('index.minor', {
+    //            url: "/minor",
+    //            templateUrl: "views/minor.html",
+    //            data: { pageTitle: 'Example view' }
+    //        })
+
         .state('index', {
             abstract: true,
             url: "/index",
@@ -34,14 +51,6 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             controller: "ExplorerCtrl as exp",
             data: {
                 pageTitle: 'Risk Explorer'
-            },
-            resolve: {
-                loadPlugin2: ['$ocLazyLoad', function ($ocLazyLoad) {
-                    return $ocLazyLoad.load({
-                        files: ['css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
-                        cache: false
-                    });
-                }]
             }
         })
         .state('index.risk', {
@@ -54,7 +63,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
-                        files: ["js/daterangepicker.js", "css/daterangepicker-bs3.css", 'css/plugins/iCheck/custom.css', 'js/plugins/iCheck/icheck.min.js'],
+                        files: ["js/daterangepicker.js", "css/daterangepicker-bs3.css"],
                         cache: true
                     });
                 }]
@@ -62,22 +71,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
 
     .state('index.calender', {
-        url: "/calender",
-        controller: 'CalenderController',
-        controllerAs:'cal',
-        template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
-    })
+            url: "/calender",
+            controller: 'CalenderController',
+            controllerAs: 'cal',
+            template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
+        })
         .state('index.rank', {
-        url: "/rank",
-        controller: 'RankController',
-        controllerAs:'rank',
-        template: '<div id="qrm-SubRankPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "subRankSVGDiv"></div></div>'
-    })
+            url: "/rank",
+            controller: 'RankController',
+            controllerAs: 'rank',
+            templateUrl: "views/rank.html"
+        })
+        .state('index.matrix', {
+            url: "/matrix",
+            templateUrl: "views/relmatrix.html"
+        })
 }
-
-
-
-angular.module('qrm')
+angular
+    .module('inspinia')
     .config(config)
     .run(function ($rootScope, $state) {
         $rootScope.$state = $state;

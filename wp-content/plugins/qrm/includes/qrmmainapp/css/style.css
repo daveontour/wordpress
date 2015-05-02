@@ -1509,12 +1509,7 @@ a.list-group-item.active:focus {
     margin-top: 15px;
     position: relative;
 }
-
-/* Removes because datatables istself is being used  - DB*/
-
-
 /* DATATABLES */
-/*
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc,
@@ -1540,7 +1535,6 @@ table.dataTable thead .sorting:after {
 .dataTables_wrapper {
     padding-bottom: 30px;
 }
-*/
 /* CIRCLE */
 .img-circle {
     border-radius: 50%;
@@ -1730,11 +1724,9 @@ table.dataTable thead .sorting:after {
     font-size: 36px;
     margin-bottom: 0;
 }
-/*
 .glyphicon.fa {
     font-family: "FontAwesome";
 }
-*/
 /* INPUTS */
 .inline {
     display: inline-block !important;
