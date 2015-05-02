@@ -1303,7 +1303,6 @@ function SorterLayout(rankCtl){
 
    this.layoutTable = function(){
       
-       debugger;
       this.preLayout();
 
       d3.select(this.svgDiv+" svg").remove();

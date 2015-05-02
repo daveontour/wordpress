@@ -74,8 +74,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/calender",
             controller: 'CalenderController',
             controllerAs: 'cal',
-            template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
-        })
+//            template: '<div id="svgcalIDPanel" style="width:100%;height:calc(100vh - 51px )"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
+            template: '<div id="svgcalIDPanel" style="width:100%;position:absolute;top:60px;bottom:100px"><div style="width:100%;height:100%" id = "svgcalID"></div></div>'
+    })
         .state('index.rank', {
             url: "/rank",
             controller: 'RankController',
@@ -84,6 +85,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.matrix', {
             url: "/matrix",
+        controller:'RelMatrixController',
+        controllerAs:'relMatrix',
             templateUrl: "views/relmatrix.html"
         })
 }
