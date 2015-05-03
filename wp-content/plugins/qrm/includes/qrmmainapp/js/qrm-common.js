@@ -1482,6 +1482,8 @@ function SorterLayout(rankCtl){
    };   
 } 
 
+//Need to put this so I can find it.
+var relMatrix;
 
 tooltipProb = d3.select("body")
     .append("div")

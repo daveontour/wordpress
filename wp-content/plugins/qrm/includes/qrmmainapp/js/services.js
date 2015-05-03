@@ -43,6 +43,17 @@ app.service('riskService', function ($http) {
                 alert(data.msg);
             });
         },
+        
+        updateRisksRelMatrix: function (url, data) {
+            return $http({
+                method: 'POST',
+                url: url + "?qrmfn=updateRisksRelMatrix",
+                cache: false,
+                data: JSON.stringify(data)
+            }).error(function (data, status, headers, config) {
+                alert(data.msg);
+            });
+        },
 
         getRiskAttachments: function (url, riskID) {
             return $http({

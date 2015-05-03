@@ -104,6 +104,9 @@ function my_plugin_parse_request($wp) {
 			case "getRiskAttachments":
 				getRiskAttachments();
 				break;
+            case "updateRisksRelMatrix":
+                updateRisksRelMatrix();
+                break;
 			default :
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
@@ -175,6 +178,22 @@ function uploadFile(){
 	
 	exit;
 	
+}
+
+function updateRisksRelMatrix(){
+	 $risks = json_decode(file_get_contents("php://input"));
+    
+    foreach($risks as $risk){
+        $r = json_decode(get_post_meta($risk->riskID, "riskdata", true));
+        $r->inherentProb = $risk->newInherentProb;
+	   $r->inherentImpact = $risk->newInherentImpact;
+	   $r->treatedProb = $risk->newTreatedProb;
+	   $r->treatedImpact = $risk->newTreatedImpact;
+        
+      update_post_meta( $risk->riskID, "riskdata", json_encode($r) );
+    }
+    
+    exit;
 }
 
 function addComments(){

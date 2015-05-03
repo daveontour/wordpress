@@ -1095,6 +1095,9 @@ function RankController($scope, QRMDataService, $state, riskService) {
 function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
     var relMatrixCtrl = this;
+    
+    //In the global space.
+    relMatrix = this;
 
     this.project = QRMDataService.project;
     this.status = {
@@ -1113,7 +1116,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
     this.currentItems = new Array();
     this.matrixDirty = false;
     this.editorChanges = false;
-    this.transMatrix = [1, 0, 0, 1, 0, 0];
+    this.transMatrix = [1, 0, 0, 1, 45, 45];
 
     this.stateSelectorChanged = function () {
 
@@ -1181,7 +1184,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
         var state = "Current State";
 
-        switch (relMatrixCtrl.status.val) {
+        switch (Number(relMatrixCtrl.status.val)) {
         case 0:
             state = "Current State";
             break;
@@ -1213,52 +1216,29 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
     }
     this.saveChanges = function (switchTab, tabPanel, newCard, newProjectID) {
 
-        var savingbox = Ext.MessageBox.wait('Please wait while changes are savaed', 'Saving Data', {
-            interval: 100,
-            animate: true,
-            text: 'Saving..'
-        });
         var relMatChanges = new Array();
 
         this.risks.forEach(function (item) {
             if (item.dirty) {
                 relMatChanges.push({
-                    riskID: item.riskID,
+                    riskID: item.id,
                     newTreatedImpact: (item.treatedClean) ? item.treatedImpact : item.newTreatedImpact,
                     newTreatedProb: (item.treatedClean) ? item.treatedProb : item.newTreatedProb,
-                    newUntreatedImpact: (item.untreatedClean) ? item.inherentImpact : item.newUntreatedImpact,
-                    newUntreatedProb: (item.untreatedClean) ? item.inherentProb : item.newUntreatedProb
+                    newInherentImpact: (item.untreatedClean) ? item.inherentImpact : item.newInherentImpact,
+                    newInherentProb: (item.untreatedClean) ? item.inherentProb : item.newInherentProb
                 });
             }
         });
 
-        Ext.Ajax.request({
-            url: "./updateRelMatrix",
-            params: {
-                "DATA": JSON.stringify(relMatChanges),
-                "PROJECTID": QRM.global.projectID
-            },
-            success: function (response) {
-                debugger;
-                if (switchTab) {
-                    if (tabPanel != null) {
-                        QRM.app.getRelMatrixController().matrixDirty = false;
-                        tabPanel.setActiveTab(newCard);
-                    } else if (newProjectID != null) {
-                        var store = $$("qrmNavigatorID").getStore();
-                        var record = store.findRecordByProjectID(newProjectID);
-                        $$("qrmNavigatorID").getSelectionModel().select(record);
-                        QRM.app.getMainTabsController().getProject(newProjectID);
-                    }
-                } else {
-                    QRM.app.getRelMatrixController().getRisksAndPlace();
-                    QRM.app.getRelMatrixController().matrixDirty = false;
-                }
+        if (relMatChanges.length < 1) return;
+        
+        riskService.updateRisksRelMatrix(QRMDataService.url, relMatChanges)
+            .then(function (response) {
+                relMatrixCtrl.risks.forEach(function (item) {
+                    item.dirty = false;
+                });
+            });
 
-                savingbox.hide();
-                return;
-            }
-        });
     }
     this.getState = function () {
         return Number(this.status.val);
@@ -1299,7 +1279,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
         relMatrixCtrl.owner = "";
         relMatrixCtrl.manager = "";
-               //Clear present position so the layout can take care of non overlapping
+        //Clear present position so the layout can take care of non overlapping
         relMatrixCtrl.risks.forEach(function (risk) {
             risk.x = 0;
             risk.y = 0;
@@ -1405,7 +1385,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         relMatrixCtrl.manager = "";
         relMatrixCtrl.owner = "";
         relMatrixCtrl.selectedRisk = "";
-               //Clear present position so the layout can take care of non overlapping
+        //Clear present position so the layout can take care of non overlapping
         relMatrixCtrl.risks.forEach(function (risk) {
             risk.x = 0;
             risk.y = 0;
@@ -1425,6 +1405,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
     this.pan = function (dx, dy) {
 
+        debugger;
         this.transMatrix[4] += dx;
         this.transMatrix[5] += dy;
 
@@ -1495,6 +1476,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         d3.select("#relMatrixSVGDiv svg").remove();
 
         var topSVG = d3.select("#relMatrixSVGDiv").append("svg")
+            .attr("class","relMatrixGroupHolderTop")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
@@ -1547,8 +1529,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .attr("transform", "translate(" + [width / 2, height + 20] + ")")
             .text("Impact");
 
-        var title = QRMDataService.project.projectTitle;
-
+        
 
         switch (Number(relMatrixCtrl.status.val)) {
         case 0:
@@ -1560,7 +1541,6 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         case 2:
             state = "Treated State";
             break;
-
         }
 
         topSVG.append("text")
@@ -1568,7 +1548,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .style("font-size", "20px")
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [width / 2, 20] + ")")
-            .text(title);
+            .text(QRMDataService.project.title);
 
         topSVG.append("text")
             .attr("text-anchor", "middle")
@@ -1584,6 +1564,22 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [-10, height / 2] + ") rotate(-90)")
             .text("Probability");
+        
+        topSVG.append("g")
+         .html(          
+                    '<circle cx="50" cy="50" r="42" fill="white" opacity="0.75" />'+
+                    '<path class="compass-button" onclick="relMatrix.pan( 0, 50)" d="M50 10 l12   20 a40, 70 0 0,0 -24,  0z" />'+
+                    '<path class="compass-button" onclick="relMatrix.pan( 50, 0)" d="M10 50 l20  -12 a70, 40 0 0,0   0, 24z" />'+
+                    '<path class="compass-button" onclick="relMatrix.pan( 0,-50)" d="M50 90 l12  -20 a40, 70 0 0,1 -24,  0z" />'+
+                    '<path class="compass-button" onclick="relMatrix.pan(-50, 0)" d="M90 50 l-20 -12 a70, 40 0 0,1   0, 24z" />'+
+                    '<circle class="compass" cx="50" cy="50" r="20" onclick="relMatrix.resetPZ()" />'+
+                    '<circle class="compass-button" cx="50" cy="41" r="8" onclick="relMatrix.zoom(0.8)" />'+
+                    '<circle class="compass-button" cx="50" cy="59" r="8" onclick="relMatrix.zoom(1.25)" />'+
+                    '<rect class="plus-minus" x="46" y="39.5" width="8" height="3" />'+
+                    '<rect class="plus-minus" x="46" y="57.5" width="8" height="3" />'+
+                    '<rect class="plus-minus" x="48.5" y="55" width="3" height="8" />'
+                )
+        .attr("transform", "translate(0 0)")
 
         //Configure the drag behaviour
 
@@ -1755,7 +1751,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
                 relMatrixCtrl.showDesc = true;
                 relMatrixCtrl.riskProjectCode = d.riskProjectCode;
                 relMatrixCtrl.title = d.title;
-                relMatrixCtrl.description = d.description.substring(0, 500);
+                relMatrixCtrl.description = d.description.substring(0, 300);
                 d3.select(this).style("fill", "aliceblue");
                 $scope.$apply();
             })
