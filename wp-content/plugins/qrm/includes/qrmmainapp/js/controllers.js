@@ -1270,6 +1270,8 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
         this.risks.forEach(function (risk) {
             if (risk.owner.name == relMatrixCtrl.owner.name) {
+                risk.x = 0;
+                risk.y = 0;
                 filteredRisks.push(risk);
             }
         });
@@ -1284,6 +1286,8 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
         this.risks.forEach(function (risk) {
             if (risk.manager.name == relMatrixCtrl.manager.name) {
+                risk.x = 0;
+                risk.y = 0;
                 filteredRisks.push(risk);
             }
         });
