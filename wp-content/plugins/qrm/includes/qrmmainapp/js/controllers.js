@@ -1096,83 +1096,32 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
     var relMatrixCtrl = this;
 
-    this.status = {val:0};
+    this.project = QRMDataService.project;
+    this.status = {
+        val: 0
+    };
 
     this.showDesc = false;
     this.riskProjectCode = "";
     this.title = "";
     this.description = "";
 
+    this.owner = "";
+    this.manager = "";
+    this.selectedRisk = "";
+
     this.currentItems = new Array();
     this.matrixDirty = false;
     this.editorChanges = false;
     this.transMatrix = [1, 0, 0, 1, 0, 0];
 
-    this.init = function () {
-        this.control({
-            'qrm-relMatrixItem': {
-                move: this.itemMoved
-            }
-        });
-        this.control({
-            '#qrm-RelMatCancelChangesBtn': {
-                click: this.cancelChanges
-            }
-        });
-        this.control({
-            '#qrm-RelMatSaveChangesBtn': {
-                click: this.saveChangesWrapper
-            }
-        });
-        this.control({
-            '#qrm-RelMatStateID': {
-                change: this.stateSelectorChanged
-            }
-        });
-        this.control({
-            '#comboRiskOwnerMat': {
-                select: this.ownerSelect
-            }
-        });
-        this.control({
-            '#comboRiskManagerMat': {
-                select: this.managerSelect
-            }
-        });
-        this.control({
-            '#comboFindRiskMat': {
-                select: this.riskSelect
-            }
-        });
-
-        this.control({
-            'qrmXType-riskEditor': {
-                riskChanges: this.riskChanges
-            }
-        });
-
-        this.control({
-            'qrmXType-riskEditor': {
-                close: this.riskEditorClose
-            }
-        });
-
-    }
-    this.riskEditorClose = function () {
-        if (this.listenForEditorChanges && this.editorChanges) {
-            this.getRisksAndPlace();
-        }
-        this.listenForEditorChanges = false;
-        this.editorChanges = false;
-    }
-    this.riskChanges = function () {
-        this.editorChanges = true;
-    }
     this.stateSelectorChanged = function () {
 
-        alert("Staus = "+relMatrixCtrl.status.val);
-        debugger;
-        
+        //Clear present position so the layout can take care of non overlapping
+        relMatrixCtrl.risks.forEach(function (risk) {
+            risk.x = 0;
+            risk.y = 0;
+        });
 
         var maxProb = QRMDataService.project.matrix.maxProb;
 
@@ -1182,8 +1131,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .attr("transform", function (d, i) {
                 var prob = null;
                 var impact = null;
-            
-            debugger;
+
                 switch (Number(relMatrixCtrl.status.val)) {
                 case 0:
                     if (d.treated) {
@@ -1215,12 +1163,19 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
                 }
 
-                debugger;
                 var x = (impact - 1) * QRMDataService.relMatrixGridSizeX;
                 var y = (maxProb + 1 - prob) * QRMDataService.relMatrixGridSizeY;
 
                 d.x = x;
                 d.y = y;
+                //Prevent initial layout from overlapping items.
+                relMatrixCtrl.risks.forEach(function (risk) {
+                    if (Math.abs(risk.x - d.x) < 10 && Math.abs(risk.y - d.y) < 10 && risk.id != d.id) {
+                        d.x += 5;
+                        d.y += 5;
+                    }
+                });
+
                 return "translate(" + [d.x, d.y] + ")";
             });
 
@@ -1267,8 +1222,6 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
 
         this.risks.forEach(function (item) {
             if (item.dirty) {
-                debugger;
-                console.log(item.untreatedClean + " " + item.inherentImpact + " " + item.newUntreatedImpact);
                 relMatChanges.push({
                     riskID: item.riskID,
                     newTreatedImpact: (item.treatedClean) ? item.treatedImpact : item.newTreatedImpact,
@@ -1308,17 +1261,15 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         });
     }
     this.getState = function () {
-        return $$('qrm-RelMatStateID').getValue().tolstate;
+        return Number(this.status.val);
     }
     this.ownerSelect = function () {
-        var ownerID = $$('comboRiskOwnerMat').value;
-        $$('comboRiskManagerMat').clearValue();
-        $$('comboFindRiskMat').clearValue();
+        relMatrixCtrl.manager = "";
+        relMatrixCtrl.selectedRisk = "";
         var filteredRisks = new Array();
 
-
         this.risks.forEach(function (risk) {
-            if (risk.ownerID == ownerID) {
+            if (risk.owner.name == relMatrixCtrl.owner.name) {
                 filteredRisks.push(risk);
             }
         });
@@ -1326,14 +1277,13 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         this.svgMatrix(filteredRisks);
     }
     this.managerSelect = function () {
-        var managerID = $$('comboRiskManagerMat').value;
-        $$('comboRiskOwnerMat').clearValue();
-        $$('comboFindRiskMat').clearValue();
+        relMatrixCtrl.owner = "";
+        relMatrixCtrl.selectedRisk = "";
 
         var filteredRisks = new Array();
 
         this.risks.forEach(function (risk) {
-            if (risk.manager1ID == managerID) {
+            if (risk.manager.name == relMatrixCtrl.manager.name) {
                 filteredRisks.push(risk);
             }
         });
@@ -1343,14 +1293,17 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
     }
     this.riskSelect = function () {
 
-        $$('comboRiskOwnerMat').clearValue();
-        $$('comboRiskManagerMat').clearValue();
+        relMatrixCtrl.owner = "";
+        relMatrixCtrl.manager = "";
+               //Clear present position so the layout can take care of non overlapping
+        relMatrixCtrl.risks.forEach(function (risk) {
+            risk.x = 0;
+            risk.y = 0;
+        });
+        this.svgMatrix(relMatrixCtrl.risks);
 
-        this.svgMatrix(this.risks);
-        var riskCode = "#" + $$('comboFindRiskMat').getValue();
-
-
-        var g = d3.select(riskCode);
+        var riskID = "#riskID" + relMatrixCtrl.selectedRisk.id;
+        var g = d3.select(riskID);
         g.node().parentNode.appendChild(g.node());
 
 
@@ -1385,8 +1338,9 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             })
             .attr("r", "25");
 
-        $$('qrm-RelMatSelectorDetail').update("");
-        $$('comboFindRiskMat').clearValue();
+
+        relMatrixCtrl.showDesc = false;
+        relMatrixCtrl.selectedRisk = "";
 
     }
     this.okToSwitchProject = function (newProjectID) {
@@ -1444,9 +1398,15 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         this.svgMatrix(this.risks);
     }
     this.clearFilters = function () {
-        $$('comboRiskOwnerMat').clearValue();
-        $$('comboRiskManagerMat').clearValue();
-        $$('comboFindRiskMat').clearValue();
+        relMatrixCtrl.manager = "";
+        relMatrixCtrl.owner = "";
+        relMatrixCtrl.selectedRisk = "";
+               //Clear present position so the layout can take care of non overlapping
+        relMatrixCtrl.risks.forEach(function (risk) {
+            risk.x = 0;
+            risk.y = 0;
+        });
+        this.svgMatrix(this.risks);
     }
     this.switchTab = function () {
         this.clearFilters();
@@ -1457,43 +1417,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         this.getRisksAndPlace();
         return;
     }
-    this.getRisksAndPlace = function () {
 
-        var loadingbox = Ext.MessageBox.wait('Please wait while data is retrieved', 'Retrieving Data', {
-            interval: 100,
-            animate: true,
-            text: 'Loading..'
-        });
-
-        Ext.Ajax.request({
-            url: "./getRiskLiteRPC",
-            disableCaching: true,
-            params: {
-                "ULTRALITE": true,
-                "DESCENDANTS": $$('cbDescendants').value,
-                "PROJECTID": QRM.global.projectID,
-                "NOCACHE": Math.random()
-            },
-            success: function (response) {
-                QRM.app.getRelMatrixController().matrixDirty = false;
-                var risks = Ext.JSON.decode(response.responseText);
-                risks.forEach(function (risk) {
-                    risk.untreatedClean = true;
-                    risk.treatedClean = true;
-                    risk.dirty = false;
-                });
-
-                QRM.app.getRelMatrixController().risks = risks;
-                QRM.app.getRelMatrixController().svgMatrix(risks);
-
-                loadingbox.hide();
-
-                relMatRiskStore.loadData(QRM.app.getRelMatrixController().risks);
-                $$('comboFindRiskMat').bindStore(relMatRiskStore);
-
-            }
-        });
-    }
 
     this.pan = function (dx, dy) {
 
@@ -1513,358 +1437,378 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         var newMatrix = "matrix(" + this.transMatrix.join(' ') + ")";
         d3.select("g.relMatrixGroupHolder").attr("transform", newMatrix);
     }
-
     this.resetPZ = function () {
-            this.transMatrix[0] = 1;
-            this.transMatrix[1] = 0;
-            this.transMatrix[2] = 0;
-            this.transMatrix[3] = 1;
-            this.transMatrix[4] = 45;
-            this.transMatrix[5] = 45;
+        this.transMatrix[0] = 1;
+        this.transMatrix[1] = 0;
+        this.transMatrix[2] = 0;
+        this.transMatrix[3] = 1;
+        this.transMatrix[4] = 45;
+        this.transMatrix[5] = 45;
 
-            var newMatrix = "matrix(" + this.transMatrix.join(' ') + ")";
-            d3.select("g.relMatrixGroupHolder").attr("transform", newMatrix);
+        var newMatrix = "matrix(" + this.transMatrix.join(' ') + ")";
+        d3.select("g.relMatrixGroupHolder").attr("transform", newMatrix);
 
-        },
-        this.svgMatrix = function (risks) {
+    }
 
+    this.svgMatrix = function (risks) {
 
+        var tolString = QRMDataService.project.matrix.tolString;
+        var maxImpact = QRMDataService.project.matrix.maxImpact;
+        var maxProb = QRMDataService.project.matrix.maxProb;
+        var divWidth = $('#relMatrixSVGDiv').width();
+        var divHeight = $('#relMatrixSVGDiv').height();
+        var margin = {
+            top: 45,
+            right: 45,
+            bottom: 45,
+            left: 45
+        };
+        var width = divWidth - margin.left - margin.right;
+        var height = divHeight - margin.top - margin.bottom;
 
-            var tolString = QRMDataService.project.matrix.tolString;
-            var maxImpact = QRMDataService.project.matrix.maxImpact;
-            var maxProb = QRMDataService.project.matrix.maxProb;
-            var divWidth = $('#relMatrixSVGDiv').width();
-            var divHeight = $('#relMatrixSVGDiv').height();
-            var margin = {
-                top: 45,
-                right: 45,
-                bottom: 45,
-                left: 45
-            };
-            var width = divWidth - margin.left - margin.right;
-            var height = divHeight - margin.top - margin.bottom;
+        var data = new Array();
 
-            var data = new Array();
-
-            for (var prob = maxProb; prob > 0; prob--) {
-                for (var impact = 1; impact <= maxImpact; impact++) {
-                    var index = (prob - 1) * maxImpact + impact - 1;
-                    var tol = tolString.substring(index, index + 1);
-                    data.push({
-                        "impact": impact,
-                        "prob": prob,
-                        "tol": tol
-                    });
-                }
+        for (var prob = maxProb; prob > 0; prob--) {
+            for (var impact = 1; impact <= maxImpact; impact++) {
+                var index = (prob - 1) * maxImpact + impact - 1;
+                var tol = tolString.substring(index, index + 1);
+                data.push({
+                    "impact": impact,
+                    "prob": prob,
+                    "tol": tol
+                });
             }
+        }
 
-            var gridSizeX = Math.floor(width / maxImpact);
-            var gridSizeY = Math.floor(height / maxProb);
+        var gridSizeX = Math.floor(width / maxImpact);
+        var gridSizeY = Math.floor(height / maxProb);
 
-            QRMDataService.relMatrixGridSizeX = gridSizeX;
-            QRMDataService.relMatrixGridSizeY = gridSizeY;
+        QRMDataService.relMatrixGridSizeX = gridSizeX;
+        QRMDataService.relMatrixGridSizeY = gridSizeY;
 
-            //Create the matrix
+        //Create the matrix
 
-            d3.select("#relMatrixSVGDiv svg").remove();
+        d3.select("#relMatrixSVGDiv svg").remove();
 
-            var topSVG = d3.select("#relMatrixSVGDiv").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+        var topSVG = d3.select("#relMatrixSVGDiv").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
-            //Need to embed the style into the SVG element so it can be interpreted by the PNGTranscoder on the server
-            topSVG.append("defs")
-                .append("style")
-                .attr("type", "text/css")
-                .text(
-                    "rect.tolNoHover5 {fill: #ff0000;stroke: #E6E6E6;stroke-width: 2px; }" +
-                    "rect.tolNoHover4 {fill: #ffa500;stroke: #E6E6E6;stroke-width: 2px; }" +
-                    "rect.tolNoHover3 {fill: #ffff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                    "rect.tolNoHover2 {fill: #00ff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                    "rect.tolNoHover1 {fill: #00ffff; stroke: #E6E6E6; stroke-width: 2px; }" +
-                    "g.state circle {stroke  : gray; cursor  : pointer;}" +
-                    "g.state circle.inner { fill : white;}" +
-                    "g.state circle.outer { display : none; stroke-dasharray: 4px;  stroke-opacity  : 0.5;}" +
-                    "g.state text.untreated { fill:red; font: 12px sans-serif; font-weight : bold; pointer-events : none; }" +
-                    "g.state text.treated { fill:blue; font: 12px sans-serif; font-weight : bold; pointer-events : none; }");
+        //Need to embed the style into the SVG element so it can be interpreted by the PNGTranscoder on the server
+        topSVG.append("defs")
+            .append("style")
+            .attr("type", "text/css")
+            .text(
+                "rect.tolNoHover5 {fill: #ff0000;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tolNoHover4 {fill: #ffa500;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tolNoHover3 {fill: #ffff00;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tolNoHover2 {fill: #00ff00;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tolNoHover1 {fill: #00ffff; stroke: #E6E6E6; stroke-width: 2px; }" +
+                "g.state circle {stroke  : gray; cursor  : pointer;}" +
+                "g.state circle.inner { fill : white;}" +
+                "g.state circle.outer { display : none; stroke-dasharray: 4px;  stroke-opacity  : 0.5;}" +
+                "g.state text.untreated { fill:red; font: 12px sans-serif; font-weight : bold; pointer-events : none; }" +
+                "g.state text.treated { fill:blue; font: 12px sans-serif; font-weight : bold; pointer-events : none; }");
 
-            var svg = topSVG
-                .append("g")
-                .attr("class", "relMatrixGroupHolder")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ") ");
+        var svg = topSVG
+            .append("g")
+            .attr("class", "relMatrixGroupHolder")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ") ");
 
-            var heatMap = svg.selectAll()
-                .data(data)
-                .enter().append("g")
-                .attr("class", "tolCellNoHover");
+        var heatMap = svg.selectAll()
+            .data(data)
+            .enter().append("g")
+            .attr("class", "tolCellNoHover");
 
-            heatMap.append("rect")
-                .attr("x", function (d) {
-                    return (d.impact - 1) * gridSizeX;
-                })
-                .attr("y", function (d) {
-                    return (maxProb - d.prob) * gridSizeY;
-                })
-                .attr("rx", 2)
-                .attr("ry", 2)
-                .attr("class", function (d) {
-                    return "tolNoHover" + d.tol;
-                })
-                .attr("width", gridSizeX)
-                .attr("height", gridSizeY);
-
-
-            svg.append("text")
-                .attr("text-anchor", "middle")
-                .style("font-size", "20px")
-                .style("font-weight", "normal")
-                .attr("transform", "translate(" + [width / 2, height + 20] + ")")
-                .text("Impact");
-
-            var title = QRMDataService.project.projectTitle;
+        heatMap.append("rect")
+            .attr("x", function (d) {
+                return (d.impact - 1) * gridSizeX;
+            })
+            .attr("y", function (d) {
+                return (maxProb - d.prob) * gridSizeY;
+            })
+            .attr("rx", 2)
+            .attr("ry", 2)
+            .attr("class", function (d) {
+                return "tolNoHover" + d.tol;
+            })
+            .attr("width", gridSizeX)
+            .attr("height", gridSizeY);
 
 
-            switch (Number(relMatrixCtrl.status.val)) {
-            case 0:
-                state = "Current State";
-                break;
-            case 1:
-                state = "Un Treated State";
-                break;
-            case 2:
-                state = "Treated State";
-                break;
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .style("font-size", "20px")
+            .style("font-weight", "normal")
+            .attr("transform", "translate(" + [width / 2, height + 20] + ")")
+            .text("Impact");
 
-            }
-
-            topSVG.append("text")
-                .attr("text-anchor", "middle")
-                .style("font-size", "20px")
-                .style("font-weight", "normal")
-                .attr("transform", "translate(" + [width / 2, 20] + ")")
-                .text(title);
-
-            topSVG.append("text")
-                .attr("text-anchor", "middle")
-                .attr("id", "relMatrixSubHeading")
-                .style("font-size", "15px")
-                .style("font-weight", "normal")
-                .attr("transform", "translate(" + [width / 2, 38] + ")")
-                .text(state);
-
-            svg.append("text")
-                .attr("text-anchor", "middle")
-                .style("font-size", "20px")
-                .style("font-weight", "normal")
-                .attr("transform", "translate(" + [-10, height / 2] + ") rotate(-90)")
-                .text("Probability");
-
-            //Configure the drag behaviour
-
-            var drag = d3.behavior.drag()
-                .on("dragstart", function () {
-                    var e = d3.event.sourceEvent;
-                    if (e.ctrlKey) return;
-                    d3.event.sourceEvent.stopPropagation();
-                })
-                .on("drag", function () {
-                    var e = d3.event.sourceEvent;
-                    if (e.ctrlKey) return;
-                    d3.select(this).attr("transform", function (d, i) {
-                        if (d3.event.ctrlKey) return;
-                        g = this.parentNode,
-                            isSelected = d3.select(g).classed("selected");
+        var title = QRMDataService.project.projectTitle;
 
 
-                        d.x += d3.event.dx;
-                        d.y += d3.event.dy;
-                        if (d.x < 0) {
-                            d.x = 0;
-                        }
-                        if (d.y < 0) {
-                            d.y = 0;
-                        }
+        switch (Number(relMatrixCtrl.status.val)) {
+        case 0:
+            state = "Current State";
+            break;
+        case 1:
+            state = "Un Treated State";
+            break;
+        case 2:
+            state = "Treated State";
+            break;
 
-                        if (d.x > width) {
-                            d.x = width;
-                        }
+        }
 
-                        if (d.y > height) {
-                            d.y = height;
-                        }
-                        return "translate(" + [d.x, d.y] + ")";
-                    });
-                })
-                .on("dragend", function (d) {
-                    var e = d3.event.sourceEvent;
-                    if (e.ctrlKey) return;
-                    d3.event.sourceEvent.stopPropagation();
-                    relMatrixCtrl.matrixDirty = true;
-                    d.dirty = true;
-                    var impact = 1 + (d.x / QRMDataService.relMatrixGridSizeX);
-                    var prob = (QRMDataService.project.matrix.maxProb + 1) - (d.y / QRMDataService.relMatrixGridSizeY);
+        topSVG.append("text")
+            .attr("text-anchor", "middle")
+            .style("font-size", "20px")
+            .style("font-weight", "normal")
+            .attr("transform", "translate(" + [width / 2, 20] + ")")
+            .text(title);
 
-                    switch (Number(relMatrixCtrl.status.val)) {
-                    case 0:
-                        if (d.treated) {
-                            d.treatedClean = false;
-                            d.newTreatedImpact = impact;
-                            d.newTreatedProb = prob;
-                        } else {
-                            d.untreatedClean = false;
-                            d.newUntreatedImpact = impact;
-                            d.newUntreatedProb = prob;
-                        }
-                        break;
-                    case 1:
-                        d.untreatedClean = false;
-                        d.newUntreatedImpact = impact;
-                        d.newUntreatedProb = prob;
-                        break;
-                    case 2:
+        topSVG.append("text")
+            .attr("text-anchor", "middle")
+            .attr("id", "relMatrixSubHeading")
+            .style("font-size", "15px")
+            .style("font-weight", "normal")
+            .attr("transform", "translate(" + [width / 2, 38] + ")")
+            .text(state);
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .style("font-size", "20px")
+            .style("font-weight", "normal")
+            .attr("transform", "translate(" + [-10, height / 2] + ") rotate(-90)")
+            .text("Probability");
+
+        //Configure the drag behaviour
+
+        var drag = d3.behavior.drag()
+            .on("dragstart", function () {
+                var e = d3.event.sourceEvent;
+                if (e.ctrlKey) return;
+                d3.event.sourceEvent.stopPropagation();
+            })
+            .on("drag", function () {
+                var e = d3.event.sourceEvent;
+                if (e.ctrlKey) return;
+                d3.select(this).attr("transform", function (d, i) {
+                    if (d3.event.ctrlKey) return;
+                    g = this.parentNode,
+                        isSelected = d3.select(g).classed("selected");
+
+
+                    d.x += d3.event.dx;
+                    d.y += d3.event.dy;
+                    if (d.x < 0) {
+                        d.x = 0;
+                    }
+                    if (d.y < 0) {
+                        d.y = 0;
+                    }
+
+                    if (d.x > width) {
+                        d.x = width;
+                    }
+
+                    if (d.y > height) {
+                        d.y = height;
+                    }
+                    return "translate(" + [d.x, d.y] + ")";
+                });
+            })
+            .on("dragend", function (d) {
+                var e = d3.event.sourceEvent;
+                if (e.ctrlKey) return;
+                d3.event.sourceEvent.stopPropagation();
+                relMatrixCtrl.matrixDirty = true;
+                d.dirty = true;
+                var impact = 1 + (d.x / QRMDataService.relMatrixGridSizeX);
+                var prob = (QRMDataService.project.matrix.maxProb + 1) - (d.y / QRMDataService.relMatrixGridSizeY);
+
+                switch (Number(relMatrixCtrl.status.val)) {
+                case 0:
+                    if (d.treated) {
                         d.treatedClean = false;
                         d.newTreatedImpact = impact;
                         d.newTreatedProb = prob;
+                    } else {
+                        d.untreatedClean = false;
+                        d.newInherentImpact = impact;
+                        d.newInherentProb = prob;
                     }
+                    break;
+                case 1:
+                    d.untreatedClean = false;
+                    d.newInherentImpact = impact;
+                    d.newInherentProb = prob;
+                    break;
+                case 2:
+                    d.treatedClean = false;
+                    d.newTreatedImpact = impact;
+                    d.newTreatedProb = prob;
+                }
 
-                    d3.event.sourceEvent.stopPropagation();
-                });
+                d3.event.sourceEvent.stopPropagation();
+            });
 
 
-            //Create the items on the matrix
+        //Create the items on the matrix
 
-            var radius = 25;
+        var radius = 25;
 
-            var holder = svg.append("g")
-                .attr("class", "risk");
+        var holder = svg.append("g")
+            .attr("class", "risk");
 
-            var gRisks = holder.selectAll().data(risks);
-            var gRisk = gRisks.enter().append("g")
-                .attr("id", function (d) {
-                    return d.riskProjectCode;
-                })
-                .attr({
-                    "transform": function (d) {
-                        var prob = null;
-                        var impact = null;
-                        switch (Number(relMatrixCtrl.status.val)) {
-                        case 0:
-                            prob = (d.treated) ? d.treatedProb : d.inherentProb;
-                            impact = (d.treated) ? d.treatedImpact : d.inherentImpact;
-                            break;
-                        case 1:
+        var gRisks = holder.selectAll().data(risks);
+        var gRisk = gRisks.enter().append("g")
+            .attr("id", function (d) {
+                return "riskID" + d.id;
+            })
+            .attr({
+                "transform": function (d) {
+                    var prob = null;
+                    var impact = null;
+                    switch (Number(relMatrixCtrl.status.val)) {
+                    case 0:
+                        if (d.treated) {
+                            prob = (d.treatedClean) ? d.treatedProb : d.newTreatedProb;
+                            impact = (d.treatedClean) ? d.treatedImpact : d.newTreatedImpact;
+                        } else {
+                            prob = (d.untreatedClean) ? d.inherentProb : d.newInherentProb;
+                            impact = (d.untreatedClean) ? d.inherentImpact : d.newInherentImpact;
+                        }
+                        break;
+                    case 1:
+                        debugger;
+                        if (d.untreatedClean) {
                             prob = d.inherentProb;
                             impact = d.inherentImpact;
-                            break;
-                        case 2:
+                        } else {
+                            prob = d.newInherentProb;
+                            impact = d.newInherentImpact;
+                        }
+                        break;
+                    case 2:
+                        if (d.treatedClean) {
                             prob = d.treatedProb;
                             impact = d.treatedImpact;
-                            break;
-
+                        } else {
+                            prob = d.newTreatedProb;
+                            impact = d.newTreatedImpact;
                         }
-
-                        var x = (impact - 1) * QRMDataService.relMatrixGridSizeX;
-                        var y = (maxProb + 1 - prob) * QRMDataService.relMatrixGridSizeY;
-
-                        d.x = x;
-                        d.y = y;
-                        //Prevent initial layout from overlapping items.
-                        relMatrixCtrl.risks.forEach(function (risk) {
-                            if (Math.abs(risk.x - d.x) < 10 && Math.abs(risk.y - d.y) < 10 && risk.riskProjectCode != d.riskProjectCode) {
-                                d.x += 5;
-                                d.y += 5;
-                            }
-                        });
-                        return "translate(" + [d.x, d.y] + ")";
-                    },
-                    'class': 'state'
-                });
-
-            gRisk.call(drag);
-
-            gRisk.append("circle").attr({
-                r: radius + 4,
-                class: 'outer'
-            });
-
-            gRisk.append("circle").attr({
-                    r: radius,
-                    class: 'inner'
-                })
-                .on("click", function (d, i) {
-                    var e = d3.event,
-                        g = this.parentNode,
-                        isSelected = d3.select(g).classed("selected");
-
-                    if (!e.ctrlKey) {
-                        d3.selectAll('g.selected').classed("selected", false);
+                        break;
                     }
 
-                    d3.select(g).classed("selected", !isSelected);
-                    g.parentNode.appendChild(g);
-                })
-                .on("mouseover", function (d) {
-                    var g = this.parentNode;
-                    var isSelected = d3.select(g).classed("selected");
-                    d3.selectAll('g.selected').classed("selected", false);
-                    d3.select(g).classed("selected", !isSelected);
-                    // reappend dragged element as last so that its stays on top 
-                    g.parentNode.appendChild(g);
+                    var x = (impact - 1) * QRMDataService.relMatrixGridSizeX;
+                    var y = (maxProb + 1 - prob) * QRMDataService.relMatrixGridSizeY;
 
-                    relMatrixCtrl.showDesc = true;
-                    relMatrixCtrl.riskProjectCode = d.riskProjectCode;
-                    relMatrixCtrl.title = d.title;
-                    relMatrixCtrl.description = d.description.substring(0, 500);
-                    d3.select(this).style("fill", "aliceblue");
-                    $scope.$apply();
-                })
-                .on("mouseout", function (d) {
-                    d3.select(this).style("fill", "white");
-                    d3.selectAll('g.selected').classed("selected", false);
-                    relMatrixCtrl.showDesc = false;
-                    $scope.$apply();
-                })
-                .on("click", function (d) {
-                    var e = d3.event;
-                    if (!e.ctrlKey) return;
-                    if (d3.event.defaultPrevented) return;
-                    if (relMatrixCtrl.matrixDirty) {
-                        msg("Open Risk", "Please save or cancel existing changes before opening the risk");
-                    } else {
-                        relMatrixCtrl.listenForEditorChanges = true;
-                        //swtich to the editor fo rthe risk
-                        //getRiskCodeAndDisplayInt(d.riskProjectCode);
-                    }
-                });
-
-            gRisk.append("text").attr({
-                    'text-anchor': 'middle',
-                    y: 4
-                })
-                .attr("class", function (d) {
-                    if (d.treated) {
-                        return "treated";
-                    } else return "untreated";
-                })
-                .text(function (d) {
-                    //  return d.riskProjectCode;
-                    return "RK" + d.id
-                });
-
-            gRisk.append("title").text(function (d) {
-                return d.riskProjectCode;
+                    d.x = x;
+                    d.y = y;
+                    //Prevent initial layout from overlapping items.
+                    relMatrixCtrl.risks.forEach(function (risk) {
+                        if (Math.abs(risk.x - d.x) < 10 && Math.abs(risk.y - d.y) < 10 && risk.id != d.id) {
+                            d.x += 5;
+                            d.y += 5;
+                        }
+                    });
+                    return "translate(" + [d.x, d.y] + ")";
+                },
+                'class': 'state'
             });
-        }
 
+        gRisk.call(drag);
 
-    riskService.getRisks(QRMDataService.url)
-        .then(function (response) {
-            var risks = response.data.data;
-            relMatrixCtrl.risks = risks;
-            relMatrixCtrl.svgMatrix(risks);
-
+        gRisk.append("circle").attr({
+            r: radius + 4,
+            class: 'outer'
         });
-    
+
+        gRisk.append("circle").attr({
+                r: radius,
+                class: 'inner'
+            })
+            .on("click", function (d, i) {
+                var e = d3.event,
+                    g = this.parentNode,
+                    isSelected = d3.select(g).classed("selected");
+
+                if (!e.ctrlKey) {
+                    d3.selectAll('g.selected').classed("selected", false);
+                }
+
+                d3.select(g).classed("selected", !isSelected);
+                g.parentNode.appendChild(g);
+            })
+            .on("mouseover", function (d) {
+                var g = this.parentNode;
+                var isSelected = d3.select(g).classed("selected");
+                d3.selectAll('g.selected').classed("selected", false);
+                d3.select(g).classed("selected", !isSelected);
+                // reappend dragged element as last so that its stays on top 
+                g.parentNode.appendChild(g);
+
+                relMatrixCtrl.showDesc = true;
+                relMatrixCtrl.riskProjectCode = d.riskProjectCode;
+                relMatrixCtrl.title = d.title;
+                relMatrixCtrl.description = d.description.substring(0, 500);
+                d3.select(this).style("fill", "aliceblue");
+                $scope.$apply();
+            })
+            .on("mouseout", function (d) {
+                d3.select(this).style("fill", "white");
+                d3.selectAll('g.selected').classed("selected", false);
+                relMatrixCtrl.showDesc = false;
+                $scope.$apply();
+            })
+            .on("click", function (d) {
+                var e = d3.event;
+                if (!e.ctrlKey) return;
+                if (d3.event.defaultPrevented) return;
+                if (relMatrixCtrl.matrixDirty) {
+                    msg("Open Risk", "Please save or cancel existing changes before opening the risk");
+                } else {
+                    relMatrixCtrl.listenForEditorChanges = true;
+                    //swtich to the editor fo rthe risk
+                    //getRiskCodeAndDisplayInt(d.riskProjectCode);
+                }
+            });
+
+        gRisk.append("text").attr({
+                'text-anchor': 'middle',
+                y: 4
+            })
+            .attr("class", function (d) {
+                if (d.treated) {
+                    return "treated";
+                } else return "untreated";
+            })
+            .text(function (d) {
+                //  return d.riskProjectCode;
+                return "RK" + d.id
+            });
+
+        gRisk.append("title").text(function (d) {
+            return d.riskProjectCode;
+        });
+    }
+
+    this.getRisksAndPlace = function () {
+        riskService.getRisks(QRMDataService.url)
+            .then(function (response) {
+                var risks = response.data.data;
+                risks.forEach(function (risk) {
+                    risk.untreatedClean = true;
+                    risk.treatedClean = true;
+                    risk.dirty = false;
+                });
+                relMatrixCtrl.risks = risks;
+                relMatrixCtrl.svgMatrix(risks);
+
+            });
+    }
+
+    this.getRisksAndPlace();
 }
 
 

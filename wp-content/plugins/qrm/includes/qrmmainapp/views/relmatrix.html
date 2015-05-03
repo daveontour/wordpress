@@ -7,17 +7,17 @@
 
                     <label class="control-label">Locate Risk:</label>
                     <div>
-                        <select ng-model="ctl.risk.owner" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control" name="owner"></select>
+                        <select ng-model="relMatrix.selectedRisk" ng-change="relMatrix.riskSelect()" ng-options="'Risk '+risk.id+' - '+risk.title for risk in relMatrix.risks" class="form-control"></select>
 
                     </div>
                     <label class="control-label">Risk Owner:</label>
                     <div>
-                        <select ng-model="ctl.risk.owner" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control" name="owner"></select>
+                        <select ng-change="relMatrix.ownerSelect()" ng-model="relMatrix.owner" ng-options="person.name for person in relMatrix.project.riskOwners track by person.email" class="form-control" ></select>
 
                     </div>
                     <label class="control-label" style="clear:both">Risk Manager:</label>
                     <div>
-                        <select ng-model="ctl.risk.manager" ng-options="person.name for person in ctl.project.riskManagers track by person.email" class="form-control" name="manager"></select>
+                        <select ng-change="relMatrix.managerSelect()" ng-model="relMatrix.manager" ng-options="person.name for person in relMatrix.project.riskManagers track by person.email" class="form-control" ></select>
                     </div>
                 </div>
 
@@ -39,10 +39,13 @@
                     </div>
                 </div>
             </form>
+                            <div style="float:right">
+                    <button type="button" class="btn btn-w-m btn-primary"  ng-click="relMatrix.clearFilters()">Clear Filters</button>
+                </div>
             <div style="margin-top:15px" ng-show="relMatrix.showDesc">
-                <div style='valign:top'>
+                <div style='valign:top;'>
                     <br>
-                    <hr><strong> {{relMatrix.riskProjectCode}} -  {{relMatrix.title}} <br><br>Description:<br></strong> {{relMatrix.description}}
+                    <hr><strong> {{relMatrix.riskProjectCode}} -  {{relMatrix.title}} <br><br>Description:<br></strong> <small>{{relMatrix.description}}</small>
                     <hr>
                 </div>
             </div>
@@ -69,8 +72,11 @@
         <div class="row">
             <div class="col-lg-12" style="margin-top:5px">
                 <div style="float:right">
-                    <button type="button" class="btn btn-w-m btn-primary" ng-click="rank.saveChanges()">Save Changes</button>
+                    <button type="button" class="btn btn-w-m btn-primary" style="margin-left:15px" ng-click="rank.saveChanges()">Save Changes</button>
+                </div>                <div style="float:right">
+                    <button type="button" class="btn btn-w-m btn-warning" ng-click="relMatrix.cancelChanges()">Cancel Changes</button>
                 </div>
+
             </div>
         </div>
     </div>
