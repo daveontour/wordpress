@@ -17,18 +17,20 @@
 
     <!-- Main Inspinia CSS files -->
     <link href="css/animate.css" rel="stylesheet">
-     
+
     <link rel="stylesheet" type="text/css" href="css/plugins/dropzone/dropzone.css">
 
 
     <link rel="stylesheet" href="css/plugins/ui-grid/ui-grid-unstable.css">
- 
+
     <link rel="stylesheet" href="css/plugins/angular-notify/angular-notify.min.css">
-    <link rel="stylesheet" href="css/plugins/pace/pace.css"> 
-    <link rel="stylesheet" href="css/plugins/iCheck/custom.css">    
-    <link rel="stylesheet" href="css/style.css" >
+    <link rel="stylesheet" href="css/plugins/pace/pace.css">
+    <link rel="stylesheet" href="css/plugins/iCheck/custom.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/qrm_angular.css">
     <link rel="stylesheet" href="css/qrm_styles.css">
+
+
 
 
 </head>
@@ -77,10 +79,44 @@
     <script src="js/directives.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
-<!--    <script src="js/riskController.js"></script>-->
+    <!--    <script src="js/riskController.js"></script>-->
 
     <script src="js/plugins/d3/d3.min.js"></script>
     <script src="js/qrm-common.js"></script>
+
+    <script>
+        // Space in the glbal name space, so I can easily find thinngs
+        function QRM() {
+
+            this.matrixController = null;
+            this.rankController = null;
+            this.calenderController = null;
+
+            this.resizer = function () {
+             
+                try {
+                    if (qrm.matrixController != null) qrm.matrixController.resize();
+                } catch (e) {
+                    //
+                }
+                try {
+                    if (qrm.rankController != null) qrm.rankController.resize();
+                } catch (e) {
+                    //
+                }
+                try {
+                    if (qrm.calenderController != null) qrm.calenderController.resize();
+                } catch (e) {
+                    //
+                }
+            }
+
+            $(window).resize(this.resizer);
+
+        }
+
+        var qrm = new QRM();
+    </script>
 
 </body>
 

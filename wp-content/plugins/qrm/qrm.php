@@ -240,7 +240,8 @@ function getAllRisks(){
 	
 	global $post;
 	$args = array(
-			'post_type' => 'risk'
+			'post_type' => 'risk',
+            'posts_per_page' => -1
 	);
 	
 	$the_query = new WP_Query($args);
@@ -308,8 +309,8 @@ function saveRisk (){
 	 update_post_meta( $postID, "riskdata", json_encode($risk) );
 	 
 	 // Add any comments to the returned object
-	 $risk->comments = get_comments(array('ID' => $riskID));
-	 $risk->attachments = get_children(array("post_parent"=>$riskID, "post_type"=>"attachment"));
+	 $risk->comments = get_comments(array('post_id' => $postID));
+	 $risk->attachments = get_children(array("post_parent"=>$postID, "post_type"=>"attachment"));
 	 
 	echo json_encode($risk);
 	exit;

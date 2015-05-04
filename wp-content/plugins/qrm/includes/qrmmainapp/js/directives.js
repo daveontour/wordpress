@@ -178,7 +178,7 @@ function treeModel($compile, QRMDataService) {
 
             //tree template
             var template =
-                '<ul style="list-style-type:none">' +
+                '<ul style="list-style-type:none;padding-left:15px">' +
                 '<li data-ng-repeat="node in ' + treeModel + '">' +
                 '<label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px"> <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.name}} </label>' +
                 '<div data-tree-id="' + treeId + '" data-tree-model="node.children"</div>' +

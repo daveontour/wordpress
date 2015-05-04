@@ -22,12 +22,12 @@
 
                         <label class="col-xs-4 col-sm-3 control-label">Risk Owner</label>
                         <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.owner" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control" name="owner"></select>
+                            <select ng-model="ctl.risk.owner" ng-change="ctl.updateRisk()" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control"></select>
 
                         </div>
                         <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Risk Manager</label>
                         <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.manager" ng-options="person.name for person in ctl.project.riskManagers track by person.email" class="form-control" name="manager"></select>
+                            <select ng-model="ctl.risk.manager" ng-change="ctl.updateRisk()" ng-options="person.name for person in ctl.project.riskManagers track by person.email" class="form-control"></select>
                         </div>
                     </div>
 

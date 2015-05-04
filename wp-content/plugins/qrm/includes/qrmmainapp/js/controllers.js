@@ -971,13 +971,86 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
 function CalenderController($scope, QRMDataService, $state, riskService) {
 
 
+    qrm.calenderController = this;
     var cal = this;
     this.project = QRMDataService.project;
+
+    this.showDesc = false;
+    this.riskProjectCode = "";
+    this.title = "";
+    this.description = "";
+    this.status = {
+        val: 0
+    };
+
+    this.owner = "";
+    this.manager = "";
 
     var tasks = new Array();
     var taskNames = new Array();
 
+    this.ownerSelect = function () {
+        cal.manager = "";
+        cal.stateSelectorChanged();
 
+    }
+    this.managerSelect = function () {
+        cal.owner = "";
+        cal.stateSelectorChanged();
+    }
+    this.clearFilters = function () {
+        cal.manager = "";
+        cal.owner = "";
+        cal.status.val = 0;
+        cal.stateSelectorChanged();
+    }
+    this.stateSelectorChanged = function () {
+
+        var datePass = new Array();
+        var now = new Date();
+        cal.risks.forEach(function (risk) {
+            switch (Number(cal.status.val)) {
+            case 0:
+                datePass.push(risk);
+                break;
+            case 1:
+                if (moment(risk.end) < now) {
+                    datePass.push(risk);
+                }
+                break;
+            case 2:
+                if (moment(risk.start) > now) {
+                    datePass.push(risk);
+                }
+                break;
+            case 3:
+                if (moment(risk.start) < now && moment(risk.end) > now) {
+                    datePass.push(risk);
+                }
+                break;
+
+            }
+        });
+
+        var managerPass = new Array();
+        datePass.forEach(function (risk) {
+            if (risk.manager.name == cal.manager.name || cal.manager == "") {
+                managerPass.push(risk);
+            }
+        });
+
+        var ownerPass = new Array();
+        managerPass.forEach(function (risk) {
+            if (risk.owner.name == cal.owner.name || cal.owner == "") {
+                ownerPass.push(risk);
+            }
+        });
+        cal.layoutCalender(ownerPass);
+
+
+
+
+    }
     this.editRisk = function (id) {
         QRMDataService.riskID = id;
         $state.go('index.risk');
@@ -985,66 +1058,100 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
     this.getRisks = function () {
         riskService.getRisks(QRMDataService.url)
             .then(function (response) {
-
-                var index = 0;
-                response.data.data.forEach(function (risk) {
-                    tasks.push({
-                        "startDate": moment(risk.start),
-                        "endDate": moment(risk.end),
-                        "taskName": "RISKID" + index,
-                        "status": "RUNNING",
-                        "riskID": risk.id
-                    });
-                    index++;
-                });
-
-                var now = new Date();
-                tasks.sort(function (a, b) {
-                    return a.startDate - b.startDate;
-                });
-                tasks.forEach(function (task) {
-                    if (task.startDate > now) {
-                        task.className = 'future';
-                    } else if (task.endDate < now) {
-                        task.className = 'past';
-                    } else {
-                        task.className = 'now';
-                    }
-
-                    taskNames.push(task.taskName);
-                });
-                d3.select("#svgcalID").selectAll("svg").remove();
-
-                var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
-                gantt(tasks, "#svgcalID", $('#svgcalIDPanel').width(), $('#svgcalIDPanel').height());
-
-                //              $('rect').tooltip({'placement':'top'});
+                cal.risks = response.data.data;
+                cal.layoutCalender(cal.risks);
             });
+
+    }
+
+    this.layoutCalender = function (risks) {
+        tasks = new Array();
+        taskNames = new Array();
+        var index = 0;
+        risks.forEach(function (risk) {
+            tasks.push({
+                "startDate": moment(risk.start),
+                "endDate": moment(risk.end),
+                "taskName": "RISKID" + index,
+                "status": "RUNNING",
+                "riskID": risk.id,
+                "title":risk.title
+            });
+            index++;
+        });
+
+        var now = new Date();
+        tasks.sort(function (a, b) {
+            return a.startDate - b.startDate;
+        });
+        tasks.forEach(function (task) {
+            if (task.startDate > now) {
+                task.className = 'future';
+            } else if (task.endDate < now) {
+                task.className = 'past';
+            } else {
+                task.className = 'now';
+            }
+
+            taskNames.push(task.taskName);
+        });
+        d3.select("#svgcalID").selectAll("svg").remove();
+
+        var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
+        gantt(tasks, "#svgcalID", $('#svgcalID').width(), $('#svgcalID').height());
 
     }
 
     this.getRisks();
 
-    this.resizer = function () {
+    this.resize = function () {
         d3.select("#svgcalID").selectAll("svg").remove();
         var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
-        gantt(tasks, "#svgcalID", $('#svgcalIDPanel').width(), $('#svgcalIDPanel').height());
+        gantt(tasks, "#svgcalID", $('#svgcalID').width(), $('#svgcalID').height());
+    }
+    
+    this.toolTip = function(d){
+        if (!d) {
+            cal.showDesc = false;
+            cal.startDate = null;
+            cal.endDate = null;
+            cal.taskName = null;
+            cal.title = null;
+            
+        } else {
+            cal.showDesc = true;
+            cal.startDate = moment(d.startDate).format("MMM DD, gggg");
+            cal.endDate = moment(d.endDate).format("MMM DD, gggg");
+            cal.title = d.title;
+            cal.taskName = d.taskName;
+        }
+        
+        $scope.$apply();
+        
     }
 
-    $(window).off("resize", this.resizer);
-    $(window).resize(this.resizer);
 
 }
 
 function RankController($scope, QRMDataService, $state, riskService) {
 
-
+    qrm.rankController = this;
     var rank = this;
     var myLayout;
     this.project = QRMDataService.project;
     this.editRisk = function (id) {
         QRMDataService.riskID = id;
         $state.go('index.risk');
+    }
+    
+    this.saveChanges = function(){
+        myLayout.normaliseRanks();
+        var rankOrder = myLayout.items;
+        alert(JSON.stringify(rankOrder));
+    }
+    
+    this.cancelChanges = function(){
+        this.loadGrid();
     }
 
 
@@ -1061,10 +1168,10 @@ function RankController($scope, QRMDataService, $state, riskService) {
                 //    $('#qrm-rankDetail').html(html);
 
                 myLayout = rank.layout;
-                myLayout.setHeight($('#qrm-SubRankPanel').height());
-                myLayout.setWidth($('#qrm-SubRankPanel').width());
+                myLayout.setHeight($('#subRankSVGDiv').height());
+                myLayout.setWidth($('#subRankSVGDiv').width());
                 myLayout.setItemHeight(35);
-                myLayout.setItemWidth($('#qrm-SubRankPanel').width() / 2);
+                myLayout.setItemWidth($('#subRankSVGDiv').width() / 2);
                 myLayout.scale(1, 1);
                 myLayout.setItems(rank.risks);
                 myLayout.setSVGDiv("subRankSVGDiv");
@@ -1078,26 +1185,24 @@ function RankController($scope, QRMDataService, $state, riskService) {
 
     this.loadGrid();
 
-    this.resizer = function () {
-        myLayout.setHeight($('#qrm-SubRankPanel').height());
-        myLayout.setWidth($('#qrm-SubRankPanel').width());
+    this.resize = function () {
+        myLayout.setHeight($('#subRankSVGDiv').height());
+        myLayout.setWidth($('#subRankSVGDiv').width());
         myLayout.setItemHeight(35);
-        myLayout.setItemWidth($('#qrm-SubRankPanel').width() / 2);
+        myLayout.setItemWidth($('#subRankSVGDiv').width() / 2);
         myLayout.scale(1, 1);
         myLayout.setSVGDiv("subRankSVGDiv");
         myLayout.layoutTable();
     }
-
-    $(window).off("resize", this.resizer);
-    $(window).resize(this.resizer);
 }
 
-function RelMatrixController($scope, QRMDataService, $state, riskService) {
+function RelMatrixController($scope, QRMDataService, $state, riskService, notify) {
 
     var relMatrixCtrl = this;
-    
+
     //In the global space.
-    relMatrix = this;
+
+    qrm.matrixController = this;
 
     this.project = QRMDataService.project;
     this.status = {
@@ -1230,12 +1335,26 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             }
         });
 
-        if (relMatChanges.length < 1) return;
-        
+        if (relMatChanges.length < 1) {
+            notify({
+                message: 'There are no changes to save',
+                classes: 'alert-warning',
+                duration: 1500,
+                templateUrl: "views/common/notify.html"
+            });
+            return;
+        }
+
         riskService.updateRisksRelMatrix(QRMDataService.url, relMatChanges)
             .then(function (response) {
                 relMatrixCtrl.risks.forEach(function (item) {
                     item.dirty = false;
+                });
+                notify({
+                    message: 'Changes to Probability/Impact have been saved',
+                    classes: 'alert-info',
+                    duration: 1500,
+                    templateUrl: "views/common/notify.html"
                 });
             });
 
@@ -1390,6 +1509,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             risk.x = 0;
             risk.y = 0;
         });
+        this.resetPZ();
         this.svgMatrix(this.risks);
     }
     this.switchTab = function () {
@@ -1476,7 +1596,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         d3.select("#relMatrixSVGDiv svg").remove();
 
         var topSVG = d3.select("#relMatrixSVGDiv").append("svg")
-            .attr("class","relMatrixGroupHolderTop")
+            .attr("class", "relMatrixGroupHolderTop")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
@@ -1529,7 +1649,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .attr("transform", "translate(" + [width / 2, height + 20] + ")")
             .text("Impact");
 
-        
+
 
         switch (Number(relMatrixCtrl.status.val)) {
         case 0:
@@ -1564,22 +1684,22 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [-10, height / 2] + ") rotate(-90)")
             .text("Probability");
-        
+
         topSVG.append("g")
-         .html(          
-                    '<circle cx="50" cy="50" r="42" fill="white" opacity="0.75" />'+
-                    '<path class="compass-button" onclick="relMatrix.pan( 0, 50)" d="M50 10 l12   20 a40, 70 0 0,0 -24,  0z" />'+
-                    '<path class="compass-button" onclick="relMatrix.pan( 50, 0)" d="M10 50 l20  -12 a70, 40 0 0,0   0, 24z" />'+
-                    '<path class="compass-button" onclick="relMatrix.pan( 0,-50)" d="M50 90 l12  -20 a40, 70 0 0,1 -24,  0z" />'+
-                    '<path class="compass-button" onclick="relMatrix.pan(-50, 0)" d="M90 50 l-20 -12 a70, 40 0 0,1   0, 24z" />'+
-                    '<circle class="compass" cx="50" cy="50" r="20" onclick="relMatrix.resetPZ()" />'+
-                    '<circle class="compass-button" cx="50" cy="41" r="8" onclick="relMatrix.zoom(0.8)" />'+
-                    '<circle class="compass-button" cx="50" cy="59" r="8" onclick="relMatrix.zoom(1.25)" />'+
-                    '<rect class="plus-minus" x="46" y="39.5" width="8" height="3" />'+
-                    '<rect class="plus-minus" x="46" y="57.5" width="8" height="3" />'+
-                    '<rect class="plus-minus" x="48.5" y="55" width="3" height="8" />'
-                )
-        .attr("transform", "translate(0 0)")
+            .html(
+                '<circle cx="50" cy="50" r="42" fill="white" opacity="0.75" />' +
+                '<path class="compass-button" onclick="qrm.matrixController.pan( 0, 50)" d="M50 10 l12   20 a40, 70 0 0,0 -24,  0z" />' +
+                '<path class="compass-button" onclick="qrm.matrixController.pan( 50, 0)" d="M10 50 l20  -12 a70, 40 0 0,0   0, 24z" />' +
+                '<path class="compass-button" onclick="qrm.matrixController.pan( 0,-50)" d="M50 90 l12  -20 a40, 70 0 0,1 -24,  0z" />' +
+                '<path class="compass-button" onclick="qrm.matrixController.pan(-50, 0)" d="M90 50 l-20 -12 a70, 40 0 0,1   0, 24z" />' +
+                '<circle class="compass" cx="50" cy="50" r="20" onclick="qrm.matrixController.resetPZ()" />' +
+                '<circle class="compass-button" cx="50" cy="41" r="8" onclick="qrm.matrixController.zoom(0.8)" />' +
+                '<circle class="compass-button" cx="50" cy="59" r="8" onclick="qrm.matrixController.zoom(1.25)" />' +
+                '<rect class="plus-minus" x="46" y="39.5" width="8" height="3" />' +
+                '<rect class="plus-minus" x="46" y="57.5" width="8" height="3" />' +
+                '<rect class="plus-minus" x="48.5" y="55" width="3" height="8" />'
+            )
+            .attr("transform", "translate(0 0)")
 
         //Configure the drag behaviour
 
@@ -1793,6 +1913,10 @@ function RelMatrixController($scope, QRMDataService, $state, riskService) {
         });
     }
 
+    this.resize = function () {
+        relMatrixCtrl.svgMatrix(relMatrixCtrl.risks);
+    }
+
     this.getRisksAndPlace = function () {
         riskService.getRisks(QRMDataService.url)
             .then(function (response) {
@@ -1818,4 +1942,4 @@ app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskServi
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify', RiskCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'riskService', CalenderController]);
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'riskService', RankController]);
-app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'riskService', RelMatrixController]);
+app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'riskService', 'notify', RelMatrixController]);

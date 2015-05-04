@@ -1,3 +1,61 @@
+<!--
 <div id='svgcalIDPanel' style="width:100%;height:calc(100vh - 51px );background-color:yellow">
 <div style="width:100%;height:100%" id = 'svgcalID'></div>
+</div>
+-->
+
+<div id='svgcalIDPanel' style="width:100%;height:calc(100vh - 84px )">
+    <div style="width:250px;height:calc(100% - 84px );float:left">
+        <div class="panel-body">
+            <form method="get" class="form-vertical">
+                <div class="form-group">
+
+                    <label class="control-label">Risk Owner:</label>
+                    <div>
+                        <select ng-change="cal.ownerSelect()" ng-model="cal.owner" ng-options="person.name for person in cal.project.riskOwners track by person.email" class="form-control"></select>
+
+                    </div>
+                    <label class="control-label" style="clear:both">Risk Manager:</label>
+                    <div>
+                        <select ng-change="cal.managerSelect()" ng-model="cal.manager" ng-options="person.name for person in cal.project.riskManagers track by person.email" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Show Exposure: </label>
+                    <div>
+                        <div class="checkbox">
+                            <label>
+                                <input icheck type="radio" name="status" value=0 ng-change="cal.stateSelectorChanged()" ng-model="cal.status.val"> All </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input icheck type="radio" name="status" value=1 ng-change="cal.stateSelectorChanged()" ng-model="cal.status.val"> Closed </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input icheck type="radio" name="status" value=2 ng-change="cal.stateSelectorChanged()" ng-model="cal.status.val"> Pending </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input icheck type="radio" name="status" value=3 ng-change="cal.stateSelectorChanged()" ng-model="cal.status.val"> Active </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div style="float:right">
+                <button type="button" class="btn btn-w-m btn-primary" ng-click="cal.clearFilters()">Clear Filters</button>
+            </div>
+            <div style="margin-top:15px" ng-show="cal.showDesc">
+                <div style='valign:top;'>
+                    <br>
+                    <hr><strong> {{cal.taskName}} - {{cal.title}}</strong><br><br>Start Date: {{cal.startDate}}<br/>End Date: {{cal.endDate}}<br/>
+                    <hr>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div style="width:calc(100% - 250px );height:calc(100vh - 84px );float:left" id="svgcalID"></div>
 </div>

@@ -784,10 +784,10 @@ d3.gantt = function (calController) {
     var FIT_TIME_DOMAIN_MODE = "fit";
 
     var margin = {
-        top: 20,
+        top: 30,
         right: 40,
         bottom: 20,
-        left: 150
+        left: 100
     };
     var timeDomainStart = d3.time.day.offset(new Date(), -3);
     var timeDomainEnd = d3.time.hour.offset(new Date(), +3);
@@ -876,21 +876,19 @@ d3.gantt = function (calController) {
             .attr("width", function (d) {
                 return (x(d.endDate) - x(d.startDate));
             })
-//            .attr("data-toggle", "tooltip")
-//            .attr("title", "This is a QRM ToolTOP")
             .on('mouseover', function (d) {
                 try {
-                    tooltipProb.text(d.taskName + " - Start Exposure: " + moment(d.startDate).format('MMM D, gggg') + ", End Exposure: " + moment(d.endDate).format('MMM D, gggg'));
-                } catch (e) {
+                    calController.toolTip(d);
+                 } catch (e) {
                     alert(e.message);
                 }
-                return tooltipProb.style("visibility", "visible");
-            })
-            .on("mousemove", function () {
-                return tooltipProb.style("top", (event.pageY - 9) + "px").style("left", (event.pageX + 20) + "px");
             })
             .on("mouseout", function () {
-                return tooltipProb.style("visibility", "hidden");
+               try {
+                    calController.toolTip(false);
+                 } catch (e) {
+                    alert(e.message);
+                }
             })
             .on("click", function (d) {
                 calController.edirRisk(d.riskID);
@@ -906,7 +904,7 @@ d3.gantt = function (calController) {
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
             .style("font-weight", "normal")
-            .attr("transform", "translate(" + [width / 2, 4] + ")")
+            .attr("transform", "translate(" + [width / 2, 0] + ")")
             .text(calController.project.title);
 
 
@@ -1042,8 +1040,7 @@ function SorterLayout(rankCtl){
    
    this.drag = d3.behavior.drag()
    .on("dragstart", function(d){
-     
-      debugger;
+
       var e = d3.event.sourceEvent;
       if( e.ctrlKey) return;
 
@@ -1357,7 +1354,6 @@ function SorterLayout(rankCtl){
       .attr("ty", function(d,i){ return d.ty;})
       .on("mouseover", function(d){
          var html = "<div style='valign:top'><br><hr><strong>" + d.riskProjectCode + " - " + d.title + "<br><br>Description:<br><br></strong>" + d.description.substring(0, 500) + "<hr></div>";
-         Ext.getCmp('qrm-rankDetail').update(html);
       })
       .on("click", function(d){
          debugger;
@@ -1482,8 +1478,6 @@ function SorterLayout(rankCtl){
    };   
 } 
 
-//Need to put this so I can find it.
-var relMatrix;
 
 tooltipProb = d3.select("body")
     .append("div")
