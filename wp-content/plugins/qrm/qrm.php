@@ -52,6 +52,7 @@ function my_plugin_admin_init() {
 
 register_activation_hook( __FILE__, 'add_qrm_roles_on_plugin_activation' );
 function add_qrm_roles_on_plugin_activation() {
+	// Various roles within the system to impose a level of security
 	add_role( 'risk_admin', 'Risk Administrator', array( 'read' => true ) );
 	add_role( 'risk_project_manager', 'Risk Project Manager', array( 'read' => true ) );
 	add_role( 'risk_owner', 'Risk Owner', array( 'read' => true ) );
@@ -59,60 +60,25 @@ function add_qrm_roles_on_plugin_activation() {
 	add_role( 'risk_user', 'Risk User', array( 'read' => true ) );
 }
 
-add_action ('parse_request','my_plugin_parse_request' );
-function my_plugin_parse_request($wp) {
+add_action ('parse_request','qrm_plugin_parse_request' );
+function qrm_plugin_parse_request($wp) {
+	
 	if (array_key_exists ('qrmfn', $wp->query_vars )) {
 		
-		// Overall QRM security check. User needs to be logged in to Wordpress, and have and approriate role
+		// Overall QRM security check. User needs to be logged in to Wordpress.
 		if ( !is_user_logged_in() ){
 			http_response_code(400);
 			echo '{"error":true,"msg":"Not Logged In"}';
 			exit;
 		}
-		
-		$roles = wp_get_current_user()->roles;
-		
-		if ( !in_array("risk_owner", $roles) 
-				&& !in_array("risk_manager", $roles) 
-				&& !in_array("risk_user", $roles)
-				&& !in_array("risk_admin", $roles)){
-			http_response_code(400);
-			echo '{"error":true,"msg":"Not Authorised"}';
-			exit;
-		}
-		
-		// Pass to the specific function
-		switch ($wp->query_vars ['qrmfn']) {
 			
-			case "saveRisk" :
-				saveRisk();
-				break;
-			case "getRisk" :
-   				getRisk();
-				break;
-			case "getAllRisks" :
-				getAllRisks();
-				break;
-			case "addComment" :
-				addComments();
-				break;				
-			case "uploadFile" :
-				uploadFile();
-				break;
-			case "getRiskAttachments":
-				getRiskAttachments();
-				break;
-            case "updateRisksRelMatrix":
-                updateRisksRelMatrix();
-                break;
-			default :
-				wp_die ( $wp->query_vars ['qrmfn'] );
-		}
+		// Pass to the specific function which will also check role security
+		QRM::router($wp->query_vars ['qrmfn']);
 	}
 }
 
-add_filter ('query_vars','my_plugin_query_vars' );
-function my_plugin_query_vars($vars) {
+add_filter ('query_vars','qrm_plugin_query_vars' );
+function qrm_plugin_query_vars($vars) {
 	$vars [] ='qrmfn';
 	return $vars;
 }
