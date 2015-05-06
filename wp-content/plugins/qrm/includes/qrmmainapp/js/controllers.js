@@ -7,6 +7,12 @@ function MainCtrl() {
 };
 
 function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
+    
+    this.getTableHeight = function(){
+        return {
+            height:"calc(100vh - 430px)"
+        };
+    }
 
     QRMDataService.riskID = 0;
     var exp = this;
@@ -17,8 +23,8 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     this.gridOptions = {
         enableSorting: true,
-        minRowsToShow: 10,
-        rowHeight: 25,
+//        minRowsToShow: 10,
+//        rowHeight: 25,
         rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)"   ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {

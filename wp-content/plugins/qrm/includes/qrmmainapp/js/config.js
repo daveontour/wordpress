@@ -40,7 +40,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.main', {
             url: "/main",
-            templateUrl: "views/main.html",
+            template:"<h1>DAVE WAS HERE</h1>",
+ //           templateUrl: "views/main.html",
             data: {
                 pageTitle: 'Example view'
             }

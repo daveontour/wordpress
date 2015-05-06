@@ -9,6 +9,7 @@
         'oc.lazyLoad',                  // ocLazyLoad
         'ui.bootstrap',                 // Ui Bootstrap
         'ui.grid',
+        'ui.grid.autoResize',
         'ui.grid.moveColumns',
         'cgNotify'
     ])

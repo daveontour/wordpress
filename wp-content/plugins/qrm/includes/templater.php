@@ -45,7 +45,6 @@ class PageTemplater {
 		);
 		// Add your templates to this array.
 		$this->templates = array(
-				'goodtobebad-template.php'     => 'It\'s Good to Be Bad',
 				'qrmmainapp/index.php'    => 'Quay Risk Manager Main Page'
 		);
 

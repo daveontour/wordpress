@@ -1,5 +1,14 @@
 <?php
 
+class Project{
+	public $title;
+	public $parent_id;
+	public $categories;
+	public $ownersID;
+	public $managersID;
+	public $tolSting;
+}
+
 class Risk {
 	
 	public $startDate;
@@ -63,4 +72,17 @@ class Risk {
 		;
 	}
 	
+}
+class SmallRisk {
+	public $title;
+	public $id;
+	public $owner;
+	public $manager;
+	public $description;
+	public $currentTolerance;
+	public $currentProb;
+	public $currentImpact;
+}
+class Data {
+	public $data;
 }
