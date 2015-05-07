@@ -13,9 +13,8 @@ class Project{
 	public $useAdvancedLiklihood;
 	public $ownersID;
 	public $managersID;
-	public $tolSting;
-	public $maxImpact;
-	public $maxProb;
+	public $usersID;
+	public $matrix;
 	public $objectives;
 	public $inheritParentObjectives;
 	public $riskCategories;

@@ -1036,6 +1036,41 @@ rect.tolNoHover5 {
     stroke-width: 2px;
 }
 
+rect.tolc1 {
+    fill: #00ffff;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+
+rect.tolc2 {
+    fill: #00ff00;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+
+rect.tolc3 {
+    fill: #ffff00;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+
+rect.tolc4{
+    fill: #ffa500;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+
+rect.tolc5 {
+    fill: #ff0000;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+rect.tolc {
+    fill: #ff0000;
+    stroke: #E6E6E6;
+    stroke-width: 2px;
+}
+
 .selectedMatCell {
     fill: #9999ff;
     stroke: black;

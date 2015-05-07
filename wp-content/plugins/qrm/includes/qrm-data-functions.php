@@ -5,16 +5,11 @@ class QRM {
 		// First do a security check
 		$caps = wp_get_current_user ()->caps;
 		
-		if ( !in_array("risk_owner", $caps)
-		&& !in_array("risk_manager", $caps)
-		&& !in_array("risk_project_manager", $caps)
-		&& !in_array("risk_user", $caps)
-		&& !in_array("risk_admin", $caps)
-		&& !in_array("administrator", $caps)	// Fail Safe for the site admins have always got access
-		){
-		http_response_code(400);
-		echo '{"error":true,"msg":"Not Authorised"}';
-		exit;
+		if (! in_array ( "risk_owner", $caps ) && ! in_array ( "risk_manager", $caps ) && ! in_array ( "risk_project_manager", $caps ) && ! in_array ( "risk_user", $caps ) && ! in_array ( "risk_admin", $caps ) && ! in_array ( "administrator", $caps )) // Fail Safe for the site admins have always got access
+{
+			http_response_code ( 400 );
+			echo '{"error":true,"msg":"Not Authorised"}';
+			exit ();
 		}
 		// Pass to the specific function
 		switch ($fn) {
@@ -43,6 +38,18 @@ class QRM {
 			case "getSiteUsers" :
 				QRM::getSiteUsers ();
 				break;
+			case "getSiteProjectManagers" :
+				QRM::getSiteProjectManagers ();
+				break;
+			case "getSiteManagers" :
+				QRM::getSiteManagers ();
+				break;
+			case "getSiteOwners" :
+				QRM::getSiteOwners ();
+				break;
+			case "getSiteRiskUsers" :
+				QRM::getSiteRiskUsers ();
+				break;
 			case "saveSiteUsers" :
 				QRM::saveSiteUsers ();
 				break;
@@ -50,6 +57,33 @@ class QRM {
 			default :
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
+	}
+	static function getSiteProjectManagers() {
+		QRM::getSiteUsersWithCap ( "risk_project_manager" );
+	}
+	static function getSiteOwners() {
+		QRM::getSiteUsersWithCap ( "risk_owner" );
+	}
+	static function getSiteRiskUsers() {
+		QRM::getSiteUsersWithCap ( "risk_user" );
+	}
+	static function getSiteManagers() {
+		QRM::getSiteUsersWithCap ( "risk_manager" );
+	}
+	static function getSiteUsersWithCap($cap) {
+		$u = [ ];
+		$user_query = new WP_User_Query ( array (
+				'fields' => 'all' 
+		) );
+		foreach ( $user_query->results as $user ) {
+			if ($user->has_cap ( $cap )) {
+				array_push ( $u, $user );
+			}
+		}
+		$data = new Data ();
+		$data->data = $u;
+		echo json_encode ( $data, JSON_PRETTY_PRINT );
+		exit ();
 	}
 	static function getSiteUsers() {
 		$user_query = new WP_User_Query ( array (
@@ -143,35 +177,34 @@ class QRM {
 		exit ();
 	}
 	static function saveSiteUsers() {
-		
 		$users = json_decode ( file_get_contents ( "php://input" ) );
 		
-		if ($users == null){
+		if ($users == null) {
 			QRM::getSiteUsers ();
 			return;
 		}
 		foreach ( $users as $u ) {
 			if (array_key_exists ( "dirty", $u )) {
-				$wpUser = get_user_by("id", $u->ID);
-				$wpUser->remove_cap( "risk_admin" );
-				$wpUser->remove_cap( "risk_project_manager" );
-				$wpUser->remove_cap( "risk_owner" );
-				$wpUser->remove_cap( "risk_manager" );
-				$wpUser->remove_cap( "risk_user" );
+				$wpUser = get_user_by ( "id", $u->ID );
+				$wpUser->remove_cap ( "risk_admin" );
+				$wpUser->remove_cap ( "risk_project_manager" );
+				$wpUser->remove_cap ( "risk_owner" );
+				$wpUser->remove_cap ( "risk_manager" );
+				$wpUser->remove_cap ( "risk_user" );
 				
-				if (isset($u->caps->risk_admin) && $u->caps->risk_admin == true) {
+				if (isset ( $u->caps->risk_admin ) && $u->caps->risk_admin == true) {
 					$wpUser->add_cap ( "risk_admin" );
 				}
-				if (isset($u->caps->risk_project_manager) && $u->caps->risk_project_manager == true) {
-					$wpUser->add_cap( "risk_project_manager" );
+				if (isset ( $u->caps->risk_project_manager ) && $u->caps->risk_project_manager == true) {
+					$wpUser->add_cap ( "risk_project_manager" );
 				}
-				if (isset($u->caps->risk_owner) && $u->caps->risk_owner == true) {
+				if (isset ( $u->caps->risk_owner ) && $u->caps->risk_owner == true) {
 					$wpUser->add_cap ( "risk_owner" );
 				}
-				if (isset($u->caps->risk_manager) && $u->caps->risk_manager == true) {
+				if (isset ( $u->caps->risk_manager ) && $u->caps->risk_manager == true) {
 					$wpUser->add_cap ( "risk_manager" );
 				}
-				if (isset($u->caps->risk_user) && $u->caps->risk_user == true) {
+				if (isset ( $u->caps->risk_user ) && $u->caps->risk_user == true) {
 					$wpUser->add_cap ( "risk_user" );
 				}
 			}

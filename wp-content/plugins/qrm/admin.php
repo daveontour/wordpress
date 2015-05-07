@@ -24,7 +24,7 @@
 // 	wp_enqueue_script('qrm-router');
 // 	wp_enqueue_script('qrm-bootstraptpl');
  	wp_enqueue_script('qrm-uigrid');
- //	wp_enqueue_script('qrm-icheck');
+ 	wp_enqueue_script('qrm-icheck');
 // 	wp_enqueue_script('qrm-notify');
 // 	wp_enqueue_script('qrm-dropzone');
 // 	wp_enqueue_script('qrm-moment');
@@ -33,8 +33,8 @@
 // 	wp_enqueue_script('qrm-directives');
 // 	wp_enqueue_script('qrm-controllers');
 // 	wp_enqueue_script('qrm-services');
-// 	wp_enqueue_script('qrm-d3');
-// 	wp_enqueue_script('qrm-common');
+ 	wp_enqueue_script('qrm-d3');
+ 	wp_enqueue_script('qrm-common');
 
 
 ?>
@@ -44,7 +44,7 @@
   padding-left: 0px;
 }
 </style>
-<div ng-app="myApp" ng-controller="myCtrl" style="width:100%;height:100%">
+<div ng-app="myApp" style="width:100%;height:100%">
  
  <div class="panel panel-success">
     <div class="panel-heading"></div>
@@ -60,8 +60,8 @@
             </div>
             <div style="width:100%;margin-top:20px">
             <div style="float:left;clear: both;width:100%" ng-show="t1"></div>
-            <div style="float:left;clear: both;width:100%" ng-show="t2"></div>
-            <div style="float:left;clear: both;width:100%" ng-show="t3" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';	?></div>
+            <div style="float:left;clear: both;width:100%" ng-show="t2" ng-controller="projectCtrl"><?php include 'includes/new-project-widget.php';?></div>
+            <div style="float:left;clear: both;width:100%" ng-show="t3" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';?></div>
            	<div style="float:left;clear: both;width:100%" ng-show="t4"></div>
            	</div>
             
