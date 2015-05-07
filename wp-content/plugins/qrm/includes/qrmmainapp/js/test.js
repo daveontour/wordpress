@@ -3,7 +3,7 @@ var app = angular.module('myApp', [
         'ui.grid.autoResize',
         'ui.grid.edit',
         'ui.grid.moveColumns'
-]);
+    ]);
 
 app.controller('myCtrl', function ($scope) {
 
@@ -20,7 +20,7 @@ app.controller('userCtrl', function ($scope, adminService) {
 
     $scope.changeUser = function (e) {
         e.dirty = true;
-    }
+    };
 
     $scope.saveChanges = function (e) {
         adminService.saveSiteUsers($scope.gridOptions.data)
@@ -29,14 +29,14 @@ app.controller('userCtrl', function ($scope, adminService) {
                 alert("Users Updated");
             });
 
-    }
+    };
 
     $scope.cancelChanges = function (e) {
         adminService.getSiteUsers()
             .then(function (response) {
                 $scope.gridOptions.data = response.data.data;
             });
-    }
+    };
     $scope.gridOptions = {
         enableSorting: true,
         minRowsToShow: 10,
@@ -73,7 +73,6 @@ app.controller('userCtrl', function ($scope, adminService) {
                 name: 'Owner',
                 width: 80,
                 field: 'caps.risk_owner',
-                cellTemplate: '<input type="checkbox" />',
                 cellTemplate: '<input style="height:15px" type="checkbox" ng-model="row.entity.caps.risk_owner" ng-click="grid.appScope.changeUser(row.entity)">',
                 cellClass: 'cellCentered'
             },
@@ -92,7 +91,7 @@ app.controller('userCtrl', function ($scope, adminService) {
                 cellTemplate: '<input style="height:15px" type="checkbox" ng-model="row.entity.caps.risk_user"  ng-click="grid.appScope.changeUser(row.entity)">',
                 cellClass: 'cellCentered'
             }
-    ]
+        ]
     };
 
     adminService.getSiteUsers()
@@ -114,7 +113,7 @@ app.service('adminService', function ($http) {
             url: service.url + "?qrmfn=getSiteUsers",
             cache: false
         });
-    }
+    };
 
     this.saveSiteUsers = function (data) {
         return $http({
@@ -123,6 +122,6 @@ app.service('adminService', function ($http) {
             data: data,
             cache: false
         });
-    }
+    };
 
 });
