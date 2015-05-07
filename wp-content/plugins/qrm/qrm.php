@@ -50,15 +50,15 @@ function my_plugin_admin_init() {
 	wp_enqueue_script ('jquery-ui-datepicker' );
 }
 
-register_activation_hook( __FILE__, 'add_qrm_roles_on_plugin_activation' );
-function add_qrm_roles_on_plugin_activation() {
-	// Various roles within the system to impose a level of security
-	add_role( 'risk_admin', 'Risk Administrator', array( 'read' => true ) );
-	add_role( 'risk_project_manager', 'Risk Project Manager', array( 'read' => true ) );
-	add_role( 'risk_owner', 'Risk Owner', array( 'read' => true ) );
-	add_role( 'risk_manager', 'Risk Manager', array( 'read' => true ) );
-	add_role( 'risk_user', 'Risk User', array( 'read' => true ) );
-}
+// register_activation_hook( __FILE__, 'add_qrm_roles_on_plugin_activation' );
+// function add_qrm_roles_on_plugin_activation() {
+// 	// Various roles within the system to impose a level of security
+// 	add_role( 'risk_admin', 'Risk Administrator', array( 'read' => true ) );
+// 	add_role( 'risk_project_manager', 'Risk Project Manager', array( 'read' => true ) );
+// 	add_role( 'risk_owner', 'Risk Owner', array( 'read' => true ) );
+// 	add_role( 'risk_manager', 'Risk Manager', array( 'read' => true ) );
+// 	add_role( 'risk_user', 'Risk User', array( 'read' => true ) );
+// }
 
 add_action ('parse_request','qrm_plugin_parse_request' );
 function qrm_plugin_parse_request($wp) {
@@ -66,11 +66,11 @@ function qrm_plugin_parse_request($wp) {
 	if (array_key_exists ('qrmfn', $wp->query_vars )) {
 		
 		// Overall QRM security check. User needs to be logged in to Wordpress.
-		if ( !is_user_logged_in() ){
-			http_response_code(400);
-			echo '{"error":true,"msg":"Not Logged In"}';
-			exit;
-		}
+// 		if ( !is_user_logged_in() ){
+// 			http_response_code(400);
+// 			echo '{"error":true,"msg":"Not Logged In"}';
+// 			exit;
+// 		}
 			
 		// Pass to the specific function which will also check role security
 		QRM::router($wp->query_vars ['qrmfn']);
@@ -119,19 +119,17 @@ function qrm_custom_page_template($page_template){
 	return $page_template;	
 }
 
-add_action('add_meta_boxes','qrm_add_meta_box');
-function qrm_add_meta_box() {
-	add_meta_box('mytaxonomy_id','My Radio Taxonomy','qrm_mytaxonomy_metabox','risk' ,'side','core');
+add_action( 'admin_menu', 'register_qrm_custom_menu_page' );
+function register_qrm_custom_menu_page(){
+	add_menu_page( 'Quay Risk Risk Manager', 'Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), 6 );
+	add_submenu_page( plugin_dir_path ( __FILE__ ) .'admin.php','Add Risk Project', 'New Risk Project', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), 6 );
 }
 
-
-add_action( 'admin_menu', 'register_my_custom_menu_page' );
-function register_my_custom_menu_page(){
-	add_menu_page( 'custom menu title', 'custom menu', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), 6 );
-}
-
-function my_custom_menu_page(){
-	echo "Admin Page Test";
+add_action('admin_menu', 'qrm_remove_metaboxes');
+function qrm_remove_metaboxes (){
+	remove_meta_box('submitdiv', 'risk', 'normal');
+	remove_meta_box('submitdiv', 'risk', 'side');
+	remove_meta_box('slugdiv', 'risk', 'normal');
 }
 
 add_action('init', 'qrm_scripts_styles');
@@ -173,44 +171,3 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-d3', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/d3/d3.min.js', array(), "", true );
 	wp_register_script( 'qrm-common', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/qrm-common.js', array(), "", true );
 }
-
-function qrm_mytaxonomy_metabox( $post ) {
-    //Get taxonomy and terms
-    $taxonomy ='qrmtreatment';
- 
-    //Set up the taxonomy object and get terms
-    $tax = get_taxonomy($taxonomy);
-    $terms = get_terms($taxonomy,array('hide_empty' => 0));
- 
-    //Name of the form
-    $name ='tax_input[' . $taxonomy .']';
- 
-    //Get current and popular terms
-    $popular = get_terms( $taxonomy, array('orderby' =>'count','order' =>'DESC','number' => 10,'hierarchical' => false ) );
-    $postterms = get_the_terms( $post->ID,$taxonomy );
-    $current = ($postterms ? array_pop($postterms) : false);
-    $current = ($current ? $current->term_id : 0);
-    ?>
- 
-    <div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv">
- 
-        <!-- Display tabs-->
-        <ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
-            <li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php echo $tax->labels->all_items; ?></a></li>
-            <li class="hide-if-no-js"><a href="#<?php echo $taxonomy; ?>-pop" tabindex="3"><?php _e('Most Used' ); ?></a></li>
-        </ul>
- 
-        <!-- Display taxonomy terms -->
-        <div id="<?php echo $taxonomy; ?>-all" class="tabs-panel">
-            <ul id="<?php echo $taxonomy; ?>checklist" class="list:<?php echo $taxonomy?> categorychecklist form-no-clear">
-                <?php   foreach($terms as $term){
-                    $id = $taxonomy.'-'.$term->term_id;
-                    echo "<li id='$id'><label class='selectit'>";
-                    echo "<input type='radio' id='in-$id' name='{$name}'".checked($current,$term->term_id,false)."value='$term->term_id' />$term->name
-<br />"; echo "</label>
-</li>"; }?>
-</ul>
-</div>
-
-</div>
-<?php }

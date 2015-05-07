@@ -40,20 +40,10 @@ class Risk_Post_Type_Metaboxes {
 	* @since 0.1.0
 	*/
 	function render_meta_boxes( $post ) {
+		wp_enqueue_style ('qrm-style');
 		
-		$handle_d3 = "d3.v3.min.js";
-		if (!wp_script_is($handle_d3, $list = 'enqueued')){
-			wp_enqueue_script( $handle_d3, "http://d3js.org/d3.v3.min.js", array(), null);
-		}
-		$handle_qrm = "qrm-common.js";
-		if (!wp_script_is($handle_qrm, $list = 'enqueued')){
-			wp_enqueue_script( $handle_qrm, plugin_dir_url ( __FILE__ ). "js/qrm-common.js", array(), null);
-		}
-		$handle_qrm_style = "qrm_styles.css";
-		if (!wp_style_is($handle_qrm_style, $list = 'enqueued')){
-			wp_enqueue_style( $handle_qrm_style, plugin_dir_url ( __FILE__ ). "style/qrm_styles.css", array(), null);
-		}	
-
+		wp_enqueue_script('qrm-d3');
+		wp_enqueue_script('qrm-common');
 		wp_enqueue_script('jquery-ui-selectmenu');
 		wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_style('smooth_theme', "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css");

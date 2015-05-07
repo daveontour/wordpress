@@ -1,12 +1,25 @@
 <?php
 
 class Project{
+	public $id;
 	public $title;
+	public $description;
+	public $projectCode;
+	public $riskIndex;
 	public $parent_id;
 	public $categories;
+	public $projectRiskManager;
+	public $useAdvancedConsequences;
+	public $useAdvancedLiklihood;
 	public $ownersID;
 	public $managersID;
 	public $tolSting;
+	public $maxImpact;
+	public $maxProb;
+	public $objectives;
+	public $inheritParentObjectives;
+	public $riskCategories;
+	public $inheritParentCategories;
 }
 
 class Risk {

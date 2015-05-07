@@ -23,8 +23,8 @@
 // 	wp_enqueue_script('qrm-lazyload');
 // 	wp_enqueue_script('qrm-router');
 // 	wp_enqueue_script('qrm-bootstraptpl');
-// 	wp_enqueue_script('qrm-uigrid');
- 	wp_enqueue_script('qrm-icheck');
+ 	wp_enqueue_script('qrm-uigrid');
+ //	wp_enqueue_script('qrm-icheck');
 // 	wp_enqueue_script('qrm-notify');
 // 	wp_enqueue_script('qrm-dropzone');
 // 	wp_enqueue_script('qrm-moment');
@@ -38,188 +38,33 @@
 
 
 ?>
+<style>
+#wpcontent {
+  height: 100%;
+  padding-left: 0px;
+}
+</style>
 <div ng-app="myApp" ng-controller="myCtrl" style="width:100%;height:100%">
  
  <div class="panel panel-success">
-    <div class="panel-heading">Risk Management</div>
+    <div class="panel-heading"></div>
     <div class="panel-body">
-        <div class="col-lg-6">
-            <div class="row">
-                <form method="get" class="form-horizontal">
-                    <div class="form-group">
-<label class="col-xs-4 col-sm-3 control-label">{{firstName}}</label>
-                        <label class="col-xs-4 col-sm-3 control-label">Exposure</label>
-
-                        <div class="col-xs-8 col-sm-9">
-                            <div class="control-group" style="margin-top:3px">
-                                <div class="controls">
-                                    <div class="input-prepend input-group">
-                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                        <input type="text" id="exposure" class="form-control" />
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <label class="col-xs-4 col-sm-3 control-label">Risk Owner</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.owner" ng-change="ctl.updateRisk()" ng-options="person.name for person in ctl.project.riskOwners track by person.email" class="form-control"></select>
-
-                        </div>
-                        <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Risk Manager</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.manager" ng-change="ctl.updateRisk()" ng-options="person.name for person in ctl.project.riskManagers track by person.email" class="form-control"></select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Impact</label>
-
-                        <div class="col-sm-9">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <label class="checkbox-inline" style="padding-left:0px">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impSafety"> Safety </label>
-                                    </td>
-                                    <td>
-                                        <label class="checkbox-inline" >
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impRep" > Reputation</label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkbox-inline" style="padding-left:0px">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impCost" > Cost </label>
-                                    </td>
-
-                                    <td>
-                                        <label class="checkbox-inline" >
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impEnviron"> Environment </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkbox-inline" style="padding-left:0px">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impTime"> Time </label>
-                                    </td>
-                                    <td>
-                                        <label class="checkbox-inline">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.impSpec" > Specification </label>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Treatment Strategy</label>
-
-                        <div class="col-sm-9">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <label class="checkbox-inline"  style="padding-left:0px">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.treatAvoid"> Avoidence &nbsp;&nbsp;</label>
-                                    </td>
-                                    <td>
-                                        <label class="checkbox-inline">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.treatRetention" > Retention </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkbox-inline" style="padding-left:0px">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.treatTransfer" > Transfer </label>
-                                    </td>
-                                    <td>
-                                        <label class="checkbox-inline">
-                                            <input icheck type="checkbox" ng-model="ctl.risk.treatMinimise" style="padding-left:0px"> Minimisation </label>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-
-
-                        <label class="col-xs-4 col-sm-3 control-label">Primary Category</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.primcat" ng-change="ctl.updateRisk()" ng-options="cat.name for cat in ctl.project.categories track by cat.name" class="form-control" name="primcat"></select>
-                        </div>
-                        <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Secondary Category</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="ctl.risk.seccat" ng-options="sec.name for sec in ctl.secCatArray track by sec.name" class="form-control" name="seccat"></select>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Estimated Contingency</label>
-
-                        <div class="col-xs-8 col-sm-9">
-                            <input class="form-control" type="number" name="input" ng-model="ctl.risk.estContingency" min="0" max="10000000" required>
-                        </div>
-
-                        <label class="col-sm-3 control-label"></label>
-                        <div class="col-sm-9">
-                            <label class="checkbox-inline" style="padding-left:0px">
-                                <input icheck type="checkbox" ng-model="ctl.risk.useCalContingency"> Use Calculated Contingency</label>
-                        </div>
-
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                        <div class="col-sm-9">
-                            <label class="checkbox-inline" style="padding-left:0px">
-                                <input icheck type="checkbox" ng-model="ctl.risk.treated"> Treated </label>
-                        </div>
-
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                        <div class="col-sm-9">
-                            <label class="checkbox-inline" style="padding-left:0px">
-                                <input icheck type="checkbox" ng-model="ctl.risk.summaryRisk"> Summary Risk </label>
-                        </div>
-
-                        <label class="col-sm-3 control-label">Stakeholders</label>
-                        <div class="col-sm-9" style="margin-top:8px">                         
-                                <table>
-                                <tr ng-repeat="s in ctl.stakeholders" style="cell">
-                                    <td style="font-weight:bold">{{s.name}}</td>
-                                    <td style="padding-left:5px">{{s.role}}</td>
-                                    </tr>
-                                </table>
-                        </div>
-
-                    </div>
-
-                </form>
-
-
-
-                <script>
-//                     jQuery(document).ready(function () {
-//                         jQuery('#exposure').daterangepicker({
-//                                 format: 'MMMM D, YYYY',
-//                                 separator: " - ",
-//                                 showDropdowns: true,
-//                                 drops: "down"
-//                             },
-//                             function (start, end, label) {
-//                                 try {
-//                                     // Update the Angular controller
-//                                     angular.element("#exposure").controller().updateDates(start, end);
-//                                 } catch (e) {
-//                                     console.log(e.message);
-//                                 }
-//                             });
-
-//                         $('#exposure').data('daterangepicker').setStartDate(angular.element("#exposure").controller().risk.start);
-//                         $('#exposure').data('daterangepicker').setEndDate(angular.element("#exposure").controller().risk.end);
-
-//                     });
-                </script>
+        <div class="col-lg-12">
+            
+			<h1 class="center-block" style="width:300px">Quay Risk Manager</h1>
+            <div class="center-block" style="height:3em; width:600px">
+            <button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t1" ng-click="t1=true;t2=false;t3=false;t4=false">List Risk Projects</button>        	
+          	<button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t2" ng-click="t1=false;t2=true;t3=false;t4=false">New Risk Project</button>
+            <button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t3" ng-click="t1=false;t2=false;t3=true;t4=false">Manage Users</button> 
+            <button class="btn btn-w-m btn-primary pull-left" ng-model="t4" ng-click="t1=false;t2=false;t3=false;t4=true">Settings</button> 
             </div>
+            <div style="width:100%;margin-top:20px">
+            <div style="float:left;clear: both;width:100%" ng-show="t1"></div>
+            <div style="float:left;clear: both;width:100%" ng-show="t2"></div>
+            <div style="float:left;clear: both;width:100%" ng-show="t3" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';	?></div>
+           	<div style="float:left;clear: both;width:100%" ng-show="t4"></div>
+           	</div>
+            
         </div>
     </div>
 </div>
