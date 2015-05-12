@@ -390,8 +390,8 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         bottom: 0,
         left: 0
     };
-    var width = 180 - margin.left - margin.right;
-    var height = 180 - margin.top - margin.bottom;
+    var width = 220 - margin.left - margin.right;
+    var height = 220 - margin.top - margin.bottom;
 
     var data = new Array();
 
@@ -437,8 +437,8 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         })
         .attr("rx", 2)
         .attr("ry", 2)
-        .attr("qrmID", function(d){
-            return String(d.impact)+String(d.prob);
+        .attr("qrmID", function (d) {
+            return String(d.impact) + String(d.prob);
         })
         .attr("class", function (d) {
             return "tolc" + d.tol;
@@ -449,34 +449,86 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
 
             var e = $(this);
             if (hasClassSVG(e, "tolc5", "tolc1")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
             if (hasClassSVG(e, "tolc4", "tolc5")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
             if (hasClassSVG(e, "tolc3", "tolc4")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
             if (hasClassSVG(e, "tolc2", "tolc3")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
             if (hasClassSVG(e, "tolc1", "tolc2")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
             if (hasClassSVG(e, "tolc", "tolc5")) {
-                 matrixChangeCB();
+                matrixChangeCB();
                 return;
             }
-        
+
             matrixChangeCB();
-            
+
 
         });
+
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-1)+12] + ")")
+        .text("P1");
+    
+        svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-2)+12] + ")")
+        .text("P2");
+    
+        if (maxProb > 2)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-3)+12] + ")")
+        .text("P3");
+    
+            if (maxProb > 3)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-4)+12] + ")")
+        .text("P4");
+            if (maxProb > 4)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-5)+12] + ")")
+        .text("P5");
+            if (maxProb > 5)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-6)+12] + ")")
+        .text("P6");
+            if (maxProb > 6)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-7)+12] + ")")
+        .text("P7");
+            if (maxProb > 3)    svg.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "normal")
+        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-8)+12] + ")")
+        .text("P8");
 }
 
 function hasClassSVG(tmp, oldClass, newClass) {
@@ -1624,6 +1676,7 @@ function SorterLayout(rankCtl) {
     };
 }
 
+QRM = {};
 
 tooltipProb = d3.select("body")
     .append("div")

@@ -50,16 +50,6 @@ function my_plugin_admin_init() {
 	wp_enqueue_script ('jquery-ui-datepicker' );
 }
 
-// register_activation_hook( __FILE__, 'add_qrm_roles_on_plugin_activation' );
-// function add_qrm_roles_on_plugin_activation() {
-// 	// Various roles within the system to impose a level of security
-// 	add_role( 'risk_admin', 'Risk Administrator', array( 'read' => true ) );
-// 	add_role( 'risk_project_manager', 'Risk Project Manager', array( 'read' => true ) );
-// 	add_role( 'risk_owner', 'Risk Owner', array( 'read' => true ) );
-// 	add_role( 'risk_manager', 'Risk Manager', array( 'read' => true ) );
-// 	add_role( 'risk_user', 'Risk User', array( 'read' => true ) );
-// }
-
 add_action ('parse_request','qrm_plugin_parse_request' );
 function qrm_plugin_parse_request($wp) {
 	
@@ -99,7 +89,11 @@ if (is_admin ()) {
 	
 	$post_type_admin = new Risk_Post_Type_Admin ( $post_type_registrations );
 	$post_type_admin->init ();
+	
+	
 }
+
+
 
 add_filter('single_template','get_custom_post_type_template');
 function get_custom_post_type_template($single_template){
@@ -132,6 +126,11 @@ function qrm_remove_metaboxes (){
 	remove_meta_box('slugdiv', 'risk', 'normal');
 }
 
+add_action('init', 'qrm_init_options');
+function qrm_init_options(){
+	add_option("qrm_objective_id", 1000);
+}
+
 add_action('init', 'qrm_scripts_styles');
 function qrm_scripts_styles(){
 	wp_register_style ('font-awesome',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/font-awesome.css" );
@@ -145,6 +144,8 @@ function qrm_scripts_styles(){
 	wp_register_style ('qrm-angular',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/qrm_angular.css" );
 	wp_register_style ('qrm-style',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/qrm_styles.css" );
 	wp_register_style ('icheck',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/iCheck/custom.css" );
+	wp_register_style ('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control.css" );
+	wp_register_style ('treecontrolAttr',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control-attribute.css" );
 	
 	wp_register_script( 'qrm-jquery', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js',array(), "", true );
 	wp_register_script( 'qrm-jqueryui', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js',array(), "", true );
@@ -170,4 +171,6 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-services', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/services.js', array(), "", true );
 	wp_register_script( 'qrm-d3', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/d3/d3.min.js', array(), "", true );
 	wp_register_script( 'qrm-common', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/qrm-common.js', array(), "", true );
+	wp_register_script('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/tree-control/angular-tree-control.js" );
+	
 }

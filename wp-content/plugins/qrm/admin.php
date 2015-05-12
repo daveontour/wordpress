@@ -10,7 +10,8 @@
 	wp_enqueue_style ('qrm-angular');
 	wp_enqueue_style ('qrm-style');
 	wp_enqueue_style ('icheck');
-	
+	wp_enqueue_style ('treecontrol');
+		
 	wp_enqueue_script('qrm-jquery');
 	wp_enqueue_script('qrm-jqueryui');
 	wp_enqueue_script('qrm-boostrap');
@@ -35,7 +36,8 @@
 // 	wp_enqueue_script('qrm-services');
  	wp_enqueue_script('qrm-d3');
  	wp_enqueue_script('qrm-common');
-
+ 	wp_enqueue_script('treecontrol');
+ 	
 
 ?>
 <style>
@@ -46,23 +48,28 @@
 </style>
 <div ng-app="myApp" style="width:100%;height:100%">
  
- <div class="panel panel-success">
-    <div class="panel-heading"></div>
+ <div style="background-color:#f1f1f1">
+   
     <div class="panel-body">
-        <div class="col-lg-12">
+        <div class="col-lg-12" ng-controller="switchCtrl">
             
 			<h1 class="center-block" style="width:300px">Quay Risk Manager</h1>
-            <div class="center-block" style="height:3em; width:600px">
-            <button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t1" ng-click="t1=true;t2=false;t3=false;t4=false">List Risk Projects</button>        	
-          	<button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t2" ng-click="t1=false;t2=true;t3=false;t4=false">New Risk Project</button>
-            <button style="margin-right:15px" class="btn btn-w-m btn-primary pull-left" ng-model="t3" ng-click="t1=false;t2=false;t3=true;t4=false">Manage Users</button> 
-            <button class="btn btn-w-m btn-primary pull-left" ng-model="t4" ng-click="t1=false;t2=false;t3=false;t4=true">Settings</button> 
+            <div class="center-block" style="height:3em; width:600px" >
+            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t1" ng-click="tabswitch(1)">List Risk Projects</button>        	
+          	<button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t2" ng-click="tabswitch(2)">New Risk Project</button>
+            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t3" ng-click="tabswitch(3)">Manage Users</button> 
+            <button class="btn btn-w-m btn-success pull-left" ng-model="t4" ng-click="tabswitch(4)">Settings</button> 
             </div>
             <div style="width:100%;margin-top:20px">
-            <div style="float:left;clear: both;width:100%" ng-show="t1"></div>
+            <div style="float:left;clear: both;width:100%" ng-show="t1" ng-controller="listCtrl"><?php include 'includes/list-project-widget.php';?></div>
             <div style="float:left;clear: both;width:100%" ng-show="t2" ng-controller="projectCtrl"><?php include 'includes/new-project-widget.php';?></div>
             <div style="float:left;clear: both;width:100%" ng-show="t3" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';?></div>
            	<div style="float:left;clear: both;width:100%" ng-show="t4"></div>
+           	<div style="float:left;clear: both;width:100%; text-align:center" ng-show="t0">
+           	
+           	<h1>Welcome to Quay Risk Manager</h1>
+           	<h2>Powered by Wordpress</h2>
+           	</div>
            	</div>
             
         </div>

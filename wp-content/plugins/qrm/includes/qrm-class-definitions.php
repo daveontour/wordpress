@@ -19,6 +19,7 @@ class Project{
 	public $inheritParentObjectives;
 	public $riskCategories;
 	public $inheritParentCategories;
+	public $children;
 }
 
 class Risk {

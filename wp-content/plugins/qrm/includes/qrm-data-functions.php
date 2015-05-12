@@ -38,53 +38,50 @@ class QRM {
 			case "getSiteUsers" :
 				QRM::getSiteUsers ();
 				break;
-			case "getSiteProjectManagers" :
-				QRM::getSiteProjectManagers ();
+			case "getSiteUsersCap" :
+				QRM::getSiteUsersCap ();
 				break;
-			case "getSiteManagers" :
-				QRM::getSiteManagers ();
+			case "getProjects" :
+				QRM::getProjects ();
 				break;
-			case "getSiteOwners" :
-				QRM::getSiteOwners ();
-				break;
-			case "getSiteRiskUsers" :
-				QRM::getSiteRiskUsers ();
+			case "getProject" :
+				QRM::getProject ();
 				break;
 			case "saveSiteUsers" :
 				QRM::saveSiteUsers ();
+			case "saveProject" :
+				QRM::saveProject ();
 				break;
 			
 			default :
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
 	}
-	static function getSiteProjectManagers() {
-		QRM::getSiteUsersWithCap ( "risk_project_manager" );
-	}
-	static function getSiteOwners() {
-		QRM::getSiteUsersWithCap ( "risk_owner" );
-	}
-	static function getSiteRiskUsers() {
-		QRM::getSiteUsersWithCap ( "risk_user" );
-	}
-	static function getSiteManagers() {
-		QRM::getSiteUsersWithCap ( "risk_manager" );
-	}
-	static function getSiteUsersWithCap($cap) {
-		$u = [ ];
+	static function getSiteUsersCap() {
 		$user_query = new WP_User_Query ( array (
-				'fields' => 'all' 
+				'fields' => 'all'
 		) );
+		
+		$userSummary = [];
 		foreach ( $user_query->results as $user ) {
-			if ($user->has_cap ( $cap )) {
-				array_push ( $u, $user );
-			}
+			$u = new StdClass();
+			$u->display_name = $user->data->display_name;
+			$u->user_email = $user->data->user_email;
+			$u->ID = $user->ID;
+			$u->bAdmin = $user->has_cap("risk_admin");
+			$u->bProjMgr = $user->has_cap("risk_project_manager");
+			$u->bOwner = $user->has_cap("risk_owner");
+			$u->bManager = $user->has_cap("risk_manager");
+			$u->bUser = $user->has_cap("risk_user");
+			
+			array_push ( $userSummary, $u );		
 		}
+		
 		$data = new Data ();
-		$data->data = $u;
+		$data->data = $userSummary;
 		echo json_encode ( $data, JSON_PRETTY_PRINT );
 		exit ();
-	}
+	}	
 	static function getSiteUsers() {
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all' 
@@ -261,6 +258,37 @@ class QRM {
 		echo json_encode ( $risk, JSON_PRETTY_PRINT );
 		exit ();
 	}
+	static function getProjects() {
+		global $post;
+		$args = array (
+				'post_type' => 'riskproject',
+				'posts_per_page' => - 1 
+		);
+		$the_query = new WP_Query ( $args );
+		$projects = array ();
+		
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+			array_push($projects, $project);
+		endwhile
+		;
+		
+		$data = new Data ();
+		$data->data = $projects;
+		echo json_encode ( $data, JSON_PRETTY_PRINT );
+		exit ();
+	}
+	static function getProject() {
+		
+		$projectID = json_decode ( file_get_contents ( "php://input" ) );
+		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
+		$data = new Data ();
+		$data->data = $project;
+		echo json_encode ( $data, JSON_PRETTY_PRINT );
+		exit ();
+	}
+	
 	static function getAllRisks() {
 		global $post;
 		$args = array (
@@ -342,6 +370,66 @@ class QRM {
 		) );
 		
 		echo json_encode ( $risk );
+		exit ();
+	}
+	
+	static function saveProject() {
+		
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+		
+		$postdata = file_get_contents ( "php://input" );
+		$project = json_decode ( $postdata );
+	
+		$postID = null;
+	
+		if (! empty ( $project->id ) && $project->id > 0 ) {
+			// Update the existing post
+			$post ['ID'] = $project->id;
+			wp_update_post ( array (
+			'ID' => $project->id,
+			'post_content' => $project->description,
+			'post_title' => $project->title,
+			'post_status' => 'publish',
+			'post_type' => 'riskproject'
+			) );
+			$postID = $project->id;
+		} else {
+			// Create a new one and record the ID
+			$postID = wp_insert_post ( array (
+					'post_content' => $project->description,
+					'post_title' => $project->title,
+					'post_type' => 'riskproject',
+					'post_status' => 'publish',
+					'post_author' => $user_ID
+			) );
+			$project->id = $postID;
+			update_post_meta ( $postID, "objectiveID", 100 );
+			update_post_meta ( $postID, "categoryID", 100 );
+		}
+		// Fix up any category of objective IDs
+		
+		$objID = intval(get_option("qrm_objective_id"));
+		echo var_dump($project);
+		foreach($project->objectives as   &$obj){
+			$obj->projectID = $project->id;
+			unset ($obj->children);			
+			if ($obj->id < 0){
+				$origID = $obj->id;
+				$obj->id = $objID++;
+				foreach ($project->objectives as $obj2){
+					if ($obj2->parentID == $origID){
+						$obj2->parentID = $obj->id;
+					}
+				}
+			}
+		}
+		update_option ( "qrm_objective_id", $objID );
+		
+		// The Bulk of the data is held in the post's meta data
+		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
+	
+		echo json_encode ( $project );
 		exit ();
 	}
 }

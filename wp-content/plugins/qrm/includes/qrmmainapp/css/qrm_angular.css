@@ -16,6 +16,9 @@
     padding: 5px;
 }
 
+.userGrid {
+    background-color: white;
+}
 .userGrid .cellCentered{
     text-align: center;
 }
