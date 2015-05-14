@@ -1230,3 +1230,7 @@ body.mini-navbar .navbar-static-side {
     margin-top: 15px;
 }
 
+#wpfooter{
+    display: none;
+}
+

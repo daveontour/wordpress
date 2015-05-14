@@ -1,13 +1,19 @@
 var app = angular.module('myApp', [
         'ui.grid',
         'ui.grid.autoResize',
+        'ui.bootstrap',
+        'ui.grid.treeView',
         'ui.grid.edit',
         'ui.grid.moveColumns',
-        'treeControl'
+        'treeControl',
+        'cgNotify'
     ]);
 
-function arrangeProjects(projects) {
+app.config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.debugInfoEnabled(false);
+}]);
 
+function arrangeProjects(projects) {
     var projMap = new Map();
     var retn = new Array();
 
@@ -27,6 +33,50 @@ function arrangeProjects(projects) {
         }
     });
     return retn;
+}
+
+function parentSort(projArr) {
+    
+     projArr.forEach(function (e) {
+        e.$$treeLevel = -100;
+    });
+    
+    var sortedArray = $.grep(projArr, function (value) {
+        return value.parent_id <= 0;
+    })
+
+    sortedArray.forEach(function (e) {
+        e.$$treeLevel = 0;
+    });
+
+    projArr = $.grep(projArr, function (value) {
+        return value.$$treeLevel < 0
+    });
+
+    while (projArr.length > 0) {
+        
+        for (j = 0; j < projArr.length; j++){
+            
+            var child = projArr[j];
+            var found = false;
+            for (var i = 0; i < sortedArray.length; i++) {
+                
+                var parent = sortedArray[i];
+                
+                if (child.parent_id == parent.id ) {
+                    child.$$treeLevel = parent.$$treeLevel + 1;
+                    sortedArray.splice(i + 1, 0, child);
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        projArr = $.grep(projArr, function (value) { return value.$$treeLevel < 0 });
+    }
+
+    return sortedArray;
+
 }
 
 function arrangeObjectives(objectives) {
@@ -144,52 +194,63 @@ app.controller('switchCtrl', function ($scope, adminService) {
 app.controller('listCtrl', function ($scope, adminService) {
 
     QRM.listCtrl = this;
-    $scope.projects = {};
-    $scope.selectedProject = {};
+    $scope.gridOptions = {
+        enableSorting: false,
+        enableFiltering: false,
+        onRegisterApi: function( gridApi ) {
+            $scope.gridApi = gridApi;
+        },
+        columnDefs: [
+            {
+                name: 'Project Title',
+                field: 'title',
+                width: '*',
+                cellTemplate:'<div ng-style="grid.appScope.rowStyle(row.entity)" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
+            },{
+                name:"Project Code",
+                field:"projectCode",
+                width:130
+            },{
+                name:"Project Risk Manager",
+                field:"projectRiskManager.display_name",
+                width:170
+            },
+            {
+                name: 'id',
+                enableColumnMoving: false,
+                enableFiltering: false,
+                enableSorting: false,
+                enableHiding: false,
+                enableCellEdit: false,
+                cellTemplate: '<div style="text-align:center"><i class="fa fa-edit" style="cursor:pointer;color:green;" ng-click="$event.stopPropagation();grid.appScope.editProject(row.entity.id)" ></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteProject(row.entity.id)" ></i></div>',
+                width: 60,
+                headerCellClass: 'header-hidden',
+                cellClass: 'cellCentered'
 
-    $scope.alert = function (m) {
-        alert(JSON.stringify(m));
-    }
-
-    $scope.projectSelect = function (node) {
-        // Display the project
-    }
-
-    $scope.treeOptions = {
-        nodeChildren: "children",
-        dirSelectable: true,
-        multiSelection: false,
-        injectClasses: {
-            ul: "a1",
-            li: "a2",
-            liSelected: "a7",
-            iExpanded: "a3",
-            iCollapsed: "a4",
-            iLeaf: "a5",
-            label: "a6",
-            labelSelected: "a8"
+            }
+    ]
+    };
+    
+    $scope.rowStyle = function(e){
+        return {
+            "margin-left":e.$$treeLevel*20+"px"
         }
     }
 
     this.load = function () {
         adminService.getProjects()
             .then(function (response) {
-                $scope.linearProjects = response.data.data;
-                $scope.projects = arrangeProjects(response.data.data);
+                $scope.sortedParents = parentSort(response.data.data);
+                $scope.gridOptions.data = $scope.sortedParents; 
+                setTimeout(function () {
+                    $scope.gridApi.treeView.expandAllRows();
+                }, 100);
+                $scope.gridApi.treeView.expandAllRows();
             });
     }
 
-    $scope.editProject = function () {
-
-        var projectID = $scope.selectedProject.id;
-        var projMap = new Map();
-
-        $scope.linearProjects.forEach(function (e) {
-            projMap.put(e.id, e);
-        });
-        var test = getProjectParents(projMap, projectID);
-
-        adminService.getProject(projectID)
+    $scope.editProject = function (id) {
+        adminService.getProject(id)
             .then(function (response) {
                 QRM.switchCtrl.tabswitch(2);
                 QRM.projCtrl.editProject(response.data.data);
@@ -197,10 +258,14 @@ app.controller('listCtrl', function ($scope, adminService) {
     }
 
 });
-app.controller('projectCtrl', function ($scope, adminService) {
+app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
 
     QRM.projCtrl = this;
     var projCtrl = this;
+
+    $scope.status = {
+        isFirstOpen: false
+    };
 
     $scope.tempObjectiveID = -1;
 
@@ -223,34 +288,43 @@ app.controller('projectCtrl', function ($scope, adminService) {
     $scope.ref = {};
 
     $scope.addObjective = function (isPrim) {
-        delete $scope.projectObjectives;
 
-        if ($scope.objectiveText == "" || $scope.objectiveText == null) return;
+
+        debugger;
+        if ($scope.ref.objectiveText == "" || $scope.ref.objectiveText == null) return;
+        delete $scope.projectObjectives;
         if ($scope.proj.objectives == null) {
             $scope.proj.objectives = [];
         }
+
         if (isPrim) {
             $scope.proj.objectives.push({
-                title: $scope.objectiveText,
+                title: $scope.ref.objectiveText,
                 projectID: $scope.proj.id,
                 id: $scope.tempObjectiveID--,
                 parentID: 0
             })
+        } else if ($scope.ref.selectedObjective != null) {
+            $scope.proj.objectives.push({
+                title: $scope.ref.objectiveText,
+                projectID: $scope.proj.id,
+                id: $scope.tempObjectiveID--,
+                parentID: $scope.ref.selectedObjective.id
+            })
         } else {
-            if ($scope.selectedObjective != null) {
-                $scope.proj.objectives.push({
-                    title: $scope.objectiveText,
-                    projectID: $scope.proj.id,
-                    id: $scope.tempObjectiveID--,
-                    parentID: $scope.selectedObjective.id
-                })
-            }
+            notify({
+                message: 'Please select an objective to add a sub-objective to',
+                classes: 'alert-warning',
+                duration: 5000,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
+            });
         }
         $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
 
 
-        delete $scope.objectiveText;
-        delete $scope.selectedObjective;
+        delete $scope.ref.objectiveText;
+        delete $scope.ref.selectedObjective;
 
     }
     $scope.treeObjectiveOptions = {
@@ -272,6 +346,12 @@ app.controller('projectCtrl', function ($scope, adminService) {
     $scope.projectSelect = function (parentProject) {
         $scope.proj.parent_id = parentProject.id;
         $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
+
+        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+        $scope.primGridOptions.data = $scope.catData;
+        $scope.secGridOptions.data = [];
+        $scope.primCatID = 0;
+
     }
 
     $scope.saveChanges = function () {
@@ -283,9 +363,10 @@ app.controller('projectCtrl', function ($scope, adminService) {
                 QRM.switchCtrl.tabswitch(1);
                 notify({
                     message: 'Project Saved',
-                    classes: 'alert-info',
-                    duration: 1500,
-                    templateUrl: "views/common/notify.html"
+                    classes: 'alert-success',
+                    duration: 2500,
+                    templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                    topOffset: 25
                 });
             });
     }
@@ -336,6 +417,7 @@ app.controller('projectCtrl', function ($scope, adminService) {
 
     $scope.catID = -1;
     $scope.changePrimCategory = function (id) {
+        debugger;
         $scope.primCatID = id;
         $scope.secGridOptions.data = $.grep($scope.catData, function (cat) {
             return cat.parentID == id;
@@ -343,8 +425,9 @@ app.controller('projectCtrl', function ($scope, adminService) {
     };
     $scope.addCat = function (isPrim) {
         debugger;
+
         var cat = {
-            title: $scope.catText,
+            title: isPrim ? $scope.ref.catText : $scope.ref.catSubText,
             id: $scope.catID--,
             primCat: true,
             parentID: 0,
@@ -356,7 +439,7 @@ app.controller('projectCtrl', function ($scope, adminService) {
             cat.primCat = false;
         } else {
             // Set the current selected parent to the newly created 
-            $scope.primCatID = $scope.catID+1;
+            $scope.primCatID = $scope.catID + 1;
         }
 
         $scope.proj.categories.push(cat);
@@ -366,18 +449,168 @@ app.controller('projectCtrl', function ($scope, adminService) {
         });
         $scope.primGridOptions.data = $scope.catData;
 
+        $scope.ref.catText = "";
+        $scope.ref.catSubText = "";
+
     }
-    $scope.rowStyle = function(id){
-        debugger;
-        if (id == $scope.primCatID){
-            return {'background-color':'yellow'};
+    $scope.rowStyle = function (id) {
+        if (id == $scope.primCatID) {
+            return {
+                'background-color': 'yellow'
+            };
         } else {
             return {};
         }
     };
+
+    $scope.editObjective = function (node) {
+
+        if (node.projectID != $scope.proj.id) {
+            notify({
+                message: 'The selected objective belongs to a parent project and cannot be edited here',
+                classes: 'alert-danger',
+                duration: 5000,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
+            });
+            return;
+        }
+
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentCat.html',
+            size: "md",
+            controller: function ($modalInstance, title, node) {
+                this.title = title;
+                this.catTitle = node.title;
+                this.ok = function () {
+                    $modalInstance.close(this.catTitle);
+                };
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                title: function () {
+                    return "Project Objective"
+                },
+                node: function () {
+                    return node
+                }
+            }
+        });
+
+        modalInstance.result.then(function (r) {
+            node.title = r;
+        });
+    }
+    $scope.deleteObjective = function (node) {
+        if (node.projectID != $scope.proj.id) {
+            notify({
+                message: 'The selected objective belongs to a parent project and cannot be deleted from here',
+                classes: 'alert-danger',
+                duration: 5000,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
+            });
+            return;
+        } else {
+
+            adminService.confirm("Do you wish to delete the selected Objective?", function (confirm) {
+                if (confirm) {
+                    $scope.proj.objectives = jQuery.grep($scope.proj.objectives, function (value) {
+                        return (value.id != node.id && value.parentID != node.id);
+                    });
+
+                    $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
+                    delete $scope.ref.objectiveText;
+                    delete $scope.ref.selectedObjective;
+
+                }
+
+            })
+
+        }
+    }
+    $scope.editCategory = function (cat) {
+        if (cat.projectID != $scope.proj.id) {
+            notify({
+                message: 'The selected category belongs to a parent project and cannot be edited here',
+                classes: 'alert-danger',
+                duration: 5000,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
+            });
+            return;
+        }
+
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentCat.html',
+            size: "md",
+            controller: function ($modalInstance, title, cat) {
+                this.title = title;
+                this.catTitle = cat.title;
+                this.ok = function () {
+                    $modalInstance.close(this.catTitle);
+                };
+                this.cancel = function () {
+                    $modalInstance.dismiss('cancel');
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                title: function () {
+                    return (cat.primCat) ? "Primary Category" : "Seconday Category"
+                },
+                cat: function () {
+                    return cat
+                }
+            }
+        });
+
+        modalInstance.result.then(function (r) {
+            cat.title = r;
+        });
+    }
+
+    $scope.deleteCategory = function (cat) {
+        if (cat.projectID != $scope.proj.id) {
+            notify({
+                message: 'The selected category belongs to a parent project and cannot be deleted from here',
+                classes: 'alert-danger',
+                duration: 5000,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
+            });
+            return;
+        } else {
+
+            adminService.confirm("Do you wish to delete the selected Category?", function (confirm) {
+                if (confirm) {
+                    $scope.proj.categories = jQuery.grep($scope.proj.categories, function (value) {
+                        return (value.id != cat.id && value.parentID != cat.id);
+                    });
+
+                    if (cat.primCat) {
+                        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+                        $scope.primGridOptions.data = $scope.catData;
+                        $scope.secGridOptions.data = [];
+                        $scope.primCatID = 0;
+                    } else {
+                        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+                        $scope.primGridOptions.data = $scope.catData;
+                        $scope.secGridOptions.data = $.grep($scope.catData, function (cat) {
+                            return cat.parentID == $scope.primCatID;
+                        });
+                    }
+                }
+
+            })
+
+        }
+    }
     $scope.catParentID = 100;
     $scope.primGridOptions = {
-        enableSorting: true,
         minRowsToShow: 5,
         rowHeight: 30,
         enableFiltering: true,
@@ -390,21 +623,35 @@ app.controller('projectCtrl', function ($scope, adminService) {
                 width: "*",
                 field: 'title',
                 type: 'text',
-                enableFiltering: false
+                enableFiltering: false,
 
-            }, {
+            },
+            {
                 field: 'primCat',
                 filter: {
                     term: true
                 },
                 visible: false
+            },
+            {
+                name: 'id',
+                enableColumnMoving: false,
+                enableFiltering: false,
+                enableSorting: false,
+                enableHiding: false,
+                enableCellEdit: false,
+                cellTemplate: '<i class="fa fa-edit" style="cursor:pointer;color:green;" ng-click="$event.stopPropagation();grid.appScope.editCategory(row.entity)" ng-show="grid.appScope.proj.id==row.entity.projectID"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteCategory(row.entity)" ng-show="grid.appScope.proj.id==row.entity.projectID"></i><small ng-show="grid.appScope.proj.id!=row.entity.projectID">Parent</small>',
+                width: 60,
+                headerCellClass: 'header-hidden',
+                cellClass: 'cellCentered'
+
             }
+
         ]
 
     };
 
     $scope.secGridOptions = {
-        enableSorting: true,
         minRowsToShow: 5,
         rowHeight: 30,
         enableFiltering: true,
@@ -417,10 +664,28 @@ app.controller('projectCtrl', function ($scope, adminService) {
                 type: 'text',
                 enableFiltering: false
 
+            }, {
+                field: 'primCat',
+                filter: {
+                    term: false
+                },
+                visible: false
+            }
+            , {
+                name: 'id',
+                enableColumnMoving: false,
+                enableFiltering: false,
+                enableSorting: false,
+                enableHiding: false,
+                enableCellEdit: false,
+                cellTemplate: '<i class="fa fa-edit" style="cursor:pointer;color:green;" ng-click="$event.stopPropagation();grid.appScope.editCategory(row.entity)" ng-show="grid.appScope.proj.id==row.entity.projectID"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteCategory(row.entity)" ng-show="grid.appScope.proj.id==row.entity.projectID"></i><small ng-show="grid.appScope.proj.id!=row.entity.projectID">Parent</small>',
+                width: 60,
+                headerCellClass: 'header-hidden',
+                cellClass: 'cellCentered'
+
             }
         ]
     };
-
 
     $scope.gridOwnerOptions = {
         enableSorting: true,
@@ -524,6 +789,7 @@ app.controller('projectCtrl', function ($scope, adminService) {
                 $scope.ref.riskProjectManagers = jQuery.grep(response.data.data, function (e) {
                     return e.bProjMgr
                 });
+            debugger;
                 $scope.gridOwnerOptions.data = jQuery.grep(response.data.data, function (e) {
                     return e.bOwner
                 });
@@ -550,9 +816,10 @@ app.controller('projectCtrl', function ($scope, adminService) {
 
                 $scope.projMap.put($scope.proj.id, $scope.proj);
                 $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
-
                 $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+                $scope.primGridOptions.data = $scope.catData;
                 $scope.secGridOptions.data = [];
+                $scope.primCatID = 0;
 
             });
     }
@@ -581,7 +848,13 @@ app.controller('userCtrl', function ($scope, adminService) {
         adminService.saveSiteUsers($scope.gridOptions.data)
             .then(function (response) {
                 $scope.gridOptions.data = response.data.data;
-                alert("Users Updated");
+                notify({
+                    message: 'Site Risk Users Updated',
+                    classes: 'alert-success',
+                    duration: 5000,
+                    templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                    topOffset: 25
+                });
             });
 
     };
@@ -670,11 +943,38 @@ app.controller('userCtrl', function ($scope, adminService) {
     }
 
 });
-app.service('adminService', function ($http) {
+app.service('adminService', function ($http, $modal) {
 
     var service = this;
     var loc = window.location.href;
     this.url = loc.slice(0, loc.indexOf("wp-admin"));
+
+    this.confirm = function (msg, cbFn) {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContentConfirm.html',
+            size: "md",
+            controller: function ($modalInstance, title) {
+                this.title = title;
+                this.ok = function () {
+                    $modalInstance.close(true);
+                };
+                this.cancel = function () {
+                    $modalInstance.close(false);
+                };
+            },
+            controllerAs: "vm",
+            resolve: {
+                title: function () {
+                    return msg
+                }
+            }
+        });
+
+        modalInstance.result.then(function (r) {
+            cbFn(r);
+        });
+
+    }
 
     this.getSiteUsers = function () {
         return $http({

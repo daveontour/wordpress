@@ -23,10 +23,10 @@
 	wp_enqueue_script('qrm-test');
 // 	wp_enqueue_script('qrm-lazyload');
 // 	wp_enqueue_script('qrm-router');
-// 	wp_enqueue_script('qrm-bootstraptpl');
+ 	wp_enqueue_script('qrm-bootstraptpl');
  	wp_enqueue_script('qrm-uigrid');
  	wp_enqueue_script('qrm-icheck');
-// 	wp_enqueue_script('qrm-notify');
+ 	wp_enqueue_script('qrm-notify');
 // 	wp_enqueue_script('qrm-dropzone');
 // 	wp_enqueue_script('qrm-moment');
 // 	wp_enqueue_script('qrm-app');
@@ -53,10 +53,9 @@
     <div class="panel-body">
         <div class="col-lg-12" ng-controller="switchCtrl">
             
-			<h1 class="center-block" style="width:300px">Quay Risk Manager</h1>
-            <div class="center-block" style="height:3em; width:600px" >
-            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t1" ng-click="tabswitch(1)">List Risk Projects</button>        	
-          	<button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t2" ng-click="tabswitch(2)">New Risk Project</button>
+			<h1 class="pull-left" >Quay Risk Manager</h1>
+            <div class="pull-left" style="height:3em;clear:both" >
+            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t1" ng-click="tabswitch(1)">Risk Projects</button>        	
             <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t3" ng-click="tabswitch(3)">Manage Users</button> 
             <button class="btn btn-w-m btn-success pull-left" ng-model="t4" ng-click="tabswitch(4)">Settings</button> 
             </div>

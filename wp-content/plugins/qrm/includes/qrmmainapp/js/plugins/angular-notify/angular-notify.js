@@ -22,12 +22,14 @@ angular.module('cgNotify', []).factory('notify',['$timeout','$http','$compile','
             args.templateUrl = args.templateUrl ? args.templateUrl : defaultTemplateUrl;
             args.container = args.container ? args.container : container;
             args.classes = args.classes ? args.classes : '';
+            
 
             var scope = args.scope ? args.scope.$new() : $rootScope.$new();
             scope.$position = args.position ? args.position : position;
             scope.$message = args.message;
             scope.$classes = args.classes;
             scope.$messageTemplate = args.messageTemplate;
+            scope.$topOffset = args.topOffset? args.topOffset : 0;
 
             if (maximumOpen > 0) {
                 var numToClose = (openNotificationsScope.length + 1) - maximumOpen;
@@ -92,7 +94,7 @@ angular.module('cgNotify', []).factory('notify',['$timeout','$http','$compile','
                         } else {
                             currentY += height + verticalSpacing;
                         }
-                        element.css('top',top + 'px').css('margin-top','-' + (height+shadowHeight) + 'px').css('visibility','visible');
+                        element.css('top',top+scope.$topOffset + 'px').css('margin-top','-' + (height+shadowHeight) + 'px').css('visibility','visible');
                         j ++;
                     }
                 };

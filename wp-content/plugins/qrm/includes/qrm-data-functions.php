@@ -407,10 +407,10 @@ class QRM {
 			update_post_meta ( $postID, "objectiveID", 100 );
 			update_post_meta ( $postID, "categoryID", 100 );
 		}
-		// Fix up any category of objective IDs
+		// Fix up any category or objective IDs
 		
 		$objID = intval(get_option("qrm_objective_id"));
-		echo var_dump($project);
+		
 		foreach($project->objectives as   &$obj){
 			$obj->projectID = $project->id;
 			unset ($obj->children);			
@@ -425,6 +425,23 @@ class QRM {
 			}
 		}
 		update_option ( "qrm_objective_id", $objID );
+		
+		
+		$catID = intval(get_option("qrm_category_id"));
+		
+		foreach($project->categories as   &$cat){
+			$cat->projectID = $project->id;
+			if ($cat->id < 0){
+				$origID = $cat->id;
+				$cat->id = $catID++;
+				foreach ($project->categories as $cat2){
+					if ($cat2->parentID == $origID){
+						$cat2->parentID = $cat->id;
+					}
+				}
+			}
+		}
+		update_option ( "qrm_category_id", $catID );
 		
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );

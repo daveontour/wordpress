@@ -2388,6 +2388,11 @@ label.error {
     margin-top: 30px;
     color: inherit;
 }
+
+.alert-admin{
+    margin-top: 100px;
+}
+
 .inspinia-notify.alert-warning {
     border-left: 6px solid #f8ac59;
 }
