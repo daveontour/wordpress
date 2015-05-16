@@ -413,7 +413,6 @@ class QRM {
 		
 		foreach($project->objectives as   &$obj){
 			$obj->projectID = $project->id;
-			unset ($obj->children);			
 			if ($obj->id < 0){
 				$origID = $obj->id;
 				$obj->id = $objID++;
