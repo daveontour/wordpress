@@ -6,41 +6,17 @@ var app = angular.module('myApp', [
         'ui.grid.edit',
         'ui.grid.moveColumns',
         'treeControl',
-        'cgNotify'
+        'cgNotify',
+        'ui.select',
+    'ngSanitize'
     ]);
 
-app.config(['$compileProvider', function ($compileProvider) {
-    $compileProvider.debugInfoEnabled(false);
-}]);
-
-function arrangeProjects(projects) {
-    var projMap = new Map();
-    var retn = new Array();
-
-    projects.forEach(function (e) {
-        projMap.put(e.id, e);
-    });
-
-    projects.forEach(function (e) {
-        if (projMap.findIt(e.parent_id) > -1) {
-            parent = projMap.get(e.parent_id);
-            if (parent.children == null) {
-                parent.children = new Array();
-            }
-            parent.children.push(e);
-        } else {
-            retn.push(e);
-        }
-    });
-    return retn;
-}
-
 function parentSort(projArr) {
-    
-     projArr.forEach(function (e) {
+
+    projArr.forEach(function (e) {
         e.$$treeLevel = -100;
     });
-    
+
     var sortedArray = $.grep(projArr, function (value) {
         return value.parent_id <= 0;
     })
@@ -54,16 +30,16 @@ function parentSort(projArr) {
     });
 
     while (projArr.length > 0) {
-        
-        for (j = 0; j < projArr.length; j++){
-            
+
+        for (j = 0; j < projArr.length; j++) {
+
             var child = projArr[j];
             var found = false;
             for (var i = 0; i < sortedArray.length; i++) {
-                
+
                 var parent = sortedArray[i];
-                
-                if (child.parent_id == parent.id ) {
+
+                if (child.parent_id == parent.id) {
                     child.$$treeLevel = parent.$$treeLevel + 1;
                     sortedArray.splice(i + 1, 0, child);
                     found = true;
@@ -72,7 +48,9 @@ function parentSort(projArr) {
             }
             if (found) break;
         }
-        projArr = $.grep(projArr, function (value) { return value.$$treeLevel < 0 });
+        projArr = $.grep(projArr, function (value) {
+            return value.$$treeLevel < 0
+        });
     }
 
     return sortedArray;
@@ -116,6 +94,12 @@ function getProjectParents(projMap, projectID) {
 
 function getFamilyObjectives(projMap, projectID) {
 
+    return arrangeObjectives(getLinearObjectives(projMap, projectID));
+
+}
+
+function getLinearObjectives(projMap, projectID) {
+
 
     var obj = new Array();
     var proj = projMap.get(projectID);
@@ -132,12 +116,13 @@ function getFamilyObjectives(projMap, projectID) {
         delete e.children;
     })
 
-    return arrangeObjectives(obj);
+    return obj;
 
 }
 
 function getFamilyCats(projMap, projectID) {
 
+    var parents = getProjectParents(projMap, projectID);
 
     var cat = new Array();
     var proj = projMap.get(projectID);
@@ -151,6 +136,49 @@ function getFamilyCats(projMap, projectID) {
     });
 
     return cat;
+
+}
+
+function checkValid(proj, adminService) {
+    var rtn = {
+        code: 1,
+        msg: ""
+    }
+
+    //Check for circular parent/child relationships.
+
+    var pID = proj.parent_id;
+
+    while (pID != 0) {
+
+        var search = $.grep(adminService.projectsLinear, function (value) {
+            return value.id == pID;
+        });
+
+        if (search.length == 0) {
+            pID = 0;
+            continue;
+        }
+
+        var pp = search[0];
+        if (pp.id == proj.id) {
+            rtn.code = -1;
+            rtn.msg = "Circular Parent/Child Relationship Detected";
+            return rtn;
+        } else {
+            pID = pp.parent_id;
+        }
+    }
+
+    // Project Risk Manager Set
+    if (typeof (proj.projectRiskManager) == "undefined") {
+        rtn.code = -1;
+        rtn.msg = "Project Risk Manager Not Set";
+        return rtn;
+    }
+
+
+    return rtn;
 
 }
 
@@ -178,7 +206,6 @@ app.controller('switchCtrl', function ($scope, adminService) {
             break;
         case 2:
             $scope.t2 = true;
-            QRM.projCtrl.load();
             break;
         case 3:
             $scope.t3 = true;
@@ -190,6 +217,11 @@ app.controller('switchCtrl', function ($scope, adminService) {
         }
     }
 
+    adminService.getSiteUsers()
+        .then(function (response) {
+            QRM.siteUsers = response.data.data;
+        });
+
 });
 app.controller('listCtrl', function ($scope, adminService) {
 
@@ -197,7 +229,7 @@ app.controller('listCtrl', function ($scope, adminService) {
     $scope.gridOptions = {
         enableSorting: false,
         enableFiltering: false,
-        onRegisterApi: function( gridApi ) {
+        onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
         },
         columnDefs: [
@@ -205,15 +237,16 @@ app.controller('listCtrl', function ($scope, adminService) {
                 name: 'Project Title',
                 field: 'title',
                 width: '*',
-                cellTemplate:'<div ng-style="grid.appScope.rowStyle(row.entity)" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
-            },{
-                name:"Project Code",
-                field:"projectCode",
-                width:130
-            },{
-                name:"Project Risk Manager",
-                field:"projectRiskManager.display_name",
-                width:170
+                cellTemplate: '<div ng-style="grid.appScope.rowStyle(row.entity)" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
+            }, {
+                name: "Project Code",
+                field: "projectCode",
+                width: 130
+            }, {
+                name: "Project Risk Manager",
+                field: "projectRiskManager",
+                width: 170,
+                cellFilter: "usernameFilter"
             },
             {
                 name: 'id',
@@ -230,23 +263,43 @@ app.controller('listCtrl', function ($scope, adminService) {
             }
     ]
     };
-    
-    $scope.rowStyle = function(e){
+
+    $scope.rowStyle = function (e) {
         return {
-            "margin-left":e.$$treeLevel*20+"px"
+            "margin-left": e.$$treeLevel * 20 + "px"
         }
     }
 
     this.load = function () {
         adminService.getProjects()
             .then(function (response) {
+
+                $scope.projectsLinear = response.data.data;
+                adminService.projectsLinear = $scope.projectsLinear;
+
                 $scope.sortedParents = parentSort(response.data.data);
-                $scope.gridOptions.data = $scope.sortedParents; 
+                adminService.sortedParents = $scope.sortedParents;
+
+                $scope.projMap = new Map();
+                $scope.projectsLinear.forEach(function (e) {
+                    $scope.projMap.put(e.id, e);
+                });
+                adminService.projMap = $scope.projMap;
+
+                $scope.gridOptions.data = $scope.sortedParents;
                 setTimeout(function () {
                     $scope.gridApi.treeView.expandAllRows();
                 }, 100);
-                $scope.gridApi.treeView.expandAllRows();
             });
+    }
+    
+    $scope.newProject = function(){
+        var proj = adminService.getDefaultProject();        
+        adminService.projMap.put(proj.id, proj);
+        adminService.projectsLinear = adminService.projMap.valArray;
+        QRM.switchCtrl.tabswitch(2);
+        QRM.projCtrl.editProject(proj);
+        
     }
 
     $scope.editProject = function (id) {
@@ -263,32 +316,14 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     QRM.projCtrl = this;
     var projCtrl = this;
 
-    $scope.status = {
-        isFirstOpen: false
-    };
+    $scope.sortedParents = adminService.sortedParents;
 
     $scope.tempObjectiveID = -1;
-
-    $scope.treeOptions = {
-        nodeChildren: "children",
-        dirSelectable: true,
-        multiSelection: false,
-        injectClasses: {
-            ul: "a1",
-            li: "a2",
-            liSelected: "a7",
-            iExpanded: "a3",
-            iCollapsed: "a4",
-            iLeaf: "a5",
-            label: "a6",
-            labelSelected: "a8"
-        }
-    }
-
+    $scope.catParentID = 100;
+    $scope.catID = -1;
     $scope.ref = {};
 
     $scope.addObjective = function (isPrim) {
-
 
         debugger;
         if ($scope.ref.objectiveText == "" || $scope.ref.objectiveText == null) return;
@@ -320,7 +355,12 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 topOffset: 25
             });
         }
+        
+        $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
+        
         $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
+        
+       // $scope.expandedObjectives =  getLinearObjectives($scope.projMap, $scope.proj.id);
 
 
         delete $scope.ref.objectiveText;
@@ -343,32 +383,53 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         }
     }
 
-    $scope.projectSelect = function (parentProject) {
-        $scope.proj.parent_id = parentProject.id;
+    $scope.projectSelect = function (item, model) {
+        
+        //Update the Map for determining parents.
+        
+        $scope.projMap.get($scope.proj.id).parent_id = model;
+            
         $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
 
         $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
         $scope.primGridOptions.data = $scope.catData;
         $scope.secGridOptions.data = [];
         $scope.primCatID = 0;
-
     }
 
+    $scope.cancelChanges = function () {
+        QRM.switchCtrl.tabswitch(1);
+    }
     $scope.saveChanges = function () {
+
+        if (typeof ($scope.proj.parent_id) == "undefined") {
+            $scope.proj.parent_id = 0;
+        }
         if ($scope.proj.id == $scope.proj.parent_id) {
             $scope.proj.parent_id = 0;
         }
-        adminService.saveProject(JSON.stringify($scope.proj))
-            .then(function (response) {
-                QRM.switchCtrl.tabswitch(1);
-                notify({
-                    message: 'Project Saved',
-                    classes: 'alert-success',
-                    duration: 2500,
-                    templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                    topOffset: 25
+
+        var valid = checkValid($scope.proj, adminService);
+        if (valid.code > 0) {
+            adminService.saveProject(JSON.stringify($scope.proj))
+                .then(function (response) {
+                    notify({
+                        message: 'Project Saved',
+                        classes: 'alert-success',
+                        duration: 2500,
+                        templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                        topOffset: 25
+                    });
                 });
+        } else {
+            notify({
+                message: 'Project Not Saved: ' + valid.msg,
+                classes: 'alert-danger',
+                duration: 2500,
+                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                topOffset: 25
             });
+        }
     }
     $scope.matrixChange = function () {
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
@@ -388,44 +449,59 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         })
     }
     $scope.changeOwner = function (e) {
-        if ($.inArray(e.ID, $scope.proj.ownersID) > -1) {
+
+        if (typeof ($scope.proj.ownersID) == 'undefined') {
+            $scope.proj.ownersID = [];
+        }
+
+        if (!e.pOwner) {
             $scope.proj.ownersID = $.grep($scope.proj.ownersID, function (value) {
                 return value != e.ID;
             })
-        } else {
+        } else if ($.inArray(e.ID, $scope.proj.ownersID) < 0) {
             $scope.proj.ownersID.push(e.ID);
         }
+
     };
     $scope.changeManager = function (e) {
-        if ($.inArray(e.ID, $scope.proj.ownersID) > -1) {
+
+        if (typeof ($scope.proj.managersID) == 'undefined') {
+            $scope.proj.managersID = [];
+        }
+
+        if (!e.pManager) {
             $scope.proj.managersID = $.grep($scope.proj.managersID, function (value) {
                 return value != e.ID;
             })
-        } else {
+        } else if ($.inArray(e.ID, $scope.proj.managersID) < 0) {
             $scope.proj.managersID.push(e.ID);
         }
+
     };
     $scope.changeUser = function (e) {
-        if ($.inArray(e.ID, $scope.proj.userssID) > -1) {
+
+        if (typeof ($scope.proj.usersID) == 'undefined') {
+            $scope.proj.usersID = [];
+        }
+
+        if (!e.pUser) {
             $scope.proj.usersID = $.grep($scope.proj.usersID, function (value) {
                 return value != e.ID;
             })
-        } else {
+        } else if ($.inArray(e.ID, $scope.proj.usersID) < 0) {
             $scope.proj.usersID.push(e.ID);
-        };
+        }
+
     }
 
-    $scope.catID = -1;
     $scope.changePrimCategory = function (id) {
-        debugger;
         $scope.primCatID = id;
         $scope.secGridOptions.data = $.grep($scope.catData, function (cat) {
             return cat.parentID == id;
         });
     };
     $scope.addCat = function (isPrim) {
-        debugger;
-
+ 
         var cat = {
             title: isPrim ? $scope.ref.catText : $scope.ref.catSubText,
             id: $scope.catID--,
@@ -453,7 +529,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         $scope.ref.catSubText = "";
 
     }
-    $scope.rowStyle = function (id) {
+    $scope.catRowStyle = function (id) {
         if (id == $scope.primCatID) {
             return {
                 'background-color': 'yellow'
@@ -462,7 +538,6 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
             return {};
         }
     };
-
     $scope.editObjective = function (node) {
 
         if (node.projectID != $scope.proj.id) {
@@ -609,13 +684,12 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
 
         }
     }
-    $scope.catParentID = 100;
     $scope.primGridOptions = {
         minRowsToShow: 5,
         rowHeight: 30,
         enableFiltering: true,
         data: $scope.catData,
-        rowTemplate: '<div ng-click="grid.appScope.changePrimCategory(row.entity.id)"   ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-style="grid.appScope.rowStyle(row.entity.id)" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        rowTemplate: '<div ng-click="grid.appScope.changePrimCategory(row.entity.id)"   ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-style="grid.appScope.catRowStyle(row.entity.id)" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
 
             {
@@ -691,6 +765,9 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         enableSorting: true,
         minRowsToShow: 5,
         rowHeight: 30,
+        onRegisterApi: function (gridApi) {
+            $scope.gridOwnerApi = gridApi;
+        },
         columnDefs: [
 
             {
@@ -712,7 +789,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 width: 80,
                 type: 'text',
                 field: 'caps.risk_user',
-                cellTemplate: '<input style="height:15px" type="checkbox" ng-checked="$.inArray(row.entity.ID,grid.appScope.proj.ownersID)" ng-click="grid.appScope.changeOwner(row.entity)">',
+                cellTemplate: '<input style="height:15px" type="checkbox"  ng-change="grid.appScope.changeOwner(row.entity)" ng-model="row.entity.pOwner" ng-checked="row.entity.pOwner">',
                 cellClass: 'cellCentered'
             }
         ]
@@ -720,6 +797,9 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     $scope.gridManagerOptions = {
         enableSorting: true,
         minRowsToShow: 5,
+        onRegisterApi: function (gridApi) {
+            $scope.gridManagerApi = gridApi;
+        },
         rowHeight: 30,
         columnDefs: [
 
@@ -742,7 +822,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 name: 'Manager',
                 width: 80,
                 field: 'caps.risk_user',
-                cellTemplate: '<input style="height:15px" type="checkbox" ng-click="grid.appScope.changeManager(row.entity)">',
+                cellTemplate: '<input style="height:15px" type="checkbox"  ng-change="grid.appScope.changeManager(row.entity)" ng-model="row.entity.pManager" ng-checked="row.entity.pManager">',
                 cellClass: 'cellCentered',
                 type: 'text'
 
@@ -752,6 +832,9 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     $scope.gridUserOptions = {
         enableSorting: true,
         minRowsToShow: 5,
+        onRegisterApi: function (gridApi) {
+            $scope.gridUserApi = gridApi;
+        },
         rowHeight: 30,
         columnDefs: [
 
@@ -774,7 +857,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 name: 'User',
                 width: 80,
                 field: 'caps.risk_user',
-                cellTemplate: '<input style="height:15px" type="checkbox" ng-click="grid.appScope.changeUser(row.entity)">',
+                cellTemplate: '<input style="height:15px" type="checkbox" ng-change="grid.appScope.changeUser(row.entity)" ng-model="row.entity.pUser" ng-checked="row.entity.pUser">',
                 cellClass: 'cellCentered',
                 type: 'text'
 
@@ -782,58 +865,65 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         ]
     };
 
-    $scope.load = function () {
 
+    $scope.rowStyle = function (e) {
+        return {
+            "margin-left": e.$$treeLevel * 20 + "px"
+        }
+    }
+
+
+    $scope.resetFirst = function () {
+        $scope.firstActive = false;
+    }
+    $scope.firstActive = true;
+
+    this.editProject = function (project) {
+        $scope.proj = project;
+        
+        setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
         adminService.getSiteUsersCap()
             .then(function (response) {
                 $scope.ref.riskProjectManagers = jQuery.grep(response.data.data, function (e) {
                     return e.bProjMgr
                 });
-            debugger;
                 $scope.gridOwnerOptions.data = jQuery.grep(response.data.data, function (e) {
+                    e.pOwner = ($.inArray(e.ID, $scope.proj.ownersID) > -1);
                     return e.bOwner
                 });
                 $scope.gridManagerOptions.data = jQuery.grep(response.data.data, function (e) {
+                    e.pManager = ($.inArray(e.ID, $scope.proj.managersID) > -1);
                     return e.bManager
                 });
                 $scope.gridUserOptions.data = jQuery.grep(response.data.data, function (e) {
+                    e.pUser = ($.inArray(e.ID, $scope.proj.usersID) > -1);
                     return e.bUser
                 });
-            });
-
-        adminService.getProjects()
-            .then(function (response) {
-                $scope.projectsLinear = response.data.data;
-                $scope.projects = arrangeProjects($scope.projectsLinear);
-
-                $scope.projMap = new Map();
-                $scope.projects.forEach(function (e) {
-                    $scope.projMap.put(e.id, e);
-                    if (e.id == $scope.proj.parent_id) {
-                        $scope.selectedProject = e;
-                    }
-                });
-
-                $scope.projMap.put($scope.proj.id, $scope.proj);
-                $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
-                $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
-                $scope.primGridOptions.data = $scope.catData;
-                $scope.secGridOptions.data = [];
-                $scope.primCatID = 0;
 
             });
-    }
+        $scope.projectsLinear = adminService.projectsLinear;
+        $scope.sortedParents = adminService.sortedParents;
+        $scope.projMap = adminService.projMap;
 
-    this.load = function () {
-        $scope.proj = adminService.getDefaultProject();
-        setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
-        $scope.load();
-    }
+        $scope.projectObjectives = getFamilyObjectives($scope.projMap, $scope.proj.id);
+ //       $scope.expandedObjectives =  getLinearObjectives($scope.projMap, $scope.proj.id);
+        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+        $scope.primGridOptions.data = $scope.catData;
+        $scope.secGridOptions.data = [];
+        $scope.primCatID = 0;
 
-    this.editProject = function (project) {
-        $scope.proj = project;
-        setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
-        $scope.load();
+        $scope.gridManagerApi.core.refresh();
+        $scope.gridOwnerApi.core.refresh();
+        $scope.gridUserApi.core.refresh();
+
+        $scope.firstActive = true;
+//        try {
+//            $scope.$apply();
+//        } catch (e) {
+//            console.log("Unnecessary call to $scope.$apply() " + new Date());
+//        }
+
+
     }
 });
 app.controller('userCtrl', function ($scope, adminService) {
@@ -935,11 +1025,9 @@ app.controller('userCtrl', function ($scope, adminService) {
         ]
     };
 
+
     this.load = function () {
-        adminService.getSiteUsers()
-            .then(function (response) {
-                $scope.gridOptions.data = response.data.data;
-            });
+        $scope.gridOptions.data = QRM.siteUsers;
     }
 
 });
@@ -1122,4 +1210,13 @@ app.directive('icheck', function icheck($timeout) {
             });
         }
     };
+});
+app.filter('usernameFilter', function () {
+    return function (input) {
+        if (typeof (input) == 'undefined') return;
+        return $.grep(QRM.siteUsers, function (e) {
+            return e.ID == input
+        })[0].data.display_name;
+    }
+
 });

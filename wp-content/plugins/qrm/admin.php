@@ -11,7 +11,8 @@
 	wp_enqueue_style ('qrm-style');
 	wp_enqueue_style ('icheck');
 	wp_enqueue_style ('treecontrol');
-		
+	wp_enqueue_style ('select');
+	
 	wp_enqueue_script('qrm-jquery');
 	wp_enqueue_script('qrm-jqueryui');
 	wp_enqueue_script('qrm-boostrap');
@@ -37,6 +38,8 @@
  	wp_enqueue_script('qrm-d3');
  	wp_enqueue_script('qrm-common');
  	wp_enqueue_script('treecontrol');
+ 	wp_enqueue_script('select');
+ 	wp_enqueue_script('sanitize');
  	
 
 ?>
