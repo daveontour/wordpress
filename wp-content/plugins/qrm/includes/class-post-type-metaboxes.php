@@ -15,14 +15,10 @@ class Risk_Post_Type_Metaboxes {
 
 	public function init() {
 		add_action( 'add_meta_boxes', array( $this, 'risk_meta_boxes' ) );
+		add_action( 'add_meta_boxes', array( $this, 'riskproject_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save_meta_boxes' ),  10, 2 );
 	}
 
-	/**
-	 * Register the metaboxes to be used for the team post type
-	 *
-	 * @since 0.1.0
-	 */
 	public function risk_meta_boxes() {
 		add_meta_box(
 			'risk_fields',
@@ -34,11 +30,56 @@ class Risk_Post_Type_Metaboxes {
 		);
 	}
 
-   /**
-	* The HTML for the fields
-	*
-	* @since 0.1.0
-	*/
+	public function riskproject_meta_boxes() {
+		add_meta_box(
+		'riskproject_fields',
+		'Project Details',
+		array( $this, 'render_riskproject_meta_boxes' ),
+		'riskproject',
+		'normal',
+		'high'
+				);
+	}	
+
+	function render_riskproject_meta_boxes( $post ) {
+		wp_enqueue_style ('font-awesome' );
+//		wp_enqueue_style ('boostrap');
+		wp_enqueue_style ('animate');
+		wp_enqueue_style ('dropzone' );
+		wp_enqueue_style ('ui-grid' );
+		wp_enqueue_style ('notify');
+		wp_enqueue_style ('pace' );
+//		wp_enqueue_style ('style');
+ 		wp_enqueue_style ('qrm-angular');
+		wp_enqueue_style ('qrm-style');
+ 		wp_enqueue_style ('icheck');
+ 		wp_enqueue_style ('treecontrol');
+ 		wp_enqueue_style ('select');
+		
+		wp_enqueue_script('qrm-jquery');
+		wp_enqueue_script('qrm-jqueryui');
+		wp_enqueue_script('qrm-boostrap');
+		wp_enqueue_script('qrm-angular');
+		wp_enqueue_script('qrm-test');
+	 	wp_enqueue_script('qrm-bootstraptpl');
+	 	wp_enqueue_script('qrm-uigrid');
+	 	wp_enqueue_script('qrm-icheck');
+	 	wp_enqueue_script('qrm-notify');
+	 	wp_enqueue_script('qrm-d3');
+	 	wp_enqueue_script('qrm-common');
+	 	wp_enqueue_script('treecontrol');
+	 	wp_enqueue_script('select');
+	 	wp_enqueue_script('sanitize');
+	 	
+	 	?>
+	 	
+   <div ng-app="myApp" style="width:100%;height:100%" ng-controller="projectCtrl">
+            <?php include 'riskproject-widget.php';?>
+   </div>
+ 	 	
+	 	<?php 
+	}
+	
 	function render_meta_boxes( $post ) {
 		wp_enqueue_style ('qrm-style');
 		
@@ -47,13 +88,15 @@ class Risk_Post_Type_Metaboxes {
 		wp_enqueue_script('jquery-ui-selectmenu');
 		wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_style('smooth_theme', "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css");
+		
+		
 		$meta = get_post_custom( $post->ID );
 		
 		$risk = ! isset( $meta['risk'][0] ) ? new Risk() :unserialize($meta['risk'][0]);
 
 		wp_nonce_field( basename( __FILE__ ), 'risk_fields' ); ?>
 
-		
+		<?php include 'new-project-widget.php';?>
 		<div id="tabs">
 		  <ul>
 		    <li><a href="#tabs-1">Risk</a></li>

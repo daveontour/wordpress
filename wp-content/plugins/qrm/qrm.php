@@ -93,7 +93,50 @@ if (is_admin ()) {
 	
 }
 
+add_filter('manage_riskproject_posts_columns', 'bs_riskproject_table_head');
+function bs_riskproject_table_head( $defaults ) {
+	$defaults['manager']  = 'Risk Project Manager';
+	$defaults['author'] = 'Added By';
+	return $defaults;
+}
 
+add_action( 'manage_riskproject_posts_custom_column', 'bs_riskproject_table_content', 10, 2 );
+
+function bs_riskproject_table_content( $column_name, $post_id ) {
+
+	if ($column_name == 'manager') {
+		$status = "Dave Burton";
+		echo $status;
+	}
+
+	if ($column_name == 'title') {
+		$status = "Dave Burton";
+		echo $status;
+	}
+}
+
+// add_action(
+// 'admin_head-edit.php',
+// 'wpse152971_edit_post_change_title_in_list'
+// );
+// function wpse152971_edit_post_change_title_in_list() {
+// 	add_filter(
+// 	'the_title',
+// 	'wpse152971_construct_new_title',
+// 	100,
+// 	2
+// 	);
+// }
+
+// function wpse152971_construct_new_title( $title, $id ) {
+// 	//print_r( $title );
+// 	//print_r( $id );
+// 	if (get_post_type() == "riskproject"){
+// 		return '--'.$title;
+// 	} else {
+// 		return $title;
+// 	}
+// }
 
 add_filter('single_template','get_custom_post_type_template');
 function get_custom_post_type_template($single_template){
@@ -121,9 +164,9 @@ function register_qrm_custom_menu_page(){
 
 add_action('admin_menu', 'qrm_remove_metaboxes');
 function qrm_remove_metaboxes (){
-	remove_meta_box('submitdiv', 'risk', 'normal');
-	remove_meta_box('submitdiv', 'risk', 'side');
-	remove_meta_box('slugdiv', 'risk', 'normal');
+//	remove_meta_box('submitdiv', 'risk', 'normal');
+//	remove_meta_box('submitdiv', 'risk', 'side');
+//	remove_meta_box('slugdiv', 'risk', 'normal');
 }
 
 add_action('init', 'qrm_init_options');
