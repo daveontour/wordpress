@@ -808,7 +808,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         }
     }
 
-     this.editProject = function (project) {
+    this.editProject = function (project) {
         $scope.proj = project;
 
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
@@ -853,7 +853,6 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
 
      }
 
-
     adminService.getProjects()
         .then(function (response) {
 
@@ -868,14 +867,10 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 $scope.projMap.put(e.id, e);
             });
             adminService.projMap = $scope.projMap;
+        
+        projCtrl.editProject($scope.projMap.get(projectID));
 
-    adminService.getProject(projectID).then(function (response) {
-        projCtrl.editProject(response.data.data);
-    });
         });
-
-
-
 });
 app.service('adminService', function ($http, $modal) {
 

@@ -317,8 +317,8 @@ class QRM {
 		
 		$data = new Data ();
 		$data->data = $risks;
-		echo json_encode ( $data, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json ( $data );
+		
 	}
 	static function saveRisk() {
 		$postdata = file_get_contents ( "php://input" );
@@ -361,8 +361,8 @@ class QRM {
 				"post_type" => "attachment" 
 		) );
 		
-		echo json_encode ( $risk );
-		exit ();
+		wp_send_json ( $risk );
+		
 	}
 	
 	static function saveProject() {
@@ -441,7 +441,7 @@ class QRM {
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
 	
-		echo json_encode ( $project );
-		exit ();
+	 	wp_send_json( $project );
+		
 	}
 }
