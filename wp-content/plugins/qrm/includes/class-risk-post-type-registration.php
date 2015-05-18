@@ -1,19 +1,6 @@
 <?php
-/**
- * Team Post Type
- *
- * @package   Risk_Post_Type
- * @license   GPL-2.0+
- */
 
-/**
- * Register post types and taxonomies.
- *
- * @package Team_Post_Type
- */
 class Risk_Post_Type_Registrations {
-
-	public $post_type = 'risk';
 
 	public function init() {
 		// Add the team post type and taxonomies
@@ -22,7 +9,6 @@ class Risk_Post_Type_Registrations {
 
 	public function register() {
 		$this->register_post_type();
-		$this->register_custom_taxonomy();
 	}
 
 	protected function register_post_type() {
@@ -56,7 +42,7 @@ class Risk_Post_Type_Registrations {
 		);
 
 		$args = apply_filters( 'risk_post_type_args', $args );
-		register_post_type( $this->post_type, $args );
+		register_post_type( 'risk', $args );
 		
 		
 		$labels = array(
@@ -76,7 +62,7 @@ class Risk_Post_Type_Registrations {
 				'revisions',
 				'title',
 				'page-attributes',
-				'editor'
+				
 		);
 		
 		$args = array(
@@ -95,37 +81,5 @@ class Risk_Post_Type_Registrations {
 		$args = apply_filters( 'riskproject_post_type_args', $args );
 		register_post_type( 'riskproject', $args );
 	}
-	
-	// Register Custom Taxonomy
-	function register_custom_taxonomy() {
-	
-		$labels = array(
-				'name'                       => __( 'Risk Categories', 'text_domain' ),
-				'singular_name'              => __( 'Category', 'text_domain' ),
-				'menu_name'                  => __( 'Categories', 'text_domain' ),
-				'all_items'                  => __( 'All Items', 'text_domain' ),
-				'parent_item'                => __( 'Parent Item', 'text_domain' ),
-				'parent_item_colon'          => __( 'Parent Item:', 'text_domain' ),
-				'new_item_name'              => __( 'New Risk Category Name', 'text_domain' ),
-				'add_new_item'               => __( 'Add Risk Category', 'text_domain' ),
-				'edit_item'                  => __( 'Edit Risk Category', 'text_domain' ),
-				'update_item'                => __( 'Update Risk Category', 'text_domain' ),
-				'separate_items_with_commas' => __( 'Separate items with commas', 'text_domain' ),
-				'search_items'               => __( 'Search Items', 'text_domain' ),
-				'add_or_remove_items'        => __( 'Add or remove items', 'text_domain' ),
-				'choose_from_most_used'      => __( 'Choose from the most used items', 'text_domain' ),
-				'not_found'                  => __( 'Not Found', 'text_domain' ),
-		);
-		$args = array(
-				'labels'                     => $labels,
-				'hierarchical'               => true,
-				'public'                     => true,
-				'show_ui'                    => true,
-				'show_admin_column'          => true,
-				'show_in_nav_menus'          => true,
-				'show_tagcloud'              => true,
-		);
-		register_taxonomy( 'qrmcategory', array( 'riskproject' ), $args );	
-	
-	}
+
 }

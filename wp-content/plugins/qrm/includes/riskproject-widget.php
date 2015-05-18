@@ -1,13 +1,26 @@
 <?php ?>
 
+ <style>
+
+
+    .select2 > .select2-choice.ui-select-match {
+      /* Because of the inclusion of Bootstrap */
+      height: 29px;
+    }
+
+  </style>
+
 <table class="form-table">
 	<tr valign="top">
+		<th scope="row">Project Description</th>
+		<td><textarea ng-model="proj.description" rows=4 style="width:100%" required></textarea></td>
+	</tr>	<tr valign="top">
 		<th scope="row">Project Code</th>
 		<td><input ng-model="proj.projectCode" required></td>
 	</tr>
 	<tr valign="top">
 		<th scope="row">Risk Project Manager</th>
-		<td><ui-select ng-model="proj.projectRiskManager" theme="bootstrap"> <ui-select-match
+		<td><ui-select ng-model="proj.projectRiskManager" theme="select2" search-enabled=false style="width:350px"> <ui-select-match
 				allow-clear=false placeholder="Select Project Risk Manager...">{{$select.selected.display_name}}</ui-select-match>
 			<ui-select-choices
 				repeat="person.ID as person in ref.riskProjectManagers">
@@ -18,8 +31,8 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">Parent Project</th>
-		<td><ui-select ng-model="proj.parent_id" theme="bootstrap"
-				on-select="projectSelect($item, $model)"> <ui-select-match
+		<td><ui-select ng-model="proj.parent_id" theme="select2"  search-enabled=false
+				on-select="projectSelect($item, $model)" style="width:350px"> <ui-select-match
 				allow-clear=true placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
 			<ui-select-choices repeat="project.id as project in sortedParents">
 			<div ng-style="rowStyle(project)">
@@ -30,7 +43,7 @@
 	<tr valign="top">
 		<th scope="row"></th>
 		<td><label class="checkbox-inline" style="padding-left: 0px"> <input
-				icheck type="checkbox" ng-model="proj.useAdvancedConsequences">
+				 type="checkbox" ng-model="proj.useAdvancedConsequences">
 				Enable Quantitative Consequences
 		</label></td>
 	</tr>
@@ -189,3 +202,13 @@
 	</td>
 	</tr>
 </table>
+
+<script>
+jQuery(document).ready(function(){
+	jQuery("#post").on('submit', function(event){
+		QRM.projCtrl.saveProject();
+		event.preventDefault();
+	})
+});
+	
+</script>

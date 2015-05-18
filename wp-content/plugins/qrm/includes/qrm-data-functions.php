@@ -76,11 +76,8 @@ class QRM {
 			
 			array_push ( $userSummary, $u );		
 		}
-		
-		$data = new Data ();
-		$data->data = $userSummary;
-		echo json_encode ( $data, JSON_PRETTY_PRINT );
-		exit ();
+
+		wp_send_json($userSummary);
 	}	
 	static function getSiteUsers() {
 		$user_query = new WP_User_Query ( array (
@@ -233,8 +230,7 @@ class QRM {
 		$emptyRisk->comments = get_comments ( array (
 				'post_id' => $comment->riskID 
 		) );
-		echo json_encode ( $emptyRisk, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json ( $emptyRisk );
 	}
 	static function getRiskAttachments() {
 		$riskID = json_decode ( file_get_contents ( "php://input" ) );
@@ -242,8 +238,7 @@ class QRM {
 				"post_parent" => $riskID,
 				"post_type" => "attachment" 
 		) );
-		echo json_encode ( $attachments, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json($attachments);
 	}
 	static function getRisk() {
 		$riskID = json_decode ( file_get_contents ( "php://input" ) );
@@ -255,8 +250,7 @@ class QRM {
 				"post_parent" => $riskID,
 				"post_type" => "attachment" 
 		) );
-		echo json_encode ( $risk, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json($risk);
 	}
 	static function getProjects() {
 		global $post;
@@ -276,8 +270,7 @@ class QRM {
 		
 		$data = new Data ();
 		$data->data = $projects;
-		echo json_encode ( $data, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json($data);
 	}
 	static function getProject() {
 		
@@ -285,8 +278,7 @@ class QRM {
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
 		$data = new Data ();
 		$data->data = $project;
-		echo json_encode ( $data, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json($data);
 	}
 	
 	static function getAllRisks() {
@@ -380,6 +372,8 @@ class QRM {
 		
 		$postdata = file_get_contents ( "php://input" );
 		$project = json_decode ( $postdata );
+		
+	
 	
 		$postID = null;
 	
@@ -391,7 +385,8 @@ class QRM {
 			'post_content' => $project->description,
 			'post_title' => $project->title,
 			'post_status' => 'publish',
-			'post_type' => 'riskproject'
+			'post_type' => 'riskproject',
+			'post_parent' => $project->parent_id
 			) );
 			$postID = $project->id;
 		} else {
@@ -401,7 +396,8 @@ class QRM {
 					'post_title' => $project->title,
 					'post_type' => 'riskproject',
 					'post_status' => 'publish',
-					'post_author' => $user_ID
+					'post_author' => $user_ID,
+					'post_parent' => $project->parent_id
 			) );
 			$project->id = $postID;
 			update_post_meta ( $postID, "objectiveID", 100 );

@@ -226,7 +226,7 @@ final class _WP_Editors {
 		 * @param string $output Editor's HTML markup.
 		 */
 		$the_editor = apply_filters( 'the_editor', '<div id="wp-' . $editor_id . '-editor-container" class="wp-editor-container">' .
-			'<textarea' . $editor_class . $height . $tabindex . $autocomplete . ' cols="40" name="' . $set['textarea_name'] . '" ' .
+			'<textarea ' . $editor_class . $height . $tabindex . $autocomplete . ' cols="40" name="' . $set['textarea_name'] . '" ' .
 			'id="' . $editor_id . '">%s</textarea></div>' );
 
 		/**

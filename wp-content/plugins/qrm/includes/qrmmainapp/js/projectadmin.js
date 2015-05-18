@@ -3,10 +3,7 @@ var app = angular.module('myApp', [
         'ui.grid.autoResize',
         'ui.bootstrap',
         'ui.grid.treeView',
-        'ui.grid.edit',
-        'ui.grid.moveColumns',
-        'treeControl',
-        'cgNotify',
+       'cgNotify',
         'ui.select',
     'ngSanitize'
     ]);
@@ -240,6 +237,11 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     $scope.cancelChanges = function () {
         QRM.switchCtrl.tabswitch(1);
     }
+    
+    this.saveProject = function(){
+        $scope.saveChanges();
+    }
+    
     $scope.saveChanges = function () {
 
         if (typeof ($scope.proj.parent_id) == "undefined") {
@@ -273,7 +275,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
             });
         }
     }
-    
+
     $scope.matrixChange = function () {
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
     }
@@ -290,7 +292,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
             $scope.proj.matrix.tolString = $scope.proj.matrix.tolString.substring(0, index) + tol + $scope.proj.matrix.tolString.substring(index + 1);
         })
     }
-    
+
     $scope.changeOwner = function (e) {
 
         if (typeof ($scope.proj.ownersID) == 'undefined') {
@@ -806,29 +808,24 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         }
     }
 
-    $scope.resetFirst = function () {
-        $scope.firstActive = false;
-    }
-    $scope.firstActive = true;
-
-    this.editProject = function (project) {
+     this.editProject = function (project) {
         $scope.proj = project;
 
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
         adminService.getSiteUsersCap()
             .then(function (response) {
-                $scope.ref.riskProjectManagers = jQuery.grep(response.data.data, function (e) {
+                $scope.ref.riskProjectManagers = jQuery.grep(response.data, function (e) {
                     return e.bProjMgr
                 });
-                $scope.gridOwnerOptions.data = jQuery.grep(response.data.data, function (e) {
+                $scope.gridOwnerOptions.data = jQuery.grep(response.data, function (e) {
                     e.pOwner = ($.inArray(e.ID, $scope.proj.ownersID) > -1);
                     return e.bOwner
                 });
-                $scope.gridManagerOptions.data = jQuery.grep(response.data.data, function (e) {
+                $scope.gridManagerOptions.data = jQuery.grep(response.data, function (e) {
                     e.pManager = ($.inArray(e.ID, $scope.proj.managersID) > -1);
                     return e.bManager
                 });
-                $scope.gridUserOptions.data = jQuery.grep(response.data.data, function (e) {
+                $scope.gridUserOptions.data = jQuery.grep(response.data, function (e) {
                     e.pUser = ($.inArray(e.ID, $scope.proj.usersID) > -1);
                     return e.bUser
                 });
@@ -854,12 +851,31 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         $scope.gridOwnerApi.core.refresh();
         $scope.gridUserApi.core.refresh();
 
-        $scope.firstActive = true;
+     }
 
-    }
-    
-    var project = adminService.getProject();
-    this.editProject(project);
+
+    adminService.getProjects()
+        .then(function (response) {
+
+            $scope.projectsLinear = response.data.data;
+            adminService.projectsLinear = $scope.projectsLinear;
+
+            $scope.sortedParents = parentSort(response.data.data);
+            adminService.sortedParents = $scope.sortedParents;
+
+            $scope.projMap = new Map();
+            $scope.projectsLinear.forEach(function (e) {
+                $scope.projMap.put(e.id, e);
+            });
+            adminService.projMap = $scope.projMap;
+
+    adminService.getProject(projectID).then(function (response) {
+        projCtrl.editProject(response.data.data);
+    });
+        });
+
+
+
 });
 app.service('adminService', function ($http, $modal) {
 
@@ -898,8 +914,8 @@ app.service('adminService', function ($http, $modal) {
         return $http({
             method: 'POST',
             url: ajaxurl,
-            params:{
-              action: "saveSiteUsersCap" 
+            params: {
+                action: "getSiteUsersCap"
             },
             cache: false
         });
@@ -908,8 +924,8 @@ app.service('adminService', function ($http, $modal) {
         return $http({
             method: 'POST',
             url: ajaxurl,
-            params:{
-              action:"getProjects"  
+            params: {
+                action: "getProjects"
             },
             cache: false
         });
@@ -920,8 +936,8 @@ app.service('adminService', function ($http, $modal) {
         return $http({
             method: 'POST',
             url: ajaxurl,
-            params:{
-              action:"saveProject"  
+            params: {
+                action: "saveProject"
             },
             data: data,
             cache: false
@@ -931,8 +947,8 @@ app.service('adminService', function ($http, $modal) {
         return $http({
             method: 'POST',
             url: ajaxurl,
-            params:{
-              action:"getProject"  
+            params: {
+                action: "getProject"
             },
             data: projectID,
             cache: false

@@ -50,28 +50,36 @@ function my_plugin_admin_init() {
 	wp_enqueue_script ('jquery-ui-datepicker' );
 }
 
-add_action ('parse_request','qrm_plugin_parse_request' );
-function qrm_plugin_parse_request($wp) {
-	
-	if (array_key_exists ('qrmfn', $wp->query_vars )) {
-		
-		// Overall QRM security check. User needs to be logged in to Wordpress.
-// 		if ( !is_user_logged_in() ){
-// 			http_response_code(400);
-// 			echo '{"error":true,"msg":"Not Logged In"}';
-// 			exit;
-// 		}
-			
-		// Pass to the specific function which will also check role security
-		QRM::router($wp->query_vars ['qrmfn']);
-	}
-}
 
-add_filter ('query_vars','qrm_plugin_query_vars' );
-function qrm_plugin_query_vars($vars) {
-	$vars [] ='qrmfn';
-	return $vars;
-}
+//Ajax Callbacks
+add_action("wp_ajax_getProject", array(QRM, "getProject"));
+add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
+add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
+add_action("wp_ajax_saveProject", array(QRM, "saveProject"));
+
+
+// add_action ('parse_request','qrm_plugin_parse_request' );
+// function qrm_plugin_parse_request($wp) {
+	
+// 	if (array_key_exists ('qrmfn', $wp->query_vars )) {
+		
+// 		// Overall QRM security check. User needs to be logged in to Wordpress.
+// // 		if ( !is_user_logged_in() ){
+// // 			http_response_code(400);
+// // 			echo '{"error":true,"msg":"Not Logged In"}';
+// // 			exit;
+// // 		}
+			
+// 		// Pass to the specific function which will also check role security
+// 		QRM::router($wp->query_vars ['qrmfn']);
+// 	}
+// }
+
+// add_filter ('query_vars','qrm_plugin_query_vars' );
+// function qrm_plugin_query_vars($vars) {
+// 	$vars [] ='qrmfn';
+// 	return $vars;
+// }
 
 
 /**
@@ -100,6 +108,20 @@ function bs_riskproject_table_head( $defaults ) {
 	return $defaults;
 }
 
+// add_filter('wp_editor_settings', 'customise_project_editor');
+// function customise_project_editor($settings){
+//  	global $post;
+//  	if ('riskproject' == get_post_type($post)){
+// 		$settings['wpautop'] = false;
+// 		$settings['media_buttons'] = false;
+// 		$settings['textarea_rows'] = 4;
+// 		$settings['media_buttons'] = false;
+// 		$settings['quicktags'] = false;
+		
+//  	}
+// 	return $settings;
+// }
+
 add_action( 'manage_riskproject_posts_custom_column', 'bs_riskproject_table_content', 10, 2 );
 
 function bs_riskproject_table_content( $column_name, $post_id ) {
@@ -108,35 +130,23 @@ function bs_riskproject_table_content( $column_name, $post_id ) {
 		$status = "Dave Burton";
 		echo $status;
 	}
-
-	if ($column_name == 'title') {
-		$status = "Dave Burton";
-		echo $status;
-	}
 }
 
-// add_action(
-// 'admin_head-edit.php',
-// 'wpse152971_edit_post_change_title_in_list'
-// );
-// function wpse152971_edit_post_change_title_in_list() {
-// 	add_filter(
-// 	'the_title',
-// 	'wpse152971_construct_new_title',
-// 	100,
-// 	2
-// 	);
+add_filter('user_can_richedit', 'disable_wysiwyg_for_CPT');
+function disable_wysiwyg_for_CPT($default) {
+	global $post;
+	if ('riskproject' == get_post_type($post))
+		return false;
+	return $default;
+}
+
+// add_action('admin_head','z_remove_media_controls');
+// function z_remove_media_controls() {
+// 		global $post;
+// 	if ('riskproject' == get_post_type($post))
+// 	remove_action( 'media_buttons', 'media_buttons' );
 // }
 
-// function wpse152971_construct_new_title( $title, $id ) {
-// 	//print_r( $title );
-// 	//print_r( $id );
-// 	if (get_post_type() == "riskproject"){
-// 		return '--'.$title;
-// 	} else {
-// 		return $title;
-// 	}
-// }
 
 add_filter('single_template','get_custom_post_type_template');
 function get_custom_post_type_template($single_template){
@@ -164,8 +174,9 @@ function register_qrm_custom_menu_page(){
 
 add_action('admin_menu', 'qrm_remove_metaboxes');
 function qrm_remove_metaboxes (){
-//	remove_meta_box('submitdiv', 'risk', 'normal');
-//	remove_meta_box('submitdiv', 'risk', 'side');
+	remove_meta_box('pageparentdiv', 'riskproject', 'normal');
+	remove_meta_box('pageparentdiv', 'riskproject', 'side');
+	//	remove_meta_box('submitdiv', 'risk', 'side');
 //	remove_meta_box('slugdiv', 'risk', 'normal');
 }
 
@@ -190,8 +201,11 @@ function qrm_scripts_styles(){
 	wp_register_style ('icheck',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/iCheck/custom.css" );
 	wp_register_style ('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control.css" );
 	wp_register_style ('treecontrolAttr',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control-attribute.css" );
-	wp_register_style ('select',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/select/select.min.css" );
+	wp_register_style ('select',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/select/select.css" );
+	wp_register_style ('select2',"http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css" );
+	wp_register_style ('selectize',"http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css" );
 	
+		
 	wp_register_script( 'qrm-jquery', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js',array(), "", true );
 	wp_register_script( 'qrm-jqueryui', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js',array(), "", true );
 	wp_register_script( 'qrm-boostrap', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/bootstrap.min.js', array(), "", true );
@@ -200,7 +214,7 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-pace', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/pace/pace.min.js', array(), "", true );
 	wp_register_script( 'qrm-inspinia', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/inspinia.js', array('qrm-jquery'), "", true );
 	wp_register_script( 'qrm-angular', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/angular/angular.min.js', array(), "", true );
-	wp_register_script( 'qrm-test', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/test.js', array('qrm-jquery', 'qrm-angular'), "", true );
+	wp_register_script( 'qrm-projadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/projectadmin.js', array('qrm-jquery', 'qrm-angular'), "", true );
 	wp_register_script( 'qrm-lazyload', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js', array(), "", true );
 	wp_register_script( 'qrm-router', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/ui-router/angular-ui-router.min.js', array(), "", true );
 	wp_register_script( 'qrm-bootstraptpl', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js', array(), "", true );
@@ -217,8 +231,8 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-d3', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/d3/d3.min.js', array(), "", true );
 	wp_register_script( 'qrm-common', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/qrm-common.js', array(), "", true );
 	wp_register_script('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/tree-control/angular-tree-control.js" );
-	wp_register_script( 'select', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/select/select.min.js', array(), "", true );
-	wp_register_script( 'sanitize', "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-sanitize.js", array(), "", true );
+	wp_register_script( 'qrm-select', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/select/select.min.js', array(), "", true );
+	wp_register_script( 'qrm-sanitize', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js', array(), "", true );
 		
 	
 }
