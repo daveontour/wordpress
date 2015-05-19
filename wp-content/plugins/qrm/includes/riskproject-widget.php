@@ -1,8 +1,6 @@
 <?php ?>
 
  <style>
-
-
     .select2 > .select2-choice.ui-select-match {
       /* Because of the inclusion of Bootstrap */
       height: 29px;
@@ -12,9 +10,14 @@
 
 <table class="form-table">
 	<tr valign="top">
+		<th scope="row">Project Title</th>
+		<td><input ng-model="proj.title" style="width:100%" required></td>
+	</tr>
+		<tr valign="top">
 		<th scope="row">Project Description</th>
 		<td><textarea ng-model="proj.description" rows=4 style="width:100%" required></textarea></td>
-	</tr>	<tr valign="top">
+	</tr>
+		<tr valign="top">
 		<th scope="row">Project Code</th>
 		<td><input ng-model="proj.projectCode" required></td>
 	</tr>
@@ -34,7 +37,7 @@
 		<td><ui-select ng-model="proj.parent_id" theme="select2"  search-enabled=false
 				on-select="projectSelect($item, $model)" style="width:350px"> <ui-select-match
 				allow-clear=true placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
-			<ui-select-choices repeat="project.id as project in sortedParents">
+			<ui-select-choices repeat="project.id as project in sortedParents track by project.id">
 			<div ng-style="rowStyle(project)">
 				<span ng-bind-html="project.title"></span>
 			</div>
@@ -212,3 +215,74 @@ jQuery(document).ready(function(){
 });
 	
 </script>
+
+    <script type="text/ng-template" id="deleteObjectiveModalDialogId">
+        <div class="ngdialog-message">
+            <h3>Delete Objective</h3>
+            <p>Please confirm that you wish to delete the objective <i>{{dialogObjective.title}}</i></p>
+        </div>
+        <div class="ngdialog-buttons">
+             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
+       </div>
+    </script>
+    <script type="text/ng-template" id="editObjectiveModalDialogId">
+        <div class="ngdialog-message">
+            <h3>Edit Objective</h3>
+            <p><input ng-model="dialogObjective.title" style="width:100%"></p>
+        </div>
+        <div class="ngdialog-buttons">
+             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+       </div>
+    </script>
+        <script type="text/ng-template" id="deleteCategoryModalDialogId">
+        <div class="ngdialog-message">
+            <h3>Delete Category</h3>
+            <p>Please confirm that you wish to delete the category <i>{{dialogCategory.title}}</i></p>
+            <p>If it is a primary category, the associated seconday categories will also be deleted</p>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
+        </div>
+    </script>
+        <script type="text/ng-template" id="editCategoryModalDialogId">
+        <div class="ngdialog-message">
+            <h3>Edit Category</h3>
+            <p><input ng-model="dialogCategory.title" style="width:100%"></p>
+        </div>
+        <div class="ngdialog-buttons">
+             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+       </div>
+    </script>
+<script type="text/ng-template" id="myModalContentCat.html">
+        <div class="inmodal">
+            <div class="modal-header">
+                <h4 class="modal-title">{{vm.title}}</h4>
+            </div>
+            <div class="modal-body">
+                <input ng-model="vm.catTitle" style="width:100%;" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
+                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
+            </div>
+        </div>
+    </script>
+
+<script type="text/ng-template" id="myModalContentConfirm.html">
+        <div class="inmodal">
+            <div class="modal-header">
+                <h2>Please Confirm</h2>
+            </div>
+            <div class="modal-body">
+                {{vm.title}}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="vm.ok()">Yes</button>
+                <button class="btn btn-warning" ng-click="vm.cancel()">No</button>
+            </div>
+        </div>
+    </script>

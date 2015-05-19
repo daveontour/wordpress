@@ -3,10 +3,22 @@ var app = angular.module('myApp', [
         'ui.grid.autoResize',
         'ui.bootstrap',
         'ui.grid.treeView',
-       'cgNotify',
+        'cgNotify',
         'ui.select',
-    'ngSanitize'
+        'ngSanitize',
+        'ngDialog'
     ]);
+
+app.config(['ngDialogProvider', function (ngDialogProvider) {
+    ngDialogProvider.setDefaults({
+        className: 'ngdialog-theme-default',
+        plain: false,
+        showClose: true,
+        closeByDocument: true,
+        closeByEscape: true,
+        appendTo: false
+    });
+        }]);
 
 function parentSort(projArr) {
 
@@ -159,7 +171,7 @@ function getFamilyCats(projMap, projectID) {
 
 }
 
-function checkValid(proj, adminService) {
+function checkValid(proj, scope) {
     var rtn = {
         code: 1,
         msg: ""
@@ -167,27 +179,10 @@ function checkValid(proj, adminService) {
 
     //Check for circular parent/child relationships.
 
-    var pID = proj.parent_id;
-
-    while (pID != 0) {
-
-        var search = $.grep(adminService.projectsLinear, function (value) {
-            return value.id == pID;
-        });
-
-        if (search.length == 0) {
-            pID = 0;
-            continue;
-        }
-
-        var pp = search[0];
-        if (pp.id == proj.id) {
-            rtn.code = -1;
-            rtn.msg = "Circular Parent/Child Relationship Detected";
-            return rtn;
-        } else {
-            pID = pp.parent_id;
-        }
+    if (isCircular(proj, scope)) {
+        rtn.code = -1;
+        rtn.msg = "Circular Parent/Child Relationship Detected";
+        return rtn;
     }
 
     // Project Risk Manager Set
@@ -202,23 +197,69 @@ function checkValid(proj, adminService) {
 
 }
 
-app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
+function isCircular(proj, scope) {
+    var pID = proj.parent_id;
+
+    while (pID != 0) {
+
+        var search = $.grep(scope.projectsLinear, function (value) {
+            return value.id == pID;
+        });
+
+        if (search.length == 0) {
+            pID = 0;
+            continue;
+        }
+
+        var pp = search[0];
+        if (pp.id == proj.id) {
+            return true;
+        } else {
+            pID = pp.parent_id;
+        }
+    }
+
+    return false;
+
+}
+
+app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ngDialog) {
 
     QRM.projCtrl = this;
     var projCtrl = this;
 
-    $scope.sortedParents = adminService.sortedParents;
     $scope.tempObjectiveID = -1;
     $scope.catParentID = 100;
     $scope.catID = -1;
     $scope.ref = {};
+    $scope.parentProjectID = 0;
 
     $scope.projectSelect = function (item, model) {
+
+        /*
+         *   $scope.parentProjectID keeps track of the valid original parent Project ID
+         *   in case it is changed to a value that would create a circular reference
+         */
 
         if (typeof (item) == "undefined" || typeof (model) == "undefined") {
             $scope.projMap.get($scope.proj.id).parent_id = 0;
         } else {
+
             $scope.projMap.get($scope.proj.id).parent_id = model;
+
+            if (isCircular($scope.projMap.get($scope.proj.id), $scope)) {
+                notify({
+                    message: 'Parent Project not updated because it would cretae a circular relationship between parent and children',
+                    classes: 'alert-danger',
+                    duration: 8000,
+                    templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
+                    topOffset: 25
+                });
+                $scope.projMap.get($scope.proj.id).parent_id = $scope.parentProjectID;
+
+            } else {
+                $scope.parentProjectID = $scope.projMap.get($scope.proj.id).parent_id;
+            }
         }
 
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
@@ -251,7 +292,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
             $scope.proj.parent_id = 0;
         }
 
-        var valid = checkValid($scope.proj, adminService);
+         var valid = checkValid($scope.proj, $scope);
         if (valid.code > 0) {
             adminService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
@@ -262,21 +303,8 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                         templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
                         topOffset: 25
                     });
-
-                    $scope.projectsLinear = response.data.data;
-                    adminService.projectsLinear = $scope.projectsLinear;
-
-                    $scope.sortedParents = parentSort(response.data.data);
-                    adminService.sortedParents = $scope.sortedParents;
-
-                    $scope.projMap = new Map();
-                    $scope.projectsLinear.forEach(function (e) {
-                        $scope.projMap.put(e.id, e);
-                    });
-                    adminService.projMap = $scope.projMap;
-
-                    projCtrl.editProject($scope.projMap.get($scope.proj.ID));
-
+                    $scope.handleGetProjects(response);
+                    projCtrl.editProject($scope.projMap.get(projectID));
 
                 });
         } else {
@@ -383,59 +411,34 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
 
     }
     $scope.editCategory = function (cat) {
-        if (cat.projectID != $scope.proj.id) {
-            notify({
-                message: 'The selected category belongs to a parent project and cannot be edited here',
-                classes: 'alert-danger',
-                duration: 5000,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
+       
+        $scope.dialogCategory = cat;
+        $scope.origCat = cat.title;
+        
+    
+          ngDialog.openConfirm({
+                template: "editCategoryModalDialogId",
+                className: 'ngdialog-theme-default',
+                scope:$scope,
+            }).then(function (value) {
+ 
+             
+            }, function (reason) {
+                    cat.title =  $scope.origCat;
             });
-            return;
-        }
 
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentCat.html',
-            size: "md",
-            controller: function ($modalInstance, title, cat) {
-                this.title = title;
-                this.catTitle = cat.title;
-                this.ok = function () {
-                    $modalInstance.close(this.catTitle);
-                };
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                title: function () {
-                    return (cat.primCat) ? "Primary Category" : "Seconday Category"
-                },
-                cat: function () {
-                    return cat
-                }
-            }
-        });
 
-        modalInstance.result.then(function (r) {
-            cat.title = r;
-        });
     }
     $scope.deleteCategory = function (cat) {
-        if (cat.projectID != $scope.proj.id) {
-            notify({
-                message: 'The selected category belongs to a parent project and cannot be deleted from here',
-                classes: 'alert-danger',
-                duration: 5000,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
-            });
-            return;
-        } else {
+        
+        $scope.dialogCategory = cat;
+        
 
-            adminService.confirm("Do you wish to delete the selected Category?", function (confirm) {
-                if (confirm) {
+            ngDialog.openConfirm({
+                template: "deleteCategoryModalDialogId",
+                className: 'ngdialog-theme-default',
+                scope:$scope,
+            }).then(function (value) {
                     $scope.proj.categories = jQuery.grep($scope.proj.categories, function (value) {
                         return (value.id != cat.id && value.parentID != cat.id);
                     });
@@ -452,11 +455,12 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                             return cat.parentID == $scope.primCatID;
                         });
                     }
-                }
+                
+            }, function (reason) {
+     //           alert("NO");
+            });
 
-            })
 
-        }
     }
     $scope.changePrimCategory = function (id) {
         $scope.primCatID = id;
@@ -489,7 +493,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
             })
         } else {
             notify({
-                message: 'Please select an objective to add a sub-objective to',
+                message: 'Please select an objective to add a sub-objective',
                 classes: 'alert-warning',
                 duration: 5000,
                 templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
@@ -500,7 +504,9 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-
+        setTimeout(function () {
+            $scope.objGridApi.treeView.expandAllRows();
+        }, 100);
 
         delete $scope.ref.objectiveText;
         delete $scope.ref.selectedObjective;
@@ -508,73 +514,45 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     }
     $scope.editObjective = function (node) {
 
-        if (node.projectID != $scope.proj.id) {
-            notify({
-                message: 'The selected objective belongs to a parent project and cannot be edited here',
-                classes: 'alert-danger',
-                duration: 5000,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
+        $scope.dialogObjective = node;
+        $scope.origObjective = node.title;
+        
+         ngDialog.openConfirm({
+                template: "editObjectiveModalDialogId",
+                className: 'ngdialog-theme-default',
+                scope:$scope,
+            }).then(function (value) {
+ 
+             
+            }, function (reason) {
+                    node.title =  $scope.origObjective;
             });
-            return;
-        }
 
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentCat.html',
-            size: "md",
-            controller: function ($modalInstance, title, node) {
-                this.title = title;
-                this.catTitle = node.title;
-                this.ok = function () {
-                    $modalInstance.close(this.catTitle);
-                };
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                title: function () {
-                    return "Project Objective"
-                },
-                node: function () {
-                    return node
-                }
-            }
-        });
-
-        modalInstance.result.then(function (r) {
-            node.title = r;
-        });
     }
     $scope.deleteObjective = function (node) {
-        if (node.projectID != $scope.proj.id) {
-            notify({
-                message: 'The selected objective belongs to a parent project and cannot be deleted from here',
-                classes: 'alert-danger',
-                duration: 5000,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
+        
+        $scope.dialogObjective = node;
+        
+            ngDialog.openConfirm({
+                template: "deleteObjectiveModalDialogId",
+                className: 'ngdialog-theme-default',
+                scope:$scope,
+            }).then(function (value) {
+                 $scope.proj.objectives = jQuery.grep($scope.proj.objectives, function (value) {
+                    return (value.id != node.id && value.parentID != node.id);
+                });
+
+                $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
+                $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
+                $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
+
+                delete $scope.ref.objectiveText;
+                delete $scope.ref.selectedObjective;
+                
+            }, function (reason) {
+     //           alert("NO");
             });
-            return;
-        } else {
-
-            adminService.confirm("Do you wish to delete the selected Objective?", function (confirm) {
-                if (confirm) {
-                    $scope.proj.objectives = jQuery.grep($scope.proj.objectives, function (value) {
-                        return (value.id != node.id && value.parentID != node.id);
-                    });
-
-                    $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
-                    $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
-                    $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-
-                    delete $scope.ref.objectiveText;
-                    delete $scope.ref.selectedObjective;
-
-                }
-            })
-        }
+      
     }
     $scope.changeSelectedObjective = function (obj) {
         $scope.ref.selectedObjective = obj;
@@ -823,7 +801,19 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     }
 
     this.editProject = function (project) {
+
+        if (typeof (project) == 'undefined' || project == null) {
+            project = adminService.getDefaultProject();
+            project.id = projectID;
+        }
+
         $scope.proj = project;
+
+        if (typeof ($scope.proj.parent_id) == "undefined") {
+            $scope.proj.parent_id = 0;
+        }
+
+        $scope.parentProjectID = $scope.proj.parent_id;
 
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
         adminService.getSiteUsersCap()
@@ -845,9 +835,6 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 });
 
             });
-        $scope.projectsLinear = adminService.projectsLinear;
-        $scope.sortedParents = adminService.sortedParents;
-        $scope.projMap = adminService.projMap;
 
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
@@ -867,24 +854,30 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
 
     }
 
+    // Load the data
     adminService.getProjects()
         .then(function (response) {
+            $scope.handleGetProjects(response);
+            // projectID is dynamically set by the PHP that generates the page
+            projCtrl.editProject($scope.projMap.get(projectID));
 
+        });
+
+    $scope.handleGetProjects = function (response) {
+
+        $scope.projectsLinear = [];
+        $scope.sortedParents = [];
+        $scope.projMap = new Map();
+
+        if (response.data.data.length != 0) {
             $scope.projectsLinear = response.data.data;
-            adminService.projectsLinear = $scope.projectsLinear;
-
             $scope.sortedParents = parentSort(response.data.data);
-            adminService.sortedParents = $scope.sortedParents;
-
             $scope.projMap = new Map();
             $scope.projectsLinear.forEach(function (e) {
                 $scope.projMap.put(e.id, e);
             });
-            adminService.projMap = $scope.projMap;
-
-            projCtrl.editProject($scope.projMap.get(projectID));
-
-        });
+        }
+    }
 });
 app.service('adminService', function ($http, $modal) {
 
@@ -986,8 +979,6 @@ app.service('adminService', function ($http, $modal) {
                 probVal7: 100,
                 probVal8: 100
             },
-            inheritParentCategories: true,
-            inheritParentObjectives: true,
             categories: [],
             objectives: [],
             parent_id: 0,
@@ -995,37 +986,4 @@ app.service('adminService', function ($http, $modal) {
 
     }
 
-});
-app.directive('icheck', function icheck($timeout) {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function ($scope, element, $attrs, ngModel) {
-            return $timeout(function () {
-                var value;
-                value = $attrs['value'];
-
-                $scope.$watch($attrs['ngModel'], function (newValue) {
-                    $(element).iCheck('update');
-                })
-
-                return $(element).iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green'
-
-                }).on('ifChanged', function (event) {
-                    if ($(element).attr('type') === 'checkbox' && $attrs['ngModel']) {
-                        $scope.$apply(function () {
-                            return ngModel.$setViewValue(event.target.checked);
-                        });
-                    }
-                    if ($(element).attr('type') === 'radio' && $attrs['ngModel']) {
-                        return $scope.$apply(function () {
-                            return ngModel.$setViewValue(value);
-                        });
-                    }
-                });
-            });
-        }
-    };
 });

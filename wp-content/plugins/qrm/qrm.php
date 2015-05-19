@@ -189,7 +189,7 @@ function qrm_init_options(){
 add_action('init', 'qrm_scripts_styles');
 function qrm_scripts_styles(){
 	wp_register_style ('font-awesome',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/font-awesome/css/font-awesome.css" );
-	wp_register_style ('boostrap',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/bootstrap.min.css" );
+	wp_register_style ('boosstrap',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/bootstrap.min.css" );
 	wp_register_style ('animate',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/animate.css" );
 	wp_register_style ('dropzone',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/dropzone/dropzone.css" );
 	wp_register_style ('ui-grid',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css" );
@@ -204,6 +204,8 @@ function qrm_scripts_styles(){
 	wp_register_style ('select',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/select/select.css" );
 	wp_register_style ('select2',"http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css" );
 	wp_register_style ('selectize',"http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css" );
+	wp_register_style ('ngDialog',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ngDialog/ngDialog.min.css" );
+	wp_register_style ('ngDialogTheme',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css" );
 	
 		
 	wp_register_script( 'qrm-jquery', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js',array(), "", true );
@@ -233,6 +235,6 @@ function qrm_scripts_styles(){
 	wp_register_script('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/tree-control/angular-tree-control.js" );
 	wp_register_script( 'qrm-select', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/select/select.min.js', array(), "", true );
 	wp_register_script( 'qrm-sanitize', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js', array(), "", true );
-		
+	wp_register_script('qrm-ngDialog',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" );
 	
 }

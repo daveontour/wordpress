@@ -29,10 +29,13 @@ class Risk_Post_Type_Metaboxes {
   		wp_enqueue_style ('select');
  		wp_enqueue_style ('select2');
   		wp_enqueue_style ('selectize');
- 		
+ // 		wp_enqueue_style ('bootstrap');
+  		wp_enqueue_style ('ngDialog');
+  		wp_enqueue_style ('ngDialogTheme');
+  		
 		wp_enqueue_script('qrm-jquery');
 		wp_enqueue_script('qrm-jqueryui');
-//		wp_enqueue_script('qrm-boostrap');
+		wp_enqueue_script('qrm-boostrap');
  		wp_enqueue_script('qrm-angular');
  		wp_enqueue_script('qrm-projadmin');
 	 	wp_enqueue_script('qrm-bootstraptpl');
@@ -42,7 +45,7 @@ class Risk_Post_Type_Metaboxes {
 	 	wp_enqueue_script('qrm-common');
 	 	wp_enqueue_script('qrm-select');
 	 	wp_enqueue_script('qrm-sanitize');
-	 	
+	 	wp_enqueue_script('qrm-ngDialog');
 	 	?>
 	 	
 	 	<script>

@@ -60,7 +60,6 @@ class Risk_Post_Type_Registrations {
 		
 		$supports = array(
 				'revisions',
-				'title',
 				'page-attributes',
 				
 		);
