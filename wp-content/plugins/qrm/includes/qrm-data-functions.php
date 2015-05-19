@@ -441,7 +441,8 @@ class QRM {
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
 	
-	 	wp_send_json( $project );
+		// Return all the projects
+	 	QRM::getProjects();
 		
 	}
 }

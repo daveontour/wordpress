@@ -237,11 +237,11 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
     $scope.cancelChanges = function () {
         QRM.switchCtrl.tabswitch(1);
     }
-    
-    this.saveProject = function(){
+
+    this.saveProject = function () {
         $scope.saveChanges();
     }
-    
+
     $scope.saveChanges = function () {
 
         if (typeof ($scope.proj.parent_id) == "undefined") {
@@ -263,7 +263,21 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                         topOffset: 25
                     });
 
-                    projCtrl.editProject(response.data);
+                    $scope.projectsLinear = response.data.data;
+                    adminService.projectsLinear = $scope.projectsLinear;
+
+                    $scope.sortedParents = parentSort(response.data.data);
+                    adminService.sortedParents = $scope.sortedParents;
+
+                    $scope.projMap = new Map();
+                    $scope.projectsLinear.forEach(function (e) {
+                        $scope.projMap.put(e.id, e);
+                    });
+                    adminService.projMap = $scope.projMap;
+
+                    projCtrl.editProject($scope.projMap.get($scope.proj.ID));
+
+
                 });
         } else {
             notify({
@@ -851,7 +865,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
         $scope.gridOwnerApi.core.refresh();
         $scope.gridUserApi.core.refresh();
 
-     }
+    }
 
     adminService.getProjects()
         .then(function (response) {
@@ -867,8 +881,8 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService) {
                 $scope.projMap.put(e.id, e);
             });
             adminService.projMap = $scope.projMap;
-        
-        projCtrl.editProject($scope.projMap.get(projectID));
+
+            projCtrl.editProject($scope.projMap.get(projectID));
 
         });
 });
