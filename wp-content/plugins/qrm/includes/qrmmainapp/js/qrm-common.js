@@ -491,8 +491,7 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         .style("font-weight", "normal")
         .attr("transform", "translate(" + [8, gridSizeY*(maxProb-2)+12] + ")")
         .text("P2");
-    
-        if (maxProb > 2)    svg.append("text")
+         if (maxProb > 2)    svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
@@ -523,7 +522,7 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         .style("font-weight", "normal")
         .attr("transform", "translate(" + [8, gridSizeY*(maxProb-7)+12] + ")")
         .text("P7");
-            if (maxProb > 3)    svg.append("text")
+            if (maxProb > 7)    svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")

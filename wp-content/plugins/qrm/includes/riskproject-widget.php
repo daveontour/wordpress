@@ -1,13 +1,5 @@
 <?php ?>
 
- <style>
-    .select2 > .select2-choice.ui-select-match {
-      /* Because of the inclusion of Bootstrap */
-      height: 29px;
-    }
-
-  </style>
-
 <table class="form-table">
 	<tr valign="top">
 		<th scope="row">Project Title</th>
@@ -185,7 +177,7 @@
 	<td>			<div class="row" style="margin-top: 5px">
 				
 				
-				<div class="col-lg-12" style="margin-top: 10px"
+				<div class="col-lg-12" style="margin-top: 10px;background-color:white"
 					ui-grid="gridObjectiveOptions" ui-grid-auto-resize
 					ui-grid-tree-view class="userGrid"></div>
 
@@ -208,6 +200,7 @@
 
 <script>
 jQuery(document).ready(function(){
+	//Hooks the update/publish button so we can do our own thing
 	jQuery("#post").on('submit', function(event){
 		QRM.projCtrl.saveProject();
 		event.preventDefault();
@@ -215,7 +208,7 @@ jQuery(document).ready(function(){
 });
 	
 </script>
-
+<!-- Templates for dialog boxes -->
     <script type="text/ng-template" id="deleteObjectiveModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Objective</h3>
@@ -256,33 +249,4 @@ jQuery(document).ready(function(){
              <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
        </div>
-    </script>
-<script type="text/ng-template" id="myModalContentCat.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">{{vm.title}}</h4>
-            </div>
-            <div class="modal-body">
-                <input ng-model="vm.catTitle" style="width:100%;" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-
-<script type="text/ng-template" id="myModalContentConfirm.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h2>Please Confirm</h2>
-            </div>
-            <div class="modal-body">
-                {{vm.title}}
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">Yes</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">No</button>
-            </div>
-        </div>
     </script>

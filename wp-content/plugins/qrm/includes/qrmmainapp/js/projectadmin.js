@@ -1,9 +1,9 @@
 var app = angular.module('myApp', [
         'ui.grid',
         'ui.grid.autoResize',
-        'ui.bootstrap',
+        'ui.bootstrap', 
         'ui.grid.treeView',
-        'cgNotify',
+        'ngNotify',
         'ui.select',
         'ngSanitize',
         'ngDialog'
@@ -18,7 +18,7 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
         closeByEscape: true,
         appendTo: false
     });
-        }]);
+}]);
 
 function parentSort(projArr) {
 
@@ -132,7 +132,6 @@ function getProjectParents(projMap, projectID) {
 
 function getLinearObjectives(projMap, projectID) {
 
-
     var obj = new Array();
     var proj = projMap.get(projectID);
 
@@ -144,12 +143,7 @@ function getLinearObjectives(projMap, projectID) {
         }
     });
 
-    obj.forEach(function (e) {
-        delete e.children;
-    })
-
     return obj;
-
 }
 
 function getFamilyCats(projMap, projectID) {
@@ -223,7 +217,7 @@ function isCircular(proj, scope) {
 
 }
 
-app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ngDialog) {
+app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog) {
 
     QRM.projCtrl = this;
     var projCtrl = this;
@@ -238,7 +232,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
 
         /*
          *   $scope.parentProjectID keeps track of the valid original parent Project ID
-         *   in case it is changed to a value that would create a circular reference
+         *   in case it is changed to a value that would create a circular reference (set whenthe editor is first initaited)
          */
 
         if (typeof (item) == "undefined" || typeof (model) == "undefined") {
@@ -248,15 +242,8 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
             $scope.projMap.get($scope.proj.id).parent_id = model;
 
             if (isCircular($scope.projMap.get($scope.proj.id), $scope)) {
-                notify({
-                    message: 'Parent Project not updated because it would cretae a circular relationship between parent and children',
-                    classes: 'alert-danger',
-                    duration: 8000,
-                    templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                    topOffset: 25
-                });
+                ngNotify.set('Parent Project not updated because it would create a circular relationship between parent and children',{type:"grimace"});
                 $scope.projMap.get($scope.proj.id).parent_id = $scope.parentProjectID;
-
             } else {
                 $scope.parentProjectID = $scope.projMap.get($scope.proj.id).parent_id;
             }
@@ -264,10 +251,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
 
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-        setTimeout(function () {
-            $scope.objGridApi.treeView.expandAllRows();
-        }, 100);
-
+        setTimeout(function () {$scope.objGridApi.treeView.expandAllRows(); }, 100);
 
         $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
         $scope.gridPrimCatOptions.data = $scope.catData;
@@ -296,25 +280,13 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
         if (valid.code > 0) {
             adminService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
-                    notify({
-                        message: 'Project Saved',
-                        classes: 'alert-success',
-                        duration: 2500,
-                        templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                        topOffset: 25
-                    });
+                    ngNotify.set("Project Saved","success");
                     $scope.handleGetProjects(response);
                     projCtrl.editProject($scope.projMap.get(projectID));
 
                 });
         } else {
-            notify({
-                message: 'Project Not Saved: ' + valid.msg,
-                classes: 'alert-danger',
-                duration: 2500,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
-            });
+              ngNotify.set("Project Not Saved<br/><br/><i>"+valid.msg+"</i>",{html:true, type:"error"});
         }
     }
 
@@ -492,21 +464,13 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
                 parentID: $scope.ref.selectedObjective.id
             })
         } else {
-            notify({
-                message: 'Please select an objective to add a sub-objective',
-                classes: 'alert-warning',
-                duration: 5000,
-                templateUrl: "../wp-content/plugins/qrm/includes/qrmmainapp/views/common/notify.html",
-                topOffset: 25
-            });
-        }
+           ngNotify.set('Please select an objective to add a sub-objective',{type:"grimace"});
+         }
 
         $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-        setTimeout(function () {
-            $scope.objGridApi.treeView.expandAllRows();
-        }, 100);
+        setTimeout(function () {$scope.objGridApi.treeView.expandAllRows();}, 100);
 
         delete $scope.ref.objectiveText;
         delete $scope.ref.selectedObjective;
@@ -559,7 +523,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
     }
 
     $scope.gridPrimCatOptions = {
-        minRowsToShow: 5,
+        minRowsToShow: 7,
         rowHeight: 30,
         enableFiltering: true,
         data: $scope.catData,
@@ -599,7 +563,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
 
     };
     $scope.gridSecCatOptions = {
-        minRowsToShow: 5,
+        minRowsToShow: 7,
         rowHeight: 30,
         enableFiltering: true,
         columnDefs: [
@@ -636,7 +600,7 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
     $scope.gridObjectiveOptions = {
         enableSorting: false,
         enableFiltering: false,
-        minRowsToShow: 10,
+        minRowsToShow: 7,
         rowHeight: 30,
         onRegisterApi: function (gridApi) {
             $scope.objGridApi = gridApi;
@@ -774,24 +738,32 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
     $scope.catRowStyle = function (id) {
         if (id == $scope.primCatID) {
             return {
-                'background-color': 'yellow'
+                'background-color': 'lightblue',
+                'cursor':'pointer'
             };
         } else {
-            return {};
+            return {
+                'cursor':'pointer'
+            };
         }
     };
     $scope.objRowStyle = function (obj) {
 
         if (typeof ($scope.ref.selectedObjective) == 'undefined') {
-            return {};
+            return {
+                'cursor':'pointer'
+            };
         }
 
         if (obj.id == $scope.ref.selectedObjective.id) {
             return {
-                'background-color': 'yellow'
+                'background-color': 'lightblue',
+                'cursor':'pointer'
             };
         } else {
-            return {};
+            return {
+                'cursor':'pointer'
+            };
         }
     };
     $scope.rowStyle = function (e) {
@@ -803,7 +775,8 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
     this.editProject = function (project) {
 
         if (typeof (project) == 'undefined' || project == null) {
-            project = adminService.getDefaultProject();
+            // Will happen for in the case where "Add a New" is used
+            project = adminService.getDefaultProject();  
             project.id = projectID;
         }
 
@@ -854,15 +827,6 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
 
     }
 
-    // Load the data
-    adminService.getProjects()
-        .then(function (response) {
-            $scope.handleGetProjects(response);
-            // projectID is dynamically set by the PHP that generates the page
-            projCtrl.editProject($scope.projMap.get(projectID));
-
-        });
-
     $scope.handleGetProjects = function (response) {
 
         $scope.projectsLinear = [];
@@ -878,39 +842,17 @@ app.controller('projectCtrl', function ($scope, $modal, notify, adminService, ng
             });
         }
     }
+    
+    // Load the data
+    adminService.getProjects()
+        .then(function (response) {
+            $scope.handleGetProjects(response);
+            // projectID is dynamically set by the PHP that generates the page
+            projCtrl.editProject($scope.projMap.get(projectID));
+
+        });
 });
-app.service('adminService', function ($http, $modal) {
-
-    var service = this;
-    var loc = window.location.href;
-    this.url = loc.slice(0, loc.indexOf("wp-admin"));
-
-    this.confirm = function (msg, cbFn) {
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentConfirm.html',
-            size: "md",
-            controller: function ($modalInstance, title) {
-                this.title = title;
-                this.ok = function () {
-                    $modalInstance.close(true);
-                };
-                this.cancel = function () {
-                    $modalInstance.close(false);
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                title: function () {
-                    return msg
-                }
-            }
-        });
-
-        modalInstance.result.then(function (r) {
-            cbFn(r);
-        });
-
-    }
+app.service('adminService', function ($http) {
 
     this.getSiteUsersCap = function () {
         return $http({
@@ -932,8 +874,6 @@ app.service('adminService', function ($http, $modal) {
             cache: false
         });
     };
-
-
     this.saveProject = function (data) {
         return $http({
             method: 'POST',
@@ -942,17 +882,6 @@ app.service('adminService', function ($http, $modal) {
                 action: "saveProject"
             },
             data: data,
-            cache: false
-        });
-    };
-    this.getProject = function (projectID) {
-        return $http({
-            method: 'POST',
-            url: ajaxurl,
-            params: {
-                action: "getProject"
-            },
-            data: projectID,
             cache: false
         });
     };

@@ -1234,3 +1234,14 @@ body.mini-navbar .navbar-static-side {
     display: none;
 }
 
+#riskproject_fields{
+    background-color:aliceblue
+}
+
+#riskproject_fields .ui-sortable-handle{
+    display: none;
+}
+
+#riskproject_fields .handlediv{
+    display: none;
+}

@@ -23,15 +23,14 @@ class Risk_Post_Type_Metaboxes {
 		
 		wp_enqueue_style ('font-awesome' );
 		wp_enqueue_style ('ui-grid' );
-		wp_enqueue_style ('notify');
  		wp_enqueue_style ('qrm-angular');
 		wp_enqueue_style ('qrm-style');
   		wp_enqueue_style ('select');
  		wp_enqueue_style ('select2');
   		wp_enqueue_style ('selectize');
- // 		wp_enqueue_style ('bootstrap');
   		wp_enqueue_style ('ngDialog');
   		wp_enqueue_style ('ngDialogTheme');
+  		wp_enqueue_style ('ngNotify');
   		
 		wp_enqueue_script('qrm-jquery');
 		wp_enqueue_script('qrm-jqueryui');
@@ -40,12 +39,12 @@ class Risk_Post_Type_Metaboxes {
  		wp_enqueue_script('qrm-projadmin');
 	 	wp_enqueue_script('qrm-bootstraptpl');
 	 	wp_enqueue_script('qrm-uigrid');
-	 	wp_enqueue_script('qrm-notify');
 	 	wp_enqueue_script('qrm-d3');
 	 	wp_enqueue_script('qrm-common');
 	 	wp_enqueue_script('qrm-select');
 	 	wp_enqueue_script('qrm-sanitize');
 	 	wp_enqueue_script('qrm-ngDialog');
+	 	wp_enqueue_script('qrm-ngNotify');
 	 	?>
 	 	
 	 	<script>
