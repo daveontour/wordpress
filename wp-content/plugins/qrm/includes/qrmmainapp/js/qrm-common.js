@@ -1,3 +1,6 @@
+QRM = {};
+
+
 function merge_options(obj1, obj2) {
     var obj3 = {};
     for (var attrname in obj1) {
@@ -1675,8 +1678,6 @@ function SorterLayout(rankCtl) {
     };
 }
 
-QRM = {};
-
 tooltipProb = d3.select("body")
     .append("div")
     .style("position", "absolute")
@@ -1691,3 +1692,148 @@ tooltipProb = d3.select("body")
     .style("font-weight", "normal")
     .style("visibility", "hidden")
     .text("a simple tooltip");
+
+function parentSort(projArr) {
+
+    projArr.forEach(function (e) {
+        e.$$treeLevel = -100;
+    });
+
+    var sortedArray = $.grep(projArr, function (value) {
+        return value.parent_id <= 0;
+    })
+
+    sortedArray.forEach(function (e) {
+        e.$$treeLevel = 0;
+    });
+
+    projArr = $.grep(projArr, function (value) {
+        return value.$$treeLevel < 0
+    });
+
+    while (projArr.length > 0) {
+
+        for (j = 0; j < projArr.length; j++) {
+
+            var child = projArr[j];
+            var found = false;
+            for (var i = 0; i < sortedArray.length; i++) {
+
+                var parent = sortedArray[i];
+
+                if (child.parent_id == parent.id) {
+                    child.$$treeLevel = parent.$$treeLevel + 1;
+                    sortedArray.splice(i + 1, 0, child);
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        projArr = $.grep(projArr, function (value) {
+            return value.$$treeLevel < 0
+        });
+    }
+
+    return sortedArray;
+
+}
+
+function objectiveSort(objArr) {
+
+    objArr.forEach(function (e) {
+        e.$$treeLevel = -100;
+    });
+
+    var sortedArray = $.grep(objArr, function (value) {
+        // Find if the parent objective is in the array, if not, return as a top level
+        var tmp = $.grep(objArr, function (p) {
+            return p.id == value.parentID;
+        })
+        return tmp.length == 0;
+    })
+
+    sortedArray.forEach(function (e) {
+        e.$$treeLevel = 0;
+    });
+
+    objArr = $.grep(objArr, function (value) {
+        return value.$$treeLevel < 0
+    });
+
+    while (objArr.length > 0) {
+
+        for (j = 0; j < objArr.length; j++) {
+
+            var child = objArr[j];
+            var found = false;
+            for (var i = 0; i < sortedArray.length; i++) {
+
+                var parent = sortedArray[i];
+
+                if (child.parentID == parent.id) {
+                    child.$$treeLevel = parent.$$treeLevel + 1;
+                    sortedArray.splice(i + 1, 0, child);
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        objArr = $.grep(objArr, function (value) {
+            return value.$$treeLevel < 0
+        });
+    }
+
+    return sortedArray;
+
+
+}
+
+function getProjectParents(projMap, projectID) {
+    var parentID = projMap.get(projectID).parent_id;
+
+    retn = new Array();
+    if (projMap.findIt(parentID) > -1) {
+        var tmp = projMap.get(parentID);
+        retn.push(tmp);
+        return retn.concat(getProjectParents(projMap, parentID));
+    } else {
+        return retn;
+    }
+}
+
+function getLinearObjectives(projMap, projectID) {
+
+    var obj = new Array();
+    var proj = projMap.get(projectID);
+
+    obj = obj.concat(proj.objectives);
+
+    getProjectParents(projMap, projectID).forEach(function (p) {
+        if (p.id != projectID) {
+            obj = obj.concat(p.objectives);
+        }
+    });
+
+    return obj;
+}
+
+function getFamilyCats(projMap, projectID) {
+
+    var parents = getProjectParents(projMap, projectID);
+
+    var cat = new Array();
+    var proj = projMap.get(projectID);
+
+    cat = cat.concat(proj.categories);
+
+    getProjectParents(projMap, projectID).forEach(function (p) {
+        if (p.id != projectID) {
+            cat = cat.concat(p.categories);
+        }
+    });
+
+    return cat;
+
+}

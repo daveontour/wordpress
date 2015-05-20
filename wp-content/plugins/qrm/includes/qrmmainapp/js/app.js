@@ -1,8 +1,3 @@
-/**
- * INSPINIA - Responsive Admin Theme
- * Copyright 2015 Webapplayers.com
- *
- */
 (function () {
     angular.module('inspinia', [
         'ui.router',                    // Routing
@@ -11,7 +6,8 @@
         'ui.grid',
         'ui.grid.autoResize',
         'ui.grid.moveColumns',
-        'cgNotify'
+        'cgNotify',
+        'ngNotify'
     ])
 })();
 

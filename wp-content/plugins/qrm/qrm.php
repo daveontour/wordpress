@@ -51,6 +51,9 @@ add_action("wp_ajax_getProject", array(QRM, "getProject"));
 add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
 add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
 add_action("wp_ajax_saveProject", array(QRM, "saveProject"));
+add_action("wp_ajax_getAllRisks", array(QRM, "getAllRisks"));
+add_action("wp_ajax_getRisk", array(QRM, "getRisk"));
+add_action("wp_ajax_saveRisk", array(QRM, "saveRisk"));
 
 add_action('init', 'qrm_init_options');
 
@@ -80,10 +83,12 @@ function bs_riskproject_table_content( $column_name, $post_id ) {
 
 add_filter('single_template','get_custom_post_type_template');
 function get_custom_post_type_template($single_template){
+	// Template for viewing risk or projects
+	// Template loads the QRM app
 	global $post;
 	
-	if ($post->post_type ='risk'){
-		$single_template = dirname(__FILE__).'/templates/risk-type-template.php';
+	if ($post->post_type ='risk' || $post->post_type ='riskproject'){
+		$single_template = dirname(__FILE__).'/templates/qrm-type-template.php';
 	}
 	return $single_template;
 }
@@ -139,6 +144,7 @@ function qrm_scripts_styles(){
 	wp_register_style ('style',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/style.css" );
 	wp_register_style ('qrm-angular',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/qrm_angular.css" );
 	wp_register_style ('qrm-style',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/qrm_styles.css" );
+	wp_register_style ('qrm-wpstyle',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/qrm_wp_styles.css" );
 	wp_register_style ('icheck',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/iCheck/custom.css" );
 	wp_register_style ('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control.css" );
 	wp_register_style ('treecontrolAttr',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/tree-control/tree-control-attribute.css" );
@@ -158,7 +164,7 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-pace', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/pace/pace.min.js', array(), "", true );
 	wp_register_script( 'qrm-inspinia', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/inspinia.js', array('qrm-jquery'), "", true );
 	wp_register_script( 'qrm-angular', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/angular/angular.min.js', array(), "", true );
-	wp_register_script( 'qrm-projadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/projectadmin.js', array('qrm-jquery', 'qrm-angular'), "", true );
+	wp_register_script( 'qrm-projadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/projectadmin.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
 	wp_register_script( 'qrm-lazyload', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js', array(), "", true );
 	wp_register_script( 'qrm-router', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/ui-router/angular-ui-router.min.js', array(), "", true );
 	wp_register_script( 'qrm-bootstraptpl', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js', array(), "", true );
@@ -173,7 +179,7 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-controllers', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/controllers.js', array(), "", true );
 	wp_register_script( 'qrm-services', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/services.js', array(), "", true );
 	wp_register_script( 'qrm-d3', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/d3/d3.min.js', array(), "", true );
-	wp_register_script( 'qrm-common', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/qrm-common.js', array(), "", true );
+	wp_register_script( 'qrm-common', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/qrm-common.js', array('qrm-d3'), "", true );
 	wp_register_script('treecontrol',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/tree-control/angular-tree-control.js" );
 	wp_register_script( 'qrm-select', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/select/select.min.js', array(), "", true );
 	wp_register_script( 'qrm-sanitize', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js', array(), "", true );

@@ -132,7 +132,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         alert("Delete Risk: " + riskID);
     }
     this.getRisks = function () {
-        riskService.getRisks(QRMDataService.url)
+        riskService.getRisks()
             .then(function (response) {
                 exp.rawRisks = response.data.data;
                 exp.gridOptions.data = response.data.data;
@@ -289,7 +289,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
 }
 
-function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService, notify) {
+function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService, notify, ngNotify) {
 
     var vm = this;
     this.riskID = QRMDataService.riskID;
@@ -607,7 +607,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         if (isNaN(vm.riskID) || vm.riskID == 0) {
             return;
         }
-        riskService.getRisk(QRMDataService.url, vm.riskID)
+        riskService.getRisk(vm.riskID)
             .then(function (response) {
                 vm.risk = response.data;
                 vm.updateRisk();
@@ -619,18 +619,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         //Zero out the comments as these are managed separately
         vm.risk.comments = [];
         vm.risk.attachments = [];
-        riskService.saveRisk(QRMDataService.url, vm.risk)
+        riskService.saveRisk(vm.risk)
             .then(function (response) {
                 vm.risk = response.data;
                 // Update the risk with changes that may have been made by the host.
                 QRMDataService.riskID = vm.risk.riskID;
                 vm.updateRisk();
-                notify({
-                    message: 'Risk Saved',
-                    classes: 'alert-info',
-                    duration: 1500,
-                    templateUrl: "views/common/notify.html"
-                });
+                ngNotify.set("Risk Saved", "success");
             });
     };
     this.updateRisk = function () {
@@ -728,8 +723,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         }
 
         //Set the date controll
-        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
-        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
+//        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
+//        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
 
 
     }
@@ -1945,7 +1940,22 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
 var app = angular.module('inspinia')
 app.controller('MainCtrl', MainCtrl);
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify', RiskCtrl]);
+app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify','ngNotify', RiskCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'riskService', CalenderController]);
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'riskService', RankController]);
-app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'riskService', 'notify', RelMatrixController]);
+app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'riskService', 'notify','ngNotify', RelMatrixController]);
+
+app.service('riskService', ['$http', RiskService]);
+app.service('QRMDataService', DataService);
+app.filter('currencyFilter', function () {
+    return function (value) {
+        return '$' + Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+    };
+});
+app.filter('percentFilter', function () {
+    return function (value) {
+        return Number(value).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "%";
+
+    };
+});

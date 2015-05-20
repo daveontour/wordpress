@@ -45,6 +45,7 @@ class Risk_Post_Type_Metaboxes {
 	 	wp_enqueue_script('qrm-sanitize');
 	 	wp_enqueue_script('qrm-ngDialog');
 	 	wp_enqueue_script('qrm-ngNotify');
+	 	wp_enqueue_script('qrm-services');
 	 	?>
 	 	
 	 	<script>
