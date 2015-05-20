@@ -372,8 +372,6 @@ class QRM {
 		
 		$postdata = file_get_contents ( "php://input" );
 		$project = json_decode ( $postdata );
-		
-	
 	
 		$postID = null;
 	
@@ -389,6 +387,7 @@ class QRM {
 			'post_parent' => $project->parent_id
 			) );
 			$postID = $project->id;
+			add_post_meta ( $postID, "numberofrisks", 0,true );
 		} else {
 			// Create a new one and record the ID
 			$postID = wp_insert_post ( array (
@@ -400,11 +399,10 @@ class QRM {
 					'post_parent' => $project->parent_id
 			) );
 			$project->id = $postID;
-			update_post_meta ( $postID, "objectiveID", 100 );
-			update_post_meta ( $postID, "categoryID", 100 );
+			
 		}
-		// Fix up any category or objective IDs
 		
+		// Fix up any category or objective IDs	(negatives ID are used to handle new IDs	
 		$objID = intval(get_option("qrm_objective_id"));
 		
 		foreach($project->objectives as   &$obj){
@@ -440,6 +438,9 @@ class QRM {
 		
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
+		
+		// Fill in all the other meta data
+		update_post_meta ( $postID, "projectriskmanager", get_user_by("id", $project->projectRiskManager)->display_name );
 	
 		// Return all the projects
 	 	QRM::getProjects();

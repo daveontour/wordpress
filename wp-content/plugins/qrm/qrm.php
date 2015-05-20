@@ -45,11 +45,6 @@ $post_type_metaboxes->init ();
 
 wp_enqueue_style ('jquery-style','http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 
-add_action ('admin_init','my_plugin_admin_init' );
-function my_plugin_admin_init() {
-	wp_enqueue_script ('jquery-ui-datepicker' );
-}
-
 
 //Ajax Callbacks
 add_action("wp_ajax_getProject", array(QRM, "getProject"));
@@ -57,95 +52,30 @@ add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
 add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
 add_action("wp_ajax_saveProject", array(QRM, "saveProject"));
 
+add_action('init', 'qrm_init_options');
 
-// add_action ('parse_request','qrm_plugin_parse_request' );
-// function qrm_plugin_parse_request($wp) {
-	
-// 	if (array_key_exists ('qrmfn', $wp->query_vars )) {
-		
-// 		// Overall QRM security check. User needs to be logged in to Wordpress.
-// // 		if ( !is_user_logged_in() ){
-// // 			http_response_code(400);
-// // 			echo '{"error":true,"msg":"Not Logged In"}';
-// // 			exit;
-// // 		}
-			
-// 		// Pass to the specific function which will also check role security
-// 		QRM::router($wp->query_vars ['qrmfn']);
-// 	}
-// }
-
-// add_filter ('query_vars','qrm_plugin_query_vars' );
-// function qrm_plugin_query_vars($vars) {
-// 	$vars [] ='qrmfn';
-// 	return $vars;
-// }
-
-
-/**
- * Adds styling to the dashboard for the post type and adds quote posts
- * to the "At a Glance" metabox.
- */
-if (is_admin ()) {
-	
-	// Loads for users viewing the WordPress dashboard
-	if (! class_exists ('Dashboard_Glancer' )) {
-		require plugin_dir_path ( __FILE__ ) .'includes/class-dashboard-glancer.php'; // WP 3.8
-	}
-	
-	require plugin_dir_path ( __FILE__ ) .'includes/class-risk-post-type-admin.php';
-	
-	$post_type_admin = new Risk_Post_Type_Admin ( $post_type_registrations );
-	$post_type_admin->init ();
-	
-	
+if (is_admin ()) {	
+	add_filter('user_has_cap', 'qrm_prevent_riskproject_parent_deletion', 10, 3);
+	add_filter('manage_riskproject_posts_columns', 'bs_riskproject_table_head');
+	add_action('manage_riskproject_posts_custom_column', 'bs_riskproject_table_content', 10, 2 );
+	add_action('admin_menu', 'qrm_admin_menu_config');
 }
 
-add_filter('manage_riskproject_posts_columns', 'bs_riskproject_table_head');
 function bs_riskproject_table_head( $defaults ) {
 	$defaults['manager']  = 'Risk Project Manager';
+	$defaults['number']  = 'Number of Risks';
 	$defaults['author'] = 'Added By';
 	return $defaults;
 }
-
-// add_filter('wp_editor_settings', 'customise_project_editor');
-// function customise_project_editor($settings){
-//  	global $post;
-//  	if ('riskproject' == get_post_type($post)){
-// 		$settings['wpautop'] = false;
-// 		$settings['media_buttons'] = false;
-// 		$settings['textarea_rows'] = 4;
-// 		$settings['media_buttons'] = false;
-// 		$settings['quicktags'] = false;
-		
-//  	}
-// 	return $settings;
-// }
-
-add_action( 'manage_riskproject_posts_custom_column', 'bs_riskproject_table_content', 10, 2 );
-
 function bs_riskproject_table_content( $column_name, $post_id ) {
-
 	if ($column_name == 'manager') {
-		$status = "Dave Burton";
-		echo $status;
+		echo get_post_meta ( $post_id, "projectriskmanager", true);
+	}
+	
+	if ($column_name == 'number') {
+		echo get_post_meta ( $post_id, "numberofrisks", true);
 	}
 }
-
-add_filter('user_can_richedit', 'disable_wysiwyg_for_CPT');
-function disable_wysiwyg_for_CPT($default) {
-	global $post;
-	if ('riskproject' == get_post_type($post))
-		return false;
-	return $default;
-}
-
-// add_action('admin_head','z_remove_media_controls');
-// function z_remove_media_controls() {
-// 		global $post;
-// 	if ('riskproject' == get_post_type($post))
-// 	remove_action( 'media_buttons', 'media_buttons' );
-// }
 
 
 add_filter('single_template','get_custom_post_type_template');
@@ -166,27 +96,38 @@ function qrm_custom_page_template($page_template){
 	return $page_template;	
 }
 
-add_action( 'admin_menu', 'register_qrm_custom_menu_page' );
-function register_qrm_custom_menu_page(){
-	add_menu_page( 'Quay Risk Risk Manager', 'Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), 6 );
-	add_submenu_page( plugin_dir_path ( __FILE__ ) .'admin.php','Add Risk Project', 'New Risk Project', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), 6 );
-}
+function qrm_admin_menu_config (){
 
-add_action('admin_menu', 'qrm_remove_metaboxes');
-function qrm_remove_metaboxes (){
+	add_menu_page( 'Quay Risk Risk Manager', 'Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), "20.9" );
+	
 	remove_meta_box('pageparentdiv', 'riskproject', 'normal');
 	remove_meta_box('pageparentdiv', 'riskproject', 'side');
-	//	remove_meta_box('submitdiv', 'risk', 'side');
-//	remove_meta_box('slugdiv', 'risk', 'normal');
 }
 
-add_action('init', 'qrm_init_options');
 function qrm_init_options(){
 	add_option("qrm_objective_id", 1000);
 	add_option("qrm_category_id", 1000);
+	
+	qrm_scripts_styles();
 }
 
-add_action('init', 'qrm_scripts_styles');
+function qrm_prevent_riskproject_parent_deletion ($allcaps, $caps, $args) {
+	// Prevent the deletion of any riskproject post that has children projects
+	// Accomplished by checking for a non-zero count of projects with this as a parent 
+	// and removing delete capability from user for that post
+	global $wpdb;
+	if (isset($args[0]) && isset($args[2]) && $args[0] == 'delete_post') {
+		$post = get_post ($args[2]);
+		if ($post->post_status == 'publish' && $post->post_type == 'riskproject') {
+			$query = "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type = %s AND post_parent = %s";
+			$num_posts = $wpdb->get_var ($wpdb->prepare ($query, $post->post_type, $post->ID));
+			if ($num_posts > 0)
+				$allcaps[$caps[0]] = false;
+		}
+	}
+	return $allcaps;
+}
+
 function qrm_scripts_styles(){
 	wp_register_style ('font-awesome',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/font-awesome/css/font-awesome.css" );
 	wp_register_style ('boosstrap',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/bootstrap.min.css" );

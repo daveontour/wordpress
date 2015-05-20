@@ -1,25 +1,3 @@
-var app = angular.module('myApp', [
-        'ui.grid',
-        'ui.grid.autoResize',
-        'ui.bootstrap', 
-        'ui.grid.treeView',
-        'ngNotify',
-        'ui.select',
-        'ngSanitize',
-        'ngDialog'
-    ]);
-
-app.config(['ngDialogProvider', function (ngDialogProvider) {
-    ngDialogProvider.setDefaults({
-        className: 'ngdialog-theme-default',
-        plain: false,
-        showClose: true,
-        closeByDocument: true,
-        closeByEscape: true,
-        appendTo: false
-    });
-}]);
-
 function parentSort(projArr) {
 
     projArr.forEach(function (e) {
@@ -217,7 +195,7 @@ function isCircular(proj, scope) {
 
 }
 
-app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog) {
+function ProjectController($scope, ngNotify, adminService, ngDialog) {
 
     QRM.projCtrl = this;
     var projCtrl = this;
@@ -242,7 +220,9 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
             $scope.projMap.get($scope.proj.id).parent_id = model;
 
             if (isCircular($scope.projMap.get($scope.proj.id), $scope)) {
-                ngNotify.set('Parent Project not updated because it would create a circular relationship between parent and children',{type:"grimace"});
+                ngNotify.set('Parent Project not updated because it would create a circular relationship between parent and children', {
+                    type: "grimace"
+                });
                 $scope.projMap.get($scope.proj.id).parent_id = $scope.parentProjectID;
             } else {
                 $scope.parentProjectID = $scope.projMap.get($scope.proj.id).parent_id;
@@ -251,7 +231,9 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
 
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-        setTimeout(function () {$scope.objGridApi.treeView.expandAllRows(); }, 100);
+        setTimeout(function () {
+            $scope.objGridApi.treeView.expandAllRows();
+        }, 100);
 
         $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
         $scope.gridPrimCatOptions.data = $scope.catData;
@@ -276,17 +258,20 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
             $scope.proj.parent_id = 0;
         }
 
-         var valid = checkValid($scope.proj, $scope);
+        var valid = checkValid($scope.proj, $scope);
         if (valid.code > 0) {
             adminService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
-                    ngNotify.set("Project Saved","success");
+                    ngNotify.set("Project Saved", "success");
                     $scope.handleGetProjects(response);
                     projCtrl.editProject($scope.projMap.get(projectID));
 
                 });
         } else {
-              ngNotify.set("Project Not Saved<br/><br/><i>"+valid.msg+"</i>",{html:true, type:"error"});
+            ngNotify.set("Project Not Saved<br/><br/><i>" + valid.msg + "</i>", {
+                html: true,
+                type: "error"
+            });
         }
     }
 
@@ -383,56 +368,51 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
 
     }
     $scope.editCategory = function (cat) {
-       
+
         $scope.dialogCategory = cat;
         $scope.origCat = cat.title;
-        
-    
-          ngDialog.openConfirm({
-                template: "editCategoryModalDialogId",
-                className: 'ngdialog-theme-default',
-                scope:$scope,
-            }).then(function (value) {
- 
-             
-            }, function (reason) {
-                    cat.title =  $scope.origCat;
-            });
+
+
+        ngDialog.openConfirm({
+            template: "editCategoryModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+
+
+        }, function (reason) {
+            cat.title = $scope.origCat;
+        });
 
 
     }
     $scope.deleteCategory = function (cat) {
-        
+
         $scope.dialogCategory = cat;
-        
 
-            ngDialog.openConfirm({
-                template: "deleteCategoryModalDialogId",
-                className: 'ngdialog-theme-default',
-                scope:$scope,
-            }).then(function (value) {
-                    $scope.proj.categories = jQuery.grep($scope.proj.categories, function (value) {
-                        return (value.id != cat.id && value.parentID != cat.id);
-                    });
-
-                    if (cat.primCat) {
-                        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
-                        $scope.gridPrimCatOptions.data = $scope.catData;
-                        $scope.gridSecCatOptions.data = [];
-                        $scope.primCatID = 0;
-                    } else {
-                        $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
-                        $scope.gridPrimCatOptions.data = $scope.catData;
-                        $scope.gridSecCatOptions.data = $.grep($scope.catData, function (cat) {
-                            return cat.parentID == $scope.primCatID;
-                        });
-                    }
-                
-            }, function (reason) {
-     //           alert("NO");
+        ngDialog.openConfirm({
+            template: "deleteCategoryModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            $scope.proj.categories = jQuery.grep($scope.proj.categories, function (value) {
+                return (value.id != cat.id && value.parentID != cat.id);
             });
 
+            if (cat.primCat) {
+                $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+                $scope.gridPrimCatOptions.data = $scope.catData;
+                $scope.gridSecCatOptions.data = [];
+                $scope.primCatID = 0;
+            } else {
+                $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
+                $scope.gridPrimCatOptions.data = $scope.catData;
+                $scope.gridSecCatOptions.data = $.grep($scope.catData, function (cat) {
+                    return cat.parentID == $scope.primCatID;
+                });
+            }
 
+        });
     }
     $scope.changePrimCategory = function (id) {
         $scope.primCatID = id;
@@ -464,13 +444,17 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
                 parentID: $scope.ref.selectedObjective.id
             })
         } else {
-           ngNotify.set('Please select an objective to add a sub-objective',{type:"grimace"});
-         }
+            ngNotify.set('Please select an objective to add a sub-objective', {
+                type: "grimace"
+            });
+        }
 
         $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
         $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
         $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-        setTimeout(function () {$scope.objGridApi.treeView.expandAllRows();}, 100);
+        setTimeout(function () {
+            $scope.objGridApi.treeView.expandAllRows();
+        }, 100);
 
         delete $scope.ref.objectiveText;
         delete $scope.ref.selectedObjective;
@@ -480,43 +464,43 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
 
         $scope.dialogObjective = node;
         $scope.origObjective = node.title;
-        
-         ngDialog.openConfirm({
-                template: "editObjectiveModalDialogId",
-                className: 'ngdialog-theme-default',
-                scope:$scope,
-            }).then(function (value) {
- 
-             
-            }, function (reason) {
-                    node.title =  $scope.origObjective;
-            });
+
+        ngDialog.openConfirm({
+            template: "editObjectiveModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+
+
+        }, function (reason) {
+            node.title = $scope.origObjective;
+        });
 
     }
     $scope.deleteObjective = function (node) {
-        
+
         $scope.dialogObjective = node;
-        
-            ngDialog.openConfirm({
-                template: "deleteObjectiveModalDialogId",
-                className: 'ngdialog-theme-default',
-                scope:$scope,
-            }).then(function (value) {
-                 $scope.proj.objectives = jQuery.grep($scope.proj.objectives, function (value) {
-                    return (value.id != node.id && value.parentID != node.id);
-                });
 
-                $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
-                $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
-                $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
-
-                delete $scope.ref.objectiveText;
-                delete $scope.ref.selectedObjective;
-                
-            }, function (reason) {
-     //           alert("NO");
+        ngDialog.openConfirm({
+            template: "deleteObjectiveModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            $scope.proj.objectives = jQuery.grep($scope.proj.objectives, function (value) {
+                return (value.id != node.id && value.parentID != node.id);
             });
-      
+
+            $scope.projMap.get($scope.proj.id).objectives = $scope.proj.objectives;
+            $scope.projectObjectives = getLinearObjectives($scope.projMap, $scope.proj.id);
+            $scope.gridObjectiveOptions.data = objectiveSort(getLinearObjectives($scope.projMap, $scope.proj.id));
+
+            delete $scope.ref.objectiveText;
+            delete $scope.ref.selectedObjective;
+
+        }, function (reason) {
+            //           alert("NO");
+        });
+
     }
     $scope.changeSelectedObjective = function (obj) {
         $scope.ref.selectedObjective = obj;
@@ -739,11 +723,11 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
         if (id == $scope.primCatID) {
             return {
                 'background-color': 'lightblue',
-                'cursor':'pointer'
+                'cursor': 'pointer'
             };
         } else {
             return {
-                'cursor':'pointer'
+                'cursor': 'pointer'
             };
         }
     };
@@ -751,18 +735,18 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
 
         if (typeof ($scope.ref.selectedObjective) == 'undefined') {
             return {
-                'cursor':'pointer'
+                'cursor': 'pointer'
             };
         }
 
         if (obj.id == $scope.ref.selectedObjective.id) {
             return {
                 'background-color': 'lightblue',
-                'cursor':'pointer'
+                'cursor': 'pointer'
             };
         } else {
             return {
-                'cursor':'pointer'
+                'cursor': 'pointer'
             };
         }
     };
@@ -776,7 +760,7 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
 
         if (typeof (project) == 'undefined' || project == null) {
             // Will happen for in the case where "Add a New" is used
-            project = adminService.getDefaultProject();  
+            project = adminService.getDefaultProject();
             project.id = projectID;
         }
 
@@ -842,7 +826,7 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
             });
         }
     }
-    
+
     // Load the data
     adminService.getProjects()
         .then(function (response) {
@@ -851,7 +835,30 @@ app.controller('projectCtrl', function ($scope, ngNotify, adminService, ngDialog
             projCtrl.editProject($scope.projMap.get(projectID));
 
         });
-});
+}
+
+var app = angular.module('myApp', [
+        'ui.grid',
+        'ui.grid.autoResize',
+        'ui.bootstrap',
+        'ui.grid.treeView',
+        'ngNotify',
+        'ui.select',
+        'ngSanitize',
+        'ngDialog'
+    ]);
+
+app.config(['ngDialogProvider', function (ngDialogProvider) {
+    ngDialogProvider.setDefaults({
+        className: 'ngdialog-theme-default',
+        plain: false,
+        showClose: true,
+        closeByDocument: true,
+        closeByEscape: true,
+        appendTo: false
+    });
+}]);
+app.controller('projectCtrl', ['$scope', 'ngNotify', 'adminService', 'ngDialog', ProjectController]);
 app.service('adminService', function ($http) {
 
     this.getSiteUsersCap = function () {

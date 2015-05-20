@@ -36,7 +36,7 @@
 			</ui-select-choices> </ui-select></td>
 	</tr>
 	<tr valign="top">
-		<th scope="row"></th>
+		<th scope="row">Quantitative Consequences</th>
 		<td><label class="checkbox-inline" style="padding-left: 0px"> <input
 				 type="checkbox" ng-model="proj.useAdvancedConsequences">
 				Enable Quantitative Consequences

@@ -37,7 +37,7 @@ class Risk_Post_Type_Registrations {
 			'public'          => true,
 			'capability_type' => 'post',
 			'rewrite'         => array( 'slug' => 'risk', ), // Permalinks format
-			'menu_position'   => 30,
+			'menu_position'   => 22,
 			'menu_icon'       => 'dashicons-id',
 		);
 
@@ -46,7 +46,7 @@ class Risk_Post_Type_Registrations {
 		
 		
 		$labels = array(
-				'name'               => __( 'Risk Project', 'riskproject-post-type' ),
+				'name'               => __( 'Risk Projects', 'riskproject-post-type' ),
 				'singular_name'      => __( 'Risk Project', 'riskproject-post-type' ),
 				'add_new'            => __( 'Add Risk Project', 'riskproject-post-type' ),
 				'add_new_item'       => __( 'Add Risk Project', 'riskproject-post-type' ),
@@ -75,6 +75,7 @@ class Risk_Post_Type_Registrations {
 				'show_ui'         => true,
 				'show_in_menu'    => true,
 				'menu_icon'       => 'dashicons-id',
+				'menu_position'   => 21
 		);
 		
 		$args = apply_filters( 'riskproject_post_type_args', $args );
