@@ -205,7 +205,7 @@ class QRM {
 		}
 		QRM::getSiteUsers ();
 	}
-	static function addComments() {
+	static function addComment() {
 		$comment = json_decode ( file_get_contents ( "php://input" ) );
 		$time = current_time ( 'mysql' );
 		

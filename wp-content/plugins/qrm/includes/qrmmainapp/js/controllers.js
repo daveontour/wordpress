@@ -287,33 +287,39 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
         return r;
     }
     this.cellClass = function (prob, impact, tol) {
+
+        if (impact > QRMDataService.project.matrix.maxImpact || prob > QRMDataService.project.matrix.maxProb) {
+            return true;
+        }
         var index = (prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1;
         return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
 
-    //    this.handleGetProjects = function (response) {
-    //        this.projectsLinear = [];
-    //        this.sortedParents = [];
-    //        this.projMap = new Map();
-    //
-    //        if (response.data.data.length != 0) {
-    //            this.projectsLinear = response.data.data;
-    //            this.sortedParents = parentSort(response.data.data);
-    //            this.projMap = new Map();
-    //            this.projectsLinear.forEach(function (e) {
-    //                exp.projMap.put(e.id, e);
-    //            });
-    //
-    //            QRMDataService.projectsLinear = this.projectsLinear;
-    //            QRMDataService.sortedParents = this.sortedParents;
-    //            QRMDataService.projMap = this.projMap;
-    //        }
-    //    }
+    this.cellStyle = function (prob, impact, tol) {
+
+        var vh = 100 / QRMDataService.project.matrix.maxProb
+        var vw = 100 / QRMDataService.project.matrix.maxImpact
+
+        return {
+            "width": vw + "%",
+            "height": vh + "%",
+            "text-align": "center"
+        }
+    }
+
+    this.rowClass = function (prob) {
+        if (prob > QRMDataService.project.matrix.maxProb) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     this.init = function () {
         remoteService.getProjects()
             .then(function (response) {
-                 QRMDataService.handleGetProjects(response);
+                QRMDataService.handleGetProjects(response);
                 exp.projectsLinear = QRMDataService.projectsLinear;
                 exp.sortedParents = QRMDataService.sortedParents;
                 exp.projMap = QRMDataService.projMap;
@@ -323,7 +329,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
                     exp.projectSelect(null, postID);
                     postType = null;
                 } else {
-                    if (typeof(QRMDataService.project) != 'undefined') exp.getAllProjectRisks( QRMDataService.project.id);
+                    if (typeof (QRMDataService.project) != 'undefined') exp.getAllProjectRisks(QRMDataService.project.id);
                 }
             });
     }
@@ -334,7 +340,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
 
 }
 
-function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, remoteService, notify, ngNotify) {
+function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotify, ngDialog) {
 
     var vm = this;
     this.riskID = QRMDataService.riskID;
@@ -1004,28 +1010,45 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, remoteSe
     }
 
     this.deleteMitStep = function (s) {
-        for (var i = 0; i < vm.risk.mitigation.mitPlan.length; i++) {
-            if (vm.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
-                vm.risk.mitigation.mitPlan.splice(i, 1);
-                break;
+        ngDialog.openConfirm({
+            template: "deleteMitStepModalDialogId",
+            className: 'ngdialog-theme-default'
+        }).then(function (value) {
+            for (var i = 0; i < vm.risk.mitigation.mitPlan.length; i++) {
+                if (vm.risk.mitigation.mitPlan[i].$$hashKey == s.$$hashKey) {
+                    vm.risk.mitigation.mitPlan.splice(i, 1);
+                    break;
+                }
             }
-        }
+        });
     }
     this.deleteRespStep = function (s) {
-        for (var i = 0; i < vm.risk.response.respPlan.length; i++) {
-            if (vm.risk.response.respPlan[i].$$hashKey == s.$$hashKey) {
-                vm.risk.response.respPlan.splice(i, 1);
-                break;
+
+        ngDialog.openConfirm({
+            template: "deleteRespStepModalDialogId",
+            className: 'ngdialog-theme-default'
+        }).then(function (value) {
+            for (var i = 0; i < vm.risk.response.respPlan.length; i++) {
+                if (vm.risk.response.respPlan[i].$$hashKey == s.$$hashKey) {
+                    vm.risk.response.respPlan.splice(i, 1);
+                    break;
+                }
             }
-        }
+        });
     }
     this.deleteControl = function (s) {
-        for (var i = 0; i < vm.risk.controls.length; i++) {
-            if (vm.risk.controls[i].$$hashKey == s.$$hashKey) {
-                vm.risk.controls.splice(i, 1);
-                break;
+
+        ngDialog.openConfirm({
+            template: "deleteControlModalDialogId",
+            className: 'ngdialog-theme-default'
+        }).then(function (value) {
+            for (var i = 0; i < vm.risk.controls.length; i++) {
+                if (vm.risk.controls[i].$$hashKey == s.$$hashKey) {
+                    vm.risk.controls.splice(i, 1);
+                    break;
+                }
             }
-        }
+        });
     }
 
     // Handle formatting of objectives
@@ -1037,19 +1060,19 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, remoteSe
 
     this.init = function () {
         if (postType == "risk") {
-             
+
             // Jumped here directly from risk list in WP
             remoteService.getProjects()
                 .then(function (response) {
-                
-                     QRMDataService.handleGetProjects(response);
+
+                    QRMDataService.handleGetProjects(response);
                     QRMDataService.selectProject(projectID);
                     QRMDataService.riskID = postID;
 
                     vm.project = QRMDataService.project;
                     vm.categories = QRMDataService.catData;
                     vm.objectives = QRMDataService.projectObjectives;
-                    
+
                     vm.riskID = postID;
                     vm.getRisk();
                 });
@@ -1153,7 +1176,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         $state.go('index.risk');
     }
     this.getRisks = function () {
-        remoteService.getRisks(QRMDataService.url)
+        remoteService.getAllProjectRisks(QRMDataService.project.id)
             .then(function (response) {
                 cal.risks = response.data.data;
                 cal.layoutCalender(cal.risks);
@@ -1254,7 +1277,7 @@ function RankController($scope, QRMDataService, $state, remoteService) {
 
     this.loadGrid = function () {
 
-        remoteService.getRisks(QRMDataService.url)
+        remoteService.getAllProjectRisks(QRMDataService.project.id)
             .then(function (response) {
                 var risks = response.data.data;
                 rank.dirty = false;
@@ -1622,7 +1645,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
 
     this.pan = function (dx, dy) {
 
-          this.transMatrix[4] += dx;
+        this.transMatrix[4] += dx;
         this.transMatrix[5] += dy;
 
         var newMatrix = "matrix(" + this.transMatrix.join(' ') + ")";
@@ -2013,7 +2036,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
     }
 
     this.getRisksAndPlace = function () {
-        remoteService.getRisks(QRMDataService.url)
+        remoteService.getAllProjectRisks(QRMDataService.project.id)
             .then(function (response) {
                 var risks = response.data.data;
                 risks.forEach(function (risk) {
@@ -2030,11 +2053,20 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
     this.getRisksAndPlace();
 }
 
-
-var app = angular.module('inspinia')
+var app = angular.module('inspinia');
+app.config(['ngDialogProvider', function (ngDialogProvider) {
+    ngDialogProvider.setDefaults({
+        className: 'ngdialog-theme-default',
+        plain: false,
+        showClose: true,
+        closeByDocument: true,
+        closeByEscape: true,
+        appendTo: false
+    });
+}]);
 app.controller('MainCtrl', ['QRMDataService', 'RemoteService', MainCtrl]);
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'RemoteService', 'notify', 'ngNotify', RiskCtrl]);
+app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', RankController]);
 app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'notify', 'ngNotify', RelMatrixController]);

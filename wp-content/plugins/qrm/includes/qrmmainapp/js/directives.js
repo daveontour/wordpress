@@ -127,17 +127,22 @@ function icheck($timeout) {
     };
 }
 
-function riskmat() {
-    //Creates the risk matrices onthe explorer page
+function riskmat(QRMDataService) {
+    //Creates the risk matrices on the explorer page
     return {
         restrict: "E",
         compile: function (element, attrs) {
-
+            
+            var maxProb = 8;
+            var maxImpact = 8;
+            var hP = 100/maxProb;
+            var wP = 100/maxImpact;
+            
             var mat = "<table border='1' cellspacing='5' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
-            for (var prob = 5; prob > 0; prob--) {
-                mat = mat + "<tr>";
-                for (var impact = 1; impact <= 5; impact++) {
-                    mat = mat + "<td style='width:20%;height:20%;text-align:center' ng-click='exp.matrixFilter(" + impact + "," + prob + "," + attrs.treated + ")' ng-class='{cellLow: exp.cellClass(" + prob + "," + impact + ",1), cellModerate:exp.cellClass(" + prob + "," + impact + ",2), cellSignificant:exp.cellClass(" + prob + "," + impact + ",3), cellHigh:exp.cellClass(" + prob + "," + impact + ",4), cellExtreme:exp.cellClass(" + prob + "," + impact + ",5), matCellHighLight:exp.cellHighlight(" + prob + "," + impact + "," + attrs.treated + ")}'>{{exp.getCellValue(" + prob + "," + impact + "," + attrs.treated + ")}}</td>";
+            for (var prob = maxProb; prob > 0; prob--) {
+                mat = mat + "<tr ng-class='{cellHidden: exp.rowClass(" + prob + ")}'>";
+                for (var impact = 1; impact <= maxImpact; impact++) {
+                    mat = mat + "<td ng-style='exp.cellStyle()' ng-click='exp.matrixFilter(" + impact + "," + prob + "," + attrs.treated + ")' ng-class='{cellHidden: exp.cellClass(" + prob + "," + impact + ",0),cellLow: exp.cellClass(" + prob + "," + impact + ",1), cellModerate:exp.cellClass(" + prob + "," + impact + ",2), cellSignificant:exp.cellClass(" + prob + "," + impact + ",3), cellHigh:exp.cellClass(" + prob + "," + impact + ",4), cellExtreme:exp.cellClass(" + prob + "," + impact + ",5), matCellHighLight:exp.cellHighlight(" + prob + "," + impact + "," + attrs.treated + ")}'>{{exp.getCellValue(" + prob + "," + impact + "," + attrs.treated + ")}}</td>";
                 }
                 mat = mat + "</tr>";
             }
@@ -147,44 +152,6 @@ function riskmat() {
     };
 }
 
-function treeModel($compile, QRMDataService) {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-
-            //tree id
-            var treeId = attrs.treeId;
-
-            //tree model
-            var treeModel = attrs.treeModel;
-
-            //tree template
-            var template =
-                '<ul style="list-style-type:none;padding-left:15px">' +
-                '<li data-ng-repeat="node in ' + treeModel + '">' +
-                '<label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px"> <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.name}} </label>' +
-                '<div data-tree-id="' + treeId + '" data-tree-model="node.children"</div>' +
-                '</li>' +
-                '</ul>';
-
-
-            //check tree id, tree model
-            if (treeId && treeModel) {
-
-                //root node
-                if (attrs.angularTreeview) {
-
-                    //create tree object if not exists
-                    scope[treeId] = scope[treeId] || {};
-
-                }
-
-                //Rendering template.
-                element.html('').append($compile(template)(scope));
-            }
-        }
-    };
-}
 
 function dropzone() {
     function link (scope, element, attrs) {
@@ -208,8 +175,7 @@ angular
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
     .directive('iboxTools', iboxTools)
-    .directive('riskmat', riskmat)
+    .directive('riskmat', ['QRMDataService',riskmat])
     .directive('icheck', icheck)
     .directive('minimalizaSidebar', minimalizaSidebar)
     .directive('dropzone', dropzone)
-    .directive('treeModel', ['$compile', 'QRMDataService', treeModel])

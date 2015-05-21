@@ -21,7 +21,7 @@ function DataService() {
             managersID: [],
             usersID: [],
             matrix: {
-                maxImpact: 5,
+                maxImpact:5,
                 maxProb: 5,
                 tolString: "1123312234223443345534455555555555555555555555555555555555555555",
                 probVal1: 20,
@@ -178,7 +178,7 @@ function DataService() {
       ],
         matrix: {
             maxProb: 5,
-            maxImpact: 5,
+            maxImpact:5,
             tolString: "1123312234223443345534455",
             probVal1: 20,
             probVal2: 40,

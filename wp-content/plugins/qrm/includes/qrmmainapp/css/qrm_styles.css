@@ -838,6 +838,10 @@ a.qrmLink:hover {
     cursor: hand
 }
 
+.cellHidden{
+    display: none;
+}
+
 .matText {
     font-family: Verdana, Geneva, sans-serif;
     font-size: 12px;

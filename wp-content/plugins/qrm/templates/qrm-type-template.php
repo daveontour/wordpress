@@ -26,6 +26,9 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_angular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css" ?>'>
+ 
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngDialog/ngDialog.min.css" ?>'>
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css"?>'>
     
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/select/select.css" ?>'>
     <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css'>
@@ -51,6 +54,9 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-notify/angular-notify.min.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/dropzone/dropzone.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/moment.js" ?>'></script>
+    
+    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" ?>'></script>
+    
 
 <!--  Watch out for dependency order -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/d3/d3.min.js" ?>'></script>
