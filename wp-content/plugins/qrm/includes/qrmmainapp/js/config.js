@@ -1,9 +1,14 @@
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("/index/explorer");
+    $urlRouterProvider.otherwise( function(){
+        // Route directly to the risk viewer if risk was selected
+         if (postType =='risk') return "/index/risk";
+        return "/index/explorer";
+    });
+
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
-        debug: false
+        debug: true
     });
 
     $stateProvider
@@ -32,7 +37,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             templateUrl: pluginurl+"views/risk.html",
             controller: "RiskCtrl as ctl",
             onEnter: function () {
-                minimiseSideBar();
+                minimiseSideBar(true);
             },
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {

@@ -1,13 +1,4 @@
-/**
- * INSPINIA - Responsive Admin Theme
- * Copyright 2015 Webapplayers.com
- *
- */
 
-
-/**
- * pageTitle - Directive for set Page title - mata title
- */
 function pageTitle($rootScope, $timeout) {
     return {
         link: function (scope, element) {
@@ -25,9 +16,6 @@ function pageTitle($rootScope, $timeout) {
     }
 };
 
-/**
- * sideNavigation - Directive for run metsiMenu on sidebar navigation
- */
 function sideNavigation($timeout) {
     return {
         restrict: 'A',
@@ -40,9 +28,6 @@ function sideNavigation($timeout) {
     };
 };
 
-/**
- * iboxTools - Directive for iBox tools elements in right corner of ibox
- */
 function iboxTools($timeout) {
     return {
         restrict: 'A',
@@ -72,9 +57,6 @@ function iboxTools($timeout) {
     };
 };
 
-/**
- * minimalizaSidebar - Directive for minimalize sidebar
- */
 function minimalizaSidebar($timeout) {
     return {
         restrict: 'A',
@@ -202,33 +184,25 @@ function treeModel($compile, QRMDataService) {
             }
         }
     };
-
-
 }
 
-function dropzone(QRMDataService) {
-    return function (scope, element, attrs) {
-
+function dropzone() {
+    function link (scope, element, attrs) {
         var config, dropzone;
-
-        config = scope.$parent[attrs.dropzone];
-
+        config = scope[attrs.dropzone];
         // create a Dropzone for the element with the given options
         dropzone = new Dropzone(element[0], config.options);
-
         // bind the given event handlers
         angular.forEach(config.eventHandlers, function (handler, event) {
             dropzone.on(event, handler);
         });
     };
+    
+    return{
+        link:link
+    }
 }
 
-
-
-/**
- *
- * Pass all functions into module
- */
 angular
     .module('inspinia')
     .directive('pageTitle', pageTitle)
@@ -237,5 +211,5 @@ angular
     .directive('riskmat', riskmat)
     .directive('icheck', icheck)
     .directive('minimalizaSidebar', minimalizaSidebar)
-    .directive('dropzone', ['QRMDataService', dropzone])
+    .directive('dropzone', dropzone)
     .directive('treeModel', ['$compile', 'QRMDataService', treeModel])

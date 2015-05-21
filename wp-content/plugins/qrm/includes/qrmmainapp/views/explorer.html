@@ -1,7 +1,18 @@
 <div class="wrapper wrapper-content">
     <div class="row">
     <div class="col-lg-12">
-        <h1 style="display:inline">Risk Explorer</h1>
+        <div class="pull-left"><h2 style="display:inline">Risk Explorer - {{exp.project.title}}</h2></div>
+        <div class="pull-right">Select Project:&nbsp;&nbsp;
+        <ui-select ng-model="exp.project" theme="select2"  search-enabled=false
+				on-select="exp.projectSelect($item, $model)" style="width:300px"> <ui-select-match
+				allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
+			<ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
+			<div ng-style="exp.rowStyle(project)">
+				<span ng-bind-html="project.title"></span>
+			</div>
+			</ui-select-choices> </ui-select>
+            </div>
+        
     </div>
     <div class="col-lg-12">
         <div style="float:left;margin-left:15px; margin-top:10px;width:180px;height:180px">
@@ -73,11 +84,11 @@
                 </div>
                 <label class="control-label">Risk Owner</label>
                 <div>
-                    <select ng-model="exp.filterOptions.owner" ng-options="person.name for person in exp.project.riskOwners track by person.email" class="form-control"></select>
+                    <select ng-model="exp.filterOptions.owner" ng-options="person as (person | usernameFilter) for person in exp.project.ownersID" class="form-control"></select>
                 </div>
                 <label class="control-label" style="clear:both">Risk Manager</label>
                 <div class="">
-                    <select ng-model="exp.filterOptions.manager" ng-options="person.name for person in exp.project.riskManagers track by person.email" class="form-control"></select>
+                    <select ng-model="exp.filterOptions.manager" ng-options="person as (person | usernameFilter)  for person in exp.project.managersID" class="form-control"></select>
                 </div>
             </form>
         </div>

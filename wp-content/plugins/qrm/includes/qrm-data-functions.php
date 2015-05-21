@@ -281,11 +281,14 @@ class QRM {
 		wp_send_json($data);
 	}
 	
-	static function getAllRisks() {
+	static function getAllProjectRisks() {
+		$projectID = json_decode ( file_get_contents ( "php://input" ) );
 		global $post;
 		$args = array (
 				'post_type' => 'risk',
-				'posts_per_page' => - 1 
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $projectID 
 		);
 		
 		$the_query = new WP_Query ( $args );
@@ -351,6 +354,7 @@ class QRM {
 		}
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		update_post_meta ( $postID, "projectID", $risk->projectID );
 		
 		// Add any comments to the returned object
 		$risk->comments = get_comments ( array (
@@ -387,7 +391,6 @@ class QRM {
 			'post_parent' => $project->parent_id
 			) );
 			$postID = $project->id;
-			add_post_meta ( $postID, "numberofrisks", 0,true );
 		} else {
 			// Create a new one and record the ID
 			$postID = wp_insert_post ( array (
@@ -441,7 +444,12 @@ class QRM {
 		
 		// Fill in all the other meta data
 		update_post_meta ( $postID, "projectriskmanager", get_user_by("id", $project->projectRiskManager)->display_name );
-	
+		update_post_meta ( $postID, "projectCode",  $project->projectCode );
+		
+		add_post_meta($postID, "riskIndex", 10, true);
+		add_post_meta ( $postID, "numberofrisks", 0,true );
+		
+		
 		// Return all the projects
 	 	QRM::getProjects();
 		

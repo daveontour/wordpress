@@ -6,8 +6,11 @@
     
     <script type="text/javascript">
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-		var pluginurl = '<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/" ?>'
-	</script>
+		var pluginurl = '<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/" ?>';
+		var postID = <?php echo $post->ID ?>;
+		var postType = '<?php echo $type ?>';
+		<?php if(isset($projectID))echo 'var projectID = '.$projectID.';' ?>
+		</script>
 
     <title page-title></title>
 
@@ -17,14 +20,17 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/dropzone/dropzone.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/angular-notify/angular-notify.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/pace/pace.css" ?>'>
+ <!--    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/pace/pace.css" ?>'>  -->
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/iCheck/custom.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/style.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_angular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css" ?>'>
-     
-	
+    
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/select/select.css" ?>'>
+    <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css'>
+    <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css'>
+   	
 </head>
 <body ng-controller="MainCtrl as main" class="fixed-sidebar">
     <div ui-view></div>
@@ -51,7 +57,11 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/qrm-common.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/services.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" ?>'></script>
+ 
+     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/select/select.min.js" ?>'></script>
+     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js" ?>'></script>
     
+     
     <!-- Anglar App Script -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/app.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/config.js" ?>'></script>
@@ -59,7 +69,7 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/controllers.js" ?>'></script>
  
     <script>
-        // Space in the glbal name space, so I can easily find thinngs
+        // Space in the global name space, so I can easily find thinngs
         function QRM() {
 
             this.matrixController = null;
@@ -84,7 +94,6 @@
                     //
                 }
             }
-
             $(window).resize(this.resizer);
 
         }

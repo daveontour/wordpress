@@ -50,7 +50,7 @@ function isCircular(proj, scope) {
 
 }
 
-function ProjectController($scope, ngNotify, adminService, ngDialog) {
+function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDialog) {
 
     QRM.projCtrl = this;
     var projCtrl = this;
@@ -115,7 +115,7 @@ function ProjectController($scope, ngNotify, adminService, ngDialog) {
 
         var valid = checkValid($scope.proj, $scope);
         if (valid.code > 0) {
-            adminService.saveProject(JSON.stringify($scope.proj))
+            remoteService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
                     ngNotify.set("Project Saved", "success");
                     $scope.handleGetProjects(response);
@@ -615,7 +615,7 @@ function ProjectController($scope, ngNotify, adminService, ngDialog) {
 
         if (typeof (project) == 'undefined' || project == null) {
             // Will happen for in the case where "Add a New" is used
-            project = adminService.getDefaultProject();
+            project = QRMDataService.getDefaultProject();
             project.id = projectID;
         }
 
@@ -628,7 +628,7 @@ function ProjectController($scope, ngNotify, adminService, ngDialog) {
         $scope.parentProjectID = $scope.proj.parent_id;
 
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
-        adminService.getSiteUsersCap()
+        remoteService.getSiteUsersCap()
             .then(function (response) {
                 $scope.ref.riskProjectManagers = jQuery.grep(response.data, function (e) {
                     return e.bProjMgr
@@ -667,7 +667,6 @@ function ProjectController($scope, ngNotify, adminService, ngDialog) {
     }
 
     $scope.handleGetProjects = function (response) {
-
         $scope.projectsLinear = [];
         $scope.sortedParents = [];
         $scope.projMap = new Map();
@@ -683,7 +682,7 @@ function ProjectController($scope, ngNotify, adminService, ngDialog) {
     }
 
     // Load the data
-    adminService.getProjects()
+    remoteService.getProjects()
         .then(function (response) {
             $scope.handleGetProjects(response);
             // projectID is dynamically set by the PHP that generates the page
@@ -713,5 +712,6 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
         appendTo: false
     });
 }]);
-app.controller('projectCtrl', ['$scope', 'ngNotify', 'adminService', 'ngDialog', ProjectController]);
-app.service('adminService', ['$http', AdminService ]);
+app.controller('projectCtrl', ['$scope', 'ngNotify', 'remoteService', 'QRMDataService','ngDialog', ProjectController]);
+app.service('remoteService', ['$http', RemoteService ]);
+app.service('QRMDataService', DataService);

@@ -50,10 +50,14 @@ wp_enqueue_style ('jquery-style','http://ajax.googleapis.com/ajax/libs/jqueryui/
 add_action("wp_ajax_getProject", array(QRM, "getProject"));
 add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
 add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
+add_action("wp_ajax_getSiteUsers", array(QRM, "getSiteUsers"));
 add_action("wp_ajax_saveProject", array(QRM, "saveProject"));
-add_action("wp_ajax_getAllRisks", array(QRM, "getAllRisks"));
+add_action("wp_ajax_getAllProjectRisks", array(QRM, "getAllProjectRisks"));
 add_action("wp_ajax_getRisk", array(QRM, "getRisk"));
 add_action("wp_ajax_saveRisk", array(QRM, "saveRisk"));
+add_action("wp_ajax_addComment", array(QRM, "addComment"));
+add_action("wp_ajax_updateRisksRelMatrix", array(QRM, "updateRisksRelMatrix"));
+add_action("wp_ajax_getRiskAttachments", array(QRM, "getRiskAttachments"));
 
 add_action('init', 'qrm_init_options');
 
@@ -87,8 +91,11 @@ function get_custom_post_type_template($single_template){
 	// Template loads the QRM app
 	global $post;
 	
-	if ($post->post_type ='risk' || $post->post_type ='riskproject'){
-		$single_template = dirname(__FILE__).'/templates/qrm-type-template.php';
+	if ($post->post_type == 'risk'){
+		$single_template = dirname(__FILE__).'/templates/risk-type-template.php';
+	}
+	if ($post->post_type == 'riskproject'){
+		$single_template = dirname(__FILE__).'/templates/riskproject-type-template.php';
 	}
 	return $single_template;
 }

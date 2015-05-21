@@ -7,7 +7,10 @@
         'ui.grid.autoResize',
         'ui.grid.moveColumns',
         'cgNotify',
-        'ngNotify'
+        'ngNotify',
+        'ui.select',
+        'ngSanitize',
+
     ])
 })();
 

@@ -1,6 +1,6 @@
-function DataService(){
-        var loc = window.location.href;
-    this.url = loc.slice(0, loc.indexOf("wp-content"));
+function DataService() {
+
+        var ds = this;
     this.lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur";
     this.loremSmall = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipis";
     this.matrixDisplayConfig = {
@@ -8,6 +8,60 @@ function DataService(){
         height: 200,
         radius: 15
     };
+
+
+    this.getDefaultProject = function () {
+        return {
+            id: -1,
+            title: "Project Title",
+            description: "Description of the Project",
+            useAdvancedConsequences: false,
+            projectCode: "",
+            ownersID: [],
+            managersID: [],
+            usersID: [],
+            matrix: {
+                maxImpact: 5,
+                maxProb: 5,
+                tolString: "1123312234223443345534455555555555555555555555555555555555555555",
+                probVal1: 20,
+                probVal2: 40,
+                probVal3: 60,
+                probVal4: 80,
+                probVal5: 100,
+                probVal6: 100,
+                probVal7: 100,
+                probVal8: 100
+            },
+            categories: [],
+            objectives: [],
+            parent_id: 0,
+        };
+    }
+
+    this.selectProject = function(projectID){
+             this.projectObjectives = objectiveSort(getLinearObjectives(this.projMap, projectID));
+            this.catData = getFamilyCats(this.projMap, projectID);
+             this.project =  this.projMap.get(projectID);
+    }
+    
+    this.handleGetProjects = function (response) {
+        
+        this.projectsLinear = [];
+        this.sortedParents = [];
+        this.projMap = new Map();
+
+        if (response.data.data.length != 0) {
+            this.projectsLinear = response.data.data;
+            this.sortedParents = parentSort(response.data.data);
+            this.projMap = new Map();
+            this.projectsLinear.forEach(function (e) {
+                ds.projMap.put(e.id, e);
+            });
+        }
+    }
+
+
     this.project = {
         title: "Sample Risk Project Name",
         riskOwners: [
@@ -194,82 +248,49 @@ function DataService(){
         }
     };
 }
-function RiskService($http) {
-    return {
-        getRisk: function (riskID) {
-            return $http({
-                method: 'POST',
-                url: ajaxurl,
-                params: {
-                    action: "getRisk"
-                },
-                cache: false,
-                data: riskID
-            });
-        },
 
-        saveRisk: function (risk) {
+function RemoteService($http) {
 
-            return $http({
-                method: 'POST',
-                url: ajaxurl,
-                params: {
-                    action: "saveRisk"
-                },
-                cache: false,
-                data: risk
-            });
-        },
+    this.getRisk = function (riskID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getRisk"
+            },
+            cache: false,
+            data: riskID
+        });
+    };
 
-        addComment: function (url, comment, riskID) {
-            data = {
-                comment: comment,
-                riskID: riskID
-            }
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=addComment",
-                cache: false,
-                data: JSON.stringify(data)
-            });
-        },
+    this.saveRisk = function (risk) {
 
-        getRisks: function () {
-            return $http({
-                method: 'POST',
-                url: ajaxurl,
-                params: {
-                    action: "getAllRisks"
-                },
-                cache: false
-            }).error(function (data, status, headers, config) {
-                alert(data.msg);
-            });
-        },
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveRisk"
+            },
+            cache: false,
+            data: risk
+        });
+    };
 
-        updateRisksRelMatrix: function (url, data) {
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=updateRisksRelMatrix",
-                cache: false,
-                data: JSON.stringify(data)
-            }).error(function (data, status, headers, config) {
-                alert(data.msg);
-            });
-        },
+    this.getAllProjectRisks = function (projectID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getAllProjectRisks"
+            },
+            cache: false,
+            data: projectID
+        }).error(function (data, status, headers, config) {
+            alert(data.msg);
+        });
+    };
 
-        getRiskAttachments: function (url, riskID) {
-            return $http({
-                method: 'POST',
-                url: url + "?qrmfn=getRiskAttachments",
-                cache: false,
-                data: riskID
-            });
-        },
-    }
-}
-function AdminService($http){
-    
+
     this.getSiteUsersCap = function () {
         return $http({
             method: 'POST',
@@ -280,6 +301,18 @@ function AdminService($http){
             cache: false
         });
     };
+
+    this.getSiteUsers = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getSiteUsers"
+            },
+            cache: false
+        });
+    };
+
     this.getProjects = function () {
         return $http({
             method: 'POST',
@@ -301,33 +334,47 @@ function AdminService($http){
             cache: false
         });
     };
-    this.getDefaultProject = function () {
-        return {
-            id: -1,
-            title: "Project Title",
-            description: "Description of the Project",
-            useAdvancedConsequences: false,
-            projectCode: "",
-            ownersID: [],
-            managersID: [],
-            usersID: [],
-            matrix: {
-                maxImpact: 5,
-                maxProb: 5,
-                tolString: "1123312234223443345534455555555555555555555555555555555555555555",
-                probVal1: 20,
-                probVal2: 40,
-                probVal3: 60,
-                probVal4: 80,
-                probVal5: 100,
-                probVal6: 100,
-                probVal7: 100,
-                probVal8: 100
-            },
-            categories: [],
-            objectives: [],
-            parent_id: 0,
-        };
 
-    }
+
+    this.addComment = function (url, comment, riskID) {
+        data = {
+            comment: comment,
+            riskID: riskID
+        }
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "addComment"
+            },
+            cache: false,
+            data: JSON.stringify(data)
+        });
+    };
+
+    this.updateRisksRelMatrix = function (url, data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "updateRisksRelMatrix"
+            },
+            cache: false,
+            data: JSON.stringify(data)
+        }).error(function (data, status, headers, config) {
+            alert(data.msg);
+        });
+    };
+
+    this.getRiskAttachments = function (url, riskID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getRiskAttachments"
+            },
+            cache: false,
+            data: riskID
+        });
+    };
 }

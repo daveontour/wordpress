@@ -920,31 +920,36 @@ function getProjectStakeholders(p) {
 
 }
 
-function minimiseSideBar() {
-    $("body").toggleClass("mini-navbar");
-    if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+function minimiseSideBar(state) {
+    
+    
+     if(!jQuery("body").hasClass("mini-navbar")){
+         jQuery("body").addClass("mini-navbar");
+    }
+  
+    if (!jQuery('body').hasClass('mini-navbar') || jQuery('body').hasClass('body-small')) {
         // Hide menu in order to smoothly turn on when maximize menu
-        $('#side-menu').hide();
+        jQuery('#side-menu').hide();
         // For smoothly turn on menu
         setTimeout(
             function () {
-                $('#side-menu').fadeIn(500);
+                jQuery('#side-menu').fadeIn(500);
             }, 100);
     } else if ($('body').hasClass('fixed-sidebar')) {
-        $('#side-menu').hide();
+        jQuery('#side-menu').hide();
         setTimeout(
             function () {
-                $('#side-menu').fadeIn(500);
+                jQuery('#side-menu').fadeIn(500);
             }, 300);
     } else {
         // Remove all inline style from jquery fadeIn function to reset menu state
-        $('#side-menu').removeAttr('style');
+        jQuery('#side-menu').removeAttr('style');
     }
 
     //Resize things that may have be impacted
     setTimeout(
         function () {
-            $(window).trigger('resize');
+           jQuery(window).trigger('resize');
         }, 250);
 }
 
@@ -1548,8 +1553,7 @@ function SorterLayout(rankCtl) {
                 var html = "<div style='valign:top'><br><hr><strong>" + d.riskProjectCode + " - " + d.title + "<br><br>Description:<br><br></strong>" + d.description.substring(0, 500) + "<hr></div>";
             })
             .on("click", function (d) {
-                debugger;
-                var e = d3.event;
+                 var e = d3.event;
                 if (!e.ctrlKey) return;
                 if (d3.event.defaultPrevented) return;
                 if (rankCtl.dirty) {

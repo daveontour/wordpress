@@ -1,16 +1,18 @@
-function MainCtrl() {
+function MainCtrl(QRMDataService, remoteService) {
 
-    this.userName = 'Example user';
-    this.helloText = 'Welcome in SeedProject';
-    this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
+    remoteService.getSiteUsers()
+        .then(function (response) {
+            QRMDataService.siteUsers = response.data.data;
+        });
+
 
 };
 
-function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
-    
-    this.getTableHeight = function(){
+function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
+
+    this.getTableHeight = function () {
         return {
-            height:"calc(100vh - 430px)"
+            height: "calc(100vh - 430px)"
         };
     }
 
@@ -20,11 +22,13 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     this.valPre = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.valPost = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.filterMatrixFlag = false;
+    this.filterMatrixHighlightFlag = false;
 
     this.gridOptions = {
         enableSorting: true,
-//        minRowsToShow: 10,
-//        rowHeight: 25,
+        //        minRowsToShow: 10,
+        //        rowHeight: 25,
         rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)"   ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
@@ -58,13 +62,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
             {
                 name: 'owner',
                 width: 140,
-                field: 'owner.name'
+                field: 'owner',
+                cellFilter: 'usernameFilter'
 
             },
             {
                 name: 'manager',
                 width: 140,
-                field: 'manager.name'
+                field: 'manager',
+                cellFilter: 'usernameFilter'
             },
             {
                 name: 'id',
@@ -80,11 +86,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
     ]
     };
-
-
-    this.filterMatrixFlag = false;
-    this.filterMatrixHighlightFlag = false;
-
     this.resetFilter = function () {
         // used for flagging clearance of matrix highlights
         this.filterMatrix = false;
@@ -112,7 +113,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
             pending: true
         }
     };
-
     this.filterOptions = this.resetFilter();
 
     $scope.$watch("exp.filterOptions", function () {
@@ -131,8 +131,8 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         QRMDataService.riskID = riskID;
         alert("Delete Risk: " + riskID);
     }
-    this.getRisks = function () {
-        riskService.getRisks()
+    this.getAllProjectRisks = function () {
+        remoteService.getAllProjectRisks(exp.project.id)
             .then(function (response) {
                 exp.rawRisks = response.data.data;
                 exp.gridOptions.data = response.data.data;
@@ -190,9 +190,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
                 if (i == exp.filterOptions.matrixImpact && p == exp.filterOptions.matrixProb) {
                     pass = true;
                 }
-
-
-
             } else {
 
                 exp.filterMatrixHighlightFlag = false;
@@ -213,10 +210,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
 
                 pass = false;
 
-                var own = exp.filterOptions.owner.name;
-                var man = exp.filterOptions.manager.name;
+                var own = exp.filterOptions.owner;
+                var man = exp.filterOptions.manager;
 
-                if (!(own == r.owner.name || own == undefined || own == null) || !(man == r.manager.name || man == undefined || man == null)) {
+                if (!(own == r.owner || own == undefined || own == null || own == "") || !(man == r.manager || man == undefined || man == null || man == "")) {
                     return;
                 }
 
@@ -259,8 +256,19 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         this.filterOptions = this.resetFilter();
     }
 
+    // Handle formatting of select project pick box
+    this.rowStyle = function (e) {
+        return {
+            "margin-left": e.$$treeLevel * 20 + "px"
+        }
+    }
 
-    // Control the appearance of the matrix cells
+    this.projectSelect = function (item, projectID) {
+            QRMDataService.selectProject(projectID);
+            this.project = QRMDataService.project;
+            this.getAllProjectRisks(this.project.id);
+        }
+        // Control the appearance of the matrix cells
     this.getCellValue = function (prob, impact, treated) {
         if (treated) {
             var val = this.valPost[(prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1];
@@ -283,13 +291,50 @@ function ExplorerCtrl($scope, QRMDataService, $state, riskService) {
         return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
 
+    //    this.handleGetProjects = function (response) {
+    //        this.projectsLinear = [];
+    //        this.sortedParents = [];
+    //        this.projMap = new Map();
+    //
+    //        if (response.data.data.length != 0) {
+    //            this.projectsLinear = response.data.data;
+    //            this.sortedParents = parentSort(response.data.data);
+    //            this.projMap = new Map();
+    //            this.projectsLinear.forEach(function (e) {
+    //                exp.projMap.put(e.id, e);
+    //            });
+    //
+    //            QRMDataService.projectsLinear = this.projectsLinear;
+    //            QRMDataService.sortedParents = this.sortedParents;
+    //            QRMDataService.projMap = this.projMap;
+    //        }
+    //    }
+
+    this.init = function () {
+        remoteService.getProjects()
+            .then(function (response) {
+                 QRMDataService.handleGetProjects(response);
+                exp.projectsLinear = QRMDataService.projectsLinear;
+                exp.sortedParents = QRMDataService.sortedParents;
+                exp.projMap = QRMDataService.projMap;
+
+                // Go to the selected project
+                if (postType == "riskproject") {
+                    exp.projectSelect(null, postID);
+                    postType = null;
+                } else {
+                    if (typeof(QRMDataService.project) != 'undefined') exp.getAllProjectRisks( QRMDataService.project.id);
+                }
+            });
+    }
 
     // Initial filling of the grid
-    this.getRisks();
+    this.init();
+
 
 }
 
-function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskService, notify, ngNotify) {
+function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, remoteService, notify, ngNotify) {
 
     var vm = this;
     this.riskID = QRMDataService.riskID;
@@ -297,11 +342,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
     this.additionalHolders = [];
     this.url = QRMDataService.url;
     this.project = QRMDataService.project;
+    this.categories = QRMDataService.catData;
+    this.objectives = QRMDataService.projectObjectives;
     this.risk = QRMDataService.getTemplateRisk();
 
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
-            url: QRMDataService.url + "?qrmfn=uploadFile",
+            url: ajaxurl + "?action=uploadFile",
             previewTemplate: document.querySelector('#preview-template').innerHTML,
             parallelUploads: 1,
             thumbnailHeight: 120,
@@ -330,16 +377,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     vm.cancelAttachment()
-                    notify({
-                        message: 'Attachment added to risk',
-                        classes: 'alert-info',
-                        duration: 300,
-                        templateUrl: "views/common/notify.html"
-                    });
-
-                    riskService.getRiskAttachments(QRMDataService.url, vm.riskID)
+                    ngNotify.set("Attachment added to risk", "success");
+                    remoteService.getRiskAttachments(QRMDataService.url, vm.riskID)
                         .then(function (response) {
-                            debugger;
                             vm.risk.attachments = response.data;
                         });
                 });
@@ -607,10 +647,29 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         if (isNaN(vm.riskID) || vm.riskID == 0) {
             return;
         }
-        riskService.getRisk(vm.riskID)
+        remoteService.getRisk(vm.riskID)
             .then(function (response) {
                 vm.risk = response.data;
                 vm.updateRisk();
+                jQuery('#exposure').daterangepicker({
+                        format: 'MMMM D, YYYY',
+                        separator: " - ",
+                        showDropdowns: true,
+                        drops: "down"
+                    },
+                    function (start, end, label) {
+                        try {
+                            // Update the Angular controller
+                            angular.element("#exposure").controller().updateDates(start, end);
+                        } catch (e) {
+                            console.log(e.message);
+                        }
+                    });
+                $('#exposure').data('daterangepicker').setStartDate(angular.element("#exposure").controller().risk.start);
+                $('#exposure').data('daterangepicker').setEndDate(angular.element("#exposure").controller().risk.end);
+
+                angular.element("#riskEditorMatrixID").controller().setRiskMatrixID("riskEditorMatrixID");
+                angular.element("#riskEditorMatrixID").controller().setRiskMatrix();
             });
     };
     this.saveRisk = function () {
@@ -618,8 +677,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         vm.updateRisk();
         //Zero out the comments as these are managed separately
         vm.risk.comments = [];
+        vm.risk.projectID = QRMDataService.project.id;
         vm.risk.attachments = [];
-        riskService.saveRisk(vm.risk)
+        remoteService.saveRisk(vm.risk)
             .then(function (response) {
                 vm.risk = response.data;
                 // Update the risk with changes that may have been made by the host.
@@ -723,8 +783,11 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         }
 
         //Set the date controll
-//        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
-//        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
+
+        // Need to be fixed ????
+
+        //        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
+        //        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
 
 
     }
@@ -827,7 +890,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         });
 
         modalInstance.result.then(function (comment) {
-            riskService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
+            remoteService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
                 .then(function (response) {
                     vm.risk.comments = response.data.comments;
                 });
@@ -965,11 +1028,44 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, riskServ
         }
     }
 
-    this.getRisk();
+    // Handle formatting of objectives
+    this.rowStyle = function (e) {
+        return {
+            "margin-left": e.$$treeLevel * 15 + "px"
+        }
+    }
+
+    this.init = function () {
+        if (postType == "risk") {
+             
+            // Jumped here directly from risk list in WP
+            remoteService.getProjects()
+                .then(function (response) {
+                
+                     QRMDataService.handleGetProjects(response);
+                    QRMDataService.selectProject(projectID);
+                    QRMDataService.riskID = postID;
+
+                    vm.project = QRMDataService.project;
+                    vm.categories = QRMDataService.catData;
+                    vm.objectives = QRMDataService.projectObjectives;
+                    
+                    vm.riskID = postID;
+                    vm.getRisk();
+                });
+            // Zero it out so no reoccurance
+            postType = null;
+        } else {
+            // Normal transfer from Explorer
+            this.getRisk();
+        }
+    }
+
+    this.init();
 
 }
 
-function CalenderController($scope, QRMDataService, $state, riskService) {
+function CalenderController($scope, QRMDataService, $state, remoteService) {
 
 
     qrm.calenderController = this;
@@ -1057,7 +1153,7 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
         $state.go('index.risk');
     }
     this.getRisks = function () {
-        riskService.getRisks(QRMDataService.url)
+        remoteService.getRisks(QRMDataService.url)
             .then(function (response) {
                 cal.risks = response.data.data;
                 cal.layoutCalender(cal.risks);
@@ -1076,7 +1172,7 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
                 "taskName": "RISKID" + index,
                 "status": "RUNNING",
                 "riskID": risk.id,
-                "title":risk.title
+                "title": risk.title
             });
             index++;
         });
@@ -1110,15 +1206,15 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
         var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
         gantt(tasks, "#svgcalID", $('#svgcalID').width(), $('#svgcalID').height());
     }
-    
-    this.toolTip = function(d){
+
+    this.toolTip = function (d) {
         if (!d) {
             cal.showDesc = false;
             cal.startDate = null;
             cal.endDate = null;
             cal.taskName = null;
             cal.title = null;
-            
+
         } else {
             cal.showDesc = true;
             cal.startDate = moment(d.startDate).format("MMM DD, gggg");
@@ -1126,15 +1222,15 @@ function CalenderController($scope, QRMDataService, $state, riskService) {
             cal.title = d.title;
             cal.taskName = d.taskName;
         }
-        
+
         $scope.$apply();
-        
+
     }
 
 
 }
 
-function RankController($scope, QRMDataService, $state, riskService) {
+function RankController($scope, QRMDataService, $state, remoteService) {
 
     qrm.rankController = this;
     var rank = this;
@@ -1144,21 +1240,21 @@ function RankController($scope, QRMDataService, $state, riskService) {
         QRMDataService.riskID = id;
         $state.go('index.risk');
     }
-    
-    this.saveChanges = function(){
+
+    this.saveChanges = function () {
         myLayout.normaliseRanks();
         var rankOrder = myLayout.items;
         alert(JSON.stringify(rankOrder));
     }
-    
-    this.cancelChanges = function(){
+
+    this.cancelChanges = function () {
         this.loadGrid();
     }
 
 
     this.loadGrid = function () {
 
-        riskService.getRisks(QRMDataService.url)
+        remoteService.getRisks(QRMDataService.url)
             .then(function (response) {
                 var risks = response.data.data;
                 rank.dirty = false;
@@ -1197,7 +1293,7 @@ function RankController($scope, QRMDataService, $state, riskService) {
     }
 }
 
-function RelMatrixController($scope, QRMDataService, $state, riskService, notify) {
+function RelMatrixController($scope, QRMDataService, $state, remoteService, notify) {
 
     var relMatrixCtrl = this;
 
@@ -1346,7 +1442,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
             return;
         }
 
-        riskService.updateRisksRelMatrix(QRMDataService.url, relMatChanges)
+        remoteService.updateRisksRelMatrix(QRMDataService.url, relMatChanges)
             .then(function (response) {
                 relMatrixCtrl.risks.forEach(function (item) {
                     item.dirty = false;
@@ -1526,8 +1622,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
 
     this.pan = function (dx, dy) {
 
-        debugger;
-        this.transMatrix[4] += dx;
+          this.transMatrix[4] += dx;
         this.transMatrix[5] += dy;
 
         var newMatrix = "matrix(" + this.transMatrix.join(' ') + ")";
@@ -1801,7 +1896,6 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
                         }
                         break;
                     case 1:
-                        debugger;
                         if (d.untreatedClean) {
                             prob = d.inherentProb;
                             impact = d.inherentImpact;
@@ -1919,7 +2013,7 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
     }
 
     this.getRisksAndPlace = function () {
-        riskService.getRisks(QRMDataService.url)
+        remoteService.getRisks(QRMDataService.url)
             .then(function (response) {
                 var risks = response.data.data;
                 risks.forEach(function (risk) {
@@ -1938,14 +2032,14 @@ function RelMatrixController($scope, QRMDataService, $state, riskService, notify
 
 
 var app = angular.module('inspinia')
-app.controller('MainCtrl', MainCtrl);
-app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'riskService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'riskService', 'notify','ngNotify', RiskCtrl]);
-app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'riskService', CalenderController]);
-app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'riskService', RankController]);
-app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'riskService', 'notify','ngNotify', RelMatrixController]);
+app.controller('MainCtrl', ['QRMDataService', 'RemoteService', MainCtrl]);
+app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', ExplorerCtrl]);
+app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', 'RemoteService', 'notify', 'ngNotify', RiskCtrl]);
+app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
+app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', RankController]);
+app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'notify', 'ngNotify', RelMatrixController]);
 
-app.service('riskService', ['$http', RiskService]);
+app.service('RemoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);
 app.filter('currencyFilter', function () {
     return function (value) {
@@ -1959,3 +2053,19 @@ app.filter('percentFilter', function () {
 
     };
 });
+app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {
+    return function (input) {
+
+        if (typeof (input) == 'undefined') return;
+        var user = $.grep(QRMDataService.siteUsers, function (e) {
+            return e.ID == input
+        })
+
+        if (typeof (user) == "undefined") return "Unknown";
+        if (user.length == 0) return "Not Found";
+        if (user.length > 1) return "Unknown (too many)";
+
+        return user[0].data.display_name;
+    }
+
+}]);
