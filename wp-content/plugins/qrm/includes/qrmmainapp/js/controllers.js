@@ -351,6 +351,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.categories = QRMDataService.catData;
     this.objectives = QRMDataService.projectObjectives;
     this.risk = QRMDataService.getTemplateRisk();
+    $scope.risk = this.risk;
 
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
@@ -420,187 +421,69 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     }
 
     this.openDescriptionEditor = function () {
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentDescription.html',
-            controller: function ($modalInstance, description, title, riskTitle) {
-                var vm = this;
-
-                vm.description = description;
-                vm.title = title;
-                vm.riskTitle = riskTitle;
-
-                vm.ok = function () {
-                    $modalInstance.close({
-                        description: vm.description,
-                        riskTitle: vm.riskTitle
-                    });
-                };
-                vm.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                description: function () {
-                    return vm.risk.description
-                },
-                title: function () {
-                    return "Risk Title and Description"
-                },
-                riskTitle: function () {
-                    return vm.risk.title
-                },
-            },
-            size: "lg"
-        });
-
-        modalInstance.result.then(function (response) {
-            vm.risk.description = response.description;
-            vm.risk.title = response.riskTitle;
+        var oTitle = vm.risk.title;
+        var oDescription = vm.risk.description;
+        ngDialog.openConfirm({
+            template: "editTitleModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            vm.risk.title = oTitle;
+            vm.risk.description = oDescription;
         });
     }
     this.openConsequenceEditor = function () {
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentConsequence.html',
-            size: "lg",
-            controller: function ($modalInstance, consequence) {
-
-                this.consequence = consequence;
-                this.ok = function () {
-                    $modalInstance.close({
-                        d: this.consequence
-                    });
-                };
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                consequence: function () {
-                    return vm.risk.consequence;
-                }
-            }
-
-        });
-
-        modalInstance.result.then(function (r) {
-            vm.risk.consequence = r.d;
+        var oConsq = vm.risk.consequence;
+        ngDialog.openConfirm({
+            template: "editConsqModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            vm.risk.consequence = oConsq;
         });
     }
     this.openCauseEditor = function () {
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentCause.html',
-            size: "lg",
-            controller: function ($modalInstance, cause) {
-
-                this.cause = cause;
-                this.ok = function () {
-                    $modalInstance.close({
-                        d: this.cause
-                    });
-                };
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                cause: function () {
-                    return vm.risk.cause;
-                }
-            }
-
-        });
-
-        modalInstance.result.then(function (r) {
-            vm.risk.cause = r.d;
+        var oCause = vm.risk.cause;
+        ngDialog.openConfirm({
+            template: "editCauseModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            vm.risk.cause = oCause;
         });
     }
     this.openMitEditor = function () {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentMitigationResponse.html',
-            size: "lg",
-            controller: function ($modalInstance, title, plan, update) {
-
-                this.title = title;
-                this.plan = plan;
-                this.update = update;
-
-                this.ok = function () {
-
-                    $modalInstance.close({
-                        plan: this.plan,
-                        update: this.update
-                    });
-                };
-
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                title: function () {
-                    return "Mitigation Plan"
-                },
-                plan: function () {
-                    return vm.risk.mitigation.mitPlanSummary
-                },
-                update: function () {
-                    return vm.risk.mitigation.mitPlanSummaryUpdate
-                }
-            }
-
-        });
-
-        modalInstance.result.then(function (r) {
-
-            vm.risk.mitigation.mitPlanSummary = r.plan;
-            vm.risk.mitigation.mitPlanSummaryUpdate = r.update;
+        var oPlan = vm.risk.mitigation.mitPlanSummary;
+        var oUpdate = vm.risk.mitigation.mitPlanSummaryUpdate
+        ngDialog.openConfirm({
+            template: "editMitigationModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            vm.risk.mitigation.mitPlanSummary = oPlan;
+            vm.risk.mitigation.mitPlanSummaryUpdate = oUpdate;
         });
     }
     this.openRespEditor = function () {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContentMitigationResponse.html',
-            size: "lg",
-            controller: function ($modalInstance, title, plan, update) {
-
-                this.title = title;
-                this.plan = plan;
-                this.update = update;
-
-                this.ok = function () {
-                    $modalInstance.close({
-                        plan: this.plan,
-                        update: this.update
-                    });
-                };
-
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            resolve: {
-                title: function () {
-                    return "Response Plan"
-                },
-                plan: function () {
-                    return vm.risk.response.respPlanSummary
-                },
-                update: function () {
-                    return vm.risk.response.respPlanSummaryUpdate
-                }
-            }
-
-        });
-
-        modalInstance.result.then(function (r) {
-            vm.risk.response.respPlanSummary = r.plan;
-            vm.risk.response.respPlanSummaryUpdate = r.update;
+        var oPlan = vm.risk.response.respPlanSummary;
+        var oUpdate = vm.risk.response.respPlanSummaryUpdate
+        ngDialog.openConfirm({
+            template: "editResponseModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            vm.risk.response.respPlanSummary = oPlan;
+            vm.risk.response.respPlanSummaryUpdate = oUpdate;
         });
     }
 
@@ -904,109 +787,134 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     }
 
     this.editMitStep = function (s) {
-        var modalInstance = $modal.open({
-            templateUrl: "myModalContentEditMit.html",
-            controller: function ($modalInstance, step, stakeholders) {
-
-                this.step = step;
-                this.stakeholders = stakeholders;
-
-                // Need to convert the date object back to a string
-                this.ok = function () {
-                    if (typeof (this.step.due) == "Date") {
-                        this.step.due = vm.step.due.toString();
-                    }
-                    $modalInstance.close(this.step);
-                };
-
-                vm.cancel = function () {
-                    if (typeof (this.step.due) == "Date") {
-                        this.step.due = this.step.due.toString();
-                    }
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            size: "lg",
-            resolve: {
-                step: function () {
-                    // Date input requires a Date object, so convert string to object
-                    s.due = new Date(s.due);
-                    return s;
-                },
-                stakeholders: function () {
-                    return getProjectStakeholders(vm.project);
-                }
-            }
-        });
-
-        modalInstance.result.then(function (o) {
-            // Object will be updated, but need to signal change TODO
+        var key = s.$$hashKey;
+        s.due = new Date(s.due);
+        var oldStepObject = jQuery.extend(true, {}, s);
+        $scope.step = s;
+        ngDialog.openConfirm({
+            template: "editMitStepModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            // Restore the old values
+            var stepObj = jQuery.grep(vm.risk.mitigation.mitPlan, function (e) {
+                return e.$$hashKey == key;
+            })[0];
+            stepObj.complete = oldStepObject.complete;
+            stepObj.cost = oldStepObject.cost;
+            stepObj.description = oldStepObject.description;
+            stepObj.due = oldStepObject.due;
+            stepObj.person = oldStepObject.person;
         });
     }
     this.editControl = function (s) {
-        var modalInstance = $modal.open({
-            templateUrl: "myModalContentEditControl.html",
-            controller: function ($modalInstance, control) {
 
-                this.control = control;
-                this.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
-                this.contribArray = ["Minimal", "Minor", "Significant", "Major"];
+        var key = s.$$hashKey;
+        var oldStepObject = jQuery.extend(true, {}, s);
+        $scope.control = s;
+        $scope.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
+        $scope.contribArray = ["Minimal", "Minor", "Significant", "Major"];
 
-                this.ok = function () {
-                    $modalInstance.close();
-                };
-
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            size: "lg",
-            resolve: {
-                control: function () {
-                    return s;
-                }
-            }
+        ngDialog.openConfirm({
+            template: "editControlModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            // Restore the old values
+            debugger;
+            var stepObj = jQuery.grep(vm.risk.controls, function (e) {
+                return e.$$hashKey == key;
+            })[0];
+            stepObj.effectiveness = oldStepObject.effectiveness;
+            stepObj.description = oldStepObject.description;
+            stepObj.contribution = oldStepObject.contribution;
         });
-
-        modalInstance.result.then(function (o) {
-            // Object will be updated, but need to signal change TODO
-        });
+        //        var modalInstance = $modal.open({
+        //            templateUrl: "myModalContentEditControl.html",
+        //            controller: function ($modalInstance, control) {
+        //
+        //                this.control = control;
+        //                this.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
+        //                this.contribArray = ["Minimal", "Minor", "Significant", "Major"];
+        //
+        //                this.ok = function () {
+        //                    $modalInstance.close();
+        //                };
+        //
+        //                this.cancel = function () {
+        //                    $modalInstance.dismiss('cancel');
+        //                };
+        //            },
+        //            controllerAs: "vm",
+        //            size: "lg",
+        //            resolve: {
+        //                control: function () {
+        //                    return s;
+        //                }
+        //            }
+        //        });
+        //
+        //        modalInstance.result.then(function (o) {
+        //            // Object will be updated, but need to signal change TODO
+        //        });
     }
     this.editRespStep = function (s) {
-        var modalInstance = $modal.open({
-            templateUrl: "myModalContentEditResp.html",
-            controller: function ($modalInstance, resp, stakeholders) {
-
-
-                this.resp = resp;
-                this.stakeholders = stakeholders;
-
-                // Need to convert the date object back to a string
-                this.ok = function () {
-                    $modalInstance.close($scope.resp);
-                };
-
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            size: "lg",
-            resolve: {
-                resp: function () {
-                    return s;
-                },
-                stakeholders: function () {
-                    return getProjectStakeholders(vm.project);
-                }
-            }
+        var key = s.$$hashKey;
+        s.due = new Date(s.due);
+        var oldStepObject = jQuery.extend(true, {}, s);
+        $scope.step = s;
+        ngDialog.openConfirm({
+            template: "editRespStepModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            // Restore the old values
+            var stepObj = jQuery.grep(vm.risk.response.respPlan, function (e) {
+                return e.$$hashKey == key;
+            })[0];
+            stepObj.cost = oldStepObject.cost;
+            stepObj.description = oldStepObject.description;
+            stepObj.person = oldStepObject.person;
         });
 
-        modalInstance.result.then(function (o) {
-            // Object will be updated, but need to signal change TODO
-        });
+        //        var modalInstance = $modal.open({
+        //            templateUrl: "myModalContentEditResp.html",
+        //            controller: function ($modalInstance, resp, stakeholders) {
+        //
+        //
+        //                this.resp = resp;
+        //                this.stakeholders = stakeholders;
+        //
+        //                // Need to convert the date object back to a string
+        //                this.ok = function () {
+        //                    $modalInstance.close($scope.resp);
+        //                };
+        //
+        //                this.cancel = function () {
+        //                    $modalInstance.dismiss('cancel');
+        //                };
+        //            },
+        //            controllerAs: "vm",
+        //            size: "lg",
+        //            resolve: {
+        //                resp: function () {
+        //                    return s;
+        //                },
+        //                stakeholders: function () {
+        //                    return getProjectStakeholders(vm.project);
+        //                }
+        //            }
+        //        });
+        //
+        //        modalInstance.result.then(function (o) {
+        //            // Object will be updated, but need to signal change TODO
+        //        });
     }
 
     this.deleteMitStep = function (s) {
@@ -2058,9 +1966,9 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
         className: 'ngdialog-theme-default',
         plain: false,
-        showClose: true,
-        closeByDocument: true,
-        closeByEscape: true,
+        showClose: false,
+        closeByDocument: false,
+        closeByEscape: false,
         appendTo: false
     });
 }]);

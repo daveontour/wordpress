@@ -1249,3 +1249,7 @@ body.mini-navbar .navbar-static-side {
 #riskproject_fields .handlediv{
     display: none;
 }
+
+.ngdialog.ngdialog-theme-default .ngdialog-content {
+    width: 800px;
+}

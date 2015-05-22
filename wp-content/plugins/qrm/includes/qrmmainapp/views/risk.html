@@ -1,10 +1,4 @@
 <div class="wrapper wrapper-content">
-
-    <!--Controller would normally go inthe above div definition, but the 
-        controller is created in the router now
-    -->
-
-
     <div class="row">
         <div class="col-lg-12">
             <h1 style="display:inline">{{ctl.risk.title}}</h1>
@@ -173,8 +167,8 @@
                                                                 <strong>Description: </strong>{{step.description}}
                                                             </td>
                                                             <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
-                                                        <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editMitStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteMitStep(step)"></i>
-                                                    </td>
+                                                                <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editMitStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteMitStep(step)"></i>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
@@ -219,8 +213,8 @@
                                                                 <strong>Description: </strong>{{step.description}}
                                                             </td>
                                                             <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
-                                                        <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editRespStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteRespStep(step)"></i>
-                                                    </td>
+                                                                <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editRespStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteRespStep(step)"></i>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
@@ -472,9 +466,6 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">Project Objectives Impacted</div>
                         <div class="panel-body">
-                            Select to Project Objectives that are impacted by this Risk:
-                            <br/>
-                            <br/>
                             <div ng-repeat="node in ctl.objectives" ng-style="ctl.rowStyle(node)">
                                 <label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px">
                                     <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.title}} </label>
@@ -497,7 +488,7 @@
                                                     <td style="padding-bottom:5px;padding-left:15px">
                                                         <strong>Control: </strong>{{control.description}}
                                                     </td>
-                                                    <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;">
+                                                    <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
                                                         <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editControl(control)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteControl(control)"></i>
                                                     </td>
                                                 </tr>
@@ -580,243 +571,47 @@
         </div>
     </div>
 
-    <!-- Template for the textarea modal dialog boxes -->
-
-    <script type="text/ng-template" id="myModalContent.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">{{vm.title}}</h4>
-            </div>
-            <div class="modal-body" style="height:200px">
-                <textarea ng-model="text" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
+       <script type="text/ng-template" id="editTitleModalDialogId">
+        <div class="ngdialog-message">
+            <p>Risk Title</p>
+            <input ng-model="ctl.risk.title"  style="width:100%">
+              <p></p>
+           <p>Risk Description</p>
+            <textarea ng-model="ctl.risk.description" rows=5 style="width:100%"></textarea>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-    <script type="text/ng-template" id="myModalContentConsequence.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Risk Consequences</h4>
-            </div>
-            <div class="modal-body" style="height:200px">
-                <textarea ng-model="vm.consequence" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
+       <script type="text/ng-template" id="editMitigationModalDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Plan</h2></div>
+            <p>Mitigation Plan Summary</p>
+            <textarea ng-model="ctl.risk.mitigation.mitPlanSummary" rows=5 style="width:100%"></textarea>
+            <p></p>
+            <p>Mitigation Plan Update</p>
+            <textarea ng-model="ctl.risk.mitigation.mitPlanSummaryUpdate" rows=5 style="width:100%"></textarea>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-    <script type="text/ng-template" id="myModalContentCause.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Risk Causes</h4>
-            </div>
-            <div class="modal-body" style="height:200px">
-                <textarea ng-model="vm.cause" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
+       <script type="text/ng-template" id="editResponseModalDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Respopnse Plan</h2></div>
+            <p>Response Plan Summary</p>
+            <textarea ng-model="ctl.risk.response.respPlanSummary" rows=5 style="width:100%"></textarea>
+            <p></p>
+            <p>Response Plan Update</p>
+            <textarea ng-model="ctl.risk.response.respPlanSummaryUpdate" rows=5 style="width:100%"></textarea>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-    <script type="text/ng-template" id="myModalContentAddComment.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Comment</h4> Add a comment to the risk
-            </div>
-            <div class="modal-body" style="height:200px">
-                <textarea ng-model="vm.comment" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">Add</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-    <script type="text/ng-template" id="myModalContentDescription.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">{{vm.title}}</h4>
-            </div>
-            <div class="modal-body" style="height:100px">
-                <h4>Risk Title</h4>
-                <textarea ng-model="vm.riskTitle" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-body" style="height:200px">
-                <h4>Risk Description</h4>
-                <textarea ng-model="vm.description" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-    <script type="text/ng-template" id="myModalContentMitigationResponse.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">{{vm.title}}</h4>
-            </div>
-            <div class="modal-body" style="height:200px">
-                <h4>Plan Summary</h4>
-                <textarea ng-model="vm.plan" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-body" style="height:200px">
-                <h4>Plan Update</h4>
-                <textarea ng-model="vm.update" style="width:100%;height:100%" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-    <script type="text/ng-template" id="myModalContentEditMit.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Mitigation Action</h4> Enter the specific action that should be taken the mitigate the likelihood or impact of this risk should it occur
-            </div>
-            <div class="modal-body">
-                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="vm.step.description" class="form-control" style="height:200px"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="vm.step.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Due Date</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <input type="date" ng-model="vm.step.due" class="form-control" style="width:230px"></input>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Cost</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <input min="0" step="10" ng-model="vm.step.cost" class="form-control" type="number" style="width:120px"></input>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Percent Complete</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <input min="0" max="100" type="number" ng-model="vm.step.complete" class="form-control" step="1" style="width:120px"></input>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-
-
-
-    </script>
-    <script type="text/ng-template" id="myModalContentEditResp.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Response Action</h4> Enter the specific action which should take place in the even that risk eventuates
-            </div>
-
-            <div class="modal-body">
-
-                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
-                    <div class="form-group">
-
-                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="vm.resp.description" class="form-control" style="height:200px"></textarea>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="vm.resp.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Estimated Cost</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <input min="0" step="10" ng-model="vm.resp.cost" class="form-control" type="number" style="width:120px"></input>
-
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-    <script type="text/ng-template" id="myModalContentEditControl.html">
-        <div class="inmodal">
-            <div class="modal-header">
-                <h4 class="modal-title">Control Action</h4>
-            </div>
-
-            <div class="modal-body">
-
-                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
-                    <div class="form-group">
-
-                        <label class="col-xs-4 col-sm-3 control-label">Control Description</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="vm.control.description" class="form-control" style="height:200px"></textarea>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Effectiveness</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="vm.control.effectiveness" ng-options="effect for effect in vm.effectArray" class="form-control" style="width:230px"></select>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Contribution</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="vm.control.contribution" ng-options="contrib for contrib in vm.contribArray" class="form-control" style="width:230px"></select>
-
-                        </div>
-                    </div>
-
-                </form>
-
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="vm.ok()">OK</button>
-                <button class="btn btn-warning" ng-click="vm.cancel()">Cancel</button>
-            </div>
-        </div>
-    </script>
-</div>
-
-<!-- This is the template used by Dropzone, won't be displayed -->
-
         <script type="text/ng-template" id="deleteMitStepModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Mitigation Action</h3>
@@ -827,7 +622,6 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-
         <script type="text/ng-template" id="deleteRespStepModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Response Action</h3>
@@ -838,7 +632,6 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-
         <script type="text/ng-template" id="deleteControlModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Control</h3>
@@ -849,6 +642,133 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
+       <script type="text/ng-template" id="editCauseModalDialogId">
+        <div class="ngdialog-message">
+            <p>Risk Causes</p>
+            <textarea ng-model="ctl.risk.cause" rows=5 style="width:100%"></textarea>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
+        <script type="text/ng-template" id="editConsqModalDialogId">
+        <div class="ngdialog-message">
+            <p>Risk Consequence</p>
+            <textarea ng-model="ctl.risk.consequence" rows=5 style="width:100%"></textarea>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
+       <script type="text/ng-template" id="editMitStepModalDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Action</h2></div>
+            <p>Enter the specific action that should be taken the mitigate the likelihood or impact of this risk should it occur</p>
+                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="step.description" class="form-control" style="height:200px"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="step.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Due Date</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input type="date" ng-model="step.due" class="form-control" style="width:230px"></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Cost</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" step="10" ng-model="step.cost" class="form-control" type="number" style="width:120px"></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Percent Complete</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" max="100" type="number" ng-model="step.complete" class="form-control" step="1" style="width:120px"></input>
+                        </div>
+                    </div>
+                </form>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>
+      <script type="text/ng-template" id="editRespStepModalDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Response Action</h2></div>
+            <p>Enter the specific action which should take place in the even that risk eventuates</p>
+                <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="step.description" class="form-control" style="height:200px"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="step.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Cost</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <input min="0" step="10" ng-model="step.cost" class="form-control" type="number" style="width:120px"></input>
+                        </div>
+                    </div>
+                 </form>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>
+      <script type="text/ng-template" id="editControlModalDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Control Action</h2></div>
+                 <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Control Description</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <textarea ng-model="control.description" class="form-control" style="height:200px"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Effectiveness</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="control.effectiveness" ng-options="effect for effect in effectArray" class="form-control" style="width:230px"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-3 control-label">Contribution</label>
+                        <div class="col-xs-8 col-sm-9">
+                            <select ng-model="control.contribution" ng-options="contrib for contrib in contribArray" class="form-control" style="width:230px"></select>
+                        </div>
+                    </div>
+                </form>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>
+
+    <!-- Template for the textarea modal dialog boxes -->
+ 
+</div>
+
+<!-- This is the template used by Dropzone, won't be displayed -->
 
 <div id="preview-template" style="display: none;">
 
