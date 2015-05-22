@@ -352,6 +352,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.objectives = QRMDataService.projectObjectives;
     this.risk = QRMDataService.getTemplateRisk();
     $scope.risk = this.risk;
+    $scope.data = {comment:""};
 
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
@@ -758,29 +759,21 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
 
     }
     this.addComment = function (s) {
-        var modalInstance = $modal.open({
-            templateUrl: "myModalContentAddComment.html",
-            controller: function ($modalInstance) {
-
-                this.comment = "";
-
-                this.ok = function () {
-                    $modalInstance.close(this.comment);
-                };
-
-                this.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-            },
-            controllerAs: "vm",
-            size: "lg"
-        });
-
-        modalInstance.result.then(function (comment) {
-            remoteService.addComment(QRMDataService.url, comment, QRMDataService.riskID)
+        $scope.data.comment = "";
+          ngDialog.openConfirm({
+            template: "addCommentModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+              debugger;
+           remoteService.addComment($scope.data.comment, QRMDataService.riskID)
                 .then(function (response) {
+               ngNotify.set("Comment added to risk", "success");
                     vm.risk.comments = response.data.comments;
-                });
+                }); 
+        }, function (reason) {
+            // Restore the old values
+            
         });
     }
 

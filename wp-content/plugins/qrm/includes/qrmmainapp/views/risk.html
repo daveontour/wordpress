@@ -309,7 +309,7 @@
                                                     <td style="padding-bottom:5px;padding-left:15px;width:100%">
                                                         <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span>
                                                         </div>
-                                                        <div style="float:left;clear:both">{{comment.comment_content}}</div>
+                                                        <div style="float:left;clear:both" ng-bind-html="comment.comment_content"></div>
                                                     </td>
                                                 </tr>
                                                 </tr>
@@ -570,6 +570,18 @@
             </div>
         </div>
     </div>
+
+
+      <script type="text/ng-template" id="addCommentModalDialogId">
+        <div class="ngdialog-message">
+            <p>Comment on the Risk</p>
+            <div text-angular ng-model="data.comment" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
 
        <script type="text/ng-template" id="editTitleModalDialogId">
         <div class="ngdialog-message">

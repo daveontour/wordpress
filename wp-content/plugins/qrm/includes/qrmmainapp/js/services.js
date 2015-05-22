@@ -336,7 +336,7 @@ function RemoteService($http) {
     };
 
 
-    this.addComment = function (url, comment, riskID) {
+    this.addComment = function (comment, riskID) {
         data = {
             comment: comment,
             riskID: riskID
