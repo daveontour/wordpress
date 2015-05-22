@@ -313,6 +313,7 @@ class QRM {
 			$r->treatedProb = $risk->treatedProb;
 			$r->treatedImpact = $risk->treatedImpact;
 			$r->treated = $risk->treated;
+			$r->riskProjectCode = $risk->riskProjectCode;
 			
 			array_push ( $risks, $risk );
 		endwhile
@@ -352,9 +353,11 @@ class QRM {
 			) );
 			$risk->id = $postID;
 		}
+		$risk->riskProjectCode = get_post_meta( $risk->projectID, "projectCode", true ).$postID;
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 		update_post_meta ( $postID, "projectID", $risk->projectID );
+		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
 		
 		// Add any comments to the returned object
 		$risk->comments = get_comments ( array (

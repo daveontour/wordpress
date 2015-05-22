@@ -135,8 +135,8 @@ function riskmat(QRMDataService) {
             
             var maxProb = 8;
             var maxImpact = 8;
-            var hP = 100/maxProb;
-            var wP = 100/maxImpact;
+            var hP = 100/(maxProb+1);
+            var wP = 100/(maxImpact+1);
             
             var mat = "<table border='1' cellspacing='5' cellpadding='0' style='width:180px;height:180px;cursor:pointer;cursor:hand'>";
             for (var prob = maxProb; prob > 0; prob--) {

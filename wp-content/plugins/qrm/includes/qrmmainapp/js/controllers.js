@@ -297,7 +297,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
 
     this.cellStyle = function (prob, impact, tol) {
 
-        var vh = 100 / QRMDataService.project.matrix.maxProb
+        var vh = 100 / (QRMDataService.project.matrix.maxProb)
         var vw = 100 / QRMDataService.project.matrix.maxImpact
 
         return {
@@ -458,11 +458,11 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             vm.risk.cause = oCause;
         });
     }
-    this.openMitEditor = function () {
+    this.openMitEditor = function (summary) {
         var oPlan = vm.risk.mitigation.mitPlanSummary;
         var oUpdate = vm.risk.mitigation.mitPlanSummaryUpdate
         ngDialog.openConfirm({
-            template: "editMitigationModalDialogId",
+            template: (summary)?"editMitigationModalDialogId":"editMitigationModalDialogId2",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
@@ -472,11 +472,11 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             vm.risk.mitigation.mitPlanSummaryUpdate = oUpdate;
         });
     }
-    this.openRespEditor = function () {
+    this.openRespEditor = function (summary) {
         var oPlan = vm.risk.response.respPlanSummary;
         var oUpdate = vm.risk.response.respPlanSummaryUpdate
         ngDialog.openConfirm({
-            template: "editResponseModalDialogId",
+            template: (summary)?"editResponseModalDialogId":"editResponseModalDialogId2",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
@@ -599,24 +599,22 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
         try {
             vm.stakeholders = [];
             vm.stakeholders.push({
-                name: vm.risk.owner.name,
-                email: vm.risk.owner.email,
+                name: vm.risk.owner,
                 role: "Risk Owner"
             });
             vm.stakeholders.push({
-                name: vm.risk.manager.name,
-                email: vm.risk.manager.email,
+                name: vm.risk.manager,
                 role: "Risk Manager"
             });
             vm.risk.mitigation.mitPlan.forEach(function (e) {
                 vm.stakeholders.push({
-                    name: e.person.name,
+                    name: e.person,
                     role: "Mitigation Owner"
                 })
             });
             vm.risk.response.respPlan.forEach(function (e) {
                 vm.stakeholders.push({
-                    name: e.person.name,
+                    name: e.person,
                     role: "Response Owner"
                 })
             });
@@ -731,7 +729,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.addMit = function () {
         vm.risk.mitigation.mitPlan.push({
             description: "No Description of the Action Entered ",
-            person: "No Assigned Responsibility",
+            person: -1,
             cost: 0,
             complete: 0,
             due: new Date()
@@ -740,7 +738,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.addResp = function () {
         vm.risk.response.respPlan.push({
             description: "No Description of the Action Entered ",
-            person: "No Assigned Responsibility",
+            person: -1,
             cost: "No Cost Allocated"
         });
     }
@@ -825,7 +823,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             // Success. 
         }, function (reason) {
             // Restore the old values
-            debugger;
             var stepObj = jQuery.grep(vm.risk.controls, function (e) {
                 return e.$$hashKey == key;
             })[0];
@@ -833,34 +830,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             stepObj.description = oldStepObject.description;
             stepObj.contribution = oldStepObject.contribution;
         });
-        //        var modalInstance = $modal.open({
-        //            templateUrl: "myModalContentEditControl.html",
-        //            controller: function ($modalInstance, control) {
-        //
-        //                this.control = control;
-        //                this.effectArray = ["Ad Hoc", "Repeatable", "Defined", "Managed", "Optimising"];
-        //                this.contribArray = ["Minimal", "Minor", "Significant", "Major"];
-        //
-        //                this.ok = function () {
-        //                    $modalInstance.close();
-        //                };
-        //
-        //                this.cancel = function () {
-        //                    $modalInstance.dismiss('cancel');
-        //                };
-        //            },
-        //            controllerAs: "vm",
-        //            size: "lg",
-        //            resolve: {
-        //                control: function () {
-        //                    return s;
-        //                }
-        //            }
-        //        });
-        //
-        //        modalInstance.result.then(function (o) {
-        //            // Object will be updated, but need to signal change TODO
-        //        });
     }
     this.editRespStep = function (s) {
         var key = s.$$hashKey;
@@ -882,39 +851,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             stepObj.description = oldStepObject.description;
             stepObj.person = oldStepObject.person;
         });
-
-        //        var modalInstance = $modal.open({
-        //            templateUrl: "myModalContentEditResp.html",
-        //            controller: function ($modalInstance, resp, stakeholders) {
-        //
-        //
-        //                this.resp = resp;
-        //                this.stakeholders = stakeholders;
-        //
-        //                // Need to convert the date object back to a string
-        //                this.ok = function () {
-        //                    $modalInstance.close($scope.resp);
-        //                };
-        //
-        //                this.cancel = function () {
-        //                    $modalInstance.dismiss('cancel');
-        //                };
-        //            },
-        //            controllerAs: "vm",
-        //            size: "lg",
-        //            resolve: {
-        //                resp: function () {
-        //                    return s;
-        //                },
-        //                stakeholders: function () {
-        //                    return getProjectStakeholders(vm.project);
-        //                }
-        //            }
-        //        });
-        //
-        //        modalInstance.result.then(function (o) {
-        //            // Object will be updated, but need to signal change TODO
-        //        });
     }
 
     this.deleteMitStep = function (s) {
@@ -980,6 +916,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
                     vm.project = QRMDataService.project;
                     vm.categories = QRMDataService.catData;
                     vm.objectives = QRMDataService.projectObjectives;
+                    $scope.siteUsers = QRMDataService.siteUsers;
 
                     vm.riskID = postID;
                     vm.getRisk();
@@ -1931,7 +1868,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
             })
             .text(function (d) {
                 //  return d.riskProjectCode;
-                return "RK" + d.id
+                return d.riskProjectCode
             });
 
         gRisk.append("title").text(function (d) {
@@ -1972,6 +1909,17 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
         appendTo: false
     });
 }]);
+app.config(function ($provide) {
+    // this demonstrates how to register a new tool and add it to the default toolbar
+    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
+taOptions.toolbar = [
+      ['h1', 'h2', 'h3', 'h4',  'p'],
+      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear','html'],
+      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
+  ];
+        return taOptions;
+  }]);
+});
 app.controller('MainCtrl', ['QRMDataService', 'RemoteService', MainCtrl]);
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', ExplorerCtrl]);
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
@@ -1995,7 +1943,8 @@ app.filter('percentFilter', function () {
 });
 app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {
     return function (input) {
-
+        if (typeof (input) == "object") input = input.ID;
+        if (input < 0) return "Not Assigned"
         if (typeof (input) == 'undefined') return;
         var user = $.grep(QRMDataService.siteUsers, function (e) {
             return e.ID == input

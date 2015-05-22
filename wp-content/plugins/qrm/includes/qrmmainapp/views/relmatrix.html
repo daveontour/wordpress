@@ -45,7 +45,7 @@
             <div style="margin-top:15px" ng-show="relMatrix.showDesc">
                 <div style='valign:top;'>
                     <br>
-                    <hr><strong> {{relMatrix.riskProjectCode}} -  {{relMatrix.title}} <br><br>Description:<br></strong> <small>{{relMatrix.description}}</small>
+                    <hr><strong> {{relMatrix.riskProjectCode}} -  {{relMatrix.title}} <br><br>Description:<br></strong> <small ng-bind-html="relMatrix.description"></small>
                     <hr>
                 </div>
             </div>

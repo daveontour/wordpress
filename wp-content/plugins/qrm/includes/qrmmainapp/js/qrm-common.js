@@ -485,51 +485,51 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-1)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 1) + 12] + ")")
         .text("P1");
-    
-        svg.append("text")
+
+    svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-2)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 2) + 12] + ")")
         .text("P2");
-         if (maxProb > 2)    svg.append("text")
+    if (maxProb > 2) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-3)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 3) + 12] + ")")
         .text("P3");
-    
-            if (maxProb > 3)    svg.append("text")
+
+    if (maxProb > 3) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-4)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 4) + 12] + ")")
         .text("P4");
-            if (maxProb > 4)    svg.append("text")
+    if (maxProb > 4) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-5)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 5) + 12] + ")")
         .text("P5");
-            if (maxProb > 5)    svg.append("text")
+    if (maxProb > 5) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-6)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 6) + 12] + ")")
         .text("P6");
-            if (maxProb > 6)    svg.append("text")
+    if (maxProb > 6) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-7)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 7) + 12] + ")")
         .text("P7");
-            if (maxProb > 7)    svg.append("text")
+    if (maxProb > 7) svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "12px")
         .style("font-weight", "normal")
-        .attr("transform", "translate(" + [8, gridSizeY*(maxProb-8)+12] + ")")
+        .attr("transform", "translate(" + [8, gridSizeY * (maxProb - 8) + 12] + ")")
         .text("P8");
 }
 
@@ -861,17 +861,6 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
         .text(function (d) {
             return d.riskProjectCode;
         });
-
-
-    // Set the form values
-    //          var prob = ((risk.inherentProb-1)/maxProb)*100;
-    //          $$('qrm-RiskEditorProbProbUnTreatedID').setValue(prob.toFixed(2)+"%");
-    //          $$('qrm-RiskEditorProbImpactTreatedID').setValue(Math.floor(risk.inherentImpact));
-    //
-    //          prob = ((this.risk.treatedProb-1)/maxProb)*100;
-    //          $$('qrm-RiskEditorProbProbTreatedID').setValue(prob.toFixed(2)+"%");
-    //          $$('qrm-RiskEditorProbImpactUnTreatedID').setValue(Math.floor(risk.inherentImpact));
-
     svg.append("text")
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
@@ -921,12 +910,12 @@ function getProjectStakeholders(p) {
 }
 
 function minimiseSideBar(state) {
-    
-    
-     if(!jQuery("body").hasClass("mini-navbar")){
-         jQuery("body").addClass("mini-navbar");
+
+
+    if (!jQuery("body").hasClass("mini-navbar")) {
+        jQuery("body").addClass("mini-navbar");
     }
-  
+
     if (!jQuery('body').hasClass('mini-navbar') || jQuery('body').hasClass('body-small')) {
         // Hide menu in order to smoothly turn on when maximize menu
         jQuery('#side-menu').hide();
@@ -949,7 +938,7 @@ function minimiseSideBar(state) {
     //Resize things that may have be impacted
     setTimeout(
         function () {
-           jQuery(window).trigger('resize');
+            jQuery(window).trigger('resize');
         }, 250);
 }
 
@@ -1553,7 +1542,7 @@ function SorterLayout(rankCtl) {
                 var html = "<div style='valign:top'><br><hr><strong>" + d.riskProjectCode + " - " + d.title + "<br><br>Description:<br><br></strong>" + d.description.substring(0, 500) + "<hr></div>";
             })
             .on("click", function (d) {
-                 var e = d3.event;
+                var e = d3.event;
                 if (!e.ctrlKey) return;
                 if (d3.event.defaultPrevented) return;
                 if (rankCtl.dirty) {

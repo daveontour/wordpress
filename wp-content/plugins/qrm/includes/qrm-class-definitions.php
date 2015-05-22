@@ -27,6 +27,7 @@ class Risk {
 	public $startDate;
 	public $endDate;
 	
+	public $riskProjectCode;
 	public $consequences;
 	public $causes;
 	public $description;
@@ -95,6 +96,7 @@ class SmallRisk {
 	public $currentTolerance;
 	public $currentProb;
 	public $currentImpact;
+	public $riskProjectCode;
 }
 class Data {
 	public $data;

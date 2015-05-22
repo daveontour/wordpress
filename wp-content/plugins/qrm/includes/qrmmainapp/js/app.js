@@ -10,7 +10,8 @@
         'ngNotify',
         'ui.select',
         'ngSanitize',
-         'ngDialog'
+         'ngDialog',
+        'textAngular'
     ])
 })();
 

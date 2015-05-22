@@ -1253,3 +1253,7 @@ body.mini-navbar .navbar-static-side {
 .ngdialog.ngdialog-theme-default .ngdialog-content {
     width: 800px;
 }
+
+.ngdialog.ngdialog-theme-default{
+    padding-bottom:160px;padding-top:30px
+}

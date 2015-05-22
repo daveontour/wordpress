@@ -1,15 +1,13 @@
 <div class="wrapper wrapper-content">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 style="display:inline">{{ctl.risk.title}}</h1>
+        <div class="col-lg-12" style="margin-bottom:10px">
+            <h2 style="display:inline">{{ctl.risk.title}} </h2><h3 style="display:inline"> ({{ctl.risk.riskProjectCode}})</h3>
             <div style="float:right">
                 <button type="button" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
                 <button type="button" style="margin-left:10px" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
             </div>
         </div>
-        <div class="col-lg-12" style="height:25px"></div>
         <div class="col-lg-12">
-
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Left Column -->
@@ -21,7 +19,7 @@
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <p>{{ctl.risk.description}}</p>
+                                    <p ng-bind-html="ctl.risk.description"></p>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +30,7 @@
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <p>{{ctl.risk.cause}}</p>
+                                    <p ng-bind-html="ctl.risk.cause"></p>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +41,7 @@
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <p>{{ctl.risk.consequence}}</p>
+                                    <p ng-bind-html="ctl.risk.consequence"></p>
                                 </div>
                             </div>
                         </div>
@@ -137,17 +135,17 @@
                             <!-- Mitigation -->
                             <div class="panel panel-success">
                                 <div class="panel-heading">Mitigation
-                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openMitEditor()"></i>
-                                    </div>
                                 </div>
                                 <div class="panel-body">
                                     <div style="margin-bottom:10px" class="row">
 
                                         <div style="margin-bottom:15px" class="col-lg-6">
-                                            <h4>Mitigation Plan Summary</h4> {{ctl.risk.mitigation.mitPlanSummary}}
+                                            <h4 style="display:inline">Mitigation Plan Summary</h4> <i class="fa fa-edit" style="cursor:pointer;margin-left:15px;font-size:16pt;color:green" ng-click="ctl.openMitEditor(true)"></i>
+                                            <p ng-bind-html="ctl.risk.mitigation.mitPlanSummary"></p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <h4>Mitigation Plan Summary Update</h4> {{ctl.risk.mitigation.mitPlanSummaryUpdate}}
+                                            <h4 style="display:inline">Mitigation Plan Summary Update</h4> <i class="fa fa-edit" style="cursor:pointer;margin-left:15px;font-size:16pt;color:green" ng-click="ctl.openMitEditor(false)"></i>
+                                            <p ng-bind-html="ctl.risk.mitigation.mitPlanSummaryUpdate"></p>
                                         </div>
 
 
@@ -164,7 +162,7 @@
                                                     <table style="width:100%">
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
-                                                                <strong>Description: </strong>{{step.description}}
+                                                                <strong>Description: </strong><span ng-bind-html="step.description"></span>
                                                             </td>
                                                             <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
                                                                 <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editMitStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteMitStep(step)"></i>
@@ -173,7 +171,7 @@
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
 
-                                                                <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person.name}}</div>
+                                                                <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person|usernameFilter}}</div>
                                                                 <div style="float:left;margin-right:15px"><strong>Cost: </strong>${{step.cost}}</div>
                                                                 <div style="float:left;margin-right:15px"><strong>Due: </strong>{{step.due | date:'MMM d, y'}}</div>
                                                                 <div style="float:left;margin-right:15px"><strong>Complete: </strong>{{step.complete}}%</div>
@@ -189,16 +187,16 @@
                             </div>
                             <div class="panel panel-success">
                                 <div class="panel-heading">Response
-                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openRespEditor()"></i>
-                                    </div>
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
                                         <div style="margin-bottom:15px" class="col-lg-6">
-                                            <h4>Reponse Plan Summary</h4> {{ctl.risk.response.respPlanSummary}}
+                                            <h4 style="display:inline">Reponse Plan Summary</h4> <i class="fa fa-edit" style="cursor:pointer;margin-left:15px;font-size:16pt;color:green" ng-click="ctl.openRespEditor(true)"></i>
+                                            <p ng-bind-html="ctl.risk.response.respPlanSummary"></p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <h4>Response Plan Summary Update</h4> {{ctl.risk.response.respPlanSummaryUpdate}}
+                                            <h4 style="display:inline">Response Plan Summary Update</h4><i class="fa fa-edit" style="cursor:pointer;margin-left:15px;font-size:16pt;color:green" ng-click="ctl.openRespEditor(false)"></i>
+                                            <p ng-bind-html="ctl.risk.response.respPlanSummaryUpdate"></p>
                                         </div>
                                         <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
                                             <h4 style="float:left">Detail Response Plan</h4>
@@ -210,7 +208,7 @@
                                                     <table style="width:100%">
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
-                                                                <strong>Description: </strong>{{step.description}}
+                                                                <strong>Description: </strong><span ng-bind-html="step.description"></span>
                                                             </td>
                                                             <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
                                                                 <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editRespStep(step)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteRespStep(step)"></i>
@@ -218,7 +216,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td style="padding-bottom:5px;padding-left:15px">
-                                                                <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person.name}}</div>
+                                                                <div style="float:left;margin-right:15px"><strong>Responsible: </strong>{{step.person|usernameFilter}}</div>
                                                                 <div style="float:left;margin-left"><strong>Estimated Cost: </strong>{{step.cost | currency}}</div>
                                                             </td>
                                                         </tr>
@@ -448,15 +446,17 @@
                                                 <label class="checkbox-inline" style="padding-left:0px">
                                                     <input icheck type="checkbox" ng-model="ctl.risk.summaryRisk"> Summary Risk </label>
                                             </div>
-                                            <label class="col-sm-3 control-label">Stakeholders</label>
+                                            <!--                                            <label class="col-sm-3 control-label">Stakeholders</label>
+
                                             <div class="col-sm-9" style="margin-top:8px">
                                                 <table>
                                                     <tr ng-repeat="s in ctl.stakeholders" style="cell">
-                                                        <td style="font-weight:bold">{{s.name}}</td>
+                                                        <td style="font-weight:bold">{{s.name | usernameFilter}}</td>
                                                         <td style="padding-left:5px">{{s.role}}</td>
                                                     </tr>
                                                 </table>
                                             </div>
+-->
                                         </div>
                                     </form>
                                 </div>
@@ -508,12 +508,12 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">Contributing Stakeholders</div>
                         <div class="panel-body">
-                            <div class="col-12-lg">
-                                <div class="col-12-lg" ng-repeat="s in ctl.stakeholders">
-                                    <div class="col-xs-6 col-sm-4 col-md-4" style="font-weight:bold;clear:both">{{s.name}} </div>
-                                    <div class="col-xs-6 col-sm-8 col-md-8">{{s.role}}</div>
-                                </div>
-                            </div>
+                            <table class="table table-striped">
+                                <tr ng-repeat="s in ctl.stakeholders" style="margin-top:15px">
+                                    <td>{{s.name | usernameFilter}} </td>
+                                    <td>{{s.role}}</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <div class="panel panel-success">
@@ -577,7 +577,7 @@
             <input ng-model="ctl.risk.title"  style="width:100%">
               <p></p>
            <p>Risk Description</p>
-            <textarea ng-model="ctl.risk.description" rows=5 style="width:100%"></textarea>
+            <div text-angular ng-model="ctl.risk.description" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
@@ -588,10 +588,18 @@
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Plan</h2></div>
             <p>Mitigation Plan Summary</p>
-            <textarea ng-model="ctl.risk.mitigation.mitPlanSummary" rows=5 style="width:100%"></textarea>
-            <p></p>
+             <div text-angular ng-model="ctl.risk.mitigation.mitPlanSummary" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
+       <script type="text/ng-template" id="editMitigationModalDialogId2">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Plan</h2></div>
             <p>Mitigation Plan Update</p>
-            <textarea ng-model="ctl.risk.mitigation.mitPlanSummaryUpdate" rows=5 style="width:100%"></textarea>
+           <div text-angular ng-model="ctl.risk.mitigation.mitPlanSummaryUpdate" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
@@ -602,11 +610,19 @@
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Respopnse Plan</h2></div>
             <p>Response Plan Summary</p>
-            <textarea ng-model="ctl.risk.response.respPlanSummary" rows=5 style="width:100%"></textarea>
-            <p></p>
-            <p>Response Plan Update</p>
-            <textarea ng-model="ctl.risk.response.respPlanSummaryUpdate" rows=5 style="width:100%"></textarea>
+           <div text-angular ng-model="ctl.risk.response.respPlanSummary" style="width:100%"></div>
+       </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
+    </script>
+      <script type="text/ng-template" id="editResponseModalDialogId2">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Respopnse Plan</h2></div>
+            <p>Response Plan Update</p>
+            <div text-angular ng-model="ctl.risk.response.respPlanSummaryUpdate" style="width:100%"></div>
+       </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
@@ -645,8 +661,8 @@
        <script type="text/ng-template" id="editCauseModalDialogId">
         <div class="ngdialog-message">
             <p>Risk Causes</p>
-            <textarea ng-model="ctl.risk.cause" rows=5 style="width:100%"></textarea>
-        </div>
+             <div text-angular ng-model="ctl.risk.cause" style="width:100%"></div>
+       </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
@@ -655,8 +671,8 @@
         <script type="text/ng-template" id="editConsqModalDialogId">
         <div class="ngdialog-message">
             <p>Risk Consequence</p>
-            <textarea ng-model="ctl.risk.consequence" rows=5 style="width:100%"></textarea>
-        </div>
+              <div text-angular ng-model="ctl.risk.consequence" style="width:100%"></div>
+       </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
@@ -668,32 +684,36 @@
             <p>Enter the specific action that should be taken the mitigate the likelihood or impact of this risk should it occur</p>
                 <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="step.description" class="form-control" style="height:200px"></textarea>
-                        </div>
+                        <label class="col-xs-4 col-sm-2 control-label">Action Description</label>
+                        <div class="col-xs-8 col-sm-10">
+                <div text-angular ng-model="step.description" style="width:100%"></div>
+                      </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
-                        <div class="col-xs-8 col-sm-9">
-                            <select ng-model="step.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
+                        <label class="col-xs-4 col-sm-2 control-label">Responsible</label>
+                        <div class="col-xs-8 col-sm-4">
+                            <select ng-model="step.person" ng-options="person as (person | usernameFilter) for person in siteUsers" class="form-control" style="width:230px"></select>
                         </div>
+<!--
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Due Date</label>
-                        <div class="col-xs-8 col-sm-9">
+-->
+                        <label class="col-xs-4 col-sm-2 control-label">Due Date</label>
+                        <div class="col-xs-8 col-sm-4">
                             <input type="date" ng-model="step.due" class="form-control" style="width:230px"></input>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-3 control-label">Cost</label>
-                        <div class="col-xs-8 col-sm-9">
+                        <label class="col-xs-4 col-sm-2 control-label">Cost</label>
+                        <div class="col-xs-8 col-sm-3">
                             <input min="0" step="10" ng-model="step.cost" class="form-control" type="number" style="width:120px"></input>
                         </div>
+<!--
                     </div>
                     <div class="form-group">
+-->
                         <label class="col-xs-4 col-sm-3 control-label">Percent Complete</label>
-                        <div class="col-xs-8 col-sm-9">
+                        <div class="col-xs-8 col-sm-4">
                             <input min="0" max="100" type="number" ng-model="step.complete" class="form-control" step="1" style="width:120px"></input>
                         </div>
                     </div>
@@ -707,18 +727,18 @@
       <script type="text/ng-template" id="editRespStepModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Response Action</h2></div>
-            <p>Enter the specific action which should take place in the even that risk eventuates</p>
+            <p>Enter the specific action which should take place in the event that risk eventuates</p>
                 <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-3 control-label">Action Description</label>
                         <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="step.description" class="form-control" style="height:200px"></textarea>
-                        </div>
+                <div text-angular ng-model="step.description" style="width:100%"></div>
+                       </div>
                     </div>
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-3 control-label">Responsible</label>
                         <div class="col-xs-8 col-sm-9">
-                            <select ng-model="step.person" ng-options="person.name for person in vm.stakeholders track by person.email" class="form-control" style="width:230px"></select>
+                            <select ng-model="step.person" ng-options="person as (person | usernameFilter) for person in siteUsers" class="form-control" style="width:230px"></select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -741,8 +761,8 @@
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-3 control-label">Control Description</label>
                         <div class="col-xs-8 col-sm-9">
-                            <textarea ng-model="control.description" class="form-control" style="height:200px"></textarea>
-                        </div>
+                <div text-angular ng-model="control.description" style="width:100%"></div>
+                      </div>
                     </div>
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-3 control-label">Effectiveness</label>
