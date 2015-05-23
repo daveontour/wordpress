@@ -63,119 +63,12 @@ function DataService() {
 
 
     this.project = {
+        id:-1,
         title: "Sample Risk Project Name",
-        riskOwners: [
-            {
-                name: "David Burton",
-                email: "dave_on_tour@yahoo.com"
-            },
-            {
-                name: "Fionna Millikan",
-                email: "fionna_on_tour@yahoo.com"
-            },
-            {
-                name: "Kerri Whitney",
-                email: "kerri_on_tour@yahoo.com"
-            }
-        ],
-        riskManagers: [
-            {
-                name: "David Burton",
-                email: "dave_on_tour@yahoo.com"
-            },
-            {
-                name: "Fionna Millikan",
-                email: "fionna_on_tour@yahoo.com"
-            },
-            {
-                name: "Kerri Whitney",
-                email: "kerri_on_tour@yahoo.com"
-            }
-        ],
-        categories: [
-            {
-                name: "Financial",
-                id: 100000,
-                sec: [
-                    {
-                        name: "Regulatory",
-                        id: 200000
-                    },
-                    {
-                        name: "Accounting",
-                        id: 300000
-                    },
-                    {
-                        name: "Management",
-                        id: 400000
-                    },
-                    {
-                        name: "Cash Flow",
-                        id: 500000
-                    }]
-
-            },
-            {
-                name: "Vendor",
-                id: 600000,
-
-                sec: [{
-                    name: "Performance",
-                    id: 700000
-                }, {
-                    name: "Relatioship",
-                    id: 800000
-                }]
-
-            }
-             ],
-        objectives: [
-            {
-                "name": "Maintain IT Security",
-                "id": "role1",
-                "children": [
-                    {
-                        "name": "Prevent Unauthorised access to systems from external",
-                        "id": "role11",
-                        "children": []
-                    },
-                    {
-                        "name": "Prevent internal access to un authorised users",
-                        "id": "role12",
-                        "children": [
-                            {
-                                "name": "Every User will have unique password",
-                                "id": "role121",
-                                "children": [
-                                    {
-                                        "name": "subUser2-1-1",
-                                        "id": "role1211",
-                                        "children": []
-                                    },
-                                    {
-                                        "name": "subUser2-1-2",
-                                        "id": "role1212",
-                                        "children": []
-                                    }
-            ]
-                            }
-          ]
-                    }
-        ]
-            },
-
-            {
-                "name": "Admin",
-                "id": "role2",
-                "children": []
-            },
-
-            {
-                "name": "Guest",
-                "id": "role3",
-                "children": []
-            }
-      ],
+        projectCode: "",
+        ownersID: [],
+        managersID: [],
+        usersID: [],
         matrix: {
             maxProb: 5,
             maxImpact:5,
@@ -194,7 +87,8 @@ function DataService() {
     this.getTemplateRisk = function () {
 
         return {
-            title: "Title of Risk (Edit 'Description' to change)",
+            title: "Title of Risk",
+            riskProjectCode:" New Risk ",
             description: "Description",
             cause: "Cause",
             consequence: "Consequence",
@@ -227,12 +121,8 @@ function DataService() {
             estContingency: 0,
             start: moment(),
             end: moment().add(1, 'month'),
-            primcat: {
-                name: ""
-            },
-            seccat: {
-                name: ""
-            },
+            primcat:0,
+            seccat:0,
             mitigation: {
                 mitPlanSummary: "Summary of the Mitigation Plan",
                 mitPlanSummaryUpdate: "Update to the Summary of the Mitigation Plan",

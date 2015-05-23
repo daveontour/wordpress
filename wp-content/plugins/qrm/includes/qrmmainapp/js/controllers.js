@@ -12,7 +12,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
 
     this.getTableHeight = function () {
         return {
-            height: "calc(100vh - 430px)"
+            height: "calc(100vh - 380px)"
         };
     }
 
@@ -29,16 +29,18 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
         enableSorting: true,
         //        minRowsToShow: 10,
         //        rowHeight: 25,
-        rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)"   ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer;"  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                name: 'currentTolerance',
-                cellTemplate: '<i class="fa fa-circle"></i>',
+                //               name: 'currentTolerance',
+                //                field:'currentTolerance',
+                //                cellTemplate: '<i class="fa fa-circle"> {{grid.appScope.formatCodeCol(grid, row)}}</i>',
+                field: 'riskProjectCode',
                 enableColumnMoving: false,
-                width: 30,
+                width: 80,
                 headerCellClass: 'header-hidden',
                 cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
-                    switch (Number(grid.getCellValue(row, col))) {
+                    switch (Number(row.entity.currentTolerance)) {
                     case 1:
                         return 'blue compact';
                     case 2:
@@ -56,7 +58,16 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
             {
                 name: 'title',
                 width: "*",
-                cellClass: 'compact'
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'treated',
+                width: 70,
+                field: 'treated',
+                cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
+                cellClass: 'cellCentered'
 
             },
             {
@@ -85,6 +96,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
             }
 
     ]
+    };
+    $scope.formatTreatedCol = function (row, check) {
+        if (row.entity.treated && check) {
+            return true;
+        }
+        if (!row.entity.treated && !check) {
+            return true;
+        }
+        return false;
     };
     this.resetFilter = function () {
         // used for flagging clearance of matrix highlights
@@ -120,6 +140,11 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
     }, true);
 
     // General purpose functions
+    this.newRisk = function () {
+        postType = null;
+        QRMDataService.riskID = -1;
+        $state.go('index.risk');
+    }
     $scope.editRisk = function (riskID) {
         exp.editRisk(riskID);
     }
@@ -350,9 +375,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.project = QRMDataService.project;
     this.categories = QRMDataService.catData;
     this.objectives = QRMDataService.projectObjectives;
-    this.risk = QRMDataService.getTemplateRisk();
-    $scope.risk = this.risk;
-    $scope.data = {comment:""};
+    $scope.data = {
+        comment: ""
+    };
 
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
@@ -463,7 +488,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
         var oPlan = vm.risk.mitigation.mitPlanSummary;
         var oUpdate = vm.risk.mitigation.mitPlanSummaryUpdate
         ngDialog.openConfirm({
-            template: (summary)?"editMitigationModalDialogId":"editMitigationModalDialogId2",
+            template: (summary) ? "editMitigationModalDialogId" : "editMitigationModalDialogId2",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
@@ -477,7 +502,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
         var oPlan = vm.risk.response.respPlanSummary;
         var oUpdate = vm.risk.response.respPlanSummaryUpdate
         ngDialog.openConfirm({
-            template: (summary)?"editResponseModalDialogId":"editResponseModalDialogId2",
+            template: (summary) ? "editResponseModalDialogId" : "editResponseModalDialogId2",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
@@ -540,6 +565,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
         remoteService.getRisk(vm.riskID)
             .then(function (response) {
                 vm.risk = response.data;
+                $scope.risk = vm.risk;
                 vm.updateRisk();
                 jQuery('#exposure').daterangepicker({
                         format: 'MMMM D, YYYY',
@@ -760,20 +786,20 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     }
     this.addComment = function (s) {
         $scope.data.comment = "";
-          ngDialog.openConfirm({
+        ngDialog.openConfirm({
             template: "addCommentModalDialogId",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-              debugger;
-           remoteService.addComment($scope.data.comment, QRMDataService.riskID)
+            debugger;
+            remoteService.addComment($scope.data.comment, QRMDataService.riskID)
                 .then(function (response) {
-               ngNotify.set("Comment added to risk", "success");
+                    ngNotify.set("Comment added to risk", "success");
                     vm.risk.comments = response.data.comments;
-                }); 
+                });
         }, function (reason) {
             // Restore the old values
-            
+
         });
     }
 
@@ -917,8 +943,15 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
             // Zero it out so no reoccurance
             postType = null;
         } else {
-            // Normal transfer from Explorer
-            this.getRisk();
+            if (QRMDataService.riskID == -1) {
+                vm.risk = QRMDataService.getTemplateRisk();
+                vm.risk.inherentProb = vm.project.matrix.maxProb + 0.5;
+                vm.risk.inherentImpact = vm.project.matrix.maxImpact + 0.5;
+                $scope.risk = vm.risk;
+            } else {
+                // Normal transfer from Explorer
+                this.getRisk();
+            }
         }
     }
 
@@ -1905,9 +1938,9 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
 app.config(function ($provide) {
     // this demonstrates how to register a new tool and add it to the default toolbar
     $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
-taOptions.toolbar = [
-      ['h1', 'h2', 'h3', 'h4',  'p'],
-      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear','html'],
+        taOptions.toolbar = [
+      ['h1', 'h2', 'h3', 'h4', 'p'],
+      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear', 'html'],
       ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
   ];
         return taOptions;

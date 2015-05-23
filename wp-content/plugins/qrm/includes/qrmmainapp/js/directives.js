@@ -170,6 +170,27 @@ function dropzone() {
     }
 }
 
+function textAngularFocus($parse, $timeout, textAngularManager) {
+
+    return {
+      link: function(scope, element, attributes) {
+
+        // Parse the focus expression
+        var shouldFocus = $parse(attributes.focus)(scope);
+
+        if (!shouldFocus) return;
+
+        $timeout(function() {
+
+          // Retrieve the scope and trigger focus
+          var editorScope = textAngularManager.retrieveEditor(attributes.name).scope;
+          editorScope.displayElements.text.trigger('focus');
+        }, 0, false);
+      }
+    };
+  }
+
+
 angular
     .module('inspinia')
     .directive('pageTitle', pageTitle)
@@ -179,3 +200,4 @@ angular
     .directive('icheck', icheck)
     .directive('minimalizaSidebar', minimalizaSidebar)
     .directive('dropzone', dropzone)
+    .directive('textAngular', ['$parse', '$timeout', 'textAngularManager', textAngularFocus])

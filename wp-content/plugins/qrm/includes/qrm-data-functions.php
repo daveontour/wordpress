@@ -283,6 +283,9 @@ class QRM {
 	
 	static function getAllProjectRisks() {
 		$projectID = json_decode ( file_get_contents ( "php://input" ) );
+		if ($projectID == null){
+			wp_send_json(array());
+		}
 		global $post;
 		$args = array (
 				'post_type' => 'risk',
@@ -448,6 +451,8 @@ class QRM {
 		// Fill in all the other meta data
 		update_post_meta ( $postID, "projectriskmanager", get_user_by("id", $project->projectRiskManager)->display_name );
 		update_post_meta ( $postID, "projectCode",  $project->projectCode );
+		update_post_meta ( $postID, "maxProb",  $project->matrix->maxProb );
+		update_post_meta ( $postID, "maxImpactb",  $project->matrix->maxImpact );
 		
 		add_post_meta($postID, "riskIndex", 10, true);
 		add_post_meta ( $postID, "numberofrisks", 0,true );

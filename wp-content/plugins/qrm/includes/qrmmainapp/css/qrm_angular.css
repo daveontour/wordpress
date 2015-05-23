@@ -7,7 +7,7 @@
 .header-hidden span{
     display:none
 } 
-.explorerGrid i{
+.explorerGrid i:before{
     font-size:15pt;
 }
 
@@ -33,28 +33,31 @@
 
 .green {
     text-align: center;
-    color:green;
+    background-color:#00ff00 !important;
     padding: 5px;
 }
 .blue {
     text-align: center;
-    color:blue;
+    background-color:#00ffff !important;
     padding: 5px;
 }
 .yellow {
     text-align: center;
-    color:yellow;
+    background-color:yellow !important;
     padding: 5px;
 }
 
 .orange {
     text-align: center;
-    color:orange;
+    color:white !important;
+    background-color:#ffa500 !important;
     padding: 5px;
+    
 }
 .red {
     text-align: center;
-    color:red;
+ color:white !important;
+   background-color:red !important;
     padding: 5px;
 }
 

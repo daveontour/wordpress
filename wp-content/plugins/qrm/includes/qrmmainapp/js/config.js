@@ -36,9 +36,6 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/risk",
             templateUrl: pluginurl+"views/risk.html",
             controller: "RiskCtrl as ctl",
-            onEnter: function () {
-                minimiseSideBar(true);
-            },
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
