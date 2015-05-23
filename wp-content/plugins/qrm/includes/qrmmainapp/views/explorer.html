@@ -120,10 +120,13 @@
     </div>
     <div class="row-fluid visible-xs visible-sm hidden-md hidden-lg" style="padding-left:0px;padding-right:0px;clear:both">
         <table  style="margin-top:10px" class="table table-striped">
+            <tr><th>ID</th><th>Title</th><th>Owner</th><th></th></tr>
             <tr ng-repeat="risk in exp.gridOptions.data">
-                <td  style="cursor:pointer" ng-click="exp.editRisk(risk.id)" ng-class="{blue:risk.currentTolerance == 1, green:risk.currentTolerance == 2, yellow:risk.currentTolerance == 3, orange:risk.currentTolerance == 4, red:risk.currentTolerance == 5 }">{{risk.riskProjectCode}}</td>
-                <td  style="cursor:pointer" ng-click="exp.editRisk(risk.id)">{{risk.title}}</td>
-                <td><td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;">
+                <td  style="cursor:pointer;width:100px" ng-click="exp.editRisk(risk.id)" ng-class="{blue:risk.currentTolerance == 1, green:risk.currentTolerance == 2, yellow:risk.currentTolerance == 3, orange:risk.currentTolerance == 4, red:risk.currentTolerance == 5 }">{{risk.riskProjectCode}}</td>
+                <td  style="cursor:pointer;width:*" ng-click="exp.editRisk(risk.id)">{{risk.title}}</td>
+                <td  style="cursor:pointer" ng-click="exp.editRisk(risk.id)">{{risk.owner | usernameFilter}}</td>
+                
+                <td style="width:30px;padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;">
                                                                 <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="exp.editRisk(risk.id)"></i></i></td>
             </tr>
         </table>
