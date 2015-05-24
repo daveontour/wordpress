@@ -1,5 +1,14 @@
-function MainCtrl(QRMDataService, remoteService) {
-
+function MainCtrl(QRMDataService, remoteService, $state, $sce) {
+    QRM.mainController = this;
+    
+    this.noProjectMsg = $sce.trustAsHtml("<span style='color:rgb(236,71,88);font-style:italic'>Please select a Risk Project from the selector above</span>");
+    this.resetMsg = function(){
+        this.noRisksMsg = $sce.trustAsHtml("<span style='color:rgb(28,132,198);font-style:italic'>Looking for risks in project <strong>"+QRM.expController.project.title+"</strong><span>");
+    }
+    this.setMsg = function(){
+        this.noRisksMsg = $sce.trustAsHtml("<span style='color:rgb(236,71,88);font-style:italic'>No risks found for risk project <strong>"+QRM.expController.project.title+"</strong></span>");
+    }
+    
     remoteService.getSiteUsers()
         .then(function (response) {
             QRMDataService.siteUsers = response.data.data;
@@ -9,7 +18,9 @@ function MainCtrl(QRMDataService, remoteService) {
 };
 
 function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
-
+    
+    QRM.expController = this;
+    
     this.getTableHeight = function () {
         return {
             height: "calc(100vh - 380px)"
@@ -18,7 +29,9 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
 
     QRMDataService.riskID = 0;
     var exp = this;
-    this.project = QRMDataService.project;
+    if (QRMDataService.project.id > 0){
+        this.project = QRMDataService.project;
+    }
 
     this.valPre = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.valPost = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -157,8 +170,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
         alert("Delete Risk: " + riskID);
     }
     this.getAllProjectRisks = function () {
+        QRM.mainController.resetMsg();
         remoteService.getAllProjectRisks(exp.project.id)
             .then(function (response) {
+                if (response.data.data.length == 0) QRM.mainController.setMsg();
                 exp.rawRisks = response.data.data;
                 exp.gridOptions.data = response.data.data;
 
@@ -292,6 +307,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
             QRMDataService.selectProject(projectID);
             this.project = QRMDataService.project;
             this.getAllProjectRisks(this.project.id);
+            this.clearFilters();
         }
         // Control the appearance of the matrix cells
     this.getCellValue = function (prob, impact, treated) {
@@ -354,7 +370,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, remoteService) {
                     exp.projectSelect(null, postID);
                     postType = null;
                 } else {
-                    if (typeof (QRMDataService.project) != 'undefined') exp.getAllProjectRisks(QRMDataService.project.id);
+                    if (QRMDataService.project.id > 0) exp.getAllProjectRisks(QRMDataService.project.id);
                 }
             });
     }
@@ -371,7 +387,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     this.riskID = QRMDataService.riskID;
     this.stakeholders = [];
     this.additionalHolders = [];
-    this.url = QRMDataService.url;
     this.project = QRMDataService.project;
     this.categories = QRMDataService.catData;
     this.objectives = QRMDataService.projectObjectives;
@@ -411,7 +426,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
                     file.previewElement.classList.add('dz-complete');
                     vm.cancelAttachment()
                     ngNotify.set("Attachment added to risk", "success");
-                    remoteService.getRiskAttachments(QRMDataService.url, vm.riskID)
+                    remoteService.getRiskAttachments(vm.riskID)
                         .then(function (response) {
                             vm.risk.attachments = response.data;
                         });
@@ -567,23 +582,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
                 vm.risk = response.data;
                 $scope.risk = vm.risk;
                 vm.updateRisk();
-                jQuery('#exposure').daterangepicker({
-                        format: 'MMMM D, YYYY',
-                        separator: " - ",
-                        showDropdowns: true,
-                        drops: "down"
-                    },
-                    function (start, end, label) {
-                        try {
-                            // Update the Angular controller
-                            angular.element("#exposure").controller().updateDates(start, end);
-                        } catch (e) {
-                            console.log(e.message);
-                        }
-                    });
-                $('#exposure').data('daterangepicker').setStartDate(angular.element("#exposure").controller().risk.start);
-                $('#exposure').data('daterangepicker').setEndDate(angular.element("#exposure").controller().risk.end);
-
                 angular.element("#riskEditorMatrixID").controller().setRiskMatrixID("riskEditorMatrixID");
                 angular.element("#riskEditorMatrixID").controller().setRiskMatrix();
             });
@@ -688,8 +686,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
                 vm.risk.currentTolerance = vm.risk.inherentTolerance;
             }
 
-
-
             vm.treatedAbsProb = probFromMatrix(vm.risk.treatedProb, vm.project.matrix);
             vm.inherentAbsProb = probFromMatrix(vm.risk.inherentProb, vm.project.matrix);
         } catch (e) {
@@ -697,11 +693,26 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
         }
 
         //Set the date controll
-
+        debugger;
         // Need to be fixed ????
-
-        //        $('#exposure').data('daterangepicker').setStartDate(moment(vm.risk.start));
-        //        $('#exposure').data('daterangepicker').setEndDate(moment(vm.risk.end));
+jQuery('#exposure').daterangepicker({
+                        format: 'MMMM D, YYYY',
+                        separator: " - ",
+                        showDropdowns: true,
+                        drops: "down"
+                    },
+                    function (start, end, label) {
+                        try {
+                            // Update the Angular controller
+                            angular.element("#exposure").controller().updateDates(start, end);
+                        } catch (e) {
+                            console.log(e.message);
+                        }
+                    });
+        var s = moment(vm.risk.start);
+        var e = moment(vm.risk.end);
+        jQuery('#exposure').data('daterangepicker').setStartDate(s);
+        jQuery('#exposure').data('daterangepicker').setEndDate(e);
 
 
     }
@@ -922,6 +933,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
     }
 
     this.init = function () {
+
         if (postType == "risk") {
 
             // Jumped here directly from risk list in WP
@@ -948,6 +960,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, remoteService, ngNotif
                 vm.risk.inherentProb = vm.project.matrix.maxProb + 0.5;
                 vm.risk.inherentImpact = vm.project.matrix.maxImpact + 0.5;
                 $scope.risk = vm.risk;
+                vm.updateRisk();
+                vm.setRiskMatrixID("riskEditorMatrixID");
+                vm.setRiskMatrix();
             } else {
                 // Normal transfer from Explorer
                 this.getRisk();
@@ -1187,7 +1202,7 @@ function RankController($scope, QRMDataService, $state, remoteService) {
     }
 }
 
-function RelMatrixController($scope, QRMDataService, $state, remoteService, notify) {
+function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNotify) {
 
     var relMatrixCtrl = this;
 
@@ -1327,26 +1342,23 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
         });
 
         if (relMatChanges.length < 1) {
-            notify({
-                message: 'There are no changes to save',
-                classes: 'alert-warning',
-                duration: 1500,
-                templateUrl: "views/common/notify.html"
-            });
+            ngNotify.set('There are no changes to save', "grimace");
             return;
         }
 
-        remoteService.updateRisksRelMatrix(QRMDataService.url, relMatChanges)
+        remoteService.updateRisksRelMatrix(relMatChanges)
             .then(function (response) {
                 relMatrixCtrl.risks.forEach(function (item) {
+                    item.treatedImpact = (item.treatedClean) ? item.treatedImpact : item.newTreatedImpact;
+                    item.treatedProb = (item.treatedClean) ? item.treatedProb : item.newTreatedProb;
+                    item.inherentImpact = (item.untreatedClean) ? item.inherentImpact : item.newInherentImpact;
+                    item.inherentProb = (item.untreatedClean) ? item.inherentProb : item.newInherentProb;
+                    item.treatedClean = true;
+                    item.untreatedClean = true;
                     item.dirty = false;
                 });
-                notify({
-                    message: 'Changes to Probability/Impact have been saved',
-                    classes: 'alert-info',
-                    duration: 1500,
-                    templateUrl: "views/common/notify.html"
-                });
+
+                ngNotify.set('Changes to Probability/Impact have been saved', "success");
             });
 
     }
@@ -1359,7 +1371,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
         var filteredRisks = new Array();
 
         this.risks.forEach(function (risk) {
-            if (risk.owner.name == relMatrixCtrl.owner.name) {
+            if (risk.owner == relMatrixCtrl.owner) {
                 risk.x = 0;
                 risk.y = 0;
                 filteredRisks.push(risk);
@@ -1375,7 +1387,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
         var filteredRisks = new Array();
 
         this.risks.forEach(function (risk) {
-            if (risk.manager.name == relMatrixCtrl.manager.name) {
+            if (risk.manager == relMatrixCtrl.manager) {
                 risk.x = 0;
                 risk.y = 0;
                 filteredRisks.push(risk);
@@ -1437,57 +1449,6 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
         relMatrixCtrl.selectedRisk = "";
 
     }
-    this.okToSwitchProject = function (newProjectID) {
-        if (!this.matrixDirty) {
-            return true;
-        } else {
-            this.dirtySwitch(null, null, newProjectID);
-            return false;
-        }
-    }
-    this.okToSwitchTab = function (tabPanel, newCard) {
-        if (!this.matrixDirty) {
-            return true;
-        } else {
-            this.dirtySwitch(tabPanel, newCard);
-            return false;
-        }
-    }
-    this.dirtySwitch = function (tabPanel, newCard, newProjectID) {
-        Ext.Msg.show({
-            title: "Save Changes",
-            msg: '<center>Save Changes?</center>',
-            width: 300,
-            buttons: Ext.Msg.YESNOCANCEL,
-            fn: function (btn) {
-                if (btn == 'cancel') {
-                    var store = $$("qrmNavigatorID").getStore();
-                    var record = store.findRecordByProjectID(QRM.global.projectID);
-                    $$("qrmNavigatorID").getSelectionModel().select(record);
-                    return;
-                }
-
-                if (btn == 'no') {
-                    QRM.app.getRelMatrixController().matrixDirty = false;
-                    if (tabPanel != null) {
-                        tabPanel.setActiveTab(newCard);
-                    } else if (newProjectID != null) {
-                        var store = $$("qrmNavigatorID").getStore();
-                        var record = store.findRecordByProjectID(newProjectID);
-                        $$("qrmNavigatorID").getSelectionModel().select(record);
-                        QRM.app.getMainTabsController().getProject(newProjectID);
-                    }
-                    return;
-                }
-                if (btn == 'yes') {
-                    QRM.app.getRelMatrixController().saveChanges(true, tabPanel, newCard, newProjectID);
-                    return;
-                }
-
-            },
-            icon: Ext.Msg.QUESTION
-        });
-    }
     this.resizePanel = function () {
         this.svgMatrix(this.risks);
     }
@@ -1503,17 +1464,6 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
         this.resetPZ();
         this.svgMatrix(this.risks);
     }
-    this.switchTab = function () {
-        this.clearFilters();
-        this.getRisksAndPlace();
-    }
-    this.switchProject = function (project, desc) {
-        this.clearFilters();
-        this.getRisksAndPlace();
-        return;
-    }
-
-
     this.pan = function (dx, dy) {
 
         this.transMatrix[4] += dx;
@@ -1690,6 +1640,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, noti
                 '<rect class="plus-minus" x="48.5" y="55" width="3" height="8" />'
             )
             .attr("transform", "translate(0 0)")
+            .attr("class", "hidden-xs")
 
         //Configure the drag behaviour
 
@@ -1935,6 +1886,9 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
         appendTo: false
     });
 }]);
+app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeSpinner = true;
+  }]);
 app.config(function ($provide) {
     // this demonstrates how to register a new tool and add it to the default toolbar
     $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
@@ -1946,12 +1900,12 @@ app.config(function ($provide) {
         return taOptions;
   }]);
 });
-app.controller('MainCtrl', ['QRMDataService', 'RemoteService', MainCtrl]);
+app.controller('MainCtrl', ['QRMDataService', 'RemoteService','$state', '$sce', MainCtrl]);
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', ExplorerCtrl]);
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', RankController]);
-app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'notify', 'ngNotify', RelMatrixController]);
+app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
 
 app.service('RemoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);

@@ -1,48 +1,16 @@
 function DataService() {
 
         var ds = this;
-    this.lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur";
-    this.loremSmall = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipis";
     this.matrixDisplayConfig = {
         width: 200,
         height: 200,
         radius: 15
     };
 
-
-    this.getDefaultProject = function () {
-        return {
-            id: -1,
-            title: "Project Title",
-            description: "Description of the Project",
-            useAdvancedConsequences: false,
-            projectCode: "",
-            ownersID: [],
-            managersID: [],
-            usersID: [],
-            matrix: {
-                maxImpact:5,
-                maxProb: 5,
-                tolString: "1123312234223443345534455555555555555555555555555555555555555555",
-                probVal1: 20,
-                probVal2: 40,
-                probVal3: 60,
-                probVal4: 80,
-                probVal5: 100,
-                probVal6: 100,
-                probVal7: 100,
-                probVal8: 100
-            },
-            categories: [],
-            objectives: [],
-            parent_id: 0,
-        };
-    }
-
     this.selectProject = function(projectID){
-             this.projectObjectives = objectiveSort(getLinearObjectives(this.projMap, projectID));
+            this.projectObjectives = objectiveSort(getLinearObjectives(this.projMap, projectID));
             this.catData = getFamilyCats(this.projMap, projectID);
-             this.project =  this.projMap.get(projectID);
+            this.project =  this.projMap.get(projectID);
     }
     
     this.handleGetProjects = function (response) {
@@ -61,26 +29,13 @@ function DataService() {
         }
     }
 
-
+    //Only here to provide skeleton for the matrix on the explorer page when no project is selected
     this.project = {
         id:-1,
-        title: "Sample Risk Project Name",
-        projectCode: "",
-        ownersID: [],
-        managersID: [],
-        usersID: [],
         matrix: {
             maxProb: 5,
             maxImpact:5,
-            tolString: "1123312234223443345534455",
-            probVal1: 20,
-            probVal2: 40,
-            probVal3: 60,
-            probVal4: 80,
-            probVal5: 100,
-            probVal6: 100,
-            probVal7: 100,
-            probVal8: 100
+            tolString: "1123312234223443345534455"
         }
 
     };
@@ -242,7 +197,7 @@ function RemoteService($http) {
         });
     };
 
-    this.updateRisksRelMatrix = function (url, data) {
+    this.updateRisksRelMatrix = function (data) {
         return $http({
             method: 'POST',
             url: ajaxurl,
@@ -256,7 +211,7 @@ function RemoteService($http) {
         });
     };
 
-    this.getRiskAttachments = function (url, riskID) {
+    this.getRiskAttachments = function (riskID) {
         return $http({
             method: 'POST',
             url: ajaxurl,

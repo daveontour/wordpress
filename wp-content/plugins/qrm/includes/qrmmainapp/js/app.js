@@ -11,7 +11,9 @@
         'ui.select',
         'ngSanitize',
          'ngDialog',
-        'textAngular'
+        'textAngular',
+        'angular-loading-bar', 
+        'ngAnimate'
     ])
 })();
 
