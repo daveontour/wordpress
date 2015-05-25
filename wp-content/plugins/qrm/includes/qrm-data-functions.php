@@ -57,6 +57,9 @@ class QRM {
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
 	}
+	static function getCurrentUser() {
+		wp_send_json(wp_get_current_user ());
+	}
 	static function getSiteUsersCap() {
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all'

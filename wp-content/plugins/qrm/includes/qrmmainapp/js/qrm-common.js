@@ -173,7 +173,6 @@ function Map() {
 
 function calcProb(risk, preMit) {
 
-
     var startMom = moment(risk.start);
     var endMom = moment(risk.end);
     var days = (new Date(risk.end).getTime() - new Date(risk.start).getTime()) / (1000 * 60 * 60 * 24);
@@ -268,32 +267,44 @@ function probFromMatrix(qprob, mat) {
 function probToMatrix(prob, mat) {
 
     var qprob = 0.5;
+    var qOK = false;
 
     if (mat.probVal1 != null && 0 <= prob && prob <= mat.probVal1 && mat.maxProb >= 1) {
         qprob = 1.0 + (prob / mat.probVal1);
+        qOK = true;
     }
     if (mat.probVal1 != null && mat.probVal2 != null && mat.probVal1 < prob && prob <= mat.probVal2 && mat.maxProb >= 2) {
         qprob = 2.0 + ((prob - mat.probVal1) / (mat.probVal2 - mat.probVal1));
+        qOK = true;
     }
     if (mat.probVal2 != null && mat.probVal3 != null && mat.probVal2 < prob && prob <= mat.probVal3 && mat.maxProb >= 3) {
         qprob = 3.0 + ((prob - mat.probVal2) / (mat.probVal3 - mat.probVal2));
-    }
+         qOK = true;
+   }
     if (mat.probVal3 != null && mat.probVal4 != null && mat.probVal3 < prob && prob <= mat.probVal4 && mat.maxProb >= 4) {
         qprob = 4.0 + ((prob - mat.probVal3) / (mat.probVal4 - mat.probVal3));
-    }
+         qOK = true;
+   }
     if (mat.probVal4 != null && mat.probVal5 != null && mat.probVal4 < prob && prob <= mat.probVal5 && mat.maxProb >= 5) {
         qprob = 5.0 + ((prob - mat.probVal4) / (mat.probVal5 - mat.probVal4));
+        qOK = true;
     }
     if (mat.probVal5 != null && mat.probVal6 != null && mat.probVal5 < prob && prob <= mat.probVal6 && mat.maxProb >= 6) {
         qprob = 6.0 + ((prob - mat.probVal5) / (mat.probVal6 - mat.probVal5));
-    }
+         qOK = true;
+   }
     if (mat.probVal6 != null && mat.probVal7 != null && mat.probVal6 < prob && prob <= mat.probVal7 && mat.maxProb >= 7) {
         qprob = 7.0 + ((prob - mat.probVal6) / (mat.probVal7 - mat.probVal6));
+        qOK = true;
     }
     if (mat.probVal7 != null && mat.probVal8 != null && mat.probVal7 < prob && prob <= mat.probVal8 && mat.maxProb == 8) {
         qprob = 8.0 + ((prob - mat.probVal7) / (mat.probVal8 - mat.probVal7));
+        qOK = true;
     }
-
+    
+    if (!qOK){
+        qprob = mat.maxProb+0.999;
+    }
     return qprob;
 }
 

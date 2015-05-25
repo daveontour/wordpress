@@ -22,13 +22,13 @@
                         </li>
                     </ul>
                 </div>
-                <button type="button" style="margin-left:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+                <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-left:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
                 <button type="button" style="margin-left:5px" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
             </div>
         </div>
         <div class="col-lg-12">
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-md-7 col-lg-8">
                     <!-- Left Column -->
                     <div class="row">
                         <div class="col-lg-12">
@@ -156,15 +156,26 @@
                                             <div style="float:left; width:390px">
                                                 <div class="form-group">
                                                     <label class="control-label" style="text-align:left;color:red">Un Treated State</label>
-                                                    <p>Probability: {{ctl.inherentAbsProb | number:1}}%</ppp>
-                                                    <p>Impact: {{ctl.risk.inherentImpact}}</p>
+                                                    <p>Probability: {{ctl.inherentAbsProb | number:1}}%
+                                                    
+                                                        <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==1"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>Year</strong></span>
+                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==2"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>Month</strong></span>
+                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==3"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>{{ctl.risk.likeT}}</strong> Days</span>
+                                                    
+                                                    </p>
+                                                    <p>Impact: {{ctl.risk.inherentImpact | number:1}}</p>
                                                 </div>
                                             </div>
                                             <div style="float:left;width:390px">
                                                 <div class="form-group">
                                                     <label class="control-label" style="text-align:left;color:blue">Treated State</label>
-                                                    <p>Probability: {{ctl.treatedAbsProb | number:1}}%</p>
-                                                    <p>Impact: {{ctl.risk.treatedImpact}}</p>
+                                                    <p>Probability: {{ctl.treatedAbsProb | number:1}}%
+                                                    
+                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==1"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>Year</strong></span>
+                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==2"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>Month</strong></span>
+                                                        <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==3"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>{{ctl.risk.likePostT}}</strong> Days</span></p>
+                                                    <p>Impact: {{ctl.risk.treatedImpact |number:1}}</p>
+
                                                 </div>
                                             </div>
                                     </div>
@@ -363,7 +374,7 @@
                     </div>
                 </div>
                 <!-- End Left Column -->
-                <div class="col-lg-4">
+                <div class="col-md-5 col-lg-4">
                     <!-- Riight Column -->
                     <div class="panel panel-success">
                         <div class="panel-heading">Risk Management</div>
@@ -624,7 +635,7 @@
   
         <div class="col-lg-12">
             <div style="float:right">
-                <button type="button" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+                <button type="button" ng-show="main.checkUserCap('save_risk')" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
                 <button type="button" style="margin-left:10px" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
             </div>
         </div>

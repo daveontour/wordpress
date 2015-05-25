@@ -59,6 +59,7 @@ add_action("wp_ajax_addComment", array(QRM, "addComment"));
 add_action("wp_ajax_updateRisksRelMatrix", array(QRM, "updateRisksRelMatrix"));
 add_action("wp_ajax_getRiskAttachments", array(QRM, "getRiskAttachments"));
 add_action("wp_ajax_uploadFile", array(QRM, "uploadFile"));
+add_action("wp_ajax_getCurrentUser", array(QRM, "getCurrentUser"));
 
 add_action('init', 'qrm_init_options');
 

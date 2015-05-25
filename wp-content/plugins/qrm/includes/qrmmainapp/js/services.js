@@ -66,7 +66,7 @@ function DataService() {
             treated: false,
             summaryRisk: false,
             useCalContingency: false,
-            useCalcProb: false,
+            useCalProb: false,
             likeType: 1,
             likeAlpha: 1,
             likeT: 365,
@@ -220,6 +220,16 @@ function RemoteService($http) {
             },
             cache: false,
             data: riskID
+        });
+    };
+    this.getCurrentUser = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getCurrentUser"
+            },
+            cache: false
         });
     };
 }
