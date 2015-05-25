@@ -362,8 +362,24 @@ class QRM {
 		$risk->riskProjectCode = get_post_meta( $risk->projectID, "projectCode", true ).$postID;
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		
+		//Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "owner", get_user_by("id", $risk->owner)->data->display_name );
+		update_post_meta ( $postID, "project", get_post($risk->projectID)->post_title );
+		
+		//Update the count for riskd for the impacted project
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $projectID
+		);
+		
+		$the_query = new WP_Query ( $args );
+		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
+		
 		
 		// Add any comments to the returned object
 		$risk->comments = get_comments ( array (
@@ -457,8 +473,20 @@ class QRM {
 		update_post_meta ( $postID, "maxProb",  $project->matrix->maxProb );
 		update_post_meta ( $postID, "maxImpactb",  $project->matrix->maxImpact );
 		
+		//Update number of risk
+		//Update the count for riskd for the impacted project
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $postID
+		);
+		
+		$the_query = new WP_Query ( $args );
+		update_post_meta ( $postID, "numberofrisks", $the_query->found_posts );
+		
 		add_post_meta($postID, "riskIndex", 10, true);
-		add_post_meta ( $postID, "numberofrisks", 0,true );
+		
 		
 		
 		// Return all the projects

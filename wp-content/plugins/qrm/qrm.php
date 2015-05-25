@@ -66,7 +66,9 @@ add_action('init', 'qrm_init_options');
 if (is_admin ()) {	
 	add_filter('user_has_cap', 'qrm_prevent_riskproject_parent_deletion', 10, 3);
 	add_filter('manage_riskproject_posts_columns', 'bs_riskproject_table_head');
+	add_filter('manage_risk_posts_columns', 'bs_risk_table_head');
 	add_action('manage_riskproject_posts_custom_column', 'bs_riskproject_table_content', 10, 2 );
+	add_action('manage_risk_posts_custom_column', 'bs_risk_table_content', 10, 2 );
 	add_action('admin_menu', 'qrm_admin_menu_config');
 }
 
@@ -74,6 +76,11 @@ function bs_riskproject_table_head( $defaults ) {
 	$defaults['manager']  = 'Risk Project Manager';
 	$defaults['number']  = 'Number of Risks';
 	$defaults['author'] = 'Added By';
+	return $defaults;
+}
+function bs_risk_table_head( $defaults ) {
+	$defaults['project']  = 'Risk Project';
+	$defaults['owner']  = 'Risk Owner';
 	return $defaults;
 }
 function bs_riskproject_table_content( $column_name, $post_id ) {
@@ -86,7 +93,15 @@ function bs_riskproject_table_content( $column_name, $post_id ) {
 	}
 }
 
+function bs_risk_table_content( $column_name, $post_id ) {
+	if ($column_name == 'project') {
+		echo get_post_meta ( $post_id, "project", true);
+	}
 
+	if ($column_name == 'owner') {
+		echo get_post_meta ( $post_id, "owner", true);
+	}
+}
 add_filter('single_template','get_custom_post_type_template');
 function get_custom_post_type_template($single_template){
 	// Template for viewing risk or projects
