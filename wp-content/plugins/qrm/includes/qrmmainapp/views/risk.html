@@ -1,12 +1,14 @@
 <div class="wrapper wrapper-content">
     <div class="row">
-        <div class="col-lg-12" style="margin-bottom:10px">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom:5px">
             <h2 style="display:inline">{{ctl.risk.title}} </h2>
-            <h3 style="display:inline"> ({{ctl.risk.riskProjectCode}})</h3>
-            <div style="float:right">
-                                <div class="btn-group" dropdown>
+            <h3 style="display:inline;font-weight:normal"> ({{ctl.risk.riskProjectCode}})</h3>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div style="float:right;clear:left">
+                <div class="btn-group" dropdown>
                     <button type="button" class="btn btn-danger">Action</button>
-                    <button type="button" class="btn btn-danger dropdown-toggle" dropdown-toggle>
+                    <button type="button" style="margin-right:5px" class="btn btn-danger dropdown-toggle" dropdown-toggle>
                         <span class="caret"></span>
                         <span class="sr-only">Split button!</span>
                     </button>
@@ -22,8 +24,8 @@
                         </li>
                     </ul>
                 </div>
-                <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-left:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
-                <button type="button" style="margin-left:5px" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
+                <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+                <button type="button" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
             </div>
         </div>
         <div class="col-lg-12">
@@ -31,7 +33,7 @@
                 <div class="col-md-7 col-lg-8">
                     <!-- Left Column -->
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12" style="margin-top:5px">
                             <div class="panel panel-success">
                                 <div class="panel-heading">Description
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openDescriptionEditor()"></i>
@@ -68,119 +70,73 @@
                             <!--   Probability  -->
                             <div class="panel panel-success">
                                 <div class="panel-heading">Probability</div>
-                                <div class="panel-body hidden-xs">
+                                <div class="panel-body">
 
-                                    <div style="width:240px;margin-left:auto;margin-right:auto">
+                                    <div class="pull-left">
                                         <div style="width:230px;height:230px" id="riskEditorMatrixID"></div>
-                                        <div>
+                                        <div style="margin-bottom:10px">
                                             <label class="checkbox-inline" style="padding-left:5px">
                                                 <input icheck type="checkbox" ng-model="ctl.risk.useCalProb" ng-change="ctl.probChange()"> Use Calculated Probability</label>
                                         </div>
                                     </div>
-                                    <div style="float:left;margin-top:15px">
-                                        <form method="get" class="form-horizontal">
-                                            <div style="float:left; width:390px">
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label" style="text-align:left;color:red">Un Treated State</label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-6 control-label">Frequency Type</label>
-                                                    <div class="col-sm-6">
-                                                        <select class="form-control" ng-model="ctl.risk.likeType" ng-change="ctl.probChange()" ng-disabled="!ctl.risk.useCalProb">
-                                                            <option value=1>Frequency per Year</option>
-                                                            <option value=2>Frequency per Month</option>
-                                                            <option value=3>Frequency per Days</option>
-                                                        </select>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Frequency of Occurance</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" ng-disabled="!ctl.risk.useCalProb" ng-change="ctl.probChange()" type="number" name="input" ng-model="ctl.risk.likeAlpha" min="0" max="99" required>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Number of Days</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likeType!=3" name="input" ng-model="ctl.risk.likeT" ng-change="ctl.probChange()" min="0" required>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Probability</label>
-                                                    <div class="col-sm-6">
-                                                        <p class="form-control-static">{{ctl.inherentAbsProb | number:1}}%</p>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-6 control-label">Impact</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" type="number" ng-model="ctl.risk.inherentImpact" min="1" max="6" ng-change="ctl.impactChange()" step="0.05">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div style="float:left;width:390px">
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label" style="text-align:left;color:blue">Treated State</label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-6 control-label">Frequency Type</label>
-                                                    <div class="col-sm-6">
-                                                        <select class="form-control" ng-model="ctl.risk.likePostType" ng-disabled="!ctl.risk.useCalProb" ng-change="ctl.probChange()">
-                                                            <option value=1>Frequency per Year</option>
-                                                            <option value=2>Frequency per Month</option>
-                                                            <option value=3>Frequency per Days</option>
-                                                        </select>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Frequency of Occurance</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" type="number" ng-change="ctl.probChange()" ng-disabled="!ctl.risk.useCalProb" ng-model="ctl.risk.likePostAlpha" min="0" max="99" required>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Number of Days</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likePostType!=3" ng-model="ctl.risk.likePostT" ng-change="ctl.probChange()" min="0" required>
-                                                    </div>
-                                                    <label class="col-sm-6 control-label">Probability</label>
-                                                    <div class="col-sm-6">
-                                                        <p class="form-control-static">{{ctl.treatedAbsProb | number:1}}%</p>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-6 control-label">Impact</label>
-                                                    <div class="col-sm-6">
-                                                        <input class="form-control" type="number" name="input" ng-model="ctl.risk.treatedImpact" ng-change="ctl.impactChange()" min="1" max="6" step="0.05">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                
-                                <!-- XS Display -->
-                                
-                                <div class="panel-body visible-xs">
-                                    <div style="float:left;margin-top:15px">
-                                            <div style="float:left; width:390px">
-                                                <div class="form-group">
-                                                    <label class="control-label" style="text-align:left;color:red">Un Treated State</label>
-                                                    <p>Probability: {{ctl.inherentAbsProb | number:1}}%
-                                                    
-                                                        <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==1"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>Year</strong></span>
-                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==2"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>Month</strong></span>
-                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likeType ==3"> - Expect <strong>{{ctl.risk.likeAlpha}}</strong> occurances per <strong>{{ctl.risk.likeT}}</strong> Days</span>
-                                                    
-                                                    </p>
-                                                    <p>Impact: {{ctl.risk.inherentImpact | number:1}}</p>
-                                                </div>
-                                            </div>
-                                            <div style="float:left;width:390px">
-                                                <div class="form-group">
-                                                    <label class="control-label" style="text-align:left;color:blue">Treated State</label>
-                                                    <p>Probability: {{ctl.treatedAbsProb | number:1}}%
-                                                    
-                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==1"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>Year</strong></span>
-                                                    <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==2"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>Month</strong></span>
-                                                        <span ng-show="ctl.risk.useCalProb && ctl.risk.likePostType ==3"> - Expect <strong>{{ctl.risk.likePostAlpha}}</strong> occurances per <strong>{{ctl.risk.likePostT}}</strong> Days</span></p>
-                                                    <p>Impact: {{ctl.risk.treatedImpact |number:1}}</p>
 
-                                                </div>
-                                            </div>
-                                    </div>
+                                    <table class="pul-left" style="margin-top:10px">
+                                        <thead>
+                                        <th></th>
+                                            <th style="color:red">Un Treated</th>
+                                            <th style="color:blue">Treated</th>
+                                        </thead>
+                                        <tr>
+                                            <th style="text-align:right;padding-right:10px">Frequency Per</th>
+                                            <td>
+                                                <select class="form-control" style="width:90px" ng-model="ctl.risk.likeType" ng-change="ctl.probChange()" ng-disabled="!ctl.risk.useCalProb">
+                                                    <option value=1>Year</option>
+                                                    <option value=2>Month</option>
+                                                    <option value=3>Days</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control" style="width:90px" ng-model="ctl.risk.likePostType" ng-disabled="!ctl.risk.useCalProb" ng-change="ctl.probChange()">
+                                                    <option value=1>Year</option>
+                                                    <option value=2>Month</option>
+                                                    <option value=3>Days</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:right;padding-right:10px">Occurances</th>
+                                            <td>
+                                                <input class="form-control" style="width:90px" ng-disabled="!ctl.risk.useCalProb" ng-change="ctl.probChange()" type="number" name="input" ng-model="ctl.risk.likeAlpha" min="0" max="99" required>
+                                            </td>
+                                            <td>
+                                                <input class="form-control" style="width:90px" type="number" ng-change="ctl.probChange()" ng-disabled="!ctl.risk.useCalProb" ng-model="ctl.risk.likePostAlpha" min="0" max="99" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:right;padding-right:10px">Number of Days</th>
+                                            <td>
+                                                <input class="form-control"  style="width:90px" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likeType!=3" name="input" ng-model="ctl.risk.likeT" ng-change="ctl.probChange()" min="0" required>
+                                            </td>
+                                            <td>
+                                                <input class="form-control" style="width:90px" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likePostType!=3" ng-model="ctl.risk.likePostT" ng-change="ctl.probChange()" min="0" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:right;padding-right:10px;padding-top:10px;padding-bottom:10px">Probability</th>
+                                            <td style="padding-left:10px;padding-top:10px;padding-bottom:10px">{{ctl.inherentAbsProb | number:1}}%</td>
+                                            <td style="padding-left:10px;padding-top:10px;padding-bottom:10px">{{ctl.treatedAbsProb | number:1}}%</td>
+                                        </tr>
+                                        <tr>
+                                            <th  style="text-align:right;padding-right:10px">Impact</th>
+                                            <td>
+                                                <input class="form-control" style="width:90px" type="number" ng-model="ctl.risk.inherentImpact" min="1" max="6" ng-change="ctl.impactChange()" step="0.05">
+                                            </td>
+                                            <td>
+                                                <input class="form-control" style="width:90px" type="number" ng-model="ctl.risk.treatedImpact" ng-change="ctl.impactChange()" min="1" max="6" step="0.05">
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -374,7 +330,7 @@
                     </div>
                 </div>
                 <!-- End Left Column -->
-                <div class="col-md-5 col-lg-4">
+                <div class="col-md-5 col-lg-4"  style="margin-top:5px">
                     <!-- Riight Column -->
                     <div class="panel panel-success">
                         <div class="panel-heading">Risk Management</div>

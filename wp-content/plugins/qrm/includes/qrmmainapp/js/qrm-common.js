@@ -622,10 +622,14 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
     var maxProb = matrixConfig.maxProb;
 
     var margin = {
-        top: radius * 2,
-        right: radius * 2,
-        bottom: radius * 2,
-        left: radius * 2
+//        top: radius * 2,
+//        right: radius * 2,
+//        bottom: radius * 2,
+//        left: radius * 2
+        top: radius,
+        right: radius,
+        bottom: radius*2,
+        left: radius*2
     };
     var width = matrixDisplayConfig.width - 2 * radius;
     var height = width;

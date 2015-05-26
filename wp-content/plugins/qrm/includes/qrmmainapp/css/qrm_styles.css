@@ -1252,6 +1252,7 @@ body.mini-navbar .navbar-static-side {
 
 .ngdialog.ngdialog-theme-default .ngdialog-content {
     width: 800px;
+    max-width: 95%;
 }
 
 .ngdialog.ngdialog-theme-default{
