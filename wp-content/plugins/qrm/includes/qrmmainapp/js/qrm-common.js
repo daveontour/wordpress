@@ -665,11 +665,11 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
         .append("style")
         .attr("type", "text/css")
         .text(
-            "rect.tolNoHover5 {fill: #ff0000;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tolNoHover4 {fill: #ffa500;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tolNoHover3 {fill: #ffff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tolNoHover2 {fill: #00ff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tolNoHover1 {fill: #00ffff; stroke: #E6E6E6; stroke-width: 2px; }" +
+            "rect.tolNoHover5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover3 {fill: #ffff55;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover2 {fill: #1ab394;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover1 {fill: #1c84c6; stroke: #E6E6E6; stroke-width: 2px; }" +
             "g.riskEditorRiskUntreated text.untreated { fill:red; font: 12px sans-serif; font-weight : bold; pointer-events : none; }" +
             "g.riskEditorRiskTreated text.treated { fill:blue; font: 12px sans-serif; font-weight : bold; pointer-events : none; }"
 

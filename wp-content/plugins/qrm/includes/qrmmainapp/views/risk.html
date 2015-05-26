@@ -34,7 +34,7 @@
                     <!-- Left Column -->
                     <div class="row">
                         <div class="col-lg-12" style="margin-top:5px">
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Description
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openDescriptionEditor()"></i>
                                     </div>
@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Causes
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openCauseEditor()"></i>
                                     </div>
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Consequences
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="ctl.openConsequenceEditor()"></i>
                                     </div>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="col-lg-12">
                             <!--   Probability  -->
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Probability</div>
                                 <div class="panel-body">
 
@@ -141,7 +141,7 @@
                         </div>
                         <div class="col-lg-12">
                             <!-- Mitigation -->
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Mitigation
                                 </div>
                                 <div class="panel-body">
@@ -193,7 +193,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Response
                                 </div>
                                 <div class="panel-body">
@@ -238,7 +238,7 @@
                         </div>
                         <div class="col-lg-12">
                             <!-- Consequences -->
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Quantifiable Consequences</div>
                                 <div class="panel-body">
                                     <div class="row">
@@ -248,7 +248,7 @@
                         </div>
                         <div class="col-lg-12" ng-show="ctl.risk.id>0">
                             <!-- Audit -->
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Audits and Reviews</div>
                                 <div class="panel-body">
                                     <div class="col-12-lg">
@@ -300,7 +300,7 @@
                         </div>
                         <div class="col-lg-12" ng-show="ctl.risk.id>0">
                             <!-- Comments -->
-                            <div class="panel panel-success">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                                 <div class="panel-heading">Comments</div>
                                 <div class="panel-body">
                                     <div class="row">
@@ -332,7 +332,7 @@
                 <!-- End Left Column -->
                 <div class="col-md-5 col-lg-4"  style="margin-top:5px">
                     <!-- Riight Column -->
-                    <div class="panel panel-success">
+                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                         <div class="panel-heading">Risk Management</div>
                         <div class="panel-body">
                             <div class="col-lg-12">
@@ -465,7 +465,7 @@
                                             <label class="col-sm-3 control-label">&nbsp;</label>
                                             <div class="col-sm-9">
                                                 <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="ctl.risk.treated"> Treated </label>
+                                                    <input icheck type="checkbox" ng-model="ctl.risk.treated" ng-change="ctl.updateRisk()"> Treated </label>
                                             </div>
                                             <label class="col-sm-3 control-label">&nbsp;</label>
                                             <div class="col-sm-9">
@@ -489,7 +489,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-success">
+                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                         <div class="panel-heading">Project Objectives Impacted</div>
                         <div class="panel-body">
                             <div ng-repeat="node in ctl.objectives" ng-style="ctl.rowStyle(node)">
@@ -498,7 +498,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-success">
+                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                         <div class="panel-heading">Controls</div>
                         <div class="panel-body">
                             <div class="row">
@@ -531,7 +531,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-success">
+                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                         <div class="panel-heading">Contributing Stakeholders</div>
                         <div class="panel-body">
                             <table class="table table-striped">
@@ -542,7 +542,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="panel panel-success">
+                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
                         <div class="panel-heading">Attachements</div>
                         <div class="panel-body">
                             <div class="row">

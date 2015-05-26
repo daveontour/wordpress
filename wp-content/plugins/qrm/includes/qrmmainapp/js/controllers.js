@@ -567,7 +567,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $timeout, remoteServic
             }
         },
     };
-
+    
     this.riskAttachmentReady = function (dropzone, file) {
         vm.dropzone = dropzone;
         vm.dzfile = file;
@@ -1066,7 +1066,23 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $timeout, remoteServic
             "margin-left": e.$$treeLevel * 15 + "px"
         }
     }
-
+    this.getPanelColor = function(x){
+        if (typeof(vm.risk) =='undefined') return false;
+        if (x == 'danger' && vm.risk.currentTolerance == 5){
+            return true;
+        } else if (x == 'warning' && vm.risk.currentTolerance == 4){
+            return true;
+        } else if (x == 'sig' && vm.risk.currentTolerance == 3){
+            return true;
+        } else if (x == 'info' && vm.risk.currentTolerance == 2){
+            return true;
+        } else if (x == 'success' && vm.risk.currentTolerance == 1){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
     this.init = function () {
 
         if (postType == "risk") {

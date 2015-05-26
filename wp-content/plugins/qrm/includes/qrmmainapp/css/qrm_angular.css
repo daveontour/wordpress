@@ -64,3 +64,41 @@
 .ui-grid-cell-contents {
     padding:2px;
 }
+
+.panel-sig {
+    border-color: #ffff55;
+}
+.panel-sig > .panel-heading {
+    color: #3c763d;
+    background-color: #ffff55;
+    border-color: #ffff55;
+}
+.panel-sig > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #ffff55;
+}
+.panel-sig > .panel-heading .badge {
+    color: #dff0d8;
+    background-color: #ffff55;
+}
+.panel-sig > .panel-footer + .panel-collapse > .panel-body {
+    border-bottom-color:#ffff55;
+}
+
+.panel-info {
+    border-color: #1ab394;
+}
+.panel-info > .panel-heading {
+    color: #ffffff;
+    background-color: #1ab394;
+    border-color: #1ab394;
+}
+.panel-info > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #1ab394;
+}
+.panel-info > .panel-heading .badge {
+    color: #ffffff;
+    background-color: #1ab394;
+}
+.panel-info > .panel-footer + .panel-collapse > .panel-body {
+    border-bottom-color:#1ab394;
+}
