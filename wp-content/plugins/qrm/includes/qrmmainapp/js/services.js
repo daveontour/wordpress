@@ -211,6 +211,20 @@ function RemoteService($http) {
         });
     };
 
+    this.saveRankOrder = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveRankOrder"
+            },
+            cache: false,
+            data: JSON.stringify(data)
+        }).error(function (data, status, headers, config) {
+            alert(data.msg);
+        });
+    };
+
     this.getRiskAttachments = function (riskID) {
         return $http({
             method: 'POST',

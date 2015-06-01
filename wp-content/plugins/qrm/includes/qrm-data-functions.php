@@ -255,6 +255,15 @@ class QRM {
 		) );
 		wp_send_json($risk);
 	}
+	static  function saveRankOrder(){
+		$risks = json_decode ( file_get_contents ( "php://input" ) );
+		
+		foreach ( $risks as $risk ) {			
+			update_post_meta ( $risk->id, "rank", $risk->rank );
+		}
+		
+		exit ();
+	}
 	static function getProjects() {
 		global $post;
 		$args = array (
@@ -267,6 +276,7 @@ class QRM {
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+			$project->rankOrder = get_post_meta($post->ID, "rankOrder", true);
 			array_push($projects, $project);
 		endwhile
 		;
@@ -305,7 +315,7 @@ class QRM {
 			
 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
 			
-			// echo var_dump($post);
+		//	 echo var_dump($post);
 			
 			$r = new SmallRisk ();
 			$r->description = $risk->description;
@@ -320,6 +330,7 @@ class QRM {
 			$r->treatedImpact = $risk->treatedImpact;
 			$r->treated = $risk->treated;
 			$r->riskProjectCode = $risk->riskProjectCode;
+			$risk->rank = get_post_meta($post->ID,"rank", true);
 			
 			array_push ( $risks, $risk );
 		endwhile

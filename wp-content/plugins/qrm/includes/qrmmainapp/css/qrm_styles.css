@@ -773,7 +773,7 @@ a.qrmLink:hover {
 .cellExtreme:link,
 .cellExtreme:visited {
     text-align: center;
-    background-color: #F00;
+    background-color: #ed5565;
     cursor: default;
     font-weight: bold;
     font-size: 14pt;
@@ -784,7 +784,7 @@ a.qrmLink:hover {
 .cellHigh:link,
 .cellHigh:visited {
     text-align: center;
-    background-color: orange;
+    background-color: #f8ac59;
     cursor: pointer;
     cursor: hand;
     font-weight: bold;
@@ -796,7 +796,7 @@ a.qrmLink:hover {
 .cellSignificant:link,
 .cellSignificant:visited {
     text-align: center;
-    background-color: #FF0;
+    background-color: #ffff55;
     cursor: default;
     font-weight: bold;
     font-size: 14pt;
@@ -807,7 +807,7 @@ a.qrmLink:hover {
 .cellModerate:link,
 .cellModerate:visited {
     text-align: center;
-    background-color: #0F0;
+    background-color: #1ab394;
     cursor: default;
     font-weight: bold;
     font-size: 14pt;
@@ -818,7 +818,7 @@ a.qrmLink:hover {
 .cellLow:link,
 .cellLow:visited {
     text-align: center;
-    background-color: #0FF;
+    background-color: #1c84c6;
     cursor: default;
     font-weight: bold;
     font-size: 14pt;
@@ -1007,65 +1007,65 @@ rect.tol5:hover {
 
 rect.tol1,
 rect.tolNoHover1 {
-    fill: #00ffff;
+    fill: #1c84c6;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tol2,
 rect.tolNoHover2 {
-    fill: #00ff00;
+    fill: #1ab394;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tol3,
 rect.tolNoHover3 {
-    fill: #ffff00;
+    fill: #ffff55;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tol4,
 rect.tolNoHover4 {
-    fill: #ffa500;
+    fill: #f8ac59;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tol5,
 rect.tolNoHover5 {
-    fill: #ff0000;
+    fill: #ed5565;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tolc1 {
-    fill: #00ffff;
+    fill: #1c84c6;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tolc2 {
-    fill: #00ff00;
+    fill: #1ab394;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tolc3 {
-    fill: #ffff00;
+    fill: #ffff55;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tolc4{
-    fill: #ffa500;
+    fill: #f8ac59;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }
 
 rect.tolc5 {
-    fill: #ff0000;
+    fill: #ed5565;
     stroke: #E6E6E6;
     stroke-width: 2px;
 }

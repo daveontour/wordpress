@@ -97,6 +97,7 @@ class SmallRisk {
 	public $currentProb;
 	public $currentImpact;
 	public $riskProjectCode;
+	public $rank;
 }
 class Data {
 	public $data;

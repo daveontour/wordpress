@@ -1290,7 +1290,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
 
 }
 
-function RankController($scope, QRMDataService, $state, remoteService) {
+function RankController($scope, QRMDataService, $state, remoteService, ngNotify) {
 
     qrm.rankController = this;
     var rank = this;
@@ -1303,8 +1303,10 @@ function RankController($scope, QRMDataService, $state, remoteService) {
 
     this.saveChanges = function () {
         myLayout.normaliseRanks();
-        var rankOrder = myLayout.items;
-        alert(JSON.stringify(rankOrder));
+        var rankOrder = myLayout.orderedIDs;
+        remoteService.saveRankOrder(myLayout.items).then(function(){
+            ngNotify.set("Rank Order Saved", "success");
+        })
     }
 
     this.cancelChanges = function () {
@@ -1696,11 +1698,11 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             .append("style")
             .attr("type", "text/css")
             .text(
-                "rect.tolNoHover5 {fill: #ff0000;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tolNoHover4 {fill: #ffa500;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tolNoHover3 {fill: #ffff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tolNoHover2 {fill: #00ff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tolNoHover1 {fill: #00ffff; stroke: #E6E6E6; stroke-width: 2px; }" +
+            "rect.tolNoHover5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover3 {fill: #ffff55;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover2 {fill: #1ab394;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tolNoHover1 {fill: #1c84c6; stroke: #E6E6E6; stroke-width: 2px; }" +
                 "g.state circle {stroke  : gray; cursor  : pointer;}" +
                 "g.state circle.inner { fill : white;}" +
                 "g.state circle.outer { display : none; stroke-dasharray: 4px;  stroke-opacity  : 0.5;}" +
@@ -2055,7 +2057,7 @@ app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', '$sce',
 app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout','RemoteService', ExplorerCtrl]);
 app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$timeout','RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
 app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
-app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', RankController]);
+app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify',RankController]);
 app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
 
 app.service('RemoteService', ['$http', RemoteService]);

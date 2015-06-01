@@ -33,31 +33,31 @@
 
 .green {
     text-align: center;
-    background-color:#00ff00 !important;
+    background-color:#1ab394 !important;
     padding: 5px;
 }
 .blue {
     text-align: center;
-    background-color:#00ffff !important;
+    background-color:#1c84c6 !important;
     padding: 5px;
 }
 .yellow {
     text-align: center;
-    background-color:yellow !important;
+    background-color:#ffff55 !important;
     padding: 5px;
 }
 
 .orange {
     text-align: center;
     color:white !important;
-    background-color:#ffa500 !important;
+    background-color:#f8ac59 !important;
     padding: 5px;
     
 }
 .red {
     text-align: center;
  color:white !important;
-   background-color:red !important;
+   background-color:#ed5565 !important;
     padding: 5px;
 }
 

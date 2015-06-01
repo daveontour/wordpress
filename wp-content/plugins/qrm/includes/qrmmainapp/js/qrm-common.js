@@ -1379,6 +1379,7 @@ function SorterLayout(rankCtl) {
                 return a.rank - b.rank;
             }
         });
+        
         var rank = 0;
         this.items.forEach(function (item) {
             item.rank = rank++;
@@ -1636,11 +1637,11 @@ function SorterLayout(rankCtl) {
                 ".markervert {stroke-width: 4px; stroke:red}" +
                 "rect.subRankText {fill: aliceblue ;stroke: gray;}" +
                 "rect.subRankText:hover {fill: #157fcc ;stroke: gray;}" +
-                "rect.tol5 {fill: #ff0000;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tol4 {fill: #ffa500;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tol3 {fill: #ffff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tol2 {fill: #00ff00;stroke: #E6E6E6;stroke-width: 2px; }" +
-                "rect.tol1 {fill: #00ffff; stroke: #E6E6E6; stroke-width: 2px; }" +
+            "rect.tol5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tol4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tol3 {fill: #ffff55;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tol2 {fill: #1ab394;stroke: #E6E6E6;stroke-width: 2px; }" +
+            "rect.tol1 {fill: #1c84c6; stroke: #E6E6E6; stroke-width: 2px; }" +
                 "g.risk text { font: 12px sans-serif; font-weight : normal; pointer-events : none; }" +
                 "g.state text.treated { fill:blue; font: 12px sans-serif; font-weight : bold; pointer-events : none; }");
 
