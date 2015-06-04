@@ -37,6 +37,7 @@
     
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/textAngular/textAngular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
     
 </head>
 <body ng-controller="MainCtrl as main" class="fixed-sidebar">
@@ -69,6 +70,7 @@
 
 <!--  Watch out for dependency order -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/d3/d3.min.js" ?>'></script>
+    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/nv/nv.d3.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/qrm-common.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/services.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" ?>'></script>

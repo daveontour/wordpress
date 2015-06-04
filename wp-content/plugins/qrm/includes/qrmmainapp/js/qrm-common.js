@@ -279,20 +279,20 @@ function probToMatrix(prob, mat) {
     }
     if (mat.probVal2 != null && mat.probVal3 != null && mat.probVal2 < prob && prob <= mat.probVal3 && mat.maxProb >= 3) {
         qprob = 3.0 + ((prob - mat.probVal2) / (mat.probVal3 - mat.probVal2));
-         qOK = true;
-   }
+        qOK = true;
+    }
     if (mat.probVal3 != null && mat.probVal4 != null && mat.probVal3 < prob && prob <= mat.probVal4 && mat.maxProb >= 4) {
         qprob = 4.0 + ((prob - mat.probVal3) / (mat.probVal4 - mat.probVal3));
-         qOK = true;
-   }
+        qOK = true;
+    }
     if (mat.probVal4 != null && mat.probVal5 != null && mat.probVal4 < prob && prob <= mat.probVal5 && mat.maxProb >= 5) {
         qprob = 5.0 + ((prob - mat.probVal4) / (mat.probVal5 - mat.probVal4));
         qOK = true;
     }
     if (mat.probVal5 != null && mat.probVal6 != null && mat.probVal5 < prob && prob <= mat.probVal6 && mat.maxProb >= 6) {
         qprob = 6.0 + ((prob - mat.probVal5) / (mat.probVal6 - mat.probVal5));
-         qOK = true;
-   }
+        qOK = true;
+    }
     if (mat.probVal6 != null && mat.probVal7 != null && mat.probVal6 < prob && prob <= mat.probVal7 && mat.maxProb >= 7) {
         qprob = 7.0 + ((prob - mat.probVal6) / (mat.probVal7 - mat.probVal6));
         qOK = true;
@@ -301,9 +301,9 @@ function probToMatrix(prob, mat) {
         qprob = 8.0 + ((prob - mat.probVal7) / (mat.probVal8 - mat.probVal7));
         qOK = true;
     }
-    
-    if (!qOK){
-        qprob = mat.maxProb+0.999;
+
+    if (!qOK) {
+        qprob = mat.maxProb + 0.999;
     }
     return qprob;
 }
@@ -622,14 +622,14 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
     var maxProb = matrixConfig.maxProb;
 
     var margin = {
-//        top: radius * 2,
-//        right: radius * 2,
-//        bottom: radius * 2,
-//        left: radius * 2
+        //        top: radius * 2,
+        //        right: radius * 2,
+        //        bottom: radius * 2,
+        //        left: radius * 2
         top: radius,
         right: radius,
-        bottom: radius*2,
-        left: radius*2
+        bottom: radius * 2,
+        left: radius * 2
     };
     var width = matrixDisplayConfig.width - 2 * radius;
     var height = width;
@@ -1195,7 +1195,7 @@ d3.gantt = function (calController) {
     return gantt;
 };
 
-function SorterLayout(rankCtl) {
+function SorterLayout(rankCtl, $scope) {
 
     this.height = 500;
     this.width = 500;
@@ -1357,8 +1357,15 @@ function SorterLayout(rankCtl) {
         this.items = i;
     };
 
-    this.sortItems = function (sortFn) {
-        this.items.sort(sortFn);
+    this.sortItems = function () {
+        this.items.sort(function (a, b) {
+            var v = 0;
+            if (a.rank && b.rank) {
+                return Number(a.rank) - Number(b.rank);
+            } else {
+                return Number(b.currentTolerance) - (a.currentTolerance);
+            }
+        });
     };
 
     this.scale = function (x, y) {
@@ -1379,10 +1386,10 @@ function SorterLayout(rankCtl) {
                 return a.rank - b.rank;
             }
         });
-        
+
         var rank = 0;
         this.items.forEach(function (item) {
-            item.rank = rank++;
+            item.rank = Number(rank++);
         });
 
     };
@@ -1473,6 +1480,8 @@ function SorterLayout(rankCtl) {
         var colNum = 1;
         var scaleFactor = 0;
 
+        this.sortItems();
+
         do {
             var columnHeight = totalItemHeight / colNum;
             scaleFactor = this.height / columnHeight;
@@ -1555,7 +1564,14 @@ function SorterLayout(rankCtl) {
                 return d.ty;
             })
             .on("mouseover", function (d) {
-                var html = "<div style='valign:top'><br><hr><strong>" + d.riskProjectCode + " - " + d.title + "<br><br>Description:<br><br></strong>" + d.description.substring(0, 500) + "<hr></div>";
+                rankCtl.showDesc = true;
+                rankCtl.showInstructions = false;
+                rankCtl.displayRisk = d;
+                $scope.$apply();
+            })
+            .on("mouseout", function (d) {
+                rankCtl.showDesc = false;
+                $scope.$apply();
             })
             .on("click", function (d) {
                 var e = d3.event;
@@ -1575,6 +1591,16 @@ function SorterLayout(rankCtl) {
             .attr("fill", 'aliceblue')
             .style("stroke", 'gray')
             .attr("class", 'tolText')
+            .on("mouseover", function (d) {
+                rankCtl.showDesc = true;
+                rankCtl.showInstructions = false;
+                rankCtl.displayRisk = d;
+                $scope.$apply();
+            })
+            .on("mouseout", function (d) {
+                rankCtl.showDesc = false;
+                $scope.$apply();
+            })
             .attr("transform", "translate(5,5)");
 
         risk.append("rect")
@@ -1590,7 +1616,18 @@ function SorterLayout(rankCtl) {
                 return "tol" + tol;
             })
             .style("stroke", 'gray')
-            .attr("transform", "translate(7,7)");
+            .on("mouseover", function (d) {
+                rankCtl.showInstructions = false;
+                rankCtl.showDesc = true;
+                rankCtl.displayRisk = d;
+                $scope.$apply();
+            })
+            .on("mouseout", function (d) {
+                rankCtl.showDesc = false;
+                $scope.$apply();
+            })
+
+        .attr("transform", "translate(7,7)");
 
         risk.append("text")
             .style("pointer-events", "none")
@@ -1637,11 +1674,11 @@ function SorterLayout(rankCtl) {
                 ".markervert {stroke-width: 4px; stroke:red}" +
                 "rect.subRankText {fill: aliceblue ;stroke: gray;}" +
                 "rect.subRankText:hover {fill: #157fcc ;stroke: gray;}" +
-            "rect.tol5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tol4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tol3 {fill: #ffff55;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tol2 {fill: #1ab394;stroke: #E6E6E6;stroke-width: 2px; }" +
-            "rect.tol1 {fill: #1c84c6; stroke: #E6E6E6; stroke-width: 2px; }" +
+                "rect.tol5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tol4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tol3 {fill: #ffff55;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tol2 {fill: #1ab394;stroke: #E6E6E6;stroke-width: 2px; }" +
+                "rect.tol1 {fill: #1c84c6; stroke: #E6E6E6; stroke-width: 2px; }" +
                 "g.risk text { font: 12px sans-serif; font-weight : normal; pointer-events : none; }" +
                 "g.state text.treated { fill:blue; font: 12px sans-serif; font-weight : bold; pointer-events : none; }");
 

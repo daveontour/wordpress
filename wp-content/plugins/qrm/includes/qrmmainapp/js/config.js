@@ -65,6 +65,12 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         controllerAs:'relMatrix',
             templateUrl: pluginurl+"views/relmatrix.html"
         })
+        .state('index.analysis', {
+            url: "/analysis",
+        controller:'AnalysisController',
+        controllerAs:'analysis',
+            templateUrl: pluginurl+"views/analysis.html"
+        })
 }
 angular
     .module('inspinia')

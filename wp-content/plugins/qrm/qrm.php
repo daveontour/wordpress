@@ -179,6 +179,7 @@ function qrm_scripts_styles(){
 	wp_register_style ('ngDialog',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ngDialog/ngDialog.min.css" );
 	wp_register_style ('ngDialogTheme',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css" );
 	wp_register_style ('ngNotify',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css" );
+	wp_register_style ('nv',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" );
 	
 		
 	wp_register_script( 'qrm-jquery', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js',array(), "", true );
@@ -210,5 +211,6 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-sanitize', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js', array(), "", true );
 	wp_register_script('qrm-ngDialog',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" );
 	wp_register_script('qrm-ngNotify',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" );
+	wp_register_script('qrm-nv',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/nv/nv.d3.min.js" );
 	
 }
