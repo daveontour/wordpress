@@ -304,6 +304,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                     QRM.mainController.risksFound();
                 }
                 exp.rawRisks = response.data.data;
+                QRMDataService.projectRisks = response.data.data;
                 exp.gridOptions.data = response.data.data;
 
                 var maxImpact = Number(QRMDataService.project.matrix.maxImpact);
@@ -1368,49 +1369,16 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
     "values": [
       { 
         "label" : "David Burton" ,
-        "value" : 1.8746444827653,
-        "t":"ex"
+        "value" : 5
       } , 
       { 
-        "label" : "Group B" ,
-        "value" : 8.0961543492239,
-        "t":"ex"
+        "label" : "Fionna Millikan" ,
+        "value" : 4
       } , 
       { 
-        "label" : "Group C" ,
-        "value" : 0.57072943117674,
-        "t":"ex"
-      } , 
-      { 
-        "label" : "Group D" ,
-        "value" : 2.4174010336624,
-        "t":"ex"
-      } , 
-      {
-        "label" : "Group E" ,
-        "value" : 0.72009071426284,
-        "t":"ex"
-      } , 
-      { 
-        "label" : "Group F" ,
-        "value" : 0.77154485523777,
-        "t":"ex"
-      } , 
-      { 
-        "label" : "Group G" ,
-        "value" : 0.90152097798131,
-        "t":"ex"
-      } , 
-      {
-        "label" : "Group H" ,
-        "value" : 0.91445417330854,
-        "t":"ex"
-      } , 
-      { 
-        "label" : "Group I" ,
-        "value" : 0.055746319141851,
-        "t":"ex"
-      }
+        "label" : "Laura Brace" ,
+        "value" : 3
+      } 
     ]
   },
   {
@@ -1419,88 +1387,93 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
     "values": [
       { 
         "label" : "David Burton" ,
-        "value" : 25.307646510375,
-        "t":"hi"
+        "value" : 2
       } , 
       { 
-        "label" : "Group B" ,
-        "value" : 16.756779544553,
-        "t":"hi"
+        "label" :  "Fionna Millikan" ,
+        "value" : 2
       } , 
       { 
-        "label" : "Group C" ,
-        "value" : 18.451534877007,
-        "t":"hi"
+        "label" : "Laura Brace" ,
+        "value" : 1
+      } 
+    ]
+  },
+         {
+    "key": "Significant",
+    "color": "#ffff55",
+    "values": [
+      { 
+        "label" : "David Burton" ,
+        "value" : 1
       } , 
       { 
-        "label" : "Group D" ,
-        "value" : 8.6142352811805,
-        "t":"hi"
-      } , 
-      {
-        "label" : "Group E" ,
-        "value" : 7.8082472075876,
-        "t":"hi"
+        "label" :  "Fionna Millikan" ,
+        "value" : 2
       } , 
       { 
-        "label" : "Group F" ,
-        "value" : 5.259101026956,
-        "t":"hi"
+        "label" : "Laura Brace" ,
+        "value" : 2
+      } 
+    ]
+  },
+         {
+    "key": "Moderate",
+    "color": "#1ab394",
+    "values": [
+      { 
+        "label" : "David Burton" ,
+        "value" : 3
       } , 
       { 
-        "label" : "Group G" ,
-        "value" : 0.30947953487127,
-        "t":"hi"
+        "label" :  "Fionna Millikan" ,
+        "value" : 1
       } , 
       { 
-        "label" : "Group H" ,
-        "value" : 0,
-        "t":"hi"
+        "label" : "Laura Brace" ,
+        "value" : 3
+      } 
+    ]
+  },
+         {
+    "key": "Low",
+    "color": "#1c84c6",
+    "values": [
+      { 
+        "label" : "David Burton" ,
+        "value" : 1
       } , 
       { 
-        "label" : "Group I" ,
-        "value" : 0,
-        "t":"hi" 
-      }
+        "label" :  "Fionna Millikan" ,
+        "value" : 2
+      } , 
+      { 
+        "label" : "Laura Brace" ,
+        "value" : 1
+      } 
     ]
   }
 ];    
+    
+    QRMDataService.analyseRisks();
     nv.addGraph(function() {
     var chart = nv.models.multiBarHorizontalChart()
         .x(function(d) { return d.label })
         .y(function(d) { return d.value })
         .margin({top: 30, right: 20, bottom: 50, left: 100})
-//        .showValues(true)           //Show bar value next to each bar.
-//        .tooltips(true)             //Show tooltips on hover.
         .stacked(true)
-//      .color(function(d,i){
-//            if (d.t == "ex"){
-//              return "#ff0000";  
-//            } else {
-//              return "#00ff00";        
-//            }   
-//        })
-        .barColor(function(d,i){
-            if (d.t == "ex"){
-              return "#ed5565";  
-            } else {
-              return "#f8ac59";        
-            }   
-        })
         .showControls(true);        //Allow user to switch between "Grouped" and "Stacked" mode.
 
-    chart.yAxis
-        .tickFormat(d3.format(',.2f'));
+    chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+    chart.xAxis.axisLabel("Risk Owner").axisLabelDistance(30);
 
-    d3.select('#chart svg')
-        .datum(data)
-        .call(chart);
+        console.log(JSON.stringify(QRMDataService.owners));
+    d3.select('#chart svg').datum(QRMDataService.owners).call(chart);
 
     nv.utils.windowResize(chart.update);
 
     return chart;
   });
- 
 }
 
 
