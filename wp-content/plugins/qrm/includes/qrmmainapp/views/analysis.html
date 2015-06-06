@@ -1,19 +1,23 @@
-<div id="qrm-AnalysisPanel" style="width:100%;height:calc(100vh - 125px )">
+<div id="qrm-AnalysisPanel" style="width:100%;height:calc(100vh - 95px )">
     <div class="row" style="height:100%">
         <div class="hidden-xs hidden-sm col-md-2 col-lg-2">
-            <div>
-
-            </div>
+<div style="clear:both" id="explorerGrid" ui-grid="gridOptions"  ng-style="getTableHeight()" class="explorerGrid" ></div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="height:100%" id="chart"><svg></svg></div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top:5px">
-
-            <div class="pull-right">
-                <button type="button" class="btn btn-w-m btn-primary" style="margin-left:15px" ng-click="rank.saveChanges()">Save Changes</button>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="height:calc(100% - 35px )" id="chart">
+            <div class="visible-xs visible-sm hidden-md hidden-lg" style="text-align:right;margin-bottom:8px;margin-top:5px">
+                        
+                <ui-select ng-model="exp.project" theme="select2" search-enabled=false on-select="typeSelect($item, $model)" style="width:300px">
+                    <ui-select-match allow-clear=false placeholder="Select Chart...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="type.id as type in data track by type.id">
+                        <div >
+                            <span ng-bind-html="type.name"></span>
+                        </div>
+                    </ui-select-choices>
+                </ui-select>
+            
             </div>
-            <div class="pull-right">
-                <button type="button" class="btn btn-w-m btn-warning" ng-click="rank.cancelChanges()">Cancel Changes</button>
-            </div>
+            <div style="text-align:center"><h3>{{projectTitle}} - {{chartName}}</h3></div>
+            <svg></svg>
         </div>
     </div>
 </div>

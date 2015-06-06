@@ -111,9 +111,7 @@ function DataService() {
 
         this.projectRisks.forEach(function (r) {
 
-            
             var tol = r.currentTolerance;
-
             var own = jQuery.grep(map.get("RiskOwner").get(tol).values, function (o) {
                 return Number(o.id) == Number(r.owner);
             })
@@ -125,16 +123,26 @@ function DataService() {
             })
             man[0].value = man[0].value + 1;
             userMap.get(r.manager).manCount++;
+            
 
-
-
-            if (map.get("Categories").get(tol).valuesMap.findIt(r.primcat.title) > -1) {
-                map.get("Categories").get(tol).valuesMap.put(r.primcat.title, map.get("Categories").get(tol).valuesMap.get(r.primcat.title) + 1);
+            var cat = jQuery.grep(map.get("Categories").get(tol).values, function (o) {
+                var c =(typeof(r.primcat.title)=='undefined')?"Unassigned":r.primcat.title;
+                return o.label == c;
+            })
+            
+            if (cat.length == 0){
+                map.get("Categories").get(tol).values.push({"label":r.primcat.title, value:1})
             } else {
-                map.get("Categories").get(tol).valuesMap.put(r.primcat.title, 1);
+                cat[0].value = cat[0].value+1;
             }
-        });
 
+        });
+        
+        this.categories = map.get("Categories").valArray;
+        
+        console.log(JSON.stringify(this.categories));
+        
+        
         //Sort the array according to greatest total value
         var countArray = userMap.valArray;
         countArray.sort(function (a, b) {
@@ -151,15 +159,23 @@ function DataService() {
                 map.get("RiskOwner").get(i).values = sortOwn;
             });
         }
-        
         this.owners = map.get("RiskOwner").valArray;
 
-        
-        
-
-        console.log(this.owners);
-
-
+        countArray.sort(function (a, b) {
+            return Number(b.manCount) - Number(a.manCount);
+        });
+         for (var i = 5; i > 0; i--){
+            var manOwn = new Array();
+            var arr = map.get("RiskManager").get(i).values;
+            countArray.forEach(function (a){
+                var item = jQuery.grep(arr, function(b){
+                    return Number(b.id) == Number (a.id);
+                })
+                manOwn.push(item[0]);
+                map.get("RiskManager").get(i).values = manOwn;
+            });
+        }
+        this.managers = map.get("RiskManager").valArray;
     }
 
     this.getAnalysisMap = function () {
@@ -235,8 +251,47 @@ function DataService() {
                 });
             }
         });
-
-        //FOr the undefined
+        
+        map.put("Categories", new Map());
+        var catMap = map.get("Categories");
+        catMap.put(5, {
+            "key": "Extreme",
+            "color": "#ed5565",
+            "values": new Array()
+        });
+        catMap.put(4, {
+            "key": "High",
+            "color": "#f8ac59",
+            "values": new Array()
+        });
+        catMap.put(3, {
+            "key": "Significant",
+            "color": "#ffff55",
+            "values": new Array()
+        });
+        catMap.put(2, {
+            "key": "Moderate",
+            "color": "#1ab394",
+            "values": new Array()
+        });
+        catMap.put(1, {
+            "key": "Low",
+            "color": "#1c84c6",
+            "values": new Array()
+        });
+        
+        this.catData.forEach(function(c){
+            if (c.primCat){
+            for (var i = 5; i > 0; i--) {
+                catMap.get(i).values.push({
+                    "label": c.title,
+                    "value": 0
+                });
+            } 
+            }
+        });
+        
+ //For the undefined
         for (var i = 5; i > 0; i--) {
             ownMap.get(i).values.push({
                 "label": "Unassigned",
@@ -248,45 +303,14 @@ function DataService() {
                 "value": 0,
                 "id": ""
             });
+            catMap.get(i).values.push({
+                "label": "Unassigned",
+                "value": 0
+            });
         }
-
-        map.put("Categories", new Map());
-        var catMap = map.get("Categories");
-        catMap.put(5, {
-            "key": "Extreme",
-            "color": "#ed5565",
-            "valuesMap": new Map(),
-            values: new Array()
-        });
-        catMap.put(4, {
-            "key": "High",
-            "color": "#f8ac59",
-            "valuesMap": new Map(),
-            values: new Array()
-        });
-        catMap.put(3, {
-            "key": "Significant",
-            "color": "#ffff55",
-            "valuesMap": new Map(),
-            values: new Array()
-        });
-        catMap.put(2, {
-            "key": "Moderate",
-            "color": "#1ab394",
-            "valuesMap": new Map(),
-            values: new Array()
-        });
-        catMap.put(1, {
-            "key": "Low",
-            "color": "#1c84c6",
-            "valuesMap": new Map(),
-            values: new Array()
-        });
 
         return map;
     }
-
-
 }
 
 function RemoteService($http) {
@@ -302,7 +326,6 @@ function RemoteService($http) {
             data: riskID
         });
     };
-
     this.saveRisk = function (risk) {
 
         return $http({
@@ -315,7 +338,6 @@ function RemoteService($http) {
             data: risk
         });
     };
-
     this.getAllProjectRisks = function (projectID) {
         return $http({
             method: 'POST',
@@ -329,8 +351,6 @@ function RemoteService($http) {
             alert(data.msg);
         });
     };
-
-
     this.getSiteUsersCap = function () {
         return $http({
             method: 'POST',
@@ -341,7 +361,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-
     this.getSiteUsers = function () {
         return $http({
             method: 'POST',
@@ -352,7 +371,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-
     this.getProjects = function () {
         return $http({
             method: 'POST',
@@ -374,8 +392,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-
-
     this.addComment = function (comment, riskID) {
         data = {
             comment: comment,
@@ -391,7 +407,6 @@ function RemoteService($http) {
             data: JSON.stringify(data)
         });
     };
-
     this.updateRisksRelMatrix = function (data) {
         return $http({
             method: 'POST',
@@ -405,7 +420,6 @@ function RemoteService($http) {
             alert(data.msg);
         });
     };
-
     this.saveRankOrder = function (data) {
         return $http({
             method: 'POST',
@@ -419,7 +433,6 @@ function RemoteService($http) {
             alert(data.msg);
         });
     };
-
     this.getRiskAttachments = function (riskID) {
         return $http({
             method: 'POST',
