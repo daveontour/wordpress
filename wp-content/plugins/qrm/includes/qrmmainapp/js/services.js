@@ -140,10 +140,7 @@ function DataService() {
         countArray.sort(function (a, b) {
             return Number(b.ownCount) - Number(a.ownCount);
         });
-        
-        
-        
-        for (var i = 5; i > 0; i--){
+         for (var i = 5; i > 0; i--){
             var sortOwn = new Array();
             var arr = map.get("RiskOwner").get(i).values;
             countArray.forEach(function (a){

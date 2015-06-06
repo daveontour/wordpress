@@ -1361,99 +1361,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
 }
 
 function AnalysisController($scope, QRMDataService, $state, remoteService, ngNotify) {
-    
-    data = [
-  {
-    "key": "Extreme",
-    "color": "#ed5565",
-    "values": [
-      { 
-        "label" : "David Burton" ,
-        "value" : 5
-      } , 
-      { 
-        "label" : "Fionna Millikan" ,
-        "value" : 4
-      } , 
-      { 
-        "label" : "Laura Brace" ,
-        "value" : 3
-      } 
-    ]
-  },
-  {
-    "key": "High",
-    "color": "#f8ac59",
-    "values": [
-      { 
-        "label" : "David Burton" ,
-        "value" : 2
-      } , 
-      { 
-        "label" :  "Fionna Millikan" ,
-        "value" : 2
-      } , 
-      { 
-        "label" : "Laura Brace" ,
-        "value" : 1
-      } 
-    ]
-  },
-         {
-    "key": "Significant",
-    "color": "#ffff55",
-    "values": [
-      { 
-        "label" : "David Burton" ,
-        "value" : 1
-      } , 
-      { 
-        "label" :  "Fionna Millikan" ,
-        "value" : 2
-      } , 
-      { 
-        "label" : "Laura Brace" ,
-        "value" : 2
-      } 
-    ]
-  },
-         {
-    "key": "Moderate",
-    "color": "#1ab394",
-    "values": [
-      { 
-        "label" : "David Burton" ,
-        "value" : 3
-      } , 
-      { 
-        "label" :  "Fionna Millikan" ,
-        "value" : 1
-      } , 
-      { 
-        "label" : "Laura Brace" ,
-        "value" : 3
-      } 
-    ]
-  },
-         {
-    "key": "Low",
-    "color": "#1c84c6",
-    "values": [
-      { 
-        "label" : "David Burton" ,
-        "value" : 1
-      } , 
-      { 
-        "label" :  "Fionna Millikan" ,
-        "value" : 2
-      } , 
-      { 
-        "label" : "Laura Brace" ,
-        "value" : 1
-      } 
-    ]
-  }
-];    
+  
     
     QRMDataService.analyseRisks();
     nv.addGraph(function() {
@@ -1466,8 +1374,6 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
 
     chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
     chart.xAxis.axisLabel("Risk Owner").axisLabelDistance(30);
-
-        console.log(JSON.stringify(QRMDataService.owners));
     d3.select('#chart svg').datum(QRMDataService.owners).call(chart);
 
     nv.utils.windowResize(chart.update);
