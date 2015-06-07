@@ -65,7 +65,7 @@ class QRM {
 				'fields' => 'all'
 		) );
 		
-		$userSummary = [];
+		$userSummary = array();
 		foreach ( $user_query->results as $user ) {
 			$u = new StdClass();
 			$u->display_name = $user->data->display_name;
@@ -174,6 +174,7 @@ class QRM {
 		exit ();
 	}
 	static function saveSiteUsers() {
+		
 		$users = json_decode ( file_get_contents ( "php://input" ) );
 		
 		if ($users == null) {
@@ -181,7 +182,11 @@ class QRM {
 			return;
 		}
 		foreach ( $users as $u ) {
+			
 			if (array_key_exists ( "dirty", $u )) {
+				
+				
+				
 				$wpUser = get_user_by ( "id", $u->ID );
 				$wpUser->remove_cap ( "risk_admin" );
 				$wpUser->remove_cap ( "risk_project_manager" );
@@ -385,11 +390,13 @@ class QRM {
 				'post_type' => 'risk',
 				'posts_per_page' => - 1,
 				'meta_key' => 'projectID',
-				'meta_value' => $projectID
+				'meta_value' => $risk->projectID
 		);
 		
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
+		
+		
 		
 		
 		// Add any comments to the returned object

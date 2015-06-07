@@ -6,18 +6,18 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
 
     this.pluginurl = pluginurl;
 
-    this.statusMsg = $sce.trustAsHtml("<span style='font-size:16pt'>Please select a Risk Project from the selector above</span>");
+    this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>Please select a Risk Project from the selector above</span>");
     this.class = "danger";
 
 
     this.lookingForRisks = function () {
-        this.statusMsg = $sce.trustAsHtml("<img src='" + pluginurl + "views/spinner.gif'><span style='font-size:16pt'> Loading for risks for project <strong>" + QRM.expController.project.title + "</strong></span>");
+        this.statusMsg = $sce.trustAsHtml("<img src='" + pluginurl + "views/spinner.gif'><span style='font-size:inherit'> Loading for risks for project <strong>" + QRM.expController.project.title + "</strong></span>");
         this.showStatusBoard = true;
         this.class = "info";
     }
 
     this.noRisksFound = function () {
-        this.statusMsg = $sce.trustAsHtml("<span style='font-size:16pt'>No risks found for risk project <strong>" + QRM.expController.project.title + "</strong></span>");
+        this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>No risks found for risk project <strong>" + QRM.expController.project.title + "</strong></span>");
         this.showStatusBoard = true;
         this.class = "warning";
     }
@@ -27,7 +27,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
     }
 
     this.loadingProject = function () {
-        this.statusMsg = $sce.trustAsHtml("<span style='font-size:16pt'>Loading Project</span>");
+        this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>Loading Project</span>");
         this.showStatusBoard = true;
         this.class = "primary"
     }
@@ -115,7 +115,6 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             break;
 
         case "save_risk":
-            debugger;
             if (QRMDataService.riskID < 0) return true;
             if (typeof (QRMDataService.risk) == 'undefined') return false;
             if (QRMDataService.risk.owner == userID) return true;
@@ -166,7 +165,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
         enableSorting: true,
         //        minRowsToShow: 10,
         //        rowHeight: 25,
-        rowTemplate: '<div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
                 //               name: 'currentTolerance',
@@ -219,18 +218,19 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                 width: 140,
                 field: 'manager',
                 cellFilter: 'usernameFilter'
-            },
-            {
-                name: 'id',
-                enableColumnMoving: false,
-                enableSorting: false,
-                enableHiding: false,
-                cellTemplate: '<i class="fa fa-search" ng-show="grid.appScope.checkUserCap(\'view_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer;color:#676a6c;"></i>&nbsp;&nbsp;<i ng-show="grid.appScope.checkUserCap(\'edit_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" class="fa fa-edit" style="cursor:pointer;color:green;"></i>&nbsp;&nbsp;<i  ng-show="grid.appScope.checkUserCap(\'delete_risk_grid\',row.entity)" class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteRisk(grid.getCellValue(row, col))"></i>',
-                width: 90,
-                headerCellClass: 'header-hidden',
-                cellClass: 'cellCentered'
-
             }
+//            ,
+//            {
+//                name: 'id',
+//                enableColumnMoving: false,
+//                enableSorting: false,
+//                enableHiding: false,
+//                cellTemplate: '<i class="fa fa-search" ng-show="grid.appScope.checkUserCap(\'view_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer;color:#676a6c;"></i>&nbsp;&nbsp;<i ng-show="grid.appScope.checkUserCap(\'edit_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" class="fa fa-edit" style="cursor:pointer;color:green;"></i>&nbsp;&nbsp;<i  ng-show="grid.appScope.checkUserCap(\'delete_risk_grid\',row.entity)" class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteRisk(grid.getCellValue(row, col))"></i>',
+//                width: 90,
+//                headerCellClass: 'header-hidden',
+//                cellClass: 'cellCentered'
+//
+//            }
 
     ]
     };
@@ -1391,9 +1391,17 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
                         bottom: 50,
                         left: 100
                     })
-                    .stacked(true)
-                    .showControls(true); //Allow user to switch between "Grouped" and "Stacked" mode.
+                    .stacked(true);
 
+        //Don't show the control group if the screen s too small
+        
+        if (window.innerWidth > 991){
+            ac.chart.showControls(true); //Allow user to switch between "Grouped" and "Stacked" mode.
+//            ac.chart.showLegend(true); //Allow user to switch between "Grouped" and "Stacked" mode.
+        } else {
+            ac.chart.showControls(false); //Allow user to switch between "Grouped" and "Stacked" mode.
+//            ac.chart.showLegend(false); //Allow user to switch between "Grouped" and "Stacked" mode.
+        }
         
         switch (type.id) {
         case "ownerT":
@@ -1422,6 +1430,17 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
                 ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
                 ac.chart.xAxis.axisLabel("Risk Category").axisLabelDistance(30);
                 d3.select('#chart svg').datum(QRMDataService.categories).call(ac.chart);
+
+                nv.utils.windowResize(ac.chart.update);
+
+                return ac.chart;
+            });
+            break;
+        case "status":
+            nv.addGraph(function () {
+                ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+                ac.chart.xAxis.axisLabel("Risk Status").axisLabelDistance(30);
+                d3.select('#chart svg').datum(QRMDataService.status).call(ac.chart);
 
                 nv.utils.windowResize(ac.chart.update);
 

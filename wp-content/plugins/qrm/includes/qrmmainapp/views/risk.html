@@ -1,36 +1,64 @@
 <div class="wrapper wrapper-content">
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom:5px">
-            <h2 style="display:inline">{{ctl.risk.title}} </h2>
-            <h3 style="display:inline;font-weight:normal"> ({{ctl.risk.riskProjectCode}})</h3>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div style="float:right;clear:left">
-                <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-danger">Action</button>
-                    <button type="button" style="margin-right:5px" class="btn btn-danger dropdown-toggle" dropdown-toggle>
-                        <span class="caret"></span>
-                        <span class="sr-only">Split button!</span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a>
-                        </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a>
-                        </li>
-                    </ul>
-                </div>
-                <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
-                <button type="button" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
-            </div>
-        </div>
         <div class="col-lg-12">
             <div class="row">
-                <div class="col-md-7 col-lg-8">
+                <div style="padding-left:5px"  class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom:5px">
+                    <h3 style="display:inline;font-weight:normal">{{ctl.risk.riskProjectCode}} - {{ctl.risk.title}}</h3>
+                </div>
+                <div style="padding-right:5px" class="hidden-xs hidden-sm col-md-6 col-lg-6">
+                    <div style="float:right;clear:left">
+                        <div class="btn-group" dropdown>
+                            <button type="button" class="btn btn-danger">Action</button>
+                            <button type="button" style="margin-right:5px" class="btn btn-danger dropdown-toggle" dropdown-toggle>
+                                <span class="caret"></span>
+                                <span class="sr-only">Split button!</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Action</a>
+                                </li>
+                                <li><a href="#">Another action</a>
+                                </li>
+                                <li><a href="#">Something else here</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="#">Separated link</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+                        <button type="button" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
+                    </div>
+                </div>
+                <div style="padding-right:5px" class="col-xs-12 col-sm-6 hidden-md hidden-lg">
+                    <div style="float:right;clear:left">
+                        <div class="btn-group" dropdown>
+                            <button type="button" class="btn btn-sm btn-danger">Action</button>
+                            <button type="button" style="margin-right:5px" class="btn btn-sm btn-danger dropdown-toggle" dropdown-toggle>
+                                <span class="caret"></span>
+                                <span class="sr-only">Split button!</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Action</a>
+                                </li>
+                                <li><a href="#">Another action</a>
+                                </li>
+                                <li><a href="#">Something else here</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="#">Separated link</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-right:5px" class="btn btn-sm btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+                        <button type="button" class="btn btn-sm btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- Top Buttons and Title -->
+        <div class="col-lg-12">
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8" style="clear:both">
                     <!-- Left Column -->
                     <div class="row">
                         <div class="col-lg-12" style="margin-top:5px">
@@ -82,7 +110,7 @@
 
                                     <table class="pul-left" style="margin-top:10px">
                                         <thead>
-                                        <th></th>
+                                            <th></th>
                                             <th style="color:red">Un Treated</th>
                                             <th style="color:blue">Treated</th>
                                         </thead>
@@ -115,7 +143,7 @@
                                         <tr>
                                             <th style="text-align:right;padding-right:10px">Number of Days</th>
                                             <td>
-                                                <input class="form-control"  style="width:90px" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likeType!=3" name="input" ng-model="ctl.risk.likeT" ng-change="ctl.probChange()" min="0" required>
+                                                <input class="form-control" style="width:90px" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likeType!=3" name="input" ng-model="ctl.risk.likeT" ng-change="ctl.probChange()" min="0" required>
                                             </td>
                                             <td>
                                                 <input class="form-control" style="width:90px" type="number" ng-disabled="!ctl.risk.useCalProb || ctl.risk.likePostType!=3" ng-model="ctl.risk.likePostT" ng-change="ctl.probChange()" min="0" required>
@@ -127,7 +155,7 @@
                                             <td style="padding-left:10px;padding-top:10px;padding-bottom:10px">{{ctl.treatedAbsProb | number:1}}%</td>
                                         </tr>
                                         <tr>
-                                            <th  style="text-align:right;padding-right:10px">Impact</th>
+                                            <th style="text-align:right;padding-right:10px">Impact</th>
                                             <td>
                                                 <input class="form-control" style="width:90px" type="number" ng-model="ctl.risk.inherentImpact" min="1" max="6" ng-change="ctl.impactChange()" step="0.05">
                                             </td>
@@ -329,150 +357,152 @@
                         </div>
                     </div>
                 </div>
-                <!-- End Left Column -->
-                <div class="col-md-5 col-lg-4"  style="margin-top:5px">
-                    <!-- Riight Column -->
-                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
-                        <div class="panel-heading">Risk Management</div>
-                        <div class="panel-body">
-                            <div class="col-lg-12">
-                                <div class="row">
-                                    <form method="get" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="col-xs-4 col-sm-3 control-label">Exposure</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <div class="control-group" style="margin-top:3px">
-                                                    <div class="controls">
-                                                        <div class="input-prepend input-group">
-                                                            <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                            <input type="text" id="exposure" class="form-control" />
+                <!-- Right Column -->
+                <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4" style="margin-top:5px">
+                    <div class="row">
+                        <!-- Right Column -->
+                        <div class="col-lg-12">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
+                                <div class="panel-heading">Risk Management</div>
+                                <div class="panel-body">
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <form method="get" class="form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="col-xs-4 col-sm-3 control-label">Exposure</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <div class="control-group" style="margin-top:3px">
+                                                            <div class="controls">
+                                                                <div class="input-prepend input-group">
+                                                                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                                    <input type="text" id="exposure" class="form-control" />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <script>
-                                                jQuery(document).ready(function () {
-                                                    jQuery('#exposure').daterangepicker({
-                                                            format: 'MMMM D, YYYY',
-                                                            separator: " - ",
-                                                            showDropdowns: true,
-                                                            drops: "down"
-                                                        },
-                                                        function (start, end, label) {
-                                                            try {
-                                                                // Update the Angular controller
-                                                                angular.element("#exposure").controller().updateDates(start, end);
-                                                            } catch (e) {
-                                                                console.log(e.message);
-                                                            }
+                                                    <script>
+                                                        jQuery(document).ready(function () {
+                                                            jQuery('#exposure').daterangepicker({
+                                                                    format: 'MMMM D, YYYY',
+                                                                    separator: " - ",
+                                                                    showDropdowns: true,
+                                                                    drops: "down"
+                                                                },
+                                                                function (start, end, label) {
+                                                                    try {
+                                                                        // Update the Angular controller
+                                                                        angular.element("#exposure").controller().updateDates(start, end);
+                                                                    } catch (e) {
+                                                                        console.log(e.message);
+                                                                    }
+                                                                });
                                                         });
-                                                });
-                                            </script>
-                                            <label class="col-xs-4 col-sm-3 control-label">Risk Owner</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <select ng-model="ctl.risk.owner" ng-change="ctl.updateRisk()" ng-options="person as (person | usernameFilter) for person in ctl.project.ownersID" class="form-control"></select>
-                                            </div>
-                                            <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Risk Manager</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <select ng-model="ctl.risk.manager" ng-change="ctl.updateRisk()" ng-options="person as (person | usernameFilter) for person in ctl.project.managersID" class="form-control"></select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label">Impact</label>
-                                            <div class="col-sm-9">
-                                                <table>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="checkbox-inline" style="padding-left:0px">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impSafety"> Safety </label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="checkbox-inline">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impRep"> Reputation</label>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="checkbox-inline" style="padding-left:0px">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impCost"> Cost </label>
-                                                        </td>
+                                                    </script>
+                                                    <label class="col-xs-4 col-sm-3 control-label">Risk Owner</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <select ng-model="ctl.risk.owner" ng-change="ctl.updateRisk()" ng-options="person as (person | usernameFilter) for person in ctl.project.ownersID" class="form-control"></select>
+                                                    </div>
+                                                    <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Risk Manager</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <select ng-model="ctl.risk.manager" ng-change="ctl.updateRisk()" ng-options="person as (person | usernameFilter) for person in ctl.project.managersID" class="form-control"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label">Impact</label>
+                                                    <div class="col-sm-9">
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impSafety"> Safety </label>
+                                                                </td>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impRep"> Reputation</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impCost"> Cost </label>
+                                                                </td>
 
-                                                        <td>
-                                                            <label class="checkbox-inline">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impEnviron"> Environment </label>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="checkbox-inline" style="padding-left:0px">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impTime"> Time </label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="checkbox-inline">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.impSpec"> Specification </label>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label">Treatment Strategy</label>
-                                            <div class="col-sm-9">
-                                                <table>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="checkbox-inline" style="padding-left:0px">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.treatAvoid"> Avoidence &nbsp;&nbsp;</label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="checkbox-inline">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.treatRetention"> Retention </label>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="checkbox-inline" style="padding-left:0px">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.treatTransfer"> Transfer </label>
-                                                        </td>
-                                                        <td>
-                                                            <label class="checkbox-inline">
-                                                                <input icheck type="checkbox" ng-model="ctl.risk.treatMinimise" style="padding-left:0px"> Minimisation </label>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-xs-4 col-sm-3 control-label">Primary Category</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <select ng-model="ctl.risk.primcat" ng-change="ctl.updateRisk()" ng-options="cat.title for cat in ctl.categories | filter:{ primCat:true} track by cat.id " class="form-control" name="primcat"></select>
-                                            </div>
-                                            <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Secondary Category</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <select ng-model="ctl.risk.seccat" ng-options="cat.title for cat in ctl.categories |  filter:{parentID:ctl.risk.primcat.id } track by cat.id " class="form-control" name="seccat"></select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-xs-4 col-sm-3 control-label">Estimated Contingency</label>
-                                            <div class="col-xs-8 col-sm-9">
-                                                <input class="form-control" type="number" name="input" ng-model="ctl.risk.estContingency" min="0" max="10000000" required>
-                                            </div>
-                                            <label class="col-sm-3 control-label"></label>
-                                            <div class="col-sm-9">
-                                                <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="ctl.risk.useCalContingency"> Use Calculated Contingency</label>
-                                            </div>
-                                            <label class="col-sm-3 control-label">&nbsp;</label>
-                                            <div class="col-sm-9">
-                                                <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="ctl.risk.treated" ng-change="ctl.updateRisk()"> Treated </label>
-                                            </div>
-                                            <label class="col-sm-3 control-label">&nbsp;</label>
-                                            <div class="col-sm-9">
-                                                <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="ctl.risk.summaryRisk"> Summary Risk </label>
-                                            </div>
-                                            <!--                                            <label class="col-sm-3 control-label">Stakeholders</label>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impEnviron"> Environment </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impTime"> Time </label>
+                                                                </td>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.impSpec"> Specification </label>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label">Treatment Strategy</label>
+                                                    <div class="col-sm-9">
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.treatAvoid"> Avoidence &nbsp;&nbsp;</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.treatRetention"> Retention </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.treatTransfer"> Transfer </label>
+                                                                </td>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="ctl.risk.treatMinimise" style="padding-left:0px"> Minimisation </label>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-xs-4 col-sm-3 control-label">Primary Category</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <select ng-model="ctl.risk.primcat" ng-change="ctl.updateRisk()" ng-options="cat.title for cat in ctl.categories | filter:{ primCat:true} track by cat.id " class="form-control" name="primcat"></select>
+                                                    </div>
+                                                    <label class="col-xs-4 col-sm-3 control-label" style="clear:both">Secondary Category</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <select ng-model="ctl.risk.seccat" ng-options="cat.title for cat in ctl.categories |  filter:{parentID:ctl.risk.primcat.id } track by cat.id " class="form-control" name="seccat"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-xs-4 col-sm-3 control-label">Estimated Contingency</label>
+                                                    <div class="col-xs-8 col-sm-9">
+                                                        <input class="form-control" type="number" name="input" ng-model="ctl.risk.estContingency" min="0" max="10000000" required>
+                                                    </div>
+                                                    <label class="col-sm-3 control-label"></label>
+                                                    <div class="col-sm-9">
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="ctl.risk.useCalContingency"> Use Calculated Contingency</label>
+                                                    </div>
+                                                    <label class="col-sm-3 control-label">&nbsp;</label>
+                                                    <div class="col-sm-9">
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="ctl.risk.treated" ng-change="ctl.updateRisk()"> Treated </label>
+                                                    </div>
+                                                    <label class="col-sm-3 control-label">&nbsp;</label>
+                                                    <div class="col-sm-9">
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="ctl.risk.summaryRisk"> Summary Risk </label>
+                                                    </div>
+                                                    <!--                                            <label class="col-sm-3 control-label">Stakeholders</label>
 
                                             <div class="col-sm-9" style="margin-top:8px">
                                                 <table>
@@ -483,99 +513,107 @@
                                                 </table>
                                             </div>
 -->
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
-                        <div class="panel-heading">Project Objectives Impacted</div>
-                        <div class="panel-body">
-                            <div ng-repeat="node in ctl.objectives" ng-style="ctl.rowStyle(node)">
-                                <label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px">
-                                    <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.title}} </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
-                        <div class="panel-heading">Controls</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
-                                    <h4 style="float:left">Risk Controls</h4>
-                                    <button style="float:left;margin-left:15px" ng-click="ctl.addControl()" class="btn btn-primary btn-sm">Add Control</button>
-                                </div>
-                                <table class="table table-striped">
-                                    <tr ng-repeat="control in ctl.risk.controls" style="margin-top:15px">
-                                        <td>
-                                            <table style="width:100%">
-                                                <tr>
-                                                    <td style="padding-bottom:5px;padding-left:15px">
-                                                        <strong>Control: </strong>{{control.description}}
-                                                    </td>
-                                                    <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
-                                                        <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editControl(control)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteControl(control)"></i>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding-bottom:5px;padding-left:15px">
-                                                        <div style="float:left;clear:both;margin-right:15px"><strong>Effectiveness: </strong>{{control.effectiveness}}</div>
-                                                        <div style="float:left;clear:both;margin-right:15px"><strong>Contribution: </strong>{{control.contribution}}</div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
-                        <div class="panel-heading">Contributing Stakeholders</div>
-                        <div class="panel-body">
-                            <table class="table table-striped">
-                                <tr ng-repeat="s in ctl.stakeholders" style="margin-top:15px">
-                                    <td>{{s.name | usernameFilter}} </td>
-                                    <td>{{s.role}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
-                        <div class="panel-heading">Attachements</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
-                                        <div class="dz-message">
-                                            Drop file here or click to attach.
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div>
-                                        <form method="get" class="form-vertical">
-                                            <div class="form-group">
-                                                <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
-                                                <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
-                                                <div class="col-lg-12" style="padding-right:0px">
-                                                    <div style="float:right">
-                                                        <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
-                                                        <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
-                                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
+                                <div class="panel-heading">Project Objectives Impacted</div>
+                                <div class="panel-body">
+                                    <div ng-repeat="node in ctl.objectives" ng-style="ctl.rowStyle(node)">
+                                        <label class="checkbox-inline" style="padding-left:0px;margin-bottom:5px">
+                                            <input icheck type="checkbox" ng-model="ctl.risk.objectives[node.id]"> {{node.title}} </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
+                                <div class="panel-heading">Controls</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12" style="margin-top:15px;margin-bottom:5px">
+                                            <h4 style="float:left">Risk Controls</h4>
+                                            <button style="float:left;margin-left:15px" ng-click="ctl.addControl()" class="btn btn-primary btn-sm">Add Control</button>
+                                        </div>
+                                        <table class="table table-striped">
+                                            <tr ng-repeat="control in ctl.risk.controls" style="margin-top:15px">
+                                                <td>
+                                                    <table style="width:100%">
+                                                        <tr>
+                                                            <td style="padding-bottom:5px;padding-left:15px">
+                                                                <strong>Control: </strong>{{control.description}}
+                                                            </td>
+                                                            <td style="padding-bottom:5px;vertical-align:top;padding-left:10px;padding-right:10px;width:80px">
+                                                                <i class="fa fa-edit" style="cursor:pointer;color:green;font-size:16pt" ng-click="ctl.editControl(control)"></i>&nbsp;&nbsp;<i class="fa fa-trash" style=";color:red;cursor:pointer;font-size:16pt" ng-click="ctl.deleteControl(control)"></i>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding-bottom:5px;padding-left:15px">
+                                                                <div style="float:left;clear:both;margin-right:15px"><strong>Effectiveness: </strong>{{control.effectiveness}}</div>
+                                                                <div style="float:left;clear:both;margin-right:15px"><strong>Contribution: </strong>{{control.contribution}}</div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
+                                <div class="panel-heading">Contributing Stakeholders</div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <tr ng-repeat="s in ctl.stakeholders" style="margin-top:15px">
+                                            <td>{{s.name | usernameFilter}} </td>
+                                            <td>{{s.role}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div ng-class="{'panel':true,  'panel-info':ctl.getPanelColor('info'),'panel-success':ctl.getPanelColor('success'), 'panel-danger':ctl.getPanelColor('danger'), 'panel-warning':ctl.getPanelColor('warning'), 'panel-sig':ctl.getPanelColor('sig') }">
+                                <div class="panel-heading">Attachements</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
+                                                <div class="dz-message">
+                                                    Drop file here or click to attach.
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12" style="margin-top:15px">
-                                    <table class="table table-striped" style="width:100%">
-                                        <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
-                                            <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                <div style="float:left;clear:both">{{attach.post_content}}
-                                                </div>
-                                                <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
-                                                </div>
-                                                <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
+                                            <div>
+                                                <form method="get" class="form-vertical">
+                                                    <div class="form-group">
+                                                        <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
+                                                        <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
+                                                        <div class="col-lg-12" style="padding-right:0px">
+                                                            <div style="float:right">
+                                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
+                                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12" style="margin-top:15px">
+                                            <table class="table table-striped" style="width:100%">
+                                                <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
+                                                    <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                                        <div style="float:left;clear:both">{{attach.post_content}}
+                                                        </div>
+                                                        <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
+                                                        </div>
+                                                        <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
                         </td>
                     </tr>
                     </tr>
@@ -583,22 +621,22 @@
             </div>
         </div>
     </div>
-</div>
-                </div> <!-- End Right Column -->
-            </div>
+                        </div></div>
+                </div>
         </div>
-  
-  
-        <div class="col-lg-12">
+            </div>
+        </div>  <!-- Main body -->
+        <div class="col-lg-12">  <!-- Bottom Buttons -->
             <div style="float:right">
                 <button type="button" ng-show="main.checkUserCap('save_risk')" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
                 <button type="button" style="margin-left:10px" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
             </div>
         </div>
     </div>
+</div>
 
-
-      <script type="text/ng-template" id="addCommentModalDialogId">
+<!-- Template for the textarea modal dialog boxes -->
+<script type="text/ng-template" id="addCommentModalDialogId">
         <div class="ngdialog-message">
             <p>Comment on the Risk</p>
             <div text-angular focus=true name="commentbbox" ng-model="data.comment" style="width:100%"></div>
@@ -608,8 +646,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-
-       <script type="text/ng-template" id="editTitleModalDialogId">
+<script type="text/ng-template" id="editTitleModalDialogId">
         <div class="ngdialog-message">
             <p>Risk Title</p>
             <input ng-model="ctl.risk.title"  style="width:100%">
@@ -622,7 +659,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-       <script type="text/ng-template" id="editMitigationModalDialogId">
+<script type="text/ng-template" id="editMitigationModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Plan</h2></div>
             <p>Mitigation Plan Summary</p>
@@ -633,7 +670,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-       <script type="text/ng-template" id="editMitigationModalDialogId2">
+<script type="text/ng-template" id="editMitigationModalDialogId2">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Plan</h2></div>
             <p>Mitigation Plan Update</p>
@@ -644,7 +681,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-       <script type="text/ng-template" id="editResponseModalDialogId">
+<script type="text/ng-template" id="editResponseModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Respopnse Plan</h2></div>
             <p>Response Plan Summary</p>
@@ -655,7 +692,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-      <script type="text/ng-template" id="editResponseModalDialogId2">
+<script type="text/ng-template" id="editResponseModalDialogId2">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Respopnse Plan</h2></div>
             <p>Response Plan Update</p>
@@ -666,7 +703,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-        <script type="text/ng-template" id="deleteMitStepModalDialogId">
+<script type="text/ng-template" id="deleteMitStepModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Mitigation Action</h3>
             <p>Please confirm that you wish to delete the selected mitigation action</p>
@@ -676,7 +713,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-        <script type="text/ng-template" id="deleteRespStepModalDialogId">
+<script type="text/ng-template" id="deleteRespStepModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Response Action</h3>
             <p>Please confirm that you wish to delete the selected reponse action</p>
@@ -686,7 +723,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-        <script type="text/ng-template" id="deleteControlModalDialogId">
+<script type="text/ng-template" id="deleteControlModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Control</h3>
             <p>Please confirm that you wish to delete the selected control</p>
@@ -696,7 +733,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-       <script type="text/ng-template" id="editCauseModalDialogId">
+<script type="text/ng-template" id="editCauseModalDialogId">
         <div class="ngdialog-message">
             <p>Risk Causes</p>
              <div text-angular ng-model="ctl.risk.cause" style="width:100%"></div>
@@ -706,7 +743,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-        <script type="text/ng-template" id="editConsqModalDialogId">
+<script type="text/ng-template" id="editConsqModalDialogId">
         <div class="ngdialog-message">
             <p>Risk Consequence</p>
               <div text-angular ng-model="ctl.risk.consequence" style="width:100%"></div>
@@ -716,7 +753,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-       <script type="text/ng-template" id="editMitStepModalDialogId">
+<script type="text/ng-template" id="editMitStepModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Mitigation Action</h2></div>
             <p>Enter the specific action that should be taken the mitigate the likelihood or impact of this risk should it occur</p>
@@ -762,7 +799,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
 </script>
-      <script type="text/ng-template" id="editRespStepModalDialogId">
+<script type="text/ng-template" id="editRespStepModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Response Action</h2></div>
             <p>Enter the specific action which should take place in the event that risk eventuates</p>
@@ -792,7 +829,7 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
 </script>
-      <script type="text/ng-template" id="editControlModalDialogId">
+<script type="text/ng-template" id="editControlModalDialogId">
         <div class="ngdialog-message">
             <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Control Action</h2></div>
                  <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
@@ -822,12 +859,7 @@
         </div>
 </script>
 
-    <!-- Template for the textarea modal dialog boxes -->
- 
-</div>
-
 <!-- This is the template used by Dropzone, won't be displayed -->
-
 <div id="preview-template" style="display: none;">
 
     <div class="dz-preview dz-file-preview">

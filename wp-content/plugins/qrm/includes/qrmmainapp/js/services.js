@@ -109,6 +109,8 @@ function DataService() {
                 "manCount": 0
             });
 
+        var now = moment();
+        
         this.projectRisks.forEach(function (r) {
 
             var tol = r.currentTolerance;
@@ -135,13 +137,27 @@ function DataService() {
             } else {
                 cat[0].value = cat[0].value+1;
             }
+            
+                            
+
+            var endDiff = now.diff(moment(r.end));
+            var startDiff = now.diff(moment(r.start));
+            
+            var status = 0
+
+            if (endDiff > 0) status = -1;
+            if (startDiff < 0) status = 1;
+            if (startDiff > 0 && endDiff < 0) status = 0;
+            
+             var status = jQuery.grep(map.get("Status").get(tol).values, function (o) {
+                return Number(o.state) == Number(status);
+            })
+            status[0].value = status[0].value + 1;
+            
 
         });
         
         this.categories = map.get("Categories").valArray;
-        
-        console.log(JSON.stringify(this.categories));
-        
         
         //Sort the array according to greatest total value
         var countArray = userMap.valArray;
@@ -176,6 +192,7 @@ function DataService() {
             });
         }
         this.managers = map.get("RiskManager").valArray;
+        this.status = map.get("Status").valArray;
     }
 
     this.getAnalysisMap = function () {
@@ -291,6 +308,41 @@ function DataService() {
             }
         });
         
+        map.put("Status", new Map());
+        var sMap = map.get("Status");
+        sMap.put(5, {
+            "key": "Extreme",
+            "color": "#ed5565",
+            values: new Array()
+        });
+        sMap.put(4, {
+            "key": "High",
+            "color": "#f8ac59",
+            values: new Array()
+        });
+        sMap.put(3, {
+            "key": "Significant",
+            "color": "#ffff55",
+            values: new Array()
+        });
+        sMap.put(2, {
+            "key": "Moderate",
+            "color": "#1ab394",
+            values: new Array()
+        });
+        sMap.put(1, {
+            "key": "Low",
+            "color": "#1c84c6",
+            values: new Array()
+        });
+        
+        for (var i = 5; i > 0; i--) {
+                sMap.get(i).values.push({"label": "Inactive","value": 0, state: -1 });
+                sMap.get(i).values.push({"label": "Active","value": 0, state: 0 });
+                sMap.get(i).values.push({"label": "Pending","value": 0, state: 1 });
+        }
+
+        
  //For the undefined
         for (var i = 5; i > 0; i--) {
             ownMap.get(i).values.push({
@@ -310,6 +362,38 @@ function DataService() {
         }
 
         return map;
+    }
+    
+        this.getDefaultProject = function () {
+        return {
+            id: -1,
+            title: "Project Title",
+            description: "Description of the Project",
+            useAdvancedConsequences: false,
+            projectCode: "",
+            ownersID: [],
+            managersID: [],
+            usersID: [],
+            matrix: {
+                maxImpact: 5,
+                maxProb: 5,
+                tolString: "1123312234223443345534455555555555555555555555555555555555555555",
+                probVal1: 20,
+                probVal2: 40,
+                probVal3: 60,
+                probVal4: 80,
+                probVal5: 100,
+                probVal6: 100,
+                probVal7: 100,
+                probVal8: 100
+            },
+            inheritParentCategories: true,
+            inheritParentObjectives: true,
+            categories: [],
+            objectives: [],
+            parent_id: 0,
+        };
+
     }
 }
 

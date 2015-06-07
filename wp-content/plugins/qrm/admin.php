@@ -40,6 +40,9 @@
  	wp_enqueue_script('treecontrol');
  	wp_enqueue_script('select');
  	wp_enqueue_script('sanitize');
+//wp_enqueue_script('qrm-projadmin');
+wp_enqueue_script('qrm-test');
+
  	
 
 ?>
@@ -49,28 +52,23 @@
   padding-left: 0px;
 }
 </style>
+
+    <script type="text/javascript">
+		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+		</script>
 <div ng-app="myApp" style="width:100%;height:100%">
  
  <div style="background-color:#f1f1f1">
    
     <div class="panel-body">
-        <div class="col-lg-12" ng-controller="switchCtrl">
+        <div class="col-lg-12" >
             
 			<h1 class="pull-left" >Quay Risk Manager</h1>
-            <div class="pull-left" style="height:3em;clear:both" >
-            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t1" ng-click="tabswitch(1)">Risk Projects</button>        	
-            <button style="margin-right:15px" class="btn btn-w-m btn-success pull-left" ng-model="t3" ng-click="tabswitch(3)">Manage Users</button> 
-            <button class="btn btn-w-m btn-success pull-left" ng-model="t4" ng-click="tabswitch(4)">Settings</button> 
-            </div>
+
             <div style="width:100%;margin-top:20px">
-            <div style="float:left;clear: both;width:100%" ng-show="t1" ng-controller="listCtrl"><?php include 'includes/list-project-widget.php';?></div>
-            <div style="float:left;clear: both;width:100%" ng-show="t2" ng-controller="projectCtrl"><?php include 'includes/new-project-widget.php';?></div>
-            <div style="float:left;clear: both;width:100%" ng-show="t3" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';?></div>
-           	<div style="float:left;clear: both;width:100%" ng-show="t4"></div>
+            <div style="float:left;clear: both;width:100%" ng-controller="userCtrl"><?php include 'includes/manage-users-widget.php';?></div>
            	<div style="float:left;clear: both;width:100%; text-align:center" ng-show="t0">
-           	
-           	<h1>Welcome to Quay Risk Manager</h1>
-           	<h2>Powered by Wordpress</h2>
+
            	</div>
            	</div>
             

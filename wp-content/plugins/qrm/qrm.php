@@ -51,6 +51,7 @@ add_action("wp_ajax_getProject", array(QRM, "getProject"));
 add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
 add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
 add_action("wp_ajax_getSiteUsers", array(QRM, "getSiteUsers"));
+add_action("wp_ajax_saveSiteUsers", array(QRM, "saveSiteUsers"));
 add_action("wp_ajax_saveProject", array(QRM, "saveProject"));
 add_action("wp_ajax_getAllProjectRisks", array(QRM, "getAllProjectRisks"));
 add_action("wp_ajax_getRisk", array(QRM, "getRisk"));
@@ -191,6 +192,7 @@ function qrm_scripts_styles(){
 	wp_register_script( 'qrm-inspinia', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/inspinia.js', array('qrm-jquery'), "", true );
 	wp_register_script( 'qrm-angular', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/angular/angular.min.js', array(), "", true );
 	wp_register_script( 'qrm-projadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/projectadmin.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
+	wp_register_script( 'qrm-test', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/test.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
 	wp_register_script( 'qrm-lazyload', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js', array(), "", true );
 	wp_register_script( 'qrm-router', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/ui-router/angular-ui-router.min.js', array(), "", true );
 	wp_register_script( 'qrm-bootstraptpl', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js', array(), "", true );

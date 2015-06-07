@@ -1837,7 +1837,10 @@ function objectiveSort(objArr) {
 }
 
 function getProjectParents(projMap, projectID) {
-    var parentID = projMap.get(projectID).parent_id;
+
+    var proj = projMap.get(projectID);
+    if (proj == null) return new Array();
+    var parentID = proj.parent_id;
 
     retn = new Array();
     if (projMap.findIt(parentID) > -1) {
@@ -1853,6 +1856,8 @@ function getLinearObjectives(projMap, projectID) {
 
     var obj = new Array();
     var proj = projMap.get(projectID);
+    
+    if (proj == null) return obj;
 
     obj = obj.concat(proj.objectives);
 
@@ -1871,6 +1876,8 @@ function getFamilyCats(projMap, projectID) {
 
     var cat = new Array();
     var proj = projMap.get(projectID);
+    
+    if (proj == null) return cat;
 
     cat = cat.concat(proj.categories);
 
