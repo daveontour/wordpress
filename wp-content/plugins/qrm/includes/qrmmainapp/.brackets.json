@@ -1,0 +1,5 @@
+{
+    "jscodehints.detectedExclusions": [
+        "C:/wamp/www/wordpress/wp-content/plugins/qrm/includes/qrmmainapp/js/ui-router/angular-ui-router.min.js"
+    ]
+}

@@ -759,36 +759,26 @@
             <p>Enter the specific action that should be taken the mitigate the likelihood or impact of this risk should it occur</p>
                 <form class="form-horizontal ng-pristine ng-valid ng-valid-min ng-valid-max ng-valid-required">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 control-label">Action Description</label>
-                        <div class="col-xs-8 col-sm-10">
+                        <label class="col-xs-12 col-sm-2 control-label">Action Description</label>
+                        <div class="col-xs-12 col-sm-10">
                 <div text-angular ng-model="step.description" style="width:100%"></div>
                       </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 control-label">Responsible</label>
-                        <div class="col-xs-8 col-sm-4">
+                        <label class="col-xs-12 col-sm-2 control-label">Responsible</label>
+                        <div class="col-xs-12 col-sm-4">
                             <select ng-model="step.person" ng-options="person as (person | usernameFilter) for person in siteUsers" class="form-control" style="width:230px"></select>
                         </div>
-<!--
-                    </div>
-                    <div class="form-group">
--->
-                        <label class="col-xs-4 col-sm-2 control-label">Due Date</label>
-                        <div class="col-xs-8 col-sm-4">
+                        <label class="col-xs-12 col-sm-2 control-label">Due Date</label>
+                        <div class="col-xs-12 col-sm-4">
                             <input type="date" ng-model="step.due" class="form-control" style="width:230px"></input>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 control-label">Cost</label>
-                        <div class="col-xs-8 col-sm-3">
+                        <label class="col-xs-12 col-sm-2 control-label">Cost</label>
+                        <div class="col-xs-12 col-sm-3">
                             <input min="0" step="10" ng-model="step.cost" class="form-control" type="number" style="width:120px"></input>
                         </div>
-<!--
-                    </div>
-                    <div class="form-group">
--->
-                        <label class="col-xs-4 col-sm-3 control-label">Percent Complete</label>
-                        <div class="col-xs-8 col-sm-4">
+                        <label class="col-xs-12 col-sm-3 control-label">Percent Complete</label>
+                        <div class="col-xs-12 col-sm-4">
                             <input min="0" max="100" type="number" ng-model="step.complete" class="form-control" step="1" style="width:120px"></input>
                         </div>
                     </div>

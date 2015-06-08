@@ -34,7 +34,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.risk', {
             url: "/risk",
-            templateUrl: pluginurl+"views/risk.html",
+            templateUrl: function(params){
+               if (jQuery(window).width() < 600){
+                    return pluginurl+"views/m.risk.html"
+                } else {   
+                    return pluginurl+"views/risk.html"
+                }
+            },
             controller: "RiskCtrl as ctl",
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {

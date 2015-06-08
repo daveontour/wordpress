@@ -144,6 +144,11 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
             height: "calc(100vh - 365px)"
         };
     }
+   this.getTableHeightSm= function () {
+        return {
+            height: "calc(100vh - 150px)"
+        };
+    }
 
     QRMDataService.riskID = 0;
     var exp = this;
@@ -219,19 +224,47 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                 field: 'manager',
                 cellFilter: 'usernameFilter'
             }
-//            ,
-//            {
-//                name: 'id',
-//                enableColumnMoving: false,
-//                enableSorting: false,
-//                enableHiding: false,
-//                cellTemplate: '<i class="fa fa-search" ng-show="grid.appScope.checkUserCap(\'view_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer;color:#676a6c;"></i>&nbsp;&nbsp;<i ng-show="grid.appScope.checkUserCap(\'edit_risk_grid\',row.entity)"  ng-click="grid.appScope.editRisk(row.entity.id)" class="fa fa-edit" style="cursor:pointer;color:green;"></i>&nbsp;&nbsp;<i  ng-show="grid.appScope.checkUserCap(\'delete_risk_grid\',row.entity)" class="fa fa-trash" style=";color:red;cursor:pointer" ng-click="$event.stopPropagation();grid.appScope.deleteRisk(grid.getCellValue(row, col))"></i>',
-//                width: 90,
-//                headerCellClass: 'header-hidden',
-//                cellClass: 'cellCentered'
-//
-//            }
+    ]
+    };
+        this.gridOptionsSm = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+            {
+                field: 'riskProjectCode',
+                enableColumnMoving: false,
+                width: 80,
+                name:"Risk ID",
+                cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                    switch (Number(row.entity.currentTolerance)) {
+                    case 1:
+                        return 'blue compact';
+                    case 2:
+                        return 'green compact';
+                    case 3:
+                        return 'yellow compact';
+                    case 4:
+                        return 'orange compact';
+                    case 5:
+                        return 'red compact';
+                    }
+                }
 
+            },
+            {
+                name: 'title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'owner',
+                width: 100,
+                field: 'owner',
+                cellFilter: 'usernameFilter'
+
+            }
     ]
     };
     $scope.formatTreatedCol = function (row, check) {
@@ -306,6 +339,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                 exp.rawRisks = response.data.data;
                 QRMDataService.projectRisks = response.data.data;
                 exp.gridOptions.data = response.data.data;
+                exp.gridOptionsSm.data = response.data.data;
 
                 var maxImpact = Number(QRMDataService.project.matrix.maxImpact);
                 var maxProb = Number(QRMDataService.project.matrix.maxProb);
@@ -574,6 +608,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $timeout, remoteServic
     };
 
     this.riskAttachmentReady = function (dropzone, file) {
+        debugger;
         vm.dropzone = dropzone;
         vm.dzfile = file;
         vm.disableAttachmentButon = false;
@@ -854,10 +889,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $timeout, remoteServic
             });
         var s = moment(vm.risk.start);
         var e = moment(vm.risk.end);
-        jQuery('#exposure').data('daterangepicker').setStartDate(s);
-        jQuery('#exposure').data('daterangepicker').setEndDate(e);
-
-
+        
+        try {
+            jQuery('#exposure').data('daterangepicker').setStartDate(s);
+            jQuery('#exposure').data('daterangepicker').setEndDate(e);
+        } catch (e) {
+            //Do nothing, will happen on mobile interface
+        }
     }
 
     //Called by listener set by jQuery on the date-range control
@@ -954,6 +992,16 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $timeout, remoteServic
             // Restore the old values
 
         });
+    }
+    this.addCommentSm = function () {
+         remoteService.addComment($scope.data.comment, QRMDataService.riskID)
+                .then(function (response) {
+                    ngNotify.set("Comment added to risk", "success");
+                    vm.risk.comments = response.data.comments;
+                });
+        
+        $scope.data.comment = "";
+
     }
 
     this.editMitStep = function (s) {
@@ -1393,7 +1441,7 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
                     })
                     .stacked(true);
 
-        //Don't show the control group if the screen s too small
+        //Don't show the control group if the screen is too small
         
         if (window.innerWidth > 991){
             ac.chart.showControls(true); //Allow user to switch between "Grouped" and "Stacked" mode.
@@ -2191,11 +2239,20 @@ app.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
   }]);
 app.config(function ($provide) {
     // this demonstrates how to register a new tool and add it to the default toolbar
-    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
+//    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
+//        taOptions.toolbar = [
+//      ['h1', 'h2', 'h3', 'h4', 'p'],
+//      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear', 'html'],
+//      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
+//  ];
+//        return taOptions;
+//  }]);
+    
+        $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
         taOptions.toolbar = [
-      ['h1', 'h2', 'h3', 'h4', 'p'],
-      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear', 'html'],
-      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
+      ['h1', 'h2','p'],
+      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo'],
+      ['justifyRight', 'indent', 'outdent']
   ];
         return taOptions;
   }]);
@@ -2220,6 +2277,15 @@ app.filter('percentFilter', function () {
     return function (value) {
         return Number(value).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "%";
 
+    };
+});
+app.filter('nullFilter', function () {
+    return function (value) {
+        if( typeof(value) == 'undefined' || value == null){
+          return "-";  
+        } else {
+            return value;
+        }
     };
 });
 app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {

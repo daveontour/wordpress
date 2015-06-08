@@ -103,3 +103,36 @@
 .panel-info > .panel-footer + .panel-collapse > .panel-body {
     border-bottom-color:#1ab394;
 }
+
+.dropdown-menu > li > a {
+  border-radius: 3px;
+  color: inherit;
+  line-height: 25px;
+  margin: 4px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 12pt;
+}
+
+.dropdown-menu {
+    height: calc(100vh - 100px)
+}
+
+/* Hack to change the appearance of disabled iCheck boxes */
+.icheckbox_square-green.checked.disabled {
+    background-position: -48px 0;
+}
+
+tr.spaceUnder > td
+{
+  padding-bottom: 0.5em;
+}
+
+table.thhead th {
+    font-weight: 600;
+    font-size: 14px;
+    font-family: inherit;
+    color: inherit;
+}
+
+

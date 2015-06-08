@@ -127,6 +127,7 @@ function icheck($timeout) {
     };
 }
 
+
 function riskmat(QRMDataService) {
     //Creates the risk matrices on the explorer page
     return {
