@@ -36,7 +36,7 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
     
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/textAngular/textAngular.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'> 
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
     
 </head>
@@ -78,7 +78,7 @@
      <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/select/select.min.js" ?>'></script>
      <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js" ?>'></script>
     
-     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/loading-bar/loading-bar.min.js" ?>'></script>
+ <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/loading-bar/loading-bar.min.js" ?>'></script> 
      
     <!-- Anglar App Script -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/app.js" ?>'></script>

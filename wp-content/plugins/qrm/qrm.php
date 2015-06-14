@@ -62,6 +62,7 @@ add_action("wp_ajax_getRiskAttachments", array(QRM, "getRiskAttachments"));
 add_action("wp_ajax_uploadFile", array(QRM, "uploadFile"));
 add_action("wp_ajax_getCurrentUser", array(QRM, "getCurrentUser"));
 add_action("wp_ajax_saveRankOrder", array(QRM, "saveRankOrder"));
+add_action("wp_ajax_registerAudit", array(QRM, "registerAudit"));
 
 add_action('init', 'qrm_init_options');
 

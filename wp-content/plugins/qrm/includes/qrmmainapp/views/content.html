@@ -1,9 +1,47 @@
 <!-- Wrapper-->
 <div id="wrapper">
+
+
     <!--    <div id="page-wrapper" class="gray-bg {{$state.current.name}}">-->
     <div class="gray-bg {{$state.current.name}}" style="padding-left:10px;padding-right:10px">
 
         <!-- Page wrapper -->
+        <div class="row border-bottom">
+            <nav class="navbar navbar-fixed-top" role="navigation" style="margin-bottom: 0;background-color:white;padding-top:5px">
+                <div class="col-lg-12">
+                    <div class="btn-group pull-left" dropdown is-open="status.isopen">
+                        <button class="btn btn-primary" style="border-radius:5px" dropdown-toggle><i class="fa fa-bars"></i>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" style="background-color:aliceblue;top:37px">
+                            <li ui-sref-active="active">
+                                <a ui-sref="index.explorer"><i class="fa fa-desktop"></i> <span class="nav-label">Risk Explorer</span></a>
+                            </li>
+                            <li ui-sref-active="active" ng-show="$state.is('index.explorer')">
+                                <a ui-sref="index.calender"><i class="fa fa-desktop"></i> <span class="nav-label">Calender</span></a>
+                            </li>
+                            <li ui-sref-active="active" ng-show="$state.is('index.explorer')">
+                                <a ui-sref="index.matrix"><i class="fa fa-desktop"></i> <span class="nav-label">Relative Matrix</span></a>
+                            </li>
+                            <li ui-sref-active="active" ng-show="$state.is('index.explorer')">
+                                <a ui-sref="index.rank"><i class="fa fa-desktop"></i> <span class="nav-label">Ranking</span></a>
+                            </li>
+                            <li ui-sref-active="analysis">
+                                <a ui-sref="index.analysis"><i class="fa fa-desktop"></i> <span class="nav-label">Analysis</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="display:inline-block;padding-top:5px;float:left">
+                        <h2 style="margin-left:10px;margin-top:0px;margin-bottom:0px;display:inline-block">Quay Risk Manager</h2>
+                    </div>
+                    <div class="hidden-xs" style="display:inline-block;padding-top:10px;float:right;margin-right:10px">
+                        <h4 style="margin-left:10px;margin-top:0px;margin-bottom:0px;display:inline-block">Welcome, {{main.userName}}</h4>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+
+        <!--
         <div class="container-fluid">
             <div class="row border-bottom">
                 <div class="row" style="background-color:white;padding-top:5px;padding-bottom:5px">
@@ -39,9 +77,10 @@
                 </div>
             </div>
         </div>
+-->
 
         <!-- Main view  -->
-        <div ui-view></div>
+        <div ui-view ></div>
         <!-- Footer -->
         <div class="footer">
             <div>
