@@ -1,46 +1,54 @@
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise( function(){
-        // Route directly to the risk viewer if risk was selected
-         if (postType =='risk') return "/index/risk";
-        return "/index/explorer";
-    });
+function closeMenu(){
+     $("#wrapper").removeClass("toggled");
+     $("#header_container").removeClass("toggled");
+     $("#footer_container").removeClass("toggled");
+     $("#qrm-title").toggleClass("hidden-qrm");
+     $("#qrm-titleSM").toggleClass("hidden-qrm");
+     $("#welcome-name").toggleClass("hidden-qrm");
+}
 
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdleProvider, KeepaliveProvider) {
+
+    // Configure Idle settings
+    IdleProvider.idle(5); // in seconds
+    IdleProvider.timeout(120); // in seconds
+
+    $urlRouterProvider.otherwise("/explorer");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
-        debug: true
+        debug: false
     });
 
     $stateProvider
-        .state('index', {
-            abstract: true,
-            url: "/index",
-            templateUrl: pluginurl+"views/content.html",
-        })
-        .state('index.main', {
-            url: "/main",
-            template:"<h1>DAVE WAS HERE</h1>",
-            data: {
-                pageTitle: 'Example view'
-            }
-        })
-        .state('index.explorer', {
+        .state('explorer', {
             url: "/explorer",
-            templateUrl: pluginurl+"views/explorer.html",
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.explorer.html"
+                } else {
+                    return pluginurl+"views/qrm/explorer.html"
+                }
+            }, 
             controller: "ExplorerCtrl as exp",
             data: {
                 pageTitle: 'Risk Explorer'
+            }, 
+            onEnter:function(){
+                closeMenu();
+                winWidth = $(document).width()-10;
+                $("#container").css("width", winWidth + "px");
             }
         })
-        .state('index.risk', {
+        .state('risk', {
             url: "/risk",
-            templateUrl: function(params){
-               if (jQuery(window).width() < 600){
-                    return pluginurl+"views/m.risk.html"
-                } else {   
-                    return pluginurl+"views/risk.html"
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.risk.html"
+                } else {
+                    return pluginurl+"views/qrm/risk.html"
                 }
-            },
+            }, 
             controller: "RiskCtrl as ctl",
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
@@ -49,38 +57,73 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                         cache: true
                     });
                 }]
+            }, 
+            onEnter:function(){
+                closeMenu();
+            },
+            onExit:function(){
+                QRM.mainController.lookingForRisks();
             }
         })
-
-    .state('index.calender', {
+        .state('calender', {
             url: "/calender",
             controller: 'CalenderController',
             controllerAs: 'cal',
-            templateUrl:pluginurl+'views/calender.html'
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.calender.html"
+                } else {
+                    return pluginurl+"views/qrm/calender.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
 
-    })
-        .state('index.rank', {
+        })
+        .state('rank', {
             url: "/rank",
             controller: 'RankController',
             controllerAs: 'rank',
-            templateUrl:pluginurl+ "views/rank.html"
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.rank.html"
+                } else {
+                    return pluginurl+"views/qrm/rank.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
         })
-        .state('index.matrix', {
+        .state('matrix', {
             url: "/matrix",
-        controller:'RelMatrixController',
-        controllerAs:'relMatrix',
-            templateUrl: pluginurl+"views/relmatrix.html"
+            controller: 'RelMatrixController',
+            controllerAs: 'relMatrix',
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.relmatrix.html"
+                } else {
+                    return pluginurl+"views/qrm/relmatrix.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
         })
-        .state('index.analysis', {
+        .state('analysis', {
             url: "/analysis",
-        controller:'AnalysisController',
-        controllerAs:'analysis',
-            templateUrl: pluginurl+"views/analysis.html"
-        })
+            controller: 'AnalysisController',
+            controllerAs: 'analysis',
+            templateUrl: pluginurl+"views/qrm/analysis.html", 
+            onEnter:function(){
+                closeMenu();
+            }
+        });
 }
 angular
     .module('inspinia')
     .config(config)
-    .run(function ($rootScope, $state) {
+    .run(function($rootScope, $state) {
         $rootScope.$state = $state;
     });

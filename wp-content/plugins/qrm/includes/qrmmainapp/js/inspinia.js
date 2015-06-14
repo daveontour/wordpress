@@ -7,12 +7,11 @@
 
 $(document).ready(function () {
 
-
-        // Append config box / Only for demo purpose
+    // Append config box / Only for demo purpose
 //    $.get("views/skin-config.html", function (data) {
 //        $('body').append(data);
 //    });
-    
+
     // Full height of sidebar
     function fix_height() {
         var heightWithoutNavbar = $("body > #wrapper").height() - 61;
@@ -21,6 +20,7 @@ $(document).ready(function () {
         var navbarHeigh = $('nav.navbar-default').height();
         var wrapperHeigh = $('#page-wrapper').height();
 
+    
         if(navbarHeigh > wrapperHeigh){
             $('#page-wrapper').css("min-height", navbarHeigh + "px");
         }
@@ -28,12 +28,14 @@ $(document).ready(function () {
         if(navbarHeigh < wrapperHeigh){
             $('#page-wrapper').css("min-height", $(window).height()  + "px");
         }
-
+        
+        $('#page-wrapper').css("min-height", "500px");
     }
+
 
     $(window).bind("load resize scroll", function() {
         if(!$("body").hasClass('body-small')) {
-                fix_height();
+            fix_height();
         }
     })
 
@@ -46,10 +48,10 @@ $(document).ready(function () {
         }
     });
 
+
     setTimeout(function(){
         fix_height();
-    });
-
+    })
 });
 
 // Minimalize menu when screen is less than 768px

@@ -399,8 +399,8 @@ function DataService() {
 
 function RemoteService($http) {
 
-    this.getRisk = function (riskID) {
-        return $http({
+    this.getRisk = function (riskID, $scope) {
+        $scope.myPromise = $http({
             method: 'POST',
             url: ajaxurl,
             params: {
@@ -409,6 +409,8 @@ function RemoteService($http) {
             cache: false,
             data: riskID
         });
+        
+        return $scope.myPromise;
     };
     this.saveRisk = function (risk) {
 
@@ -420,6 +422,17 @@ function RemoteService($http) {
             },
             cache: false,
             data: risk
+        });
+    };
+    this.registerAudit = function (auditType,auditComment,riskID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "registerAudit"
+            },
+            cache: false,
+            data: {auditType:auditType, auditComment:auditComment,riskID:riskID}
         });
     };
     this.getAllProjectRisks = function (projectID) {

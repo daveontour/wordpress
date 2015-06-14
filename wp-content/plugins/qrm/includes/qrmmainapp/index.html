@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html ng-app="inspinia">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page title set in pageTitle directive -->
+    <title page-title></title>
+
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.css">
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- All the QRM -->
+
+    <link rel="stylesheet" href='css/plugins/dropzone/dropzone.css'>
+    <link rel="stylesheet" href='css/plugins/ui-grid/ui-grid-unstable.css'>
+    <link rel="stylesheet" href='css/plugins/angular-notify/angular-notify.min.css'>
+    <link rel="stylesheet" href='css/plugins/iCheck/custom.css'>
+
+    <link rel="stylesheet" href='css/plugins/ngNotify/ng-notify.min.css'>
+    <link rel="stylesheet" href='css/plugins/ngDialog/ngDialog.min.css'>
+    <link rel="stylesheet" href='css/plugins/ngDialog/ngDialog-theme-default.min.css'>
+    <link rel="stylesheet" href='css/plugins/select/select.css'>
+
+    <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css'>
+    <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css'>
+
+    <link rel="stylesheet" href='css/plugins/textAngular/textAngular.css'>
+    <link rel="stylesheet" href='css/plugins/loading-bar/loading-bar.min.css'>
+    <link rel="stylesheet" href='css/plugins/nv/nv.d3.min.css'>
+    <link rel="stylesheet" href='css/plugins/metisMenu/metisMenu.css'>
+
+    <!-- Main Inspinia CSS files -->
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" id="loadBefore" href="css/style.css">
+
+    <link rel="stylesheet" href='css/qrm_angular.css'>
+    <link rel="stylesheet" href='css/qrm_styles.css'>
+
+    <!-- PHP Dynamic customisation for use with Wordpress -->
+    <script type="text/javascript">
+        var ajaxurl = 'http://localhost/wordpress/wp-admin/admin-ajax.php';
+        var pluginurl = 'http://localhost/wordpress/wp-content/plugins/qrm/templates/../includes/qrmmainapp/';
+        var postID = 229;
+        var postType = 'riskproject';
+    </script>
+</head>
+
+<!-- ControllerAs syntax -->
+<!-- Main controller with serveral data used in Inspinia theme on diferent view -->
+
+<body ng-controller="MainCtrl as main" class="fixed-nav body-small" style="height:calc(100vh - 61px)">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Quay Risk Manager
+                    </a>
+                </li>
+                <li>
+                    <a ui-sref="explorer">Risk Explorer</a>
+                </li>
+                <li>
+                    <a ui-sref="calender">Exposure Calender</a>
+                </li>
+                <li>
+                    <a ui-sref="rank">Risk Ranking</a>
+                </li>
+                <li>
+                    <a ui-sref="matrix">Tolerance Matrix</a>
+                </li>
+                <li>
+                    <a ui-sref="analysis">Dashboard</a>
+                </li>
+            </ul>
+
+
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div id="header_container">
+                <div id="header" style="padding-right:10px">
+                    <button id="menu-toggle" class="btn btn-sm btn-primary" style="border-radius:5px" dropdown-toggle><i class="fa fa-bars"></i>
+                    </button> <span id="qrm-title" class="hidden-qrm"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span><span id="qrm-titleSM"><strong>QRM</strong></span>
+                    <div id="welcome-name" class="pull-right hidden-qrm">Welcome, {{main.userName}}</div>
+                </div>
+            </div>
+            <div id="container">
+                <div id="content">
+                    <div ui-view></div>
+                </div>
+            </div>
+
+            <!--
+            <div id="footer_container">
+                <div id="footer">
+                    Footer Content
+                </div>
+            </div>
+-->
+            <!-- /#page-content-wrapper -->
+        </div>
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery and Bootstrap -->
+    <script src="js/jquery/jquery-2.1.1.min.js"></script>
+    <script src="js/plugins/jquery-ui/jquery-ui.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+
+    <!-- MetsiMenu -->
+    <script src="js/plugins/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="js/inspinia.js"></script>
+
+    <!-- Main Angular scripts-->
+    <script src="js/angular/angular.min.js"></script>
+    <script src='js/angular/angular-animate.min.js'></script>
+    <script src="js/plugins/oclazyload/dist/ocLazyLoad.min.js"></script>
+    <script src="js/ui-router/angular-ui-router.min.js"></script>
+    <script src="js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="js/plugins/angular-idle/angular-idle.js"></script>
+
+
+    <!-- QRM Customisations -->
+    <script src='js/plugins/ui-grid/ui-grid-unstable.js'></script>
+    <script src='js/plugins/iCheck/icheck.min.js'></script>
+    <script src='js/plugins/angular-notify/angular-notify.min.js'></script>
+    <script src='js/plugins/dropzone/dropzone.js'></script>
+    <script src='js/moment.js'></script>
+    <script src='js/plugins/ngDialog/ngDialog.min.js'></script>
+    <script src='js/plugins/textAngular/textAngular.min.js'></script>
+    <script src='js/plugins/textAngular/textAngular-rangy.min.js'></script>
+    <script src='js/plugins/textAngular/textAngular-sanitize.min.js'></script>
+
+
+    <!--  Watch out for dependency order -->
+    <script src='js/plugins/d3/d3.min.js'></script>
+    <script src='js/plugins/nv/nv.d3.js'></script>
+    <script src='js/qrm-common.js'></script>
+    <script src='js/services.js'></script>
+    <script src='js/plugins/ngNotify/ng-notify.min.js'></script>
+    <script src='js/plugins/select/select.min.js'></script>
+    <script src='js/plugins/sanitize/angular-sanitize.min.js'></script>
+    <script src='js/plugins/loading-bar/loading-bar.min.js'></script>
+
+    <!-- Anglar App Script -->
+    <script src="js/app.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="js/controllers.js"></script>
+
+    <script>
+        // Space in the global name space, so I can easily find thinngs
+        function QRM() {
+
+            this.matrixController = null;
+            this.expController = null;
+            this.rankController = null;
+            this.calenderController = null;
+            this.mainController = null;
+
+            this.resizer = function () {
+
+                try {
+                    if (qrm.matrixController != null) qrm.matrixController.resize();
+                } catch (e) {
+                    //
+                }
+                try {
+                    if (qrm.rankController != null) qrm.rankController.resize();
+                } catch (e) {
+                    //
+                }
+                try {
+                    if (qrm.calenderController != null) qrm.calenderController.resize();
+                } catch (e) {
+                    //
+                }
+            }
+            $(window).resize(this.resizer);
+        }
+
+        var qrm = new QRM();
+    </script>
+    <!-- Experimental -->
+    <script>
+        $(function () {
+            $(window).bind("load resize", function () {
+                winWidth = $(window).width() - 10;
+                $("#container").css("width", winWidth + "px");
+            })
+        });
+
+        var winWidth = $(window).width();
+
+        $("#container").css("width", winWidth + "px");
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            $("#header_container").toggleClass("toggled");
+            $("#footer_container").toggleClass("toggled");
+            $("#welcome-name").toggleClass("hidden-qrm");
+            $("#qrm-title").toggleClass("hidden-qrm");
+            $("#qrm-titleSM").toggleClass("hidden-qrm");
+        });
+    </script>
+</body>
+
+</html>

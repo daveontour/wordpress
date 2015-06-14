@@ -1,0 +1,87 @@
+<!-- Wrapper-->
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul side-navigation class="nav" id="side-menu">
+                <li ui-sref-active="active">
+                    <a ui-sref="index.explorer"><i class="fa fa-diamond"></i> <span class="nav-label">Risk Explorer</span></a>
+                </li>
+
+                <li ui-sref-active="active">
+                    <a ui-sref="index.calender"><i class="fa fa-diamond"></i> <span class="nav-label">Exposure Calendar</span></a>
+                </li>
+
+                <li ui-sref-active="active">
+                    <a ui-sref="index.matrix"><i class="fa fa-diamond"></i> <span class="nav-label">Tolerance Matrix</span></a>
+                </li>
+
+                <li ui-sref-active="active">
+                    <a ui-sref="index.rank"><i class="fa fa-diamond"></i> <span class="nav-label">Ranking</span></a>
+                </li>
+
+                <li ng-class="{active: $state.includes('charts')}">
+                    <a href=""><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Charts</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level" ng-class="{in: $state.includes('charts')}">
+                        <li ui-sref-active="active">
+                            <a href=""><span class="nav-label">Risk Owner Charts</span><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level" ng-class="{in: $state.includes('charts')}">
+                                <li ui-sref-active="active"><a ui-sref="index.explorer">Tolerance</a>
+                                </li>
+                                <li ui-sref-active="active"><a ui-sref="index.explorer">Status</a>
+                                </li>
+                                                            </ul>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Risk Manager/Tolerance</a>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Category</a>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Status</a>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Risk Owner/Status</a>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Risk Manager/Status</a>
+                        </li>
+                        <li ui-sref-active="active"><a ui-sref="index.explorer">Mitigation/Status</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+    <!-- Page wraper -->
+    <!-- ng-class with current state name give you the ability to extended customization your view -->
+    <div id="page-wrapper" class="gray-bg {{$state.current.name}}">
+
+        <!-- Page wrapper -->
+        <div class="row border-bottom">
+            <nav class="navbar navbar-fixed-top" role="navigation" style="margin-bottom: 0;background-color:white">
+                <div class="navbar-header">
+                    <span minimaliza-sidebar></span>
+                </div>
+                <div class="nav navbar-top-links navbar-left m-r-sm text-muted" style="padding-top:5px;font-size:14pt">Quay Risk Manager</div>
+                <div class="hidden-xs nav navbar-top-links navbar-right m-r-sm text-muted" style="padding-top:10px;font-size:10pt">Welcome, {{main.userName}}</div>
+            </nav>
+        </div>
+
+        <!-- Main view  -->
+        <div ui-view></div>
+
+        <!-- Footer -->
+<!--
+        <div id="footer" class="footer fixed">
+            <div>
+                <strong>Copyright</strong> Quay Systems Consulting &copy; 2014-2015
+            </div>
+        </div>
+-->
+    </div>
+    <!-- End page wrapper-->
+
+
+</div>
+<!-- End wrapper-->

@@ -1,0 +1,56 @@
+<div id="qrm-SubRankPanel" class="container-fluid" style="overflow:hidden">
+    <!-- Tolerance Matrix Config-->
+    <div id="matrixFilter">
+        <form method="get" class="form-vertical">
+            <div class="form-group">
+                <label class="control-label">Locate Risk:</label>
+                <div>
+                    <select ng-model="relMatrix.selectedRisk" ng-change="relMatrix.riskSelect()" ng-options="'Risk '+risk.id+' - '+risk.title for risk in relMatrix.risks" class="form-control"></select>
+
+                </div>
+                <label class="control-label">Risk Owner:</label>
+                <div>
+                    <select ng-change="relMatrix.ownerSelect()" ng-model="relMatrix.owner" ng-options="person as (person | usernameFilter) for person in relMatrix.project.ownersID" class="form-control"></select>
+
+                </div>
+                <label class="control-label" style="clear:both">Risk Manager:</label>
+                <div>
+                    <select ng-change="relMatrix.managerSelect()" ng-model="relMatrix.manager" ng-options="person as (person | usernameFilter) for person in relMatrix.project.managersID" class="form-control"></select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0px">
+                <label class="control-label">Show Tolerance: </label>
+                <div>
+                    <div class="checkbox">
+                        <label>
+                            <input icheck type="radio" name="status" value=0 ng-change="relMatrix.stateSelectorChanged()" ng-model="relMatrix.status.val"> Current Tolerance </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input icheck type="radio" name="status" value=1 ng-change="relMatrix.stateSelectorChanged()" ng-model="relMatrix.status.val"> Un Treated Tolerance </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input icheck type="radio" name="status" value=2 ng-change="relMatrix.stateSelectorChanged()" ng-model="relMatrix.status.val"> Treated Tolerance </label>
+                    </div>
+                    <div style="text-align:right">
+                        <button type="button" class="btn btn-xs btn-s-m btn-info" ng-click="relMatrix.closeFilters()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-lg-12" style="padding-left:0px;padding-right:0px">
+            <div style="height:calc(100vh - 100px )" id="relMatrixSVGDiv"></div>
+        </div>
+        <div  class="col-lg-12" style="text-align:left;padding-left:0px;padding-right:0px">
+            <small><strong>{{relMatrix.riskProjectCode}}&nbsp;&nbsp;{{relMatrix.title}}</strong></small>
+        </div>
+        <div class="col-lg-12" style="margin-top:4px;text-align:right;padding-left:0px;padding-right:0px">
+            <button type="button" class="btn btn-xs btn-s-m btn-info" ng-click="relMatrix.showFilters()">Filters</button>
+            <button type="button" class="btn btn-xs btn-s-m btn-primary" style="margin-left:5px;margin-right:5px" ng-click="relMatrix.saveChanges()">Save Changes</button>
+            <button type="button" class="btn btn-xs btn-s-m btn-warning" ng-click="relMatrix.cancelChanges()">Cancel Changes</button>
+        </div>
+    </div>
+</div>

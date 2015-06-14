@@ -962,9 +962,9 @@ d3.gantt = function (calController) {
 
     var margin = {
         top: 30,
-        right: 40,
+        right: 10,
         bottom: 20,
-        left: 100
+        left: 50
     };
     var timeDomainStart = d3.time.day.offset(new Date(), -3);
     var timeDomainEnd = d3.time.hour.offset(new Date(), +3);
@@ -1069,25 +1069,40 @@ d3.gantt = function (calController) {
                 }
             })
             .on("click", function (d) {
-                calController.edirRisk(d.riskID);
+                calController.editRisk(d.riskID);
             });
 
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
             .transition()
-            .call(xAxis);
+            .call(xAxis)
+            .selectAll("text")  
+            .style("text-anchor", "end")
+            .style("fill", "rgb(103,106,108)")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                return "rotate(-45)" 
+                });
 
         svg.append("text")
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
             .style("font-weight", "normal")
+            .style("fill", "rgb(103,106,108)")
             .attr("transform", "translate(" + [width / 2, 0] + ")")
             .text(calController.project.title);
 
 
 
-        svg.append("g").attr("class", "y axis").transition().call(yAxis);
+        svg.append("g")
+            .attr("class", "y axis")
+            .transition()
+            .call(yAxis)
+            .selectAll("text")  
+            .style("fill", "rgb(103,106,108)");
+
 
         return gantt;
 
@@ -1514,6 +1529,7 @@ function SorterLayout(rankCtl, $scope) {
         this.topSVG.append("text")
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
+            .style("fill", "rgb(103,106,108)")
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [this.width / 2, 20] + ")")
             .text(rankCtl.project.title);
@@ -1604,7 +1620,7 @@ function SorterLayout(rankCtl, $scope) {
             .attr("transform", "translate(5,5)");
 
         risk.append("rect")
-            .attr("width", "100")
+            .attr("width", "70")
             .attr("height", this.itemHeight - 8)
             .attr("class", function (d) {
                 var tol = null;
@@ -1637,7 +1653,7 @@ function SorterLayout(rankCtl, $scope) {
             });
 
         var textGroup = risk.append("g")
-            .attr("transform", "translate(110,25)");
+            .attr("transform", "translate(80,25)");
 
         textGroup.append("clipPath")
             .attr("id", function (d) {
@@ -1645,7 +1661,7 @@ function SorterLayout(rankCtl, $scope) {
             })
             .append("rect")
             .attr("transform", "translate(0,-20)")
-            .attr("width", this.itemWidth - 120)
+            .attr("width", this.itemWidth - 90)
             .attr("height", this.itemHeight);
 
         textGroup.append("text")

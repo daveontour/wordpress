@@ -114,10 +114,6 @@
   font-size: 12pt;
 }
 
-.dropdown-menu {
-    height: calc(100vh - 100px)
-}
-
 /* Hack to change the appearance of disabled iCheck boxes */
 .icheckbox_square-green.checked.disabled {
     background-position: -48px 0;
@@ -136,3 +132,14 @@ table.thhead th {
 }
 
 
+.footer.fixed {
+    padding: 9px 15px;
+    font-size: 9px;
+}
+
+.wrapper-content {
+    padding: 20px 10px 10px 10px;
+}
+
+#page-wrapper {
+    min-height: calc(100vh)
