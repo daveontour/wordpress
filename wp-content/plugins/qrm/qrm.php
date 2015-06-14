@@ -63,6 +63,12 @@ add_action("wp_ajax_uploadFile", array(QRM, "uploadFile"));
 add_action("wp_ajax_getCurrentUser", array(QRM, "getCurrentUser"));
 add_action("wp_ajax_saveRankOrder", array(QRM, "saveRankOrder"));
 add_action("wp_ajax_registerAudit", array(QRM, "registerAudit"));
+add_action("wp_ajax_getAllIncidents", array(QRM, "getAllIncidents"));
+add_action("wp_ajax_getIncident", array(QRM, "getIncident"));
+add_action("wp_ajax_saveIncident", array(QRM, "saveIncident"));
+add_action("wp_ajax_getAllReviews", array(QRM, "getAllReviews"));
+add_action("wp_ajax_getReview", array(QRM, "getReview"));
+add_action("wp_ajax_saveReview", array(QRM, "saveReview"));
 
 add_action('init', 'qrm_init_options');
 

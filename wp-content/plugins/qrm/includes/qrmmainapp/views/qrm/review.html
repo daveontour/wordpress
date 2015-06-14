@@ -1,0 +1,55 @@
+<div id="review-wrapper" class="container-fluid">
+
+    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
+        <h2>Risk Reviews</h2>
+    </div>
+    <div  class="row" style="padding-left:0px;padding-right:0px;clear:left">
+        <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
+            <div style="width:100%; text-align:right">
+                <div class="btn-group" dropdown>
+                    <button type="button" class="btn btn-info">Action</button>
+                    <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
+                        <span class="caret"></span>
+                        <span class="sr-only">Split button!</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Action</a>
+                        </li>
+                        <li><a href="#">Another action</a>
+                        </li>
+                        <li><a href="#">Something else here</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="#">Separated link</a>
+                        </li>
+                    </ul>
+                </div>
+                <button style="margin-left:5px" class="btn btn-w-m btn-primary" ng-show="main.checkUserCap('new_review')" ng-click="review.newReview()">New Review</button>
+            </div>
+        </div>
+    </div>
+    <div  class="row" style="padding-left:0px;padding-right:0px">
+        <style>
+            .ui-grid-row:nth-child(odd):hover .ui-grid-cell {
+                background: #ffff99;
+            }
+            
+            .ui-grid-row:nth-child(even):hover .ui-grid-cell {
+                background: #ffff99;
+            }
+        </style>
+        <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
+            <div style="clear:both" id="reviewGrid" ui-grid="review.gridOptions" ui-grid-auto-resize ng-style="review.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
+        </div>
+    </div>
+
+
+</div>
+<div id="reviewloading" ng-show="review.loading" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>

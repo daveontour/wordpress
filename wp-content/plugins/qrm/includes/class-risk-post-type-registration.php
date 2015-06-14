@@ -12,6 +12,11 @@ class Risk_Post_Type_Registrations {
 	}
 
 	protected function register_post_type() {
+		
+		/*
+		 * Risk Post Type
+		 */
+		
 		$labels = array(
 			'name'               => __( 'Risks', 'risk-post-type' ),
 			'singular_name'      => __( 'Risk', 'risk-post-type' ),
@@ -36,7 +41,7 @@ class Risk_Post_Type_Registrations {
 			'supports'        => $supports,
 			'public'          => true,
 			'capability_type' => 'post',
-			'rewrite'         => array( 'slug' => 'risk', ), // Permalinks format
+			'rewrite'         => array( 'slug' => 'risk' ), // Permalinks format
 			'menu_position'   => 22,
 			'menu_icon'       => 'dashicons-id',
 		);
@@ -44,6 +49,9 @@ class Risk_Post_Type_Registrations {
 		$args = apply_filters( 'risk_post_type_args', $args );
 		register_post_type( 'risk', $args );
 		
+		/*
+		 * Project Post Type
+		 */
 		
 		$labels = array(
 				'name'               => __( 'Risk Projects', 'riskproject-post-type' ),
@@ -80,6 +88,78 @@ class Risk_Post_Type_Registrations {
 		
 		$args = apply_filters( 'riskproject_post_type_args', $args );
 		register_post_type( 'riskproject', $args );
+		
+		/*
+		 * Incident Post Type
+		 */
+		
+		$labels = array(
+				'name'               => __( 'Risk Incidents', 'incident-post-type' ),
+				'singular_name'      => __( 'Risk Incident', 'incident-post-type' ),
+				'add_new'            => __( 'Add Incident', 'incident-post-type' ),
+				'add_new_item'       => __( 'Add Incident', 'incident-post-type' ),
+				'edit_item'          => __( 'Edit Incident', 'incident-post-type' ),
+				'new_item'           => __( 'New Incident', 'incident-post-type' ),
+				'view_item'          => __( 'View Incident', 'incident-post-type' ),
+				'search_items'       => __( 'Search Incidnet', 'incident-post-type' ),
+				'not_found'          => __( 'No incidents found', 'incident-post-type' ),
+				'not_found_in_trash' => __( 'No incidents in the trash', 'incident-post-type' ),
+		);
+		
+		$supports = array(
+				'revisions',
+				'comments',
+				'title'
+		);
+		
+		$args = array(
+				'labels'          => $labels,
+				'supports'        => $supports,
+				'public'          => true,
+				'capability_type' => 'post',
+				'rewrite'         => array( 'slug' => 'incident'), // Permalinks format
+				'menu_position'   => 22,
+				'menu_icon'       => 'dashicons-id',
+		);
+		
+		$args = apply_filters( 'incident_post_type_args', $args );
+		register_post_type( 'incident', $args );
+		
+		/*
+		 * Review Post Type
+		 */
+		
+		$labels = array(
+				'name'               => __( 'Risk Reviews', 'review-post-type' ),
+				'singular_name'      => __( 'Risk Review', 'review-post-type' ),
+				'add_new'            => __( 'Add Review', 'review-post-type' ),
+				'add_new_item'       => __( 'Add Review', 'review-post-type' ),
+				'edit_item'          => __( 'Edit Review', 'review-post-type' ),
+				'new_item'           => __( 'New Review', 'review-post-type' ),
+				'view_item'          => __( 'View Review', 'review-post-type' ),
+				'search_items'       => __( 'Search Review', 'review-post-type' ),
+				'not_found'          => __( 'No reviews found', 'review-post-type' ),
+				'not_found_in_trash' => __( 'No reviews in the trash', 'review-post-type' ),
+		);
+		
+		$supports = array(
+				'revisions',
+				'comments',
+				'title'
+		);
+		
+		$args = array(
+				'labels'          => $labels,
+				'supports'        => $supports,
+				'public'          => true,
+				'capability_type' => 'post',
+				'rewrite'         => array( 'slug' => 'review'), // Permalinks format
+				'menu_position'   => 22,
+				'menu_icon'       => 'dashicons-id',
+		);
+		
+		$args = apply_filters( 'review_post_type_args', $args );
+		register_post_type( 'review', $args );
 	}
 
 }

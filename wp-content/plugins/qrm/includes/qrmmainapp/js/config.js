@@ -111,6 +111,36 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 closeMenu();
             }
         })
+        .state('incident', {
+            url: "/incident",
+            controller: 'IncidentCtrl',
+            controllerAs: 'incident',
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.incident.html"
+                } else {
+                    return pluginurl+"views/qrm/incident.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
+        }) 
+        .state('review', {
+            url: "/review",
+            controller: 'ReviewCtrl',
+            controllerAs: 'review',
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.review.html"
+                } else {
+                    return pluginurl+"views/qrm/review.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
+        })     
         .state('analysis', {
             url: "/analysis",
             controller: 'AnalysisController',

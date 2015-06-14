@@ -81,7 +81,13 @@
                 <li>
                     <a ui-sref="analysis">Dashboard</a>
                 </li>
-            </ul>
+                 <li>
+                    <a ui-sref="incident">Incidents</a>
+                </li>
+                 <li>
+                    <a ui-sref="review">Reviews</a>
+                </li>
+                </ul>
 
 
         </div>

@@ -7,7 +7,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
     this.showSpinner = false;
 
     this.pluginurl = pluginurl;
-    this.loaderSrc = this.pluginurl+'views/ajax-loader.gif'
+    this.loaderSrc = this.pluginurl + 'views/ajax-loader.gif'
 
     this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>Please select a Risk Project from the selector above</span>");
     this.class = "danger";
@@ -16,7 +16,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
     this.lookingForRisks = function () {
         this.statusMsg = $sce.trustAsHtml("<img src='" + pluginurl + "views/spinner.gif'><span style='font-size:inherit'> Loading for risks for project <strong>" + QRM.expController.project.title + "</strong></span>");
         this.showStatusBoard = true;
-//        this.showStatusBoard = false;
+        //        this.showStatusBoard = false;
         this.class = "info";
         this.loading = true;
     }
@@ -129,9 +129,12 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             if (QRMDataService.riskID < 0) return true;
             return false;
             break;
-
-
-
+        case "new_incident":
+            return true;
+            break;
+        case "new_review":
+            return true;
+            break;
         default:
             return false;
         }
@@ -144,7 +147,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
 function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
 
     QRM.expController = this;
-   
+
     this.getTableHeight = function () {
         return {
             height: "calc(100vh - 310px)"
@@ -328,14 +331,14 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
         postType = null;
         QRMDataService.riskID = riskID;
         $scope.loading = true;
-        remoteService.getRisk(QRMDataService.riskID,$scope)
+        remoteService.getRisk(QRMDataService.riskID, $scope)
             .then(function (response) {
                 QRMDataService.pRisk = response.data;
                 QRMDataService.passRisk = true;
                 $state.go('risk');
-            }).finally(function(){
-            $scope.loading = true;
-        });
+            }).finally(function () {
+                $scope.loading = true;
+            });
     }
     this.deleteRisk = function (riskID) {
         QRMDataService.riskID = riskID;
@@ -378,8 +381,8 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                 });
 
                 exp.filterRisks();
-            
-                var winWidth = $(document).width()-10;
+
+                var winWidth = $(document).width() - 10;
                 $("#container").css("width", winWidth + "px");
             });
 
@@ -561,7 +564,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
     }
 
     // Initial filling of the grid
-    winWidth = $(window).innerWidth()-10;
+    winWidth = $(window).innerWidth() - 10;
     $("#container").css("width", winWidth + "px");
     this.init();
 
@@ -658,18 +661,18 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-            if (vm.reviewType == -1){
+            if (vm.reviewType == -1) {
                 ngNotify.set("Please Enter Audit Type", "grimace");
                 return;
             }
-            remoteService.registerAudit(vm.reviewType,vm.reviewComment,vm.risk.id)
-            .then(function (response) {
-                vm.risk.audit = response.data;
-                ngNotify.set("Audit Registered", "success");
-            }).finally(function(){
-                vm.reviewType = -1;
-                vm.reviewComment = "";
-            });
+            remoteService.registerAudit(vm.reviewType, vm.reviewComment, vm.risk.id)
+                .then(function (response) {
+                    vm.risk.audit = response.data;
+                    ngNotify.set("Audit Registered", "success");
+                }).finally(function () {
+                    vm.reviewType = -1;
+                    vm.reviewComment = "";
+                });
         }, function (reason) {
             vm.reviewType = -1;
             vm.reviewComment = "";
@@ -819,8 +822,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 QRMDataService.riskID = vm.risk.riskID;
                 vm.updateRisk();
                 ngNotify.set("Risk Saved", "success");
-            }).finally(function(){
-                       $scope.savingrisk = false;
+            }).finally(function () {
+                $scope.savingrisk = false;
             });
     };
     this.updateRisk = function () {
@@ -1224,13 +1227,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             $scope.risk = vm.risk;
             QRMDataService.risk = vm.risk;
             vm.updateRisk();
-                vm.setRiskMatrixID("riskEditorMatrixID");
-                vm.setRiskMatrix();
+            vm.setRiskMatrixID("riskEditorMatrixID");
+            vm.setRiskMatrix();
             $timeout(function () {
                 $scope.$apply()
             });
             QRMDataService.passRisk = false;
-            winWidth = $(window).innerWidth()-10;
+            winWidth = $(window).innerWidth() - 10;
             $("#container").css("width", winWidth + "px");
             return;
         }
@@ -1269,7 +1272,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 this.getRisk();
             }
         }
-        winWidth = $(window).innerWidth()-10;
+        winWidth = $(window).innerWidth() - 10;
         $("#container").css("width", winWidth + "px");
     }
 
@@ -1292,11 +1295,11 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         val: 0
     };
 
-    this.showFilters = function(){
-         $("#calenderFilter").slideDown("slow");
+    this.showFilters = function () {
+        $("#calenderFilter").slideDown("slow");
     }
-    this.closeFilters = function(){
-         $("#calenderFilter").slideUp("slow");
+    this.closeFilters = function () {
+        $("#calenderFilter").slideUp("slow");
     }
 
     this.owner = "";
@@ -1383,7 +1386,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     this.layoutCalender = function (risks) {
         tasks = new Array();
         taskNames = new Array();
-         risks.forEach(function (risk) {
+        risks.forEach(function (risk) {
             tasks.push({
                 "startDate": moment(risk.start),
                 "endDate": moment(risk.end),
@@ -1392,7 +1395,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
                 "riskID": risk.id,
                 "title": risk.title
             });
-         });
+        });
 
         var now = new Date();
         tasks.sort(function (a, b) {
@@ -1681,7 +1684,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
 
     this.stateSelectorChanged = function () {
 
-                 $("#matrixFilter").slideUp("slow");
+        $("#matrixFilter").slideUp("slow");
 
         //Clear present position so the layout can take care of non overlapping
         relMatrixCtrl.risks.forEach(function (risk) {
@@ -1763,11 +1766,11 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
         d3.select("#relMatrixSubHeading").text(state);
 
     }
-    this.showFilters = function(){
-         $("#matrixFilter").slideDown("slow");
+    this.showFilters = function () {
+        $("#matrixFilter").slideDown("slow");
     }
-    this.closeFilters = function(){
-         $("#matrixFilter").slideUp("slow");
+    this.closeFilters = function () {
+        $("#matrixFilter").slideUp("slow");
     }
     this.cancelChanges = function () {
         this.matrixDirty = false;
@@ -1834,7 +1837,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
                 filteredRisks.push(risk);
             }
         });
-         $("#matrixFilter").slideUp("slow");
+        $("#matrixFilter").slideUp("slow");
         this.svgMatrix(filteredRisks);
     }
     this.managerSelect = function () {
@@ -1851,12 +1854,12 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             }
         });
 
-         $("#matrixFilter").slideUp("slow");
+        $("#matrixFilter").slideUp("slow");
         this.svgMatrix(filteredRisks);
 
     }
     this.riskSelect = function () {
-         $("#matrixFilter").slideUp("slow");
+        $("#matrixFilter").slideUp("slow");
 
         relMatrixCtrl.owner = "";
         relMatrixCtrl.manager = "";
@@ -2045,7 +2048,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
             .style("font-weight", "normal")
-            .attr("class","chartTitle")
+            .attr("class", "chartTitle")
             .attr("transform", "translate(" + [(width / 2), height + 20] + ")")
             .text("Impact");
 
@@ -2067,7 +2070,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
             .style("font-weight", "normal")
-            .attr("class","chartTitle")
+            .attr("class", "chartTitle")
             .attr("transform", "translate(" + [(width / 2 + margin.left), 20] + ")")
             .text(QRMDataService.project.title);
 
@@ -2076,8 +2079,8 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             .attr("id", "relMatrixSubHeading")
             .style("font-size", "15px")
             .style("font-weight", "normal")
-            .attr("class","chartTitle")
-            .attr("transform", "translate(" + [width / 2+margin.left, 38] + ")")
+            .attr("class", "chartTitle")
+            .attr("transform", "translate(" + [width / 2 + margin.left, 38] + ")")
             .text(state);
 
         svg.append("text")
@@ -2085,7 +2088,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
             .style("font-size", "20px")
             .style("font-weight", "normal")
             .attr("transform", "translate(" + [-10, height / 2] + ") rotate(-90)")
-            .attr("class","chartTitle")
+            .attr("class", "chartTitle")
             .text("Probability");
 
         topSVG.append("g")
@@ -2336,6 +2339,125 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
     this.getRisksAndPlace();
 }
 
+function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+
+    var incident = this;
+    this.loading = false;
+    this.getTableHeight = function () {
+        return {
+            height: "calc(100vh - 150px)"
+        };
+    }
+
+    this.gridOptions = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+            {
+                name: 'title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'Date',
+                width: 140,
+                field: 'date'
+            },
+            {
+                name: 'Active',
+                width: 70,
+                field: 'active',
+                cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
+                cellClass: 'cellCentered'
+
+            },
+            {
+                name: 'Reported',
+                width: 140,
+                field: 'reported',
+                cellFilter: 'usernameFilter'
+
+            }
+    ]
+    };
+    
+    this.init = function(){
+        incident.loading = true;
+        remoteService.getAllIncidents()
+            .then(function (response) {
+                incident.gridOptions.data = response.data.data
+            }).finally(function(){
+            incident.loading = false;
+        });
+    }
+    
+    this.init();
+}
+
+function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+    
+    var review = this;
+    this.loading = false;
+    this.getTableHeight = function () {
+        return {
+            height: "calc(100vh - 150px)"
+        };
+    }
+
+    this.gridOptions = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+            {
+                name: 'title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'Scheduled Date',
+                width: 140,
+                field: 'scheddate'
+            },
+            {
+                name: 'Actual Date',
+                width: 140,
+                field: 'actualdate'
+            },
+            {
+                name: 'Complete',
+                width: 70,
+                field: 'complete',
+                cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
+                cellClass: 'cellCentered'
+
+            },
+            {
+                name: 'Responsible',
+                width: 140,
+                field: 'responsible',
+                cellFilter: 'usernameFilter'
+
+            }
+    ]
+    };
+    
+        this.init = function(){
+            review.loading = true;
+        remoteService.getAllReviews()
+            .then(function (response) {
+                review.gridOptions.data = response.data.data
+            }).finally(function(){
+            review.loading = false;
+        });
+    }
+    
+    this.init();
+    
+}
 var app = angular.module('inspinia');
 app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
@@ -2377,8 +2499,10 @@ app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'Rem
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
 app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
 app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
+app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
+app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
 
-app.service('RemoteService', ['$http',RemoteService]);
+app.service('RemoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);
 app.filter('currencyFilter', function () {
     return function (value) {

@@ -47,8 +47,8 @@ function DataService() {
             description: "Description",
             cause: "Cause",
             consequence: "Consequence",
-            owner: "",
-            manager: "",
+            owner: -1,
+            manager: -1,
             inherentProb: 5.5,
             inherentImpact: 5.5,
             treatedProb: 1.5,
@@ -549,6 +549,70 @@ function RemoteService($http) {
                 action: "getCurrentUser"
             },
             cache: false
+        });
+    };
+    this.getAllIncidents = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getAllIncidents"
+            },
+            cache: false
+        });
+    };
+    this.getIncident = function (incidentID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getIncident"
+            },
+            cache: false,
+            data: JSON.stringify(incidentID)
+        });
+    };
+    this.saveIncident = function (incident) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveIncident"
+            },
+            cache: false,
+            data: JSON.stringify(incident)
+        });
+    };
+    this.getAllReviews = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getAllReviews"
+            },
+            cache: false
+        });
+    };
+    this.getIncident = function (reviewID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReview"
+            },
+            cache: false,
+            data: JSON.stringify(reviewID)
+        });
+    };
+    this.saveReview = function (review) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveReview"
+            },
+            cache: false,
+            data: JSON.stringify(review)
         });
     };
 }

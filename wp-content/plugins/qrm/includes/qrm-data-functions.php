@@ -57,6 +57,25 @@ class QRM {
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
 	}
+	
+	static function getAllIncidents(){
+		
+	}
+	static function getIncident(){
+		
+	}
+	static function saveIncident(){
+		
+	}
+	static function getAllReviews(){
+		
+	}
+	static function getReview(){
+		
+	}
+	static function saveReview(){
+		
+	}	
 	static function getCurrentUser() {
 		wp_send_json ( wp_get_current_user () );
 	}
@@ -96,6 +115,21 @@ class QRM {
 		$a->auditPerson = $current_user->ID;
 		
 		$auditObj = json_decode ( get_post_meta ( $riskID, "audit", true ) );
+		if ($auditObj == null){
+			$auditObjEval = new stdObject ();
+			$auditObjEval->auditComment = "Risk Entered";
+			$auditObjEval->auditDate = date ( "M j, Y" );
+			$auditObjEval->auditPerson = $current_user->ID;
+				
+			$auditObjIdent = new stdObject ();
+			$auditObjIdent->auditComment = "Risk Entered";
+			$auditObjIdent->auditDate = date ( "M j, Y" );
+			$auditObjIdent->auditPerson = $current_user->ID;
+				
+			$auditObj = new stdObject ();
+			$auditObj->auditIdent = $auditObjIdent;
+			$auditObj->auditEval = $auditObjEval;
+		}
 		switch ($audit->auditType) {
 			case 0 :
 				break;
@@ -390,10 +424,26 @@ class QRM {
 	static function saveRisk() {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
-		
+				
 		$postdata = file_get_contents ( "php://input" );
 		$risk = json_decode ( $postdata );
 		
+		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
+		
+		if ($risk->manager == -1 || $risk->manager == ""){
+			if (in_array($current_user->ID, $project->managersID)){
+				$risk->manager = $current_user->ID;
+			} else {
+				$risk->manager = $project->projectRiskManager;
+			}
+		}
+		if ($risk->owner == -1 || $risk->owner == ""){
+			if (in_array($current_user->ID, $project->ownersID)){
+				$risk->owner = $current_user->ID;
+			} else {
+				$risk->owner = $project->projectRiskManager;
+			}
+		}		
 		$postID = null;
 		
 		if (! empty ( $risk->id )) {
@@ -443,7 +493,7 @@ class QRM {
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
-		update_post_meta ( $postID, "project", get_post ( $risk->projectID )->post_title );
+		update_post_meta ( $postID, "project", $project->post_title );
 		
 		// Update the count for riskd for the impacted project
 		$args = array (
@@ -464,7 +514,7 @@ class QRM {
 				"post_parent" => $postID,
 				"post_type" => "attachment" 
 		) );
-		
+		$risk->audit = json_decode ( get_post_meta ( $riskID, "audit", true ) );
 		wp_send_json ( $risk );
 	}
 	static function saveProject() {

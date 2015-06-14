@@ -2472,7 +2472,10 @@ body {
     left:50%;
     top:50%;
 }
-#explorerloading.loading {
+#target.loading,
+#explorerloading.loading,
+#incidentloading.loading,
+#reviewloading.loading {
     position: fixed;
     left:50%;
     top:50%;
