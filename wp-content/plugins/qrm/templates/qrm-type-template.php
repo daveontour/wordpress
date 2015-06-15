@@ -42,7 +42,8 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/metisMenu/metisMenu.css" ?>'>
-
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/datapicker/angular-datapicker.css" ?>'>
+    
     <!-- Main Inspinia CSS files -->
     <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/animate.css" ?>">
     <link rel="stylesheet" id="loadBefore" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/style.css" ?>">
@@ -82,10 +83,10 @@
                     <a ui-sref="analysis">Dashboard</a>
                 </li>
                  <li>
-                    <a ui-sref="incident">Incidents</a>
+                    <a ui-sref="incidentExpl">Incidents</a>
                 </li>
                  <li>
-                    <a ui-sref="review">Reviews</a>
+                    <a ui-sref="reviewExpl">Reviews</a>
                 </li>
                 </ul>
 
@@ -136,6 +137,7 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular-animate.min.js" ?>'></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/ui-router/angular-ui-router.min.js" ?>"></script>
+<!--  <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-0.13.0.min.js" ?>"></script> -->   
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-idle/angular-idle.js" ?>"></script>
 
@@ -161,7 +163,7 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/select/select.min.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/loading-bar/loading-bar.min.js" ?>'></script>
-
+    
     <!-- Anglar App Script -->
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/app.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/config.js" ?>"></script>

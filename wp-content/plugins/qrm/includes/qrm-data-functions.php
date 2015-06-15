@@ -57,14 +57,91 @@ class QRM {
 				wp_die ( $wp->query_vars ['qrmfn'] );
 		}
 	}
-	
-	static function getAllIncidents(){
+	static function getAllIncidents() {
+		global $post;
+		$args = array (
+				'post_type' => 'incident',
+				'posts_per_page' => - 1 
+		);
 		
+		$the_query = new WP_Query ( $args );
+		$incs = array ();
+		
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();			
+			$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
+			array_push ( $incs, $incident );
+		endwhile
+		;
+		
+		$data = new Data ();
+		$data->data = $incs;
+		wp_send_json ( $data );
 	}
 	static function getIncident(){
+		$incidentID = json_decode ( file_get_contents ( "php://input" ) );
+		$incident = json_decode ( get_post_meta ( $incidentID, "incidentdata", true ) );
+		$incident->comments = get_comments ( array (
+				'post_id' => $incidentID
+		) );
+		$incident->attachments = get_children ( array (
+				"post_parent" => $incidentID,
+				"post_type" => "attachment"
+		) );
 		
+		wp_send_json ( $incident);
 	}
 	static function saveIncident(){
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+		
+		$postdata = file_get_contents ( "php://input" );
+		$incident = json_decode ( $postdata );
+		
+		if ($incident->reportedby == 0 || $incident->reportedby == ""){
+			$incident->reportedby = $current_user->ID;
+		}
+		$postID = null;
+		
+		if (( $incident->id > 0 )) {
+			// Update the existing post
+			$post ['ID'] = $incident->id;
+			wp_update_post ( array (
+			'ID' => $incident->id,
+			'post_content' => $incident->description,
+			'post_title' => $incident->title,
+			'post_status' => 'publish',
+			'post_type' => 'incident',
+			'post_author' => $current_user->ID
+			) );
+			$postID = $incident->id;
+		} else {
+			// Create a new one and record the ID
+			$postID = wp_insert_post ( array (
+				'post_content' => $incident->description,
+				'post_title' => $incident->title,
+				'post_status' => 'publish',
+				'post_type' => 'incident',
+				'post_author' => $current_user->ID
+			) );
+			$incident->id = $postID;
+		}
+		
+		$incident->incidentCode = "INC".$incident->id;
+
+		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
+		
+		// Add any comments to the returned object
+		$incident->comments = get_comments ( array (
+				'post_id' => $postID
+		) );
+		$incident->attachments = get_children ( array (
+				"post_parent" => $postID,
+				"post_type" => "attachment"
+		) );
+		
+		wp_send_json ( $incident );
+		
 		
 	}
 	static function getAllReviews(){

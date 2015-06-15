@@ -1,55 +1,345 @@
-<div id="incident-wrapper" class="container-fluid">
-
-    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <h2>Risk Incidents</h2>
-    </div>
-    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
-            <div style="width:100%; text-align:right">
-                <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-info">Action</button>
-                    <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                        <span class="caret"></span>
-                        <span class="sr-only">Split button!</span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a>
-                        </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a>
-                        </li>
-                    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div style="padding-left:5px" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom:5px">
+                    <h3 style="display:inline;font-weight:normal">{{incident.incident.incidentCode}} - {{incident.incident.title}}</h3>
                 </div>
-                <button style="margin-left:5px" class="btn btn-w-m btn-primary" ng-show="main.checkUserCap('new_incident')" ng-click="incident.newIncident()">New Incident</button>
+                <div style="padding-right:5px" class="hidden-xs hidden-sm col-md-6 col-lg-6">
+                    <div style="float:right;clear:left">
+                        <div class="btn-group" dropdown>
+                            <button type="button" class="btn btn-info">Action</button>
+                            <button type="button" style="margin-right:5px" class="btn btn-info dropdown-toggle" dropdown-toggle>
+                                <span class="caret"></span>
+                                <span class="sr-only">Split button!</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Action</a>
+                                </li>
+                                <li><a href="#">Another action</a>
+                                </li>
+                                <li><a href="#">Something else here</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="#">Separated link</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="incident.saveIncident()">Save Changes</button>
+                        <button type="button" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Risk Explorer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Top Buttons and Title -->
+        <div class="col-lg-12">
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8" style="clear:both">
+                    <!-- Left Column -->
+                    <div class="row">
+                        <div class="col-lg-12" style="margin-top:5px">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Description
+                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openDescriptionEditor()"></i>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <p ng-bind-html="incident.incident.description"></p>
+                                </div>
+
+                                <div>
+
+                                    <div class="row-fluid">
+                                        <form method="get" class="form-horizontal">
+                                            <div class="form-group" style="margin-left:0px;margin-right:0px">
+                                                <label class="col-xs-4 col-sm-3 control-label">Date of Incident</label>
+                                                <div class="col-xs-8 col-sm-9">
+                                                    <div class="control-group" style="margin-top:3px">
+                                                        <div class="controls">
+                                                            <div class="input-prepend input-group">
+                                                                <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                                <input type="text" id="incidentDate" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    jQuery(document).ready(function () {
+                                                        jQuery('#incidentDate').daterangepicker({
+                                                                format: 'MMMM D, YYYY',
+                                                                separator: " - ",
+                                                                showDropdowns: true,
+                                                                drops: "down",
+                                                                singleDatePicker: true
+                                                            },
+                                                            function (start, end, label) {
+                                                                try {
+                                                                    // Update the Angular controller
+                                                                    angular.element("#incidentDate").controller().updateDate(start, end);
+                                                                } catch (e) {
+                                                                    console.log(e.message);
+                                                                }
+                                                            });
+                                                    });
+                                                </script>
+                                                <div class="controls">
+                                                <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
+                                                    <div class="col-sm-9"  style="margin-top:5px">
+                                                        <select ng-model="incident.incident.reportedby" ng-options="(person | usernameFilter) for person in incident.siteUsers" class="form-control"></select>
+                                                        
+                                                    </div>
+<label class="col-sm-3 control-label">Incident Resolved</label>
+                                                    <div class="col-sm-9">
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.resolved"></label>
+                                                    </div>                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Actions Taken
+                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openActionsEditor()"></i>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <p ng-bind-html="incident.incident.actions"></p>
+                                </div>
+                            </div>
+                           <div class="panel panel-info">
+                                <div class="panel-heading">Risks Impacted
+                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openRisksEditor()"></i>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    
+                                </div>
+                            </div>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Lesson Learnt
+                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openLessonsEditor()"></i>
+                                    </div>
+                                    
+                                </div>
+                                <div class="panel-body">
+                                    <p ng-bind-html="incident.incident.lessons"></p>
+                                    <form class="form-horizontal">
+                                            <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Assessment</label>
+                                                    <div class="col-sm-10">
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="incident.incident.identified"> Risks Were Identified </label>
+                                                                </td>
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="incident.incident.evaluated"> Risks Adequately Evaluated</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="incident.incident.controls"> Controls Were Effective </label>
+                                                                </td>
+
+                                                                <td>
+                                                                    <label class="checkbox-inline">
+                                                                        <input icheck type="checkbox" ng-model="incident.incident.consequences"> Consequences Acccurate </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="checkbox-inline" style="padding-left:0px">
+                                                                        <input icheck type="checkbox" ng-model="incident.incident.causes"> Causes Identified </label>
+                                                                </td>
+                                                                <td>
+                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                    
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-lg-12" ng-show="incident.incident.id>0">-->
+                        <div class="col-lg-12">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Attachements</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
+                                                <div class="dz-message">
+                                                    Drop file here or click to attach.
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <form method="get" class="form-vertical">
+                                                    <div class="form-group">
+                                                        <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
+                                                        <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
+                                                        <div class="col-lg-12" style="padding-right:0px">
+                                                            <div style="float:right">
+                                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
+                                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12" style="margin-top:15px">
+                                            <table class="table table-striped" style="width:100%">
+                                                <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
+                                                    <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                                        <div style="float:left;clear:both">{{attach.post_content}}
+                                                        </div>
+                                                        <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
+                                                        </div>
+                                                        <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
+                        </td>
+                    </tr>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
-    <div  class="row" style="padding-left:0px;padding-right:0px">
-        <style>
-            .ui-grid-row:nth-child(odd):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-            
-            .ui-grid-row:nth-child(even):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-        </style>
-        <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
-            <div style="clear:both" id="incidentGrid" ui-grid="incident.gridOptions" ui-grid-auto-resize ng-style="incident.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
-        </div>
+                        </div>
+                                                    <!-- Comments -->
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Comments</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12" style="margin-bottom:15px">
+                                            <button style="float:left" style="margin-left:20px" ng-click="incident.addComment()" class="btn btn-primary btn-sm">Add Comment</button>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <table class="table table-striped" style="width:100%">
+                                                <tr ng-repeat="comment in ctl.risk.comments" style="margin-top:15px">
+                                                    <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
+                                                        <strong>{{comment.comment_author}}</strong>
+                                                        <br/> {{comment.comment_author_email}}
+                                                    </td>
+                                                    <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                                        <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span>
+                                                        </div>
+                                                        <div style="float:left;clear:both" ng-bind-html="comment.comment_content"></div>
+                                                    </td>
+                                                </tr>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  <!-- Main body -->
     </div>
-
-
 </div>
-<div  id="incidentloading" ng-show="incident.loading" class="loading">
-    <div class="loading-overlay">
-        <p class="loading-spinner">
-            <img ng-src="{{main.loaderSrc}}">
-            <span class="loading-text">loading</span>
-        </p>
+
+
+<!-- Template for the textarea modal dialog boxes -->
+
+<script type="text/ng-template" id="addIncidentCommentModalDialogId">
+        <div class="ngdialog-message">
+            <p>Comment on the Incident</p>
+            <div text-angular focus=true name="commentbbox" ng-model="data.comment" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
+<script type="text/ng-template" id="editIncidentTitleModalDialogId">
+        <div class="ngdialog-message">
+            <p>Incident Title</p>
+            <input ng-model="incident.incident.title"  style="width:100%">
+              <p></p>
+           <p>Incident Description</p>
+            <div text-angular ng-model="incident.incident.description" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+    </script>
+
+<script type="text/ng-template" id="editActionsModalDialogId">
+        <div class="ngdialog-message">
+           <p>Actions Taken to Resolve the Incident</p>
+            <div text-angular ng-model="incident.incident.actions" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>
+<script type="text/ng-template" id="editLessonsModalDialogId">
+        <div class="ngdialog-message">
+           <p>Lessons Learnt from the  Incident</p>
+            <div text-angular ng-model="incident.incident.lessons" style="width:100%"></div>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>
+<!-- This is the template used by Dropzone, won't be displayed -->
+<div id="preview-template" style="display: none;">
+
+    <div class="dz-preview dz-file-preview">
+        <div class="dz-image"><img data-dz-thumbnail />
+        </div>
+
+        <div class="dz-details">
+            <div class="dz-size"><span data-dz-size></span>
+            </div>
+            <div class="dz-filename"><span data-dz-name></span>
+            </div>
+        </div>
+        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span>
+        </div>
+        <div class="dz-error-message"><span data-dz-errormessage></span>
+        </div>
+        <div class="dz-success-mark">
+
+            <svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
+                <title>Check</title>
+                <desc>Created with Sketch.</desc>
+                <defs></defs>
+                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                    <path d="M23.5,31.8431458 L17.5852419,25.9283877 C16.0248253,24.3679711 13.4910294,24.366835 11.9289322,25.9289322 C10.3700136,27.4878508 10.3665912,30.0234455 11.9283877,31.5852419 L20.4147581,40.0716123 C20.5133999,40.1702541 20.6159315,40.2626649 20.7218615,40.3488435 C22.2835669,41.8725651 24.794234,41.8626202 26.3461564,40.3106978 L43.3106978,23.3461564 C44.8771021,21.7797521 44.8758057,19.2483887 43.3137085,17.6862915 C41.7547899,16.1273729 39.2176035,16.1255422 37.6538436,17.6893022 L23.5,31.8431458 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z" id="Oval-2" stroke-opacity="0.198794158" stroke="#747474" fill-opacity="0.816519475" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                </g>
+            </svg>
+
+        </div>
+        <div class="dz-error-mark">
+
+            <svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
+                <title>error</title>
+                <desc>Created with Sketch.</desc>
+                <defs></defs>
+                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                    <g id="Check-+-Oval-2" sketch:type="MSLayerGroup" stroke="#747474" stroke-opacity="0.198794158" fill="#FFFFFF" fill-opacity="0.816519475">
+                        <path d="M32.6568542,29 L38.3106978,23.3461564 C39.8771021,21.7797521 39.8758057,19.2483887 38.3137085,17.6862915 C36.7547899,16.1273729 34.2176035,16.1255422 32.6538436,17.6893022 L27,23.3431458 L21.3461564,17.6893022 C19.7823965,16.1255422 17.2452101,16.1273729 15.6862915,17.6862915 C14.1241943,19.2483887 14.1228979,21.7797521 15.6893022,23.3461564 L21.3431458,29 L15.6893022,34.6538436 C14.1228979,36.2202479 14.1241943,38.7516113 15.6862915,40.3137085 C17.2452101,41.8726271 19.7823965,41.8744578 21.3461564,40.3106978 L27,34.6568542 L32.6538436,40.3106978 C34.2176035,41.8744578 36.7547899,41.8726271 38.3137085,40.3137085 C39.8758057,38.7516113 39.8771021,36.2202479 38.3106978,34.6538436 L32.6568542,29 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z" id="Oval-2" sketch:type="MSShapeGroup"></path>
+                    </g>
+                </g>
+            </svg>
+
+        </div>
     </div>
 </div>

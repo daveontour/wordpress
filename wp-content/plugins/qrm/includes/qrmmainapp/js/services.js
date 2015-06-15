@@ -593,15 +593,15 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.getIncident = function (reviewID) {
+    this.getIncident = function (incidentID) {
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
-                action: "getReview"
+                action: "getIncident"
             },
             cache: false,
-            data: JSON.stringify(reviewID)
+            data: JSON.stringify(incidentID)
         });
     };
     this.saveReview = function (review) {

@@ -111,6 +111,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 closeMenu();
             }
         })
+        .state('incidentExpl', {
+            url: "/incidentExpl",
+            controller: 'IncidentExplCtrl',
+            controllerAs: 'incidentExpl',
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.incidentExplorer.html"
+                } else {
+                    return pluginurl+"views/qrm/incidentExplorer.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
+        })
         .state('incident', {
             url: "/incident",
             controller: 'IncidentCtrl',
@@ -122,19 +137,27 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                     return pluginurl+"views/qrm/incident.html"
                 }
             },
+             resolve: {
+                loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        files: [pluginurl+"js/daterangepicker.js", pluginurl+"css/daterangepicker-bs3.css"],
+                        cache: true
+                    });
+                }]
+            },
             onEnter:function(){
                 closeMenu();
             }
-        }) 
-        .state('review', {
-            url: "/review",
-            controller: 'ReviewCtrl',
-            controllerAs: 'review',
+        })    
+        .state('reviewExpl', {
+            url: "/reviewExpl",
+            controller: 'ReviewExplCtrl',
+            controllerAs: 'reviewExpl',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.review.html"
+                    return pluginurl+"views/qrm/m.reviewExplorer.html"
                 } else {
-                    return pluginurl+"views/qrm/review.html"
+                    return pluginurl+"views/qrm/reviewExplorer.html"
                 }
             },
             onEnter:function(){

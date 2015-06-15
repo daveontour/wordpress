@@ -2339,21 +2339,36 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
     this.getRisksAndPlace();
 }
 
-function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
 
     var incident = this;
     this.loading = false;
+
+    $scope.formatTreatedCol = function (row, check) {
+        if (row.entity.resolved && check) {
+            return true;
+        }
+        if (!row.entity.resolved && !check) {
+            return true;
+        }
+        return false;
+    };
     this.getTableHeight = function () {
         return {
             height: "calc(100vh - 150px)"
         };
     }
-
     this.gridOptions = {
         enableSorting: true,
         rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
+                width: "100",
+                cellClass: 'compact',
+                field: 'incidentCode',
+                headerCellClass: 'header-hidden',
+
+            }, {
                 name: 'title',
                 width: "*",
                 cellClass: 'compact',
@@ -2361,14 +2376,15 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
 
             },
             {
-                name: 'Date',
+                name: 'Incident Date',
                 width: 140,
-                field: 'date'
+                field: 'date',
+                cellFilter: "date"
             },
             {
                 name: 'Active',
                 width: 70,
-                field: 'active',
+                field: 'resolved',
                 cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
                 cellClass: 'cellCentered'
 
@@ -2376,28 +2392,203 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
             {
                 name: 'Reported',
                 width: 140,
-                field: 'reported',
+                field: 'reportedby',
                 cellFilter: 'usernameFilter'
 
             }
     ]
     };
-    
-    this.init = function(){
+    this.init = function () {
         incident.loading = true;
         remoteService.getAllIncidents()
             .then(function (response) {
                 incident.gridOptions.data = response.data.data
-            }).finally(function(){
-            incident.loading = false;
-        });
+            }).finally(function () {
+                incident.loading = false;
+            });
     }
-    
+
+    $scope.editIncident = function (id) {
+        incident.editIncident(id);
+    }
+
+    this.editIncident = function (id) {
+        remoteService.getIncident(id)
+            .then(function (response) {
+                QRMDataService.incident = response.data;
+                QRMDataService.incidentID = QRMDataService.incident.id;
+                $state.go("incident");
+            });
+    }
+    this.newIncident = function () {
+        QRMDataService.incidentID = -1;
+        $state.go('incident');
+    }
     this.init();
 }
 
-function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+    var inc = this;
+//    this.siteUsers = QRMDataService.siteUsers;
+    this.siteUsers = [];
+    $scope.data={};
+    QRMDataService.siteUsers.forEach(function(e){
+        inc.siteUsers.push(e.ID);
+    });
     
+    $scope.dropzoneConfig = {
+        options: { // passed into the Dropzone constructor
+            url: ajaxurl + "?action=uploadFile",
+            previewTemplate: document.querySelector('#preview-template').innerHTML,
+            parallelUploads: 1,
+            thumbnailHeight: 120,
+            thumbnailWidth: 120,
+            maxFilesize: 3,
+            filesizeBase: 1000,
+            autoProcessQueue: false,
+            thumbnail: function (file, dataUrl) {
+                if (file.previewElement) {
+                    file.previewElement.classList.remove("dz-file-preview");
+                    var images = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
+                    for (var i = 0; i < images.length; i++) {
+                        var thumbnailElement = images[i];
+                        thumbnailElement.alt = file.name;
+                        thumbnailElement.src = dataUrl;
+                    }
+                    setTimeout(function () {
+                        file.previewElement.classList.add("dz-image-preview");
+                    }, 1);
+                }
+            },
+            init: function () {
+                this.on("addedfile", function (file) {
+                    inc.incidentAttachmentReady(this, file);
+                });
+                this.on('complete', function (file) {
+                    file.previewElement.classList.add('dz-complete');
+                    inc.cancelAttachment()
+                    ngNotify.set("Attachment Added to Incident", "success");
+                    remoteService.getIncidentAttachments(inc.incident.id)
+                        .then(function (response) {
+                            inc.incident.attachments = response.data;
+                        });
+                });
+            },
+            sending: function (file, xhr, formData) {
+                formData.append("ck", QRMDataService.incidentID);
+                formData.append("description", inc.uploadAttachmentDescription);
+            }
+        },
+    };
+
+    this.updateDate = function (start, finish) {
+        inc.incident.date = start;
+        inc.updateIncident();
+    }
+
+    this.updateIncident = function () {
+        var s = moment(inc.incident.date);
+        try {
+            jQuery('#incidentDate').data('daterangepicker').setStartDate(s);
+        } catch (e) {
+            //Do nothing, will happen on mobile interface
+        }
+    }
+
+    this.openDescriptionEditor = function () {
+        var oTitle = inc.incident.title;
+        var oDescription = inc.incident.description;
+        ngDialog.openConfirm({
+            template: "editIncidentTitleModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            inc.incident.title = oTitle;
+            inc.incident.description = oDescription;
+        });
+    }
+    this.openActionsEditor = function () {
+        var oActions = inc.incident.actions;
+        ngDialog.openConfirm({
+            template: "editActionsModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            inc.incident.actions = oActions;
+        });
+    }
+    this.openLessonsEditor = function () {
+        var oLessons = inc.incident.lessons;
+        ngDialog.openConfirm({
+            template: "editLessonsModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            inc.incident.lessons = oLessons;
+        });
+    }
+    this.addComment = function () {
+        debugger;
+        $scope.data.comment = "";
+        ngDialog.openConfirm({
+            template: "addIncidentCommentModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            remoteService.addIncidentComment($scope.data.comment, QRMDataService.riskID)
+                .then(function (response) {
+                    ngNotify.set("Comment added to Incident", "success");
+                    inc.incident.comments = response.data.comments;
+                });
+        }, function (reason) {
+            // Restore the old values
+
+        });
+    }
+
+    this.saveIncident = function () {
+        remoteService.saveIncident(inc.incident)
+            .then(function (response) {
+                ngNotify.set("Incident Saved", "success");
+                inc.incident = response.data;
+                inc.updateIncident();
+            });
+    }
+
+    
+    if (QRMDataService.incidentID == -1) {
+        inc.incident = {
+            title: "Incident Title",
+            description: "Description of the incident",
+            id: -1,
+            incidentCode: "New Incident",
+            resolved: false,
+            identified: false,
+            evaluated: false,
+            controls: false,
+            consequences: false,
+            causes: false,
+            reportedby: 0,
+            lessons: "Enter the lessons learnt as a result of this incident",
+            actions: "Enter a summary of actions taken to resolve the incident",
+            date: new Date()
+        }
+    } else {
+        inc.incident = QRMDataService.incident;
+    }
+
+    this.updateIncident();
+
+}
+
+function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+
     var review = this;
     this.loading = false;
     this.getTableHeight = function () {
@@ -2444,20 +2635,21 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
             }
     ]
     };
-    
-        this.init = function(){
-            review.loading = true;
+
+    this.init = function () {
+        review.loading = true;
         remoteService.getAllReviews()
             .then(function (response) {
                 review.gridOptions.data = response.data.data
-            }).finally(function(){
-            review.loading = false;
-        });
+            }).finally(function () {
+                review.loading = false;
+            });
     }
-    
+
     this.init();
-    
+
 }
+
 var app = angular.module('inspinia');
 app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
@@ -2499,8 +2691,9 @@ app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'Rem
 app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
 app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
 app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
+app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);
 app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
-app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
+app.controller('ReviewExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewExplCtrl]);
 
 app.service('RemoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);
