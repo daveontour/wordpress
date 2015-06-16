@@ -2467,11 +2467,7 @@ body {
   pointer-events: none;
 }
 
-#target.loading {
-    position: fixed;
-    left:50%;
-    top:50%;
-}
+#savingincident.loading,
 #target.loading,
 #explorerloading.loading,
 #incidentloading.loading,

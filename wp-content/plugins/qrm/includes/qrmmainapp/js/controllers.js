@@ -1,3 +1,22 @@
+function SortByProjectCode(a, b) {
+    if (a == null || b == null) return 0;
+    
+    var aName, bName;
+    if (typeof (a) == "object") {
+        aName = a.riskProjectCode.toLowerCase();
+        bName = b.riskProjectCode.toLowerCase();
+    } else {
+       aName = $.grep(QRM.mainController.risks, function (e) {
+            return e.id == a
+        })[0].riskProjectCode;
+       bName = $.grep(QRM.mainController.risks, function (e) {
+            return e.id == b
+        })[0].riskProjectCode;
+    }
+    
+    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+}
+
 function MainCtrl(QRMDataService, remoteService, $state, $sce) {
 
 
@@ -64,6 +83,16 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
         .then(function (response) {
             QRMDataService.currentUser = response.data;
             QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
+        });
+    remoteService.getAllRisks()
+        .then(function (response) {
+            QRM.mainController.risks = response.data;
+            QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
+                if (value.riskProjectCode == null) return false;
+                return value != null;
+            });
+            QRM.mainController.risks.sort(SortByProjectCode);
+            QRMDataService.risks = QRM.mainController.risks;
         });
 
     this.checkUserCap = function (action, risk) {
@@ -618,14 +647,14 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                     file.previewElement.classList.add('dz-complete');
                     vm.cancelAttachment()
                     ngNotify.set("Attachment added to risk", "success");
-                    remoteService.getRiskAttachments(vm.riskID)
+                    remoteService.getAttachments(vm.riskID)
                         .then(function (response) {
                             vm.risk.attachments = response.data;
                         });
                 });
             },
             sending: function (file, xhr, formData) {
-                formData.append("riskID", QRMDataService.riskID);
+                formData.append("postID", QRMDataService.riskID);
                 formData.append("description", vm.uploadAttachmentDescription);
             }
         },
@@ -2413,10 +2442,16 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
     }
 
     this.editIncident = function (id) {
+        incident.loading = true;
         remoteService.getIncident(id)
             .then(function (response) {
+
                 QRMDataService.incident = response.data;
+                if (QRMDataService.incident.risks != null) {
+                    QRMDataService.incident.risks.sort(SortByProjectCode);
+                }
                 QRMDataService.incidentID = QRMDataService.incident.id;
+                incident.loading = false;
                 $state.go("incident");
             });
     }
@@ -2429,13 +2464,14 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
 
 function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
     var inc = this;
-//    this.siteUsers = QRMDataService.siteUsers;
+    //    this.siteUsers = QRMDataService.siteUsers;
     this.siteUsers = [];
-    $scope.data={};
-    QRMDataService.siteUsers.forEach(function(e){
+    $scope.data = {};
+    $scope.savingincident = false;
+    QRMDataService.siteUsers.forEach(function (e) {
         inc.siteUsers.push(e.ID);
     });
-    
+
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
             url: ajaxurl + "?action=uploadFile",
@@ -2468,25 +2504,72 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
                     file.previewElement.classList.add('dz-complete');
                     inc.cancelAttachment()
                     ngNotify.set("Attachment Added to Incident", "success");
-                    remoteService.getIncidentAttachments(inc.incident.id)
+                    remoteService.getAttachments(inc.incident.id)
                         .then(function (response) {
                             inc.incident.attachments = response.data;
                         });
                 });
             },
             sending: function (file, xhr, formData) {
-                formData.append("ck", QRMDataService.incidentID);
+                formData.append("postID", QRMDataService.incidentID);
                 formData.append("description", inc.uploadAttachmentDescription);
             }
         },
     };
 
+    this.addRisk = function () {
+        if (typeof (inc.incident.risks) == "undefined") {
+            inc.incident.risks = [];
+        }
+        if (inc.riskID != null) {
+            inc.incident.risks.push(inc.riskID);
+            var unq = [];
+            $.each(inc.incident.risks, function (i, el) {
+                if ($.inArray(el, unq) === -1) unq.push(el);
+            });
+            inc.incident.risks = unq
+
+            inc.incident.risks.sort(SortByProjectCode);
+        }
+        inc.riskID = null;
+    }
+    this.removeRisk = function (riskID) {
+        inc.incident.risks = jQuery.grep(inc.incident.risks, function (value) {
+            return value != riskID;
+        });
+    }
+    this.incidentAttachmentReady = function (dropzone, file) {
+        inc.dropzone = dropzone;
+        inc.dzfile = file;
+        inc.disableAttachmentButon = false;
+        $scope.$apply();
+    }
+
+    this.uploadAttachmentDescription = "";
+    this.disableAttachmentButon = true;
+    this.dropzone = "";
+    this.uploadAttachment = function () {
+        inc.dropzone.processFile(inc.dzfile);
+    }
+    this.cancelAttachment = function () {
+        inc.dropzone.removeAllFiles(true);
+        inc.uploadAttachmentDescription = null;
+        inc.disableAttachmentButon = true;
+        inc.dropzone = null;
+        inc.dzfile = null;
+        $scope.$apply();
+    }
+
     this.updateDate = function (start, finish) {
         inc.incident.date = start;
         inc.updateIncident();
     }
-
     this.updateIncident = function () {
+
+        if (inc.incident.risks != null) {
+            inc.incident.risks.sort(SortByProjectCode);
+        }
+
         var s = moment(inc.incident.date);
         try {
             jQuery('#incidentDate').data('daterangepicker').setStartDate(s);
@@ -2534,17 +2617,16 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         });
     }
     this.addComment = function () {
-        debugger;
         $scope.data.comment = "";
         ngDialog.openConfirm({
             template: "addIncidentCommentModalDialogId",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-            remoteService.addIncidentComment($scope.data.comment, QRMDataService.riskID)
+            remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
                 .then(function (response) {
-                    ngNotify.set("Comment added to Incident", "success");
-                    inc.incident.comments = response.data.comments;
+                    ngNotify.set("Comment Added to Incident", "success");
+                    inc.incident.comments = response.data;
                 });
         }, function (reason) {
             // Restore the old values
@@ -2553,15 +2635,20 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
     }
 
     this.saveIncident = function () {
+
+        $scope.savingincident = true;
+        if (inc.incident.risks != null) {
+            inc.incident.risks.sort(SortByProjectCode);
+        }
         remoteService.saveIncident(inc.incident)
             .then(function (response) {
+                $scope.savingincident = false;
                 ngNotify.set("Incident Saved", "success");
                 inc.incident = response.data;
                 inc.updateIncident();
             });
     }
 
-    
     if (QRMDataService.incidentID == -1) {
         inc.incident = {
             title: "Incident Title",
@@ -2733,5 +2820,34 @@ app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {
 
         return user[0].data.display_name;
     }
+}]);
+app.filter('compoundRiskFilter', ['QRMDataService', function (QRMDataService) {
+    return function (input) {
 
+        if (typeof (input) == "object") return input.riskProjectCode + " - " + input.title;
+        var risk = $.grep(QRMDataService.risks, function (e) {
+            return e.id == input
+        })
+        return risk[0].riskProjectCode + " - " + risk[0].title;
+    }
+}]);
+app.filter('riskCodeFilter', ['QRMDataService', function (QRMDataService) {
+    return function (input) {
+
+        if (typeof (input) == "object") return input.riskProjectCode;
+        var risk = $.grep(QRMDataService.risks, function (e) {
+            return e.id == input
+        })
+        return risk[0].riskProjectCode;
+    }
+}]);
+app.filter('riskTitleFilter', ['QRMDataService', function (QRMDataService) {
+    return function (input) {
+
+        if (typeof (input) == "object") return input.title;
+        var risk = $.grep(QRMDataService.risks, function (e) {
+            return e.id == input
+        })
+        return risk[0].title
+    }
 }]);

@@ -1,11 +1,11 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12">
+    <div class="row-fluid">
+        <div class="col-lg-8">
             <div class="row">
                 <div style="padding-left:5px" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom:5px">
                     <h3 style="display:inline;font-weight:normal">{{incident.incident.incidentCode}} - {{incident.incident.title}}</h3>
                 </div>
-                <div style="padding-right:5px" class="hidden-xs hidden-sm col-md-6 col-lg-6">
+                <div style="padding-right:5px" class="col-md-6 col-lg-6">
                     <div style="float:right;clear:left">
                         <div class="btn-group" dropdown>
                             <button type="button" class="btn btn-info">Action</button>
@@ -32,10 +32,10 @@
             </div>
         </div>
         <!-- Top Buttons and Title -->
-        <div class="col-lg-12">
+        
             <div class="row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8" style="clear:both">
+                <div class="col-lg-8" style="clear:both">
                     <!-- Left Column -->
                     <div class="row">
                         <div class="col-lg-12" style="margin-top:5px">
@@ -84,22 +84,24 @@
                                                     });
                                                 </script>
                                                 <div class="controls">
-                                                <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
-                                                    <div class="col-sm-9"  style="margin-top:5px">
+                                                    <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
+                                                    <div class="col-sm-9" style="margin-top:5px">
                                                         <select ng-model="incident.incident.reportedby" ng-options="(person | usernameFilter) for person in incident.siteUsers" class="form-control"></select>
-                                                        
+
                                                     </div>
-<label class="col-sm-3 control-label">Incident Resolved</label>
+                                                    <label class="col-sm-3 control-label">Incident Resolved</label>
                                                     <div class="col-sm-9">
                                                         <label class="checkbox-inline" style="padding-left:0px">
-                                                            <input icheck type="checkbox" ng-model="incident.incident.resolved"></label>
-                                                    </div>                                            </div>
+                                                            <input icheck type="checkbox" ng-model="incident.incident.resolved">
+                                                        </label>
+                                                    </div>
+                                                </div>
 
                                         </form>
 
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             </div>
                             <div class="panel panel-info">
                                 <div class="panel-heading">Actions Taken
@@ -110,62 +112,89 @@
                                     <p ng-bind-html="incident.incident.actions"></p>
                                 </div>
                             </div>
-                           <div class="panel panel-info">
-                                <div class="panel-heading">Risks Impacted
-                                    <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openRisksEditor()"></i>
-                                    </div>
-                                </div>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Risks Impacted</div>
                                 <div class="panel-body">
+                                    <div style="text-align:right">
+                                    <label class="col-sm-3 control-label" style="margin-top:12px">Risk Impacted</label>
+                                        </div>
+                                    <div class="col-sm-9" style="margin-top:5px">
+                                        <ui-select ng-model="incident.riskID" theme="select2" search-enabled=true style="width:400px">
+                                            <ui-select-match allow-clear=false placeholder="Select Impacted Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
+                                            <ui-select-choices repeat="risk.id as risk in main.risks track by risk.id">
+                                                <div style="width:100px;display:inline-block;font-weight:bold">{{risk.riskProjectCode}}</div>
+                                                <div style="display:inline">{{risk.title}}</div>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                        <button type="button" ng-click="incident.addRisk()" class="btn btn-info" style="margin-left:5px">Add Risk</button>
+                                    </div>
                                     
+                                    <div class="col-sm-12" style="margin-top:10px">
+                                    <table class="table table-striped" style="width:100%;">
+                                        <tr ng-repeat="risk in incident.incident.risks" style="margin-top:15px">
+                                            <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
+                                                <strong>{{risk|riskCodeFilter}}</strong>
+                                            </td>
+                                            <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                                {{risk|riskTitleFilter}}
+                                            </td>
+                                            <td>
+                                               <button type="button" ng-click="incident.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
+                                            </td>
+                                        </tr>
+                                        </tr>
+                                    </table>
+                                </div>
+
                                 </div>
                             </div>
                             <div class="panel panel-info">
                                 <div class="panel-heading">Lesson Learnt
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openLessonsEditor()"></i>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="panel-body">
                                     <p ng-bind-html="incident.incident.lessons"></p>
                                     <form class="form-horizontal">
-                                            <div class="form-group">
-                                                    <label class="col-sm-2 control-label">Assessment</label>
-                                                    <div class="col-sm-10">
-                                                        <table>
-                                                            <tr>
-                                                                <td>
-                                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                                        <input icheck type="checkbox" ng-model="incident.incident.identified"> Risks Were Identified </label>
-                                                                </td>
-                                                                <td>
-                                                                    <label class="checkbox-inline">
-                                                                        <input icheck type="checkbox" ng-model="incident.incident.evaluated"> Risks Adequately Evaluated</label>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                                        <input icheck type="checkbox" ng-model="incident.incident.controls"> Controls Were Effective </label>
-                                                                </td>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Assessment</label>
+                                            <div class="col-sm-10">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="checkbox-inline" style="padding-left:0px">
+                                                                <input icheck type="checkbox" ng-model="incident.incident.identified"> Risks Were Identified </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="checkbox-inline">
+                                                                <input icheck type="checkbox" ng-model="incident.incident.evaluated"> Risks Adequately Evaluated</label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="checkbox-inline" style="padding-left:0px">
+                                                                <input icheck type="checkbox" ng-model="incident.incident.controls"> Controls Were Effective </label>
+                                                        </td>
 
-                                                                <td>
-                                                                    <label class="checkbox-inline">
-                                                                        <input icheck type="checkbox" ng-model="incident.incident.consequences"> Consequences Acccurate </label>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                                        <input icheck type="checkbox" ng-model="incident.incident.causes"> Causes Identified </label>
-                                                                </td>
-                                                                <td>
-                                                                    
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                    
+                                                        <td>
+                                                            <label class="checkbox-inline">
+                                                                <input icheck type="checkbox" ng-model="incident.incident.consequences"> Consequences Acccurate </label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="checkbox-inline" style="padding-left:0px">
+                                                                <input icheck type="checkbox" ng-model="incident.incident.causes"> Causes Identified </label>
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+
                                     </form>
                                 </div>
                             </div>
@@ -186,11 +215,11 @@
                                                 <form method="get" class="form-vertical">
                                                     <div class="form-group">
                                                         <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
-                                                        <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
+                                                        <textarea ng-model="incident.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="incident.disableAttachmentButon"></textarea>
                                                         <div class="col-lg-12" style="padding-right:0px">
                                                             <div style="float:right">
-                                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
-                                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
+                                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="incident.cancelAttachment()" ng-disabled="incident.disableAttachmentButon">Cancel</button>
+                                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="incident.uploadAttachment()" ng-disabled="incident.disableAttachmentButon">Upload Attachment</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -199,23 +228,22 @@
                                         </div>
                                         <div class="col-lg-12" style="margin-top:15px">
                                             <table class="table table-striped" style="width:100%">
-                                                <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
+                                                <tr ng-repeat="attach in incident.incident.attachments" style="margin-top:15px">
                                                     <td style="padding-bottom:5px;padding-left:15px;width:100%">
                                                         <div style="float:left;clear:both">{{attach.post_content}}
                                                         </div>
                                                         <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
                                                         </div>
                                                         <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
-                        </td>
-                    </tr>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+                                                    </td>
+                                                </tr>                    
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
-                                                    <!-- Comments -->
-                            <div class="panel panel-info">
+                        <!-- Comments -->
+                        <div class="panel panel-info">
                                 <div class="panel-heading">Comments</div>
                                 <div class="panel-body">
                                     <div class="row">
@@ -224,14 +252,13 @@
                                         </div>
                                         <div class="col-lg-12">
                                             <table class="table table-striped" style="width:100%">
-                                                <tr ng-repeat="comment in ctl.risk.comments" style="margin-top:15px">
+                                                <tr ng-repeat="comment in incident.incident.comments" style="margin-top:15px">
                                                     <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
                                                         <strong>{{comment.comment_author}}</strong>
                                                         <br/> {{comment.comment_author_email}}
                                                     </td>
                                                     <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                        <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span>
-                                                        </div>
+                                                        <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span></div>
                                                         <div style="float:left;clear:both" ng-bind-html="comment.comment_content"></div>
                                                     </td>
                                                 </tr>
@@ -245,7 +272,15 @@
                     </div>
                 </div>
             </div>
-        </div>  <!-- Main body -->
+    </div>
+</div>
+
+<div ng-show="savingincident" id="savingincident" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">saving</span>
+        </p>
     </div>
 </div>
 

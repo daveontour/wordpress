@@ -144,6 +144,35 @@ class QRM {
 		
 		
 	}
+	static function addIncidentComment() {
+		$comment = json_decode ( file_get_contents ( "php://input" ) );
+		$time = current_time ( 'mysql' );
+	
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+	
+		$data = array (
+				'comment_post_ID' => $comment->incidentID,
+				'comment_author' => $current_user->display_name,
+				'comment_author_email' => $current_user->user_email,
+				'comment_content' => $comment->comment,
+				'comment_type' => '',
+				'comment_parent' => 0,
+				'user_id' => $user_ID,
+				'comment_date' => $time,
+				'comment_approved' => 1
+		);
+	
+		wp_insert_comment ( $data );
+	
+
+		$comments = get_comments ( array (
+				'post_id' => $comment->incidentID
+		) );
+		
+		
+		wp_send_json ( $comments );
+	}
 	static function getAllReviews(){
 		
 	}
@@ -266,7 +295,7 @@ class QRM {
 			$filename = $movefile ['file'];
 			
 			// The ID of the post this attachment is for.
-			$parent_post_id = $_POST ["riskID"];
+			$parent_post_id = $_POST ["postID"];
 			
 			// Check the type of file. We'll use this as the 'post_mime_type'.
 			$filetype = wp_check_filetype ( basename ( $filename ), null );
@@ -315,6 +344,7 @@ class QRM {
 		
 		exit ();
 	}
+	
 	static function updateRisksRelMatrix() {
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 		
@@ -394,10 +424,10 @@ class QRM {
 		) );
 		wp_send_json ( $emptyRisk );
 	}
-	static function getRiskAttachments() {
-		$riskID = json_decode ( file_get_contents ( "php://input" ) );
+	static function getAttachments() {
+		$postID = json_decode ( file_get_contents ( "php://input" ) );
 		$attachments = get_children ( array (
-				"post_parent" => $riskID,
+				"post_parent" => $postID,
 				"post_type" => "attachment" 
 		) );
 		wp_send_json ( $attachments );
@@ -451,6 +481,35 @@ class QRM {
 		$data = new Data ();
 		$data->data = $project;
 		wp_send_json ( $data );
+	}
+	static function getAllRisks() {
+		global $post;
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1
+		);
+	
+		$the_query = new WP_Query ( $args );
+		$risks = array ();
+	
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+			
+		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+			
+		// echo var_dump($post);
+			
+		$r = new stdObject();
+		$r->description = $risk->description;
+		$r->title = $risk->title;
+		$r->id = $risk->id;
+		$r->riskProjectCode = $risk->riskProjectCode;
+		
+			
+		array_push ( $risks, $r );
+		endwhile
+		;
+		wp_send_json ( $risks );
 	}
 	static function getAllProjectRisks() {
 		$projectID = json_decode ( file_get_contents ( "php://input" ) );

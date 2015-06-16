@@ -424,6 +424,17 @@ function RemoteService($http) {
             data: risk
         });
     };
+    this.getAllRisks = function () {
+
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getAllRisks"
+            },
+            cache: false
+        });
+    };
     this.registerAudit = function (auditType,auditComment,riskID) {
         return $http({
             method: 'POST',
@@ -530,15 +541,15 @@ function RemoteService($http) {
             alert(data.msg);
         });
     };
-    this.getRiskAttachments = function (riskID) {
+    this.getAttachments = function (postID) {
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
-                action: "getRiskAttachments"
+                action: "getAttachments"
             },
             cache: false,
-            data: riskID
+            data: postID
         });
     };
     this.getCurrentUser = function () {
@@ -613,6 +624,21 @@ function RemoteService($http) {
             },
             cache: false,
             data: JSON.stringify(review)
+        });
+    };
+     this.addIncidentComment = function (comment, incidentID) {
+        data = {
+            comment: comment,
+            incidentID: incidentID
+        }
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "addIncidentComment"
+            },
+            cache: false,
+            data: JSON.stringify(data)
         });
     };
 }

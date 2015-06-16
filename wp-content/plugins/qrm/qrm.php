@@ -48,6 +48,7 @@ wp_enqueue_style ('jquery-style','http://ajax.googleapis.com/ajax/libs/jqueryui/
 
 //Ajax Callbacks
 add_action("wp_ajax_getProject", array(QRM, "getProject"));
+add_action("wp_ajax_getAllRisks", array(QRM, "getAllRisks"));
 add_action("wp_ajax_getProjects", array(QRM, "getProjects"));
 add_action("wp_ajax_getSiteUsersCap", array(QRM, "getSiteUsersCap"));
 add_action("wp_ajax_getSiteUsers", array(QRM, "getSiteUsers"));
@@ -58,7 +59,7 @@ add_action("wp_ajax_getRisk", array(QRM, "getRisk"));
 add_action("wp_ajax_saveRisk", array(QRM, "saveRisk"));
 add_action("wp_ajax_addComment", array(QRM, "addComment"));
 add_action("wp_ajax_updateRisksRelMatrix", array(QRM, "updateRisksRelMatrix"));
-add_action("wp_ajax_getRiskAttachments", array(QRM, "getRiskAttachments"));
+add_action("wp_ajax_getAttachments", array(QRM, "getAttachments"));
 add_action("wp_ajax_uploadFile", array(QRM, "uploadFile"));
 add_action("wp_ajax_getCurrentUser", array(QRM, "getCurrentUser"));
 add_action("wp_ajax_saveRankOrder", array(QRM, "saveRankOrder"));
@@ -66,6 +67,7 @@ add_action("wp_ajax_registerAudit", array(QRM, "registerAudit"));
 add_action("wp_ajax_getAllIncidents", array(QRM, "getAllIncidents"));
 add_action("wp_ajax_getIncident", array(QRM, "getIncident"));
 add_action("wp_ajax_saveIncident", array(QRM, "saveIncident"));
+add_action("wp_ajax_addIncidentComment", array(QRM, "addIncidentComment"));
 add_action("wp_ajax_getAllReviews", array(QRM, "getAllReviews"));
 add_action("wp_ajax_getReview", array(QRM, "getReview"));
 add_action("wp_ajax_saveReview", array(QRM, "saveReview"));
