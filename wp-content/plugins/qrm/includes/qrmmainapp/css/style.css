@@ -2542,4 +2542,23 @@ body {
     min-height: 100px;
 }
 
+.panel-incident {
+    border-color: #bce8f1;
+}
+.panel-incident > .panel-heading {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.panel-incident > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #bce8f1;
+}
+.panel-incident > .panel-heading .badge {
+    color: #d9edf7;
+    background-color: #31708f;
+}
+.panel-incident > .panel-footer + .panel-collapse > .panel-body {
+    border-bottom-color: #bce8f1;
+}
+
 

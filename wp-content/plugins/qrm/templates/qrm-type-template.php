@@ -221,9 +221,17 @@
             $("#wrapper").toggleClass("toggled");
             $("#header_container").toggleClass("toggled");
             $("#footer_container").toggleClass("toggled");
-            $("#welcome-name").toggleClass("hidden-qrm");
-            $("#qrm-title").toggleClass("hidden-qrm");
-            $("#qrm-titleSM").toggleClass("hidden-qrm");
+            
+            if(jQuery("#sidebar-wrapper").width() > 0){
+                $("#qrm-title").addClass("hidden-qrm");
+                $("#qrm-titleSM").removeClass("hidden-qrm");
+                $("#welcome-name").addClass("hidden-qrm");
+            } else {
+                $("#qrm-title").removeClass("hidden-qrm");
+                $("#qrm-titleSM").addClass("hidden-qrm");
+                $("#welcome-name").removeClass("hidden-qrm");
+}
+           
         });
     </script>
 </body>

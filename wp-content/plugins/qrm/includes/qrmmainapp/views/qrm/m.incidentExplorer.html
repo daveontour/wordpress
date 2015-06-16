@@ -1,0 +1,30 @@
+<div id="incident-wrapper" class="container-fluid">
+
+    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
+        <h2 style="margin-top:5px">Risk Incidents</h2>
+    </div>
+    <div  class="row" style="padding-left:0px;padding-right:0px">
+        <style>
+            .ui-grid-row:nth-child(odd):hover .ui-grid-cell {
+                background: #ffff99;
+            }
+            
+            .ui-grid-row:nth-child(even):hover .ui-grid-cell {
+                background: #ffff99;
+            }
+        </style>
+        <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
+            <div style="clear:both" id="incidentGridSM" ui-grid="incidentExpl.gridOptionsSM" ui-grid-auto-resize ng-style="incidentExpl.getTableHeightSM()" class="explorerGrid" ui-grid-move-columns></div>
+        </div>
+    </div>
+
+
+</div>
+<div  id="incidentloading" ng-show="incidentExpl.loading" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>

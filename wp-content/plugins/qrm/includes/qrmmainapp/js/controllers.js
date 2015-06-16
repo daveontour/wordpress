@@ -184,7 +184,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
     }
     this.getTableHeightSm = function () {
         return {
-            height: "calc(100vh - 100px)"
+            height: "calc(100vh - 130px)"
         };
     }
 
@@ -2387,6 +2387,11 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
             height: "calc(100vh - 150px)"
         };
     }
+    this.getTableHeightSM = function () {
+        return {
+            height: "calc(100vh - 105px)"
+        };
+    }
     this.gridOptions = {
         enableSorting: true,
         rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
@@ -2427,11 +2432,39 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
             }
     ]
     };
+    this.gridOptionsSM = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+            {
+                width: "100",
+                cellClass: 'compact',
+                field: 'incidentCode',
+                headerCellClass: 'header-hidden',
+
+            }, {
+                name: 'title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'Active',
+                width: 70,
+                field: 'resolved',
+                cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
+                cellClass: 'cellCentered'
+
+            }
+    ]
+    };
     this.init = function () {
         incident.loading = true;
         remoteService.getAllIncidents()
             .then(function (response) {
                 incident.gridOptions.data = response.data.data
+                incident.gridOptionsSM.data = response.data.data
             }).finally(function () {
                 incident.loading = false;
             });
@@ -2559,6 +2592,12 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         inc.dzfile = null;
         $scope.$apply();
     }
+    
+    this.cancelIncident = function(){
+        QRMDataService.incident = null;
+        QRMDataService.incidentID = -1;
+        $state.go("incidentExpl");
+    }
 
     this.updateDate = function (start, finish) {
         inc.incident.date = start;
@@ -2632,6 +2671,14 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
             // Restore the old values
 
         });
+    }
+    this.addCommentSM = function () {
+                    remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
+                .then(function (response) {
+                    ngNotify.set("Comment Added to Incident", "success");
+                    inc.incident.comments = response.data;
+                        $scope.data.comment = "";
+                });
     }
 
     this.saveIncident = function () {

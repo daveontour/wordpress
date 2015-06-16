@@ -26,7 +26,7 @@
                             </ul>
                         </div>
                         <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="incident.saveIncident()">Save Changes</button>
-                        <button type="button" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Risk Explorer</button>
+                        <button type="button" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Incident Explorer</button>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <!-- Left Column -->
                     <div class="row">
                         <div class="col-lg-12" style="margin-top:5px">
-                            <div class="panel panel-info">
+                            <div class="panel panel-incident">
                                 <div class="panel-heading">Description
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openDescriptionEditor()"></i>
                                     </div>
@@ -103,7 +103,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="panel panel-info">
+                            <div class="panel panel-incident">
                                 <div class="panel-heading">Actions Taken
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openActionsEditor()"></i>
                                     </div>
@@ -112,7 +112,7 @@
                                     <p ng-bind-html="incident.incident.actions"></p>
                                 </div>
                             </div>
-                            <div class="panel panel-info">
+                            <div class="panel panel-incident">
                                 <div class="panel-heading">Risks Impacted</div>
                                 <div class="panel-body">
                                     <div style="text-align:right">
@@ -148,7 +148,7 @@
 
                                 </div>
                             </div>
-                            <div class="panel panel-info">
+                            <div class="panel panel-incident">
                                 <div class="panel-heading">Lesson Learnt
                                     <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openLessonsEditor()"></i>
                                     </div>
@@ -200,8 +200,8 @@
                             </div>
                         </div>
                         <!--                        <div class="col-lg-12" ng-show="incident.incident.id>0">-->
-                        <div class="col-lg-12">
-                            <div class="panel panel-info">
+                        <div ng-show="incident.incident.id > 0" class="col-lg-12">
+                            <div class="panel panel-incident">
                                 <div class="panel-heading">Attachements</div>
                                 <div class="panel-body">
                                     <div class="row">
@@ -243,7 +243,7 @@
                                 </div>
                         </div>
                         <!-- Comments -->
-                        <div class="panel panel-info">
+                        <div class="panel panel-incident">
                                 <div class="panel-heading">Comments</div>
                                 <div class="panel-body">
                                     <div class="row">

@@ -123,6 +123,10 @@ tr.spaceUnder > td
 {
   padding-bottom: 0.5em;
 }
+tr.spaceUnder > th
+{
+  padding-bottom: 0.5em;
+}
 
 table.thhead th {
     font-weight: 600;

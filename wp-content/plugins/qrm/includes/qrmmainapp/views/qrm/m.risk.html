@@ -17,31 +17,31 @@
                 </div>
                 <div class="col-xs-12">
                     <table class="thhead">
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>Risk Owner</th>
                             <td>{{ctl.risk.owner | usernameFilter}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>Risk Manager</th>
                             <td>{{ctl.risk.manager | usernameFilter}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>Primary Category</th>
                             <td>{{ctl.risk.primcat.title | nullFilter}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th style="padding-right:15px">Secondary Category</th>
                             <td>{{ctl.risk.seccat.title | nullFilter}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>Status</th>
                             <td>{{(ctl.risk.treated)?"Treated":"Untreated"}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>Start of Exposure</th>
                             <td>{{ctl.risk.start|date:'MMM d, yyyy'}}</td>
                         </tr>
-                        <tr>
+                        <tr class="spaceUnder">
                             <th>End of Exposure</th>
                             <td>{{ctl.risk.end | date:'MMM d, yyyy'}}</td>
                         </tr>

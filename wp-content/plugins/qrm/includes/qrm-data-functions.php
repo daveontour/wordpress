@@ -127,7 +127,7 @@ class QRM {
 			$incident->id = $postID;
 		}
 		
-		$incident->incidentCode = "INC".$incident->id;
+		$incident->incidentCode = "INCIDENT-".$incident->id;
 
 		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
 		
