@@ -1,63 +1,74 @@
 <div class="container-fluid">
     <div>
         <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" style="padding-left:5px;padding-right:5px">
-            <div >
-                <div  class="pull-left">
-                    <h3 style="display:inline;font-weight:normal">{{incident.incident.incidentCode}} - {{incident.incident.title}}</h3>
+            <div>
+                <div class="pull-left">
+                    <h3 style="display:inline;font-weight:normal">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
                 </div>
                 <div class="pull-right">
-                        <div class="btn-group" dropdown>
-                            <button type="button" class="btn btn-info">Action</button>
-                            <button type="button" style="margin-right:5px" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                                <span class="caret"></span>
-                                <span class="sr-only">Split button!</span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Action</a>
-                                </li>
-                                <li><a href="#">Another action</a>
-                                </li>
-                                <li><a href="#">Something else here</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="incident.saveIncident()">Save Changes</button>
-                        <button type="button" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Incident Explorer</button>
+                    <div class="btn-group" dropdown>
+                        <button type="button" class="btn btn-info">Action</button>
+                        <button type="button" style="margin-right:5px" class="btn btn-info dropdown-toggle" dropdown-toggle>
+                            <span class="caret"></span>
+                            <span class="sr-only">Split button!</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Action</a>
+                            </li>
+                            <li><a href="#">Another action</a>
+                            </li>
+                            <li><a href="#">Something else here</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="rev.saveReview()">Save Changes</button>
+                    <button type="button" class="btn btn-w-m btn-warning" ng-click="rev.cancelReview()">Review Explorer</button>
                 </div>
             </div>
         </div>
         <div class="col-md-10 col-md-offset-1 col-lg-8  col-lg-offset-2" style="clear:both">
             <div class="row">
                 <div class="col-lg-12" style="margin-top:5px">
-                    <div class="panel panel-incident">
-                        <div class="panel-heading">Description
-                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openDescriptionEditor()"></i>
+                    <div class="panel panel-review">
+                        <div class="panel-heading">Purpose
+                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="rev.openDescriptionEditor()"></i>
                             </div>
                         </div>
                         <div class="panel-body">
-                            <p ng-bind-html="incident.incident.description"></p>
+                            <p ng-bind-html="rev.review.description"></p>
                         </div>
                         <div>
                             <div class="row">
                                 <form method="get" class="form-horizontal">
                                     <div class="form-group" style="margin-left:0px;margin-right:0px">
-                                        <label class="col-xs-4 col-sm-3 control-label">Date of Incident</label>
+                                        <label class="col-xs-4 col-sm-3 control-label">Scheduled Date of Review</label>
                                         <div class="col-xs-8 col-sm-9">
                                             <div class="control-group" style="margin-top:3px">
                                                 <div class="controls">
                                                     <div class="input-prepend input-group">
                                                         <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                        <input style="max-width:260px" type="text" id="incidentDate" class="form-control" />
+                                                        <input style="max-width:260px" type="text" id="reviewSchedDate" class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="col-xs-4 col-sm-3 control-label">Actual Date of Review</label>
+                                        <div class="col-xs-8 col-sm-9">
+                                            <div class="control-group" style="margin-top:3px">
+                                                <div class="controls">
+                                                    <div class="input-prepend input-group">
+                                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                        <input style="max-width:260px" type="text" id="reviewActualDate" class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <script>
                                             jQuery(document).ready(function () {
-                                                jQuery('#incidentDate').daterangepicker({
+                                                jQuery('#reviewSchedDate').daterangepicker({
                                                         format: 'MMMM D, YYYY',
                                                         separator: " - ",
                                                         showDropdowns: true,
@@ -67,7 +78,22 @@
                                                     function (start, end, label) {
                                                         try {
                                                             // Update the Angular controller
-                                                            angular.element("#incidentDate").controller().updateDate(start, end);
+                                                            angular.element("#reviewSchedDate").controller().updateSchedDate(start, end);
+                                                        } catch (e) {
+                                                            console.log(e.message);
+                                                        }
+                                                    });
+                                                jQuery('#reviewActualDate').daterangepicker({
+                                                        format: 'MMMM D, YYYY',
+                                                        separator: " - ",
+                                                        showDropdowns: true,
+                                                        drops: "down",
+                                                        singleDatePicker: true
+                                                    },
+                                                    function (start, end, label) {
+                                                        try {
+                                                            // Update the Angular controller
+                                                            angular.element("#reviewActualDate").controller().updateActualDate(start, end);
                                                         } catch (e) {
                                                             console.log(e.message);
                                                         }
@@ -75,15 +101,15 @@
                                             });
                                         </script>
                                         <div class="controls">
-                                            <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
+                                            <label class="col-sm-3 control-label" style="margin-top:5px">Responsible</label>
                                             <div class="col-sm-9" style="margin-top:5px">
-                                                <select  style="max-width:300px" ng-model="incident.incident.reportedby" ng-options="(person | usernameFilter) for person in incident.siteUsers" class="form-control"></select>
+                                                <select style="max-width:300px" ng-model="rev.review.responsible" ng-options="(person | usernameFilter) for person in rev.siteUsers" class="form-control"></select>
 
                                             </div>
-                                            <label class="col-sm-3 control-label">Incident Resolved</label>
+                                            <label class="col-sm-3 control-label">Review Complete</label>
                                             <div class="col-sm-9">
                                                 <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="incident.incident.resolved">
+                                                    <input icheck type="checkbox" ng-model="rev.review.complete">
                                                 </label>
                                             </div>
                                         </div>
@@ -94,24 +120,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-incident">
-                        <div class="panel-heading">Actions Taken
-                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openActionsEditor()"></i>
+                    <div class="panel panel-review">
+                        <div class="panel-heading">Review Notes
+                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="rev.openNotesEditor()"></i>
                             </div>
                         </div>
                         <div class="panel-body">
-                            <p ng-bind-html="incident.incident.actions"></p>
+                            <p ng-bind-html="rev.review.notes"></p>
                         </div>
                     </div>
-                    <div class="panel panel-incident">
-                        <div class="panel-heading">Risks Impacted</div>
+                    <div class="panel panel-review">
+                        <div class="panel-heading">Risks Under Review</div>
                         <div class="panel-body">
-                            <div style="text-align:right">
-                                <label class="col-sm-3 control-label" style="margin-top:12px">Risk Impacted</label>
-                            </div>
+                            <div class="row">
+                                <form>
+                                    <div class="form-group">
+                            <label class="col-sm-3 control-label" style="margin-top:12px;text-align:right">Risks</label>
+
                             <div class="col-sm-9" style="margin-top:5px">
-                                <ui-select ng-model="incident.riskID" on-select="incident.addRisk()" theme="select2" search-enabled=true style="width:400px">
-                                    <ui-select-match allow-clear=false placeholder="Select Impacted Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
+                                <ui-select ng-model="rev.riskID" on-select="rev.addRisk()" theme="select2" search-enabled=true style="width:400px">
+                                    <ui-select-match allow-clear=false placeholder="Select Review Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
                                     <ui-select-choices repeat="risk.id as risk in main.risks track by risk.id">
                                         <div style="width:100px;display:inline-block;font-weight:bold">{{risk.riskProjectCode}}</div>
                                         <div style="display:inline">{{risk.title}}</div>
@@ -119,78 +147,57 @@
                                 </ui-select>
                             </div>
 
-                            <div class="col-sm-12" style="margin-top:10px">
-                                <table class="table table-striped" style="width:100%;">
-                                    <tr ng-repeat="risk in incident.incident.risks" style="margin-top:15px">
+                            <label class="col-sm-3 control-label" style="margin-top:12px;clear:both;text-align:right">All Risks from Project</label>
+
+                            <div class="col-sm-9" style="margin-top:5px">
+                                <ui-select ng-model="rev.projectID" on-select="rev.addProjectRisk()" theme="select2" search-enabled=true style="width:400px">
+                                    <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
+                                    <ui-select-choices repeat="project.id as project in rev.sortedParents track by project.id">
+                                        <div ng-style="rev.rowStyle(project)">
+                                            <span ng-bind-html="project.title"></span>
+                                        </div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div  style="margin-top:10px">
+                                <div ng-show="rev.review.risks.length > 0" style="max-height:200px;overflow:auto;border-style:solid;border-width:1px;border-color:lightgray">
+                                <table class="table table-striped" style="width:100%;max-height:200px">
+                                    <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
                                         <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
                                             <strong>{{risk|riskCodeFilter}}</strong>
                                         </td>
-                                        <td style="padding-bottom:5px;padding-left:5px;width:100%">
+                                        <td style="padding-bottom:5px;padding-left:5px">
                                             {{risk|riskTitleFilter}}
+                                            <div style="font-size:8pt;margin-top:0.5em"><div ng-bind-html="rev.getRiskComment(risk)"></div></div>
                                         </td>
-                                        <td>
-                                            <button type="button" ng-click="incident.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
+                                        <td style="width:200px;padding-right:0px">
+                                            <button type="button" ng-click="rev.riskComment(risk)" class="btn btn-info btn-xs" style="margin-right:5px">Comment</button>
+                                            <button type="button" ng-click="rev.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
                                         </td>
                                     </tr>
                                     </tr>
                                 </table>
                             </div>
-
-                        </div>
-                    </div>
-                    <div class="panel panel-incident">
-                        <div class="panel-heading">Lesson Learnt
-                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openLessonsEditor()"></i>
                             </div>
-
-                        </div>
-                        <div class="panel-body">
-                            <p ng-bind-html="incident.incident.lessons"></p>
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Assessment</label>
-                                    <div class="col-sm-10">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                        <input icheck type="checkbox" ng-model="incident.incident.identified"> Risks Were Identified </label>
-                                                </td>
-                                                <td>
-                                                    <label class="checkbox-inline">
-                                                        <input icheck type="checkbox" ng-model="incident.incident.evaluated"> Risks Adequately Evaluated</label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                        <input icheck type="checkbox" ng-model="incident.incident.controls"> Controls Were Effective </label>
-                                                </td>
-
-                                                <td>
-                                                    <label class="checkbox-inline">
-                                                        <input icheck type="checkbox" ng-model="incident.incident.consequences"> Consequences Acccurate </label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label class="checkbox-inline" style="padding-left:0px">
-                                                        <input icheck type="checkbox" ng-model="incident.incident.causes"> Causes Identified </label>
-                                                </td>
-                                                <td>
-
-                                                </td>
-                                            </tr>
-                                        </table>
+                        <div style="clear:both">
+                            <form ng-show="rev.review.risks.length > 0">
+                               <div class="form-group" style="margin-top:10px">
+                                    <label class="col-sm-3 control-label" style="min-height:67px;margin-top:5px;padding-top:3px;padding-bottom:3px;background-color:lightgray;text-align:right">All Risk Comment</label>
+                                    <div class="col-sm-9" style="font-size:9pt;margin-top:5px;padding-top:3px;background-color:lightgray">
+                                        <textarea style="height:60px;width:400px" ng-model="rev.commonComment"></textarea><button type="button" ng-click="rev.addCommonRiskComment()" class="btn btn-info btn-xs" style="margin-right:5px;margin-left:10px;vertical-align:top">Comment All</button>                      
                                     </div>
                                 </div>
-
                             </form>
                         </div>
                     </div>
+
                 </div>
-                <div ng-show="incident.incident.id > 0" class="col-lg-12">
-                    <div class="panel panel-incident">
+                <div ng-show="rev.review.id > 0">
+                    <div class="panel panel-review">
                         <div class="panel-heading">Attachements</div>
                         <div class="panel-body">
                             <div class="row">
@@ -217,7 +224,7 @@
                                 </div>
                                 <div class="col-lg-12" style="margin-top:15px">
                                     <table class="table table-striped" style="width:100%">
-                                        <tr ng-repeat="attach in incident.incident.attachments" style="margin-top:15px">
+                                        <tr ng-repeat="attach in rev.review.attachments" style="margin-top:15px">
                                             <td style="padding-bottom:5px;padding-left:15px;width:100%">
                                                 <div style="float:left;clear:both">{{attach.post_content}}
                                                 </div>
@@ -232,16 +239,16 @@
                         </div>
                     </div>
                         <!-- Comments -->
-                    <div class="panel panel-incident">
+                    <div class="panel panel-review">
                         <div class="panel-heading">Comments</div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-lg-12" style="margin-bottom:15px">
-                                            <button style="float:left" style="margin-left:20px" ng-click="incident.addComment()" class="btn btn-primary btn-sm">Add Comment</button>
+                                            <button style="float:left" style="margin-left:20px" ng-click="rev.addComment()" class="btn btn-primary btn-sm">Add Comment</button>
                                     </div>
                                     <div class="col-lg-12">
                                         <table class="table table-striped" style="width:100%">
-                                            <tr ng-repeat="comment in incident.incident.comments" style="margin-top:15px">
+                                            <tr ng-repeat="comment in rev.review.comments" style="margin-top:15px">
                                                 <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
                                                     <strong>{{comment.comment_author}}</strong>
                                                     <br/> {{comment.comment_author_email}}
@@ -262,7 +269,7 @@
     </div>
 </div>
 
-<div ng-show="savingincident" id="savingincident" class="loading">
+<div ng-show="savingreview" id="savingreview" class="loading">
     <div class="loading-overlay">
         <p class="loading-spinner">
             <img ng-src="{{main.loaderSrc}}">
@@ -272,9 +279,9 @@
 </div>
 
 <!-- Template for the textarea modal dialog boxes -->
-<script type="text/ng-template" id="addIncidentCommentModalDialogId">
+<script type="text/ng-template" id="addReviewCommentModalDialogId">
         <div class="ngdialog-message">
-            <p>Comment on the Incident</p>
+            <p>Comment on the Review</p>
             <div text-angular focus=true name="commentbbox" ng-model="data.comment" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
@@ -282,39 +289,41 @@
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-<script type="text/ng-template" id="editIncidentTitleModalDialogId">
+<script type="text/ng-template" id="editReviewTitleModalDialogId">
         <div class="ngdialog-message">
-            <p>Incident Title</p>
-            <input ng-model="incident.incident.title"  style="width:100%">
+            <p>Review Title</p>
+            <input ng-model="rev.review.title"  style="width:100%">
               <p></p>
-           <p>Incident Description</p>
-            <div text-angular ng-model="incident.incident.description" style="width:100%"></div>
+           <p>Review Purpose</p>
+            <div text-angular ng-model="rev.review.description" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
     </script>
-<script type="text/ng-template" id="editActionsModalDialogId">
+<script type="text/ng-template" id="editReviewRiskCommentDialogId">
         <div class="ngdialog-message">
-           <p>Actions Taken to Resolve the Incident</p>
-            <div text-angular ng-model="incident.incident.actions" style="width:100%"></div>
+           <p>Review Notes for the Risk</p>
+            <div style="margin-bottom:5px"><strong>{{rev.riskForComment|riskCodeFilter}}</strong> - {{rev.riskForComment|riskTitleFilter}}</div>
+            <div text-angular ng-model="rev.rc.comment" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
 </script>
-<script type="text/ng-template" id="editLessonsModalDialogId">
+<script type="text/ng-template" id="editReviewNotesModalDialogId">
         <div class="ngdialog-message">
-           <p>Lessons Learnt from the  Incident</p>
-            <div text-angular ng-model="incident.incident.lessons" style="width:100%"></div>
+           <p>Notes of the Review</p>
+            <div text-angular ng-model="rev.review.notes" style="width:100%"></div>
         </div>
         <div class="ngdialog-buttons">
             <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
         </div>
 </script>
+
 <!-- This is the template used by Dropzone, won't be displayed -->
 <div id="preview-template" style="display: none;">
 

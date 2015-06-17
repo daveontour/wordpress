@@ -173,13 +173,115 @@ class QRM {
 		
 		wp_send_json ( $comments );
 	}
+	static function addReviewComment() {
+		$comment = json_decode ( file_get_contents ( "php://input" ) );
+		$time = current_time ( 'mysql' );
+	
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+	
+		$data = array (
+				'comment_post_ID' => $comment->reviewID,
+				'comment_author' => $current_user->display_name,
+				'comment_author_email' => $current_user->user_email,
+				'comment_content' => $comment->comment,
+				'comment_type' => '',
+				'comment_parent' => 0,
+				'user_id' => $user_ID,
+				'comment_date' => $time,
+				'comment_approved' => 1
+		);
+	
+		wp_insert_comment ( $data );
+		$comments = get_comments ( array (
+				'post_id' => $comment->reviewID
+		) );
+		wp_send_json ( $comments );
+	}
 	static function getAllReviews(){
+		global $post;
+		$args = array (
+				'post_type' => 'review',
+				'posts_per_page' => - 1
+		);
 		
+		$the_query = new WP_Query ( $args );
+		$revs = array ();
+		
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
+		array_push ( $revs, $review );
+		endwhile
+		;
+		
+		$data = new Data ();
+		$data->data = $revs;
+		wp_send_json ( $data );		
 	}
 	static function getReview(){
+		$reviewID = json_decode ( file_get_contents ( "php://input" ) );
+		$review = json_decode ( get_post_meta ( $reviewID, "reviewdata", true ) );
+		$review->comments = get_comments ( array (
+				'post_id' => $reviewID
+		) );
+		$review->attachments = get_children ( array (
+				"post_parent" => $reviewID,
+				"post_type" => "attachment"
+		) );
 		
+		wp_send_json ( $review);
 	}
 	static function saveReview(){
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+		
+		$postdata = file_get_contents ( "php://input" );
+		$review = json_decode ( $postdata );
+		
+		if ($review->responsible == 0 || $review->responsible == ""){
+			$review->responsible = $current_user->ID;
+		}
+		$postID = null;
+		
+		if (( $review->id > 0 )) {
+			// Update the existing post
+			$post ['ID'] = $reviewt->id;
+			wp_update_post ( array (
+			'ID' => $review->id,
+			'post_content' => $review->description,
+			'post_title' => $review->title,
+			'post_status' => 'publish',
+			'post_type' => 'review',
+			'post_author' => $current_user->ID
+			) );
+			$postID = $review->id;
+		} else {
+			// Create a new one and record the ID
+			$postID = wp_insert_post ( array (
+					'post_content' => $review->description,
+					'post_title' => $review->title,
+					'post_status' => 'publish',
+					'post_type' => 'review',
+					'post_author' => $current_user->ID
+			) );
+			$review->id = $postID;
+		}
+		
+		$review->reviewCode = "REVIEW-".$review->id;
+		
+		update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
+		
+		// Add any comments to the returned object
+		$review->comments = get_comments ( array (
+				'post_id' => $postID
+		) );
+		$review->attachments = get_children ( array (
+				"post_parent" => $postID,
+				"post_type" => "attachment"
+		) );
+		
+		wp_send_json ( $review );
 		
 	}	
 	static function getCurrentUser() {
@@ -504,6 +606,7 @@ class QRM {
 		$r->title = $risk->title;
 		$r->id = $risk->id;
 		$r->riskProjectCode = $risk->riskProjectCode;
+		$r->projectID = $risk->projectID;
 		
 			
 		array_push ( $risks, $r );

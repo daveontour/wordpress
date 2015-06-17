@@ -1906,3 +1906,50 @@ function getFamilyCats(projMap, projectID) {
     return cat;
 
 }
+
+function closeMenu(){
+    
+     $("#header_container").removeClass("sideMenuOpen");
+     $("#footer_container").removeClass("sideMenuOpen");
+     $("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
+     $("body").removeClass('cbp-spmenu-push-toright');
+    
+    
+     $("#qrm-title").removeClass("hidden-qrm");
+     $("#welcome-name").removeClass("hidden-qrm");
+     $("#qrm-titleSM").addClass("hidden-qrm");
+    
+}
+
+function openMenu(){
+    
+     $("#header_container").addClass("sideMenuOpen");
+     $("#footer_container").addClass("sideMenuOpen");
+     $("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
+     $("body").addClass('cbp-spmenu-push-toright');
+    
+    
+     $("#qrm-title").addClass("hidden-qrm");
+     $("#welcome-name").addClass("hidden-qrm");
+     $("#qrm-titleSM").removeClass("hidden-qrm");
+    
+    
+}
+function toggleMenu(){
+    
+     $("#header_container").toggleClass("sideMenuOpen");
+     $("#footer_container").toggleClass("sideMenuOpen");
+     $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
+     $("body").toggleClass('cbp-spmenu-push-toright');
+    
+    if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")){
+        $("#qrm-title").removeClass("hidden-qrm");
+        $("#welcome-name").removeClass("hidden-qrm");
+        $("#qrm-titleSM").addClass("hidden-qrm");
+    } else {
+        $("#qrm-title").addClass("hidden-qrm");
+        $("#welcome-name").addClass("hidden-qrm");
+        $("#qrm-titleSM").removeClass("hidden-qrm");
+    }
+    
+}

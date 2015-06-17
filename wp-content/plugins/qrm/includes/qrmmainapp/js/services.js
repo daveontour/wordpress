@@ -583,6 +583,17 @@ function RemoteService($http) {
             data: JSON.stringify(incidentID)
         });
     };
+        this.getReview = function (reviewID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReview"
+            },
+            cache: false,
+            data: JSON.stringify(reviewID)
+        });
+    };
     this.saveIncident = function (incident) {
         return $http({
             method: 'POST',
@@ -627,6 +638,21 @@ function RemoteService($http) {
         });
     };
      this.addIncidentComment = function (comment, incidentID) {
+        data = {
+            comment: comment,
+            incidentID: incidentID
+        }
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "addIncidentComment"
+            },
+            cache: false,
+            data: JSON.stringify(data)
+        });
+    };
+    this.addReviewComment = function (comment, incidentID) {
         data = {
             comment: comment,
             incidentID: incidentID

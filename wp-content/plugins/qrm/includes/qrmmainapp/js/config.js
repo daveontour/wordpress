@@ -1,12 +1,3 @@
-function closeMenu(){
-     $("#wrapper").removeClass("toggled");
-     $("#header_container").removeClass("toggled");
-     $("#footer_container").removeClass("toggled");
-     $("#qrm-title").toggleClass("hidden-qrm");
-     $("#qrm-titleSM").toggleClass("hidden-qrm");
-     $("#welcome-name").toggleClass("hidden-qrm");
-}
-
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdleProvider, KeepaliveProvider) {
 
     // Configure Idle settings
@@ -163,7 +154,22 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             onEnter:function(){
                 closeMenu();
             }
-        })     
+        })  
+        .state('review', {
+            url: "/review",
+            controller: 'ReviewCtrl',
+            controllerAs: 'rev',
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl+"views/qrm/m.review.html"
+                } else {
+                    return pluginurl+"views/qrm/review.html"
+                }
+            },
+            onEnter:function(){
+                closeMenu();
+            }
+        })  
         .state('analysis', {
             url: "/analysis",
             controller: 'AnalysisController',

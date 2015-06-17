@@ -42,7 +42,7 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/metisMenu/metisMenu.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/datapicker/angular-datapicker.css" ?>'>
+    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/daterangepicker-bs3.css" ?>'>
     
     <!-- Main Inspinia CSS files -->
     <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/animate.css" ?>">
@@ -51,51 +51,26 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_angular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
 
-
 </head>
 
-<!-- ControllerAs syntax -->
-<!-- Main controller with serveral data used in Inspinia theme on diferent view -->
+<body ng-controller="MainCtrl as main" class="cbp-spmenu-push" style="height:calc(100vh - 61px)">
 
-<body ng-controller="MainCtrl as main" class="fixed-nav body-small" style="height:calc(100vh - 61px)">
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="#">
-                        Quay Risk Manager
-                    </a>
-                </li>
-                <li>
-                    <a ui-sref="explorer">Risk Explorer</a>
-                </li>
-                <li>
-                    <a ui-sref="calender">Exposure Calender</a>
-                </li>
-                <li>
-                    <a ui-sref="rank">Risk Ranking</a>
-                </li>
-                <li>
-                    <a ui-sref="matrix">Tolerance Matrix</a>
-                </li>
-                <li>
-                    <a ui-sref="analysis">Dashboard</a>
-                </li>
-                 <li>
-                    <a ui-sref="incidentExpl">Incidents</a>
-                </li>
-                 <li>
-                    <a ui-sref="reviewExpl">Reviews</a>
-                </li>
-                </ul>
-
-
-        </div>
-        <!-- /#sidebar-wrapper -->
-
+		<!-- Navigation Window -->
+		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+			<h3>Quay Risk Manager</h3>
+            <a ui-sref="explorer">Risk Explorer</a>
+            <a ui-sref="calender">Exposure Calender</a>
+            <a ui-sref="rank">Risk Ranking</a>
+            <a ui-sref="matrix">Tolerance Matrix</a>
+            <a ui-sref="analysis">Dashboard</a>
+            <a ui-sref="incidentExpl">Incidents</a>
+            <a ui-sref="reviewExpl">Reviews</a>
+		</nav>
+ 
         <!-- Page Content -->
-        <div id="page-content-wrapper">
+        <div id="page-content-wrapper" class="container">
+        	
+        	<!-- Sticky Header -->
             <div id="header_container">
                 <div id="header" style="padding-right:10px">
                     <button id="menu-toggle" class="btn btn-sm btn-primary" style="border-radius:5px" dropdown-toggle><i class="fa fa-bars"></i>
@@ -103,23 +78,17 @@
                     <div id="welcome-name" class="pull-right hidden-qrm">Welcome, {{main.userName}}</div>
                 </div>
             </div>
+            
+            <!-- Main Body -->
             <div id="container">
                 <div id="content">
                     <div ui-view></div>
                 </div>
             </div>
 
-            <!--
-            <div id="footer_container">
-                <div id="footer">
-                    Footer Content
-                </div>
-            </div>
--->
-            <!-- /#page-content-wrapper -->
+            <!-- Sticky Footer (not used) -->
+            <!--<div id="footer_container"><div id="footer">Footer Content</div></div>-->
         </div>
-    </div>
-    <!-- /#wrapper -->
 
     <!-- jQuery and Bootstrap -->
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js" ?>"></script>
@@ -169,7 +138,9 @@
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/config.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/directives.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/controllers.js" ?>"></script>
-
+  
+    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/daterangepicker.js" ?>"></script>
+    
     <script>
         // Space in the global name space, so I can easily find thinngs
         function QRM() {
@@ -207,31 +178,14 @@
     <script>
         $(function () {
             $(window).bind("load resize", function () {
+                closeMenu();
                 winWidth = $(window).width() - 10;
                 $("#container").css("width", winWidth + "px");
             })
         });
-
-        var winWidth = $(window).width();
-
-        $("#container").css("width", winWidth + "px");
-
+        $("#container").css("width", $(window).width() + "px");
         $("#menu-toggle").click(function (e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-            $("#header_container").toggleClass("toggled");
-            $("#footer_container").toggleClass("toggled");
-            
-            if(jQuery("#sidebar-wrapper").width() > 0){
-                $("#qrm-title").addClass("hidden-qrm");
-                $("#qrm-titleSM").removeClass("hidden-qrm");
-                $("#welcome-name").addClass("hidden-qrm");
-            } else {
-                $("#qrm-title").removeClass("hidden-qrm");
-                $("#qrm-titleSM").addClass("hidden-qrm");
-                $("#welcome-name").removeClass("hidden-qrm");
-}
-           
+			toggleMenu();
         });
     </script>
 </body>

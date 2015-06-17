@@ -1,11 +1,11 @@
-<div id="review-wrapper" class="container-fluid">
-
-    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <h2>Risk Reviews</h2>
+<div id="review-wrapper" class="container-fluid" style="padding-left:5px;padding-right:5px">
+    <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+    <div class="pull-left" style="padding-left:0px">
+        <h2 style="margin-top:5px">Risk Reviews</h2>
     </div>
-    <div  class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
-            <div style="width:100%; text-align:right">
+    <div class="pull-right" style="padding-right:0px">
+        <div style="clear:both;padding-left:0px;padding-right:0px;margin-top:5px" >
+            <div style="text-align:right">
                 <div class="btn-group" dropdown>
                     <button type="button" class="btn btn-info">Action</button>
                     <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
@@ -28,23 +28,23 @@
             </div>
         </div>
     </div>
-    <div  class="row" style="padding-left:0px;padding-right:0px">
-        <style>
-            .ui-grid-row:nth-child(odd):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-            
-            .ui-grid-row:nth-child(even):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-        </style>
-        <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
-            <div style="clear:both" id="reviewGrid" ui-grid="reviewExpl.gridOptions" ui-grid-auto-resize ng-style="reviewExpl.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
-        </div>
     </div>
-
-
+    <div  class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+        <div style="clear:both" id="reviewGrid" ui-grid="reviewExpl.gridOptions" ui-grid-auto-resize ng-style="reviewExpl.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
+    </div>
 </div>
+
+<div id="incidentloading" ng-show="incidentExpl.loading" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>
+
+
+
 <div id="reviewloading" ng-show="reviewExpl.loading" class="loading">
     <div class="loading-overlay">
         <p class="loading-spinner">

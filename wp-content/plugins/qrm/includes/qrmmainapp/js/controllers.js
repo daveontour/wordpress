@@ -1,19 +1,19 @@
 function SortByProjectCode(a, b) {
     if (a == null || b == null) return 0;
-    
+
     var aName, bName;
     if (typeof (a) == "object") {
         aName = a.riskProjectCode.toLowerCase();
         bName = b.riskProjectCode.toLowerCase();
     } else {
-       aName = $.grep(QRM.mainController.risks, function (e) {
+        aName = $.grep(QRM.mainController.risks, function (e) {
             return e.id == a
         })[0].riskProjectCode;
-       bName = $.grep(QRM.mainController.risks, function (e) {
+        bName = $.grep(QRM.mainController.risks, function (e) {
             return e.id == b
         })[0].riskProjectCode;
     }
-    
+
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
@@ -2384,7 +2384,7 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
     };
     this.getTableHeight = function () {
         return {
-            height: "calc(100vh - 150px)"
+            height: "calc(100vh - 100px)"
         };
     }
     this.getTableHeightSM = function () {
@@ -2592,8 +2592,8 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         inc.dzfile = null;
         $scope.$apply();
     }
-    
-    this.cancelIncident = function(){
+
+    this.cancelIncident = function () {
         QRMDataService.incident = null;
         QRMDataService.incidentID = -1;
         $state.go("incidentExpl");
@@ -2673,12 +2673,12 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         });
     }
     this.addCommentSM = function () {
-                    remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
-                .then(function (response) {
-                    ngNotify.set("Comment Added to Incident", "success");
-                    inc.incident.comments = response.data;
-                        $scope.data.comment = "";
-                });
+        remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
+            .then(function (response) {
+                ngNotify.set("Comment Added to Incident", "success");
+                inc.incident.comments = response.data;
+                $scope.data.comment = "";
+            });
     }
 
     this.saveIncident = function () {
@@ -2725,15 +2725,24 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
 
     var review = this;
     this.loading = false;
+    $scope.formatTreatedCol = function (row, check) {
+        if (row.entity.complete && check) {
+            return true;
+        }
+        if (!row.entity.complete && !check) {
+            return true;
+        }
+        return false;
+    };
     this.getTableHeight = function () {
         return {
-            height: "calc(100vh - 150px)"
+            height: "calc(100vh - 100px)"
         };
     }
 
     this.gridOptions = {
         enableSorting: true,
-        rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        rowTemplate: '<div ng-click="grid.appScope.editReview(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
                 name: 'title',
@@ -2745,12 +2754,14 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
             {
                 name: 'Scheduled Date',
                 width: 140,
-                field: 'scheddate'
+                field: 'scheddate',
+                cellFilter: 'date'
             },
             {
                 name: 'Actual Date',
                 width: 140,
-                field: 'actualdate'
+                field: 'actualdate',
+                cellFilter: 'date'
             },
             {
                 name: 'Complete',
@@ -2770,6 +2781,28 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
     ]
     };
 
+    $scope.editReview = function (id) {
+        review.editReview(id);
+    }
+    this.editReview = function (id) {
+        review.loading = true;
+        remoteService.getReview(id)
+            .then(function (response) {
+
+                QRMDataService.review = response.data;
+                if (QRMDataService.review.risks != null) {
+                    QRMDataService.review.risks.sort(SortByProjectCode);
+                }
+                QRMDataService.reviewID = QRMDataService.review.id;
+                review.loading = false;
+                $state.go("review");
+            });
+    }
+    this.newReview = function () {
+        QRMDataService.reviewID = -1;
+        $state.go('review');
+    }
+
     this.init = function () {
         review.loading = true;
         remoteService.getAllReviews()
@@ -2784,7 +2817,330 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
 
 }
 
+function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+    var rev = this;
+    //    this.siteUsers = QRMDataService.siteUsers;
+    this.siteUsers = [];
+    this.sortedParents = QRMDataService.sortedParents;
+    if (this.sortedParents == null) {
+        remoteService.getProjects()
+            .then(function (response) {
+                QRMDataService.handleGetProjects(response);
+                rev.sortedParents = QRMDataService.sortedParents;
+            });
+    }
+    $scope.data = {};
+    $scope.savingreview = false;
+    QRMDataService.siteUsers.forEach(function (e) {
+        rev.siteUsers.push(e.ID);
+    });
+
+    $scope.dropzoneConfig = {
+        options: { // passed into the Dropzone constructor
+            url: ajaxurl + "?action=uploadFile",
+            previewTemplate: document.querySelector('#preview-template').innerHTML,
+            parallelUploads: 1,
+            thumbnailHeight: 120,
+            thumbnailWidth: 120,
+            maxFilesize: 3,
+            filesizeBase: 1000,
+            autoProcessQueue: false,
+            thumbnail: function (file, dataUrl) {
+                if (file.previewElement) {
+                    file.previewElement.classList.remove("dz-file-preview");
+                    var images = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
+                    for (var i = 0; i < images.length; i++) {
+                        var thumbnailElement = images[i];
+                        thumbnailElement.alt = file.name;
+                        thumbnailElement.src = dataUrl;
+                    }
+                    setTimeout(function () {
+                        file.previewElement.classList.add("dz-image-preview");
+                    }, 1);
+                }
+            },
+            init: function () {
+                this.on("addedfile", function (file) {
+                    rev.reviewAttachmentReady(this, file);
+                });
+                this.on('complete', function (file) {
+                    file.previewElement.classList.add('dz-complete');
+                    rev.cancelAttachment()
+                    ngNotify.set("Attachment Added to Review", "success");
+                    remoteService.getAttachments(rev.review.id)
+                        .then(function (response) {
+                            rev.review.attachments = response.data;
+                        });
+                });
+            },
+            sending: function (file, xhr, formData) {
+                formData.append("postID", QRMDataService.reviewID);
+                formData.append("description", rev.uploadAttachmentDescription);
+            }
+        },
+    };
+
+    // Handle formatting of select project pick box
+    this.rowStyle = function (e) {
+        return {
+            "margin-left": e.$$treeLevel * 20 + "px"
+        }
+    }
+    this.addRisk = function () {
+        if (typeof (rev.review.risks) == "undefined") {
+            rev.review.risks = [];
+        }
+        if (rev.riskID != null) {
+            rev.review.risks.push(rev.riskID);
+            var unq = [];
+            $.each(rev.review.risks, function (i, el) {
+                if ($.inArray(el, unq) === -1) unq.push(el);
+            });
+            rev.review.risks = unq
+            rev.review.risks.sort(SortByProjectCode);
+        }
+        rev.riskID = null;
+    }
+    this.addProjectRisk = function () {
+        if (typeof (rev.review.risks) == "undefined") {
+            rev.review.risks = [];
+        }
+        if (rev.projectID != null) {
+            QRMDataService.risks.forEach(function (r) {
+                if (r.projectID == rev.projectID) {
+                    rev.review.risks.push(r.id);
+                }
+            })
+
+            var unq = [];
+            $.each(rev.review.risks, function (i, el) {
+                if ($.inArray(el, unq) === -1) unq.push(el);
+            });
+            rev.review.risks = unq
+            rev.review.risks.sort(SortByProjectCode);
+        }
+        rev.projectID = null;
+    }
+    this.removeRisk = function (riskID) {
+        rev.review.risks = jQuery.grep(rev.review.risks, function (value) {
+            return value != riskID;
+        });
+    }
+    this.reviewAttachmentReady = function (dropzone, file) {
+        rev.dropzone = dropzone;
+        rev.dzfile = file;
+        rev.disableAttachmentButon = false;
+        $scope.$apply();
+    }
+
+    this.uploadAttachmentDescription = "";
+    this.disableAttachmentButon = true;
+    this.dropzone = "";
+    this.uploadAttachment = function () {
+        rev.dropzone.processFile(inc.dzfile);
+    }
+    this.cancelAttachment = function () {
+        rev.dropzone.removeAllFiles(true);
+        rev.uploadAttachmentDescription = null;
+        rev.disableAttachmentButon = true;
+        rev.dropzone = null;
+        rev.dzfile = null;
+        $scope.$apply();
+    }
+
+    this.cancelReview = function () {
+        QRMDataService.review = null;
+        QRMDataService.reviewID = -1;
+        $state.go("reviewExpl");
+    }
+
+    this.updateSchedDate = function (start, finish) {
+        rev.review.scheddate = start;
+        rev.updateReview();
+    }
+    this.updateActualDate = function (start, finish) {
+        rev.review.actualdate = start;
+        rev.updateReview();
+    }
+    this.updateReview = function () {
+
+        if (rev.review.risks != null) {
+            rev.review.risks.sort(SortByProjectCode);
+        }
+
+        var s = moment(rev.review.scheddate);
+        try {
+            jQuery('#reviewSchedDate').data('daterangepicker').setStartDate(s);
+        } catch (e) {
+            //Do nothing, will happen on mobile interface
+        }
+
+        var a = moment(rev.review.actualdate);
+        try {
+            jQuery('#reviewActualDate').data('daterangepicker').setStartDate(a);
+        } catch (e) {
+            //Do nothing, will happen on mobile interface
+        }
+    }
+
+    this.openDescriptionEditor = function () {
+        var oTitle = rev.review.title;
+        var oDescription = rev.review.description;
+        ngDialog.openConfirm({
+            template: "editReviewTitleModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            rev.review.title = oTitle;
+            rev.review.description = oDescription;
+        });
+    }
+    this.openNotesEditor = function () {
+        var oNotes = rev.review.notes;
+        ngDialog.openConfirm({
+            template: "editReviewNotesModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            // Success. 
+        }, function (reason) {
+            rev.review.notes = oNotes;
+        });
+    }
+
+    this.addComment = function () {
+        $scope.data.comment = "";
+        ngDialog.openConfirm({
+            template: "addReviewCommentModalDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            remoteService.addReviewComment($scope.data.comment, QRMDataService.reviewID)
+                .then(function (response) {
+                    ngNotify.set("Comment Added to Review", "success");
+                    rev.review.comments = response.data;
+                });
+        }, function (reason) {
+            // Restore the old values
+
+        });
+    }
+    this.addCommentSM = function () {
+        remoteService.addReviewComment($scope.data.comment, QRMDataService.incidentID)
+            .then(function (response) {
+                ngNotify.set("Comment Added to Review", "success");
+                rev.review.comments = response.data;
+                $scope.data.comment = "";
+            });
+    }
+
+    this.addCommonRiskComment = function () {
+        debugger;
+        if (rev.review.riskComments == null) {
+            rev.review.riskComments = [];
+        }
+
+        rev.review.risks.forEach(function (riskID) {
+            debugger;
+            var riskComment = $.grep(rev.review.riskComments, function (e) {
+                return e.riskID == riskID
+            });
+            if (riskComment.length > 0) {
+                riskComment[0].comment = riskComment[0].comment+"<p>"+rev.commonComment+"</p>";
+            } else {
+                var newRiskComment = {
+                    "riskID":riskID,
+                    "comment":"<p>"+rev.commonComment+"</p>"
+                }
+                rev.review.riskComments.push(newRiskComment);
+            }
+        });
+        rev.commomComment = null;
+    }
+    this.getRiskComment = function (riskID) {
+
+        if (rev.review.riskComments == null) return;
+        var riskComment = $.grep(rev.review.riskComments, function (e) {
+            return e.riskID == riskID
+        });
+
+        if (riskComment == null) return;
+
+        if (riskComment.length > 0) {
+            return riskComment[0].comment;
+        }
+
+    }
+    this.riskComment = function (riskID) {
+        if (rev.review.riskComments == null) {
+            rev.review.riskComments = [];
+        }
+
+        var riskComment = $.grep(rev.review.riskComments, function (e) {
+            return e.riskID == riskID
+        });
+        if (riskComment.length > 0) {
+            this.rc = riskComment[0];
+        } else {
+            this.rc = {
+                riskID: riskID,
+                comment: ""
+            }
+            rev.review.riskComments.push(this.rc);
+        }
+
+        var oComment = this.rc.comment;
+        rev.riskForComment = riskID;
+        ngDialog.openConfirm({
+            template: "editReviewRiskCommentDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            console.log(JSON.stringify(rev.review));
+        }, function (reason) {
+            this.rc.comment = oComment;
+        });
+    }
+
+    this.saveReview = function () {
+
+        $scope.savingreview = true;
+        if (rev.review.risks != null) {
+            rev.review.risks.sort(SortByProjectCode);
+        }
+        remoteService.saveReview(rev.review)
+            .then(function (response) {
+                $scope.savingreview = false;
+                ngNotify.set("Review Saved", "success");
+                rev.review = response.data;
+                rev.updateReview();
+            });
+    }
+
+    if (QRMDataService.reviewID == -1) {
+        rev.review = {
+            title: "Review Title",
+            description: "Purpose of the Review",
+            scheddate: new Date(),
+            actualdate: new Date(),
+            id: -1,
+            reviewCode: "REVIEW-??",
+            responsible: 0,
+            notes: "Enter any general notes about the review"
+        }
+    } else {
+        rev.review = QRMDataService.review;
+    }
+
+    this.updateReview();
+
+}
+
+
 var app = angular.module('inspinia');
+
 app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
         className: 'ngdialog-theme-default',
@@ -2828,6 +3184,7 @@ app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'Re
 app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);
 app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
 app.controller('ReviewExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewExplCtrl]);
+app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
 
 app.service('RemoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);
