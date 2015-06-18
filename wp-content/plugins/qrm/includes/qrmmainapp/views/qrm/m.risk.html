@@ -1,7 +1,7 @@
 <div class="wrapper wrapper-content">
-    <div class="row">
-        <div class="panel" style="border-width:2px;">
-            <div class="panel-heading" style="font-size:12pt">{{ctl.risk.riskProjectCode}} - {{ctl.risk.title}}</div>
+    <div class="row" style="margin-top:-20px">
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Risk {{ctl.risk.riskProjectCode}} {{ctl.risk.title}}</div>
             <div class="panel-body" style="padding:5px;">
                 <div class="col-xs-12">
                     <h4>Description</h4>
@@ -15,6 +15,12 @@
                     <h4>Consequences</h4>
                     <p ng-bind-html="ctl.risk.consequence"></p>
                 </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Risk Management</div>
+            <div class="panel-body" style="padding:5px;">
+
                 <div class="col-xs-12">
                     <table class="thhead">
                         <tr class="spaceUnder">
@@ -47,6 +53,12 @@
                         </tr>
                     </table>
                 </div>
+                            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Probability and Impact</div>
+            <div class="panel-body" style="padding:5px;">
+
                 <div class="col-xs-12">
                     <h4>Tolerance</h4>
                     <div style="width:230px;height:230px;margin-left:auto;margin-right:auto;" id="riskEditorMatrixID"></div>
@@ -167,6 +179,12 @@
                     </div>
                     <p></p>
                 </div>
+                            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Mitigation and Response</div>
+            <div class="panel-body" style="padding:5px;">
+
                 <div class="col-xs-12">
                     <h4>Mitigation Plan Summary</h4>
                     <div ng-show="ctl.risk.mitigation.mitPlanSummary == null || ctl.risk.mitigation.mitPlanSummary == 'Summary of the Mitigation Plan'" style="text-align:center"><p>No Mitigation Plan Summary</p></div>
@@ -238,8 +256,13 @@
                         </tr>
                     </table>
                 </div>
+                            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Risk Controls</div>
+            <div class="panel-body" style="padding:5px;">
+
                 <div class="col-xs-12">
-                    <h4>Risk Controls</h4>
                     <div ng-show="ctl.risk.controls == null || ctl.risk.controls.length < 1" style="text-align:center">No Controls In Place</div>
                     <table ng-show="ctl.risk.controls.length >0" class="table table-striped">
                         <tr ng-repeat="control in ctl.risk.controls" style="margin-top:15px">
@@ -262,8 +285,13 @@
                         </tr>
                     </table>
                 </div>
+                            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Stakeholders</div>
+            <div class="panel-body" style="padding:5px;">
+
                 <div class="col-xs-12">
-                    <h4>Contributing Stakeholders</h4>
                     <table class="table table-striped">
                         <tr ng-repeat="s in ctl.stakeholders" style="margin-top:15px">
                             <td>{{s.name | usernameFilter}} </td>
@@ -271,8 +299,14 @@
                         </tr>
                     </table>
                 </div>
+                            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading" style="font-size:12pt">Audit Milestones</div>
+            <div class="panel-body" style="padding:5px;">
+
                                                     <div class="col-12-lg">
-                                        <h4>Process Audit Milestones</h4>
+                                        
                                     </div>
                                     <div class="col-12-lg">
                                      <table class="table table-striped table-bordered table-hover dataTables-example">
@@ -332,8 +366,10 @@
                                         </tbody>
                                     </table>
                                     </div>
+                            </div>
+        </div>
                 <div class="col-xs-12" style="padding-right:0px;padding-left:0px">
-                    <div class="panel-info">
+                    <div class="panel">
                         <div class="panel-heading">Attachements</div>
                         <div class="panel-body">
                             <div class="row">
@@ -376,7 +412,7 @@
     </div>
                         </div></div>
                 <div class="col-xs-12" style="padding-right:0px;padding-left:0px">
-                        <div class="panel-info">
+                        <div class="panel">
                             <div class="panel-heading">Comments</div>
                             <div class="panel-body">
                                 <table class="table table-striped" style="width:100%">
@@ -398,9 +434,7 @@
                         </div>
                     </div>
             </div>        
-        </div>
-    </div>
-</div>
+ </div>
 
 <!-- This is the template used by Dropzone, won't be displayed -->
 <div id="preview-template" style="display: none;">

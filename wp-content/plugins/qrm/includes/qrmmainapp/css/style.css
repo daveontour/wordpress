@@ -2375,9 +2375,8 @@ body {
 /* Make Header Sticky */
 
 #header_container {
-    background: #eee;
     border: 0px solid #666;
-    height: 40px;
+    height: 42px;
     left: 0;
     position: fixed;
     width: 100%;
@@ -2524,10 +2523,10 @@ body {
 #matrixFilter,
 #calenderFilter
 {
-   background-color:aliceblue;
+   background-color:#afdefa;
     border-style:solid;
     border-width:2px;
-    border-color:rgb(143,221,255);
+    border-color:#47a3da;
     border-top-width:2px;
     display:none;
     padding:10px;
@@ -2536,6 +2535,12 @@ body {
     margin-left:0px;
     position: fixed;
     z-index: 1;
+}
+
+#matrixFilter select,
+#calenderFilter select
+{
+  color: :black;
 }
 
 #reviewComment .ta-scroll-window.form-control,
@@ -2756,6 +2761,24 @@ body {
 	.cbp-spmenu-push-toright {
 		left: 190px;
 	}
+}
+
+h2.m-header{
+    margin-top: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    color:white;
+    background-color: #47a3da
+}
+
+.qrmPrimMenu {
+    background-color: #0d77b6;
+    color:#af77b6;
+}
+
+.qrmSecMenu {
+     background-color: #47a3da;
 }
 
 

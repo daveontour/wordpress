@@ -1,106 +1,95 @@
-<div class="container-fluid" style="padding-left:5px;padding-right:5px">
-    <div class="row-fluid">
-        <div class="col-xs-12" style="padding-left:0px;padding-right:0px;margin-left:-10px">
+<div class="wrapper wrapper-content">
+    <div class="row" style="margin-top:-20px">
+        <div>
             <h3 style="display:inline;font-weight:normal">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
         </div>
-        <!-- Top Buttons and Title -->
+        <div class="panel panel-review">
+            <div class="panel-heading">Purpose</div>
+            <div class="panel-body">
+                <p ng-bind-html="rev.review.description"></p>
+            </div>
+            <div>
+                <table style="margin-left:10px;margin-bottom:5px">
+                    <tr class="spaceUnder">
+                        <th style="padding-right:15px">Scheduled Date of Review</th>
+                        <td>{{rev.review.scheddate | date}}</td>
+                    </tr>
+                    <tr class="spaceUnder">
+                        <th style="padding-right:15px">Actual Date of Review</th>
+                        <td>{{rev.review.actualdate | date}}</td>
+                    </tr>
+                    <tr class="spaceUnder">
+                        <th>Responsble</th>
+                        <td>{{rev.review.responsible | usernameFilter}}</td>
+                    </tr>
+                    <tr class="spaceUnder">
+                        <th>Completed</th>
+                        <td>
+                            <input disabled=true icheck type="checkbox" ng-model="rev.review.complete">
+                        </td>
+                    </tr>
+                </table>
 
-        <div class="row">
-            <!-- Left Column -->
-            <div class="col-lg-8" style="clear:both">
-                <!-- Left Column -->
-                <div class="row">
-                    <div class="col-lg-12" style="margin-top:5px">
-                        <div class="panel panel-review">
-                            <div class="panel-heading">Purpose</div>
-                            <div class="panel-body">
-                                <p ng-bind-html="rev.review.description"></p>
+            </div>
+        </div>
+        <div class="panel panel-review">
+            <div class="panel-heading">Review Notes</div>
+            <div class="panel-body">
+                <p ng-bind-html="rev.review.notes"></p>
+            </div>
+        </div>
+        <div class="panel panel-review">
+            <div class="panel-heading">Risks Under Review</div>
+            <div class="panel-body">
+                <table class="table table-striped" style="width:100%;max-height:200px">
+                    <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
+                        <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
+                            <strong>{{risk|riskCodeFilter}}</strong>
+                        </td>
+                        <td style="padding-bottom:5px;padding-left:5px">
+                            {{risk|riskTitleFilter}}
+                            <div style="font-size:8pt;margin-top:0.5em">
+                                <div ng-bind-html="rev.getRiskComment(risk)"></div>
                             </div>
-                            <div>
-                                <table style="margin-left:10px;margin-bottom:5px">
-                                    <tr class="spaceUnder">
-                                        <th style="padding-right:15px">Scheduled Date of Review</th>
-                                        <td>{{rev.review.scheddate | date}}</td>
-                                    </tr>
-                                    <tr class="spaceUnder">
-                                        <th style="padding-right:15px">Actual Date of Review</th>
-                                        <td>{{rev.review.actualdate | date}}</td>
-                                    </tr>
-                                    <tr class="spaceUnder">
-                                        <th>Responsble</th>
-                                        <td>{{rev.review.responsible | usernameFilter}}</td>
-                                    </tr>
-                                    <tr class="spaceUnder">
-                                        <th>Completed</th>
-                                        <td>
-                                            <input disabled=true icheck type="checkbox" ng-model="rev.review.complete">
-                                        </td>
-                                    </tr>
-                                </table>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </div>
+        </div>
+        <div class="panel panel-review">
+            <div class="panel-heading">Attachements</div>
+            <div class="panel-body">
+                <div>
+                    <div style="margin:5px">
+                        <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
+                            <div class="dz-message">
+                                Drop file here or click to attach.
+                            </div>
+                        </div>
+                        <div>
+                            <form method="get" class="form-vertical">
+                                <div class="form-group" style="margin-bottom:0px;margin-top:5px">
+                                    <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
+                                    <textarea ng-model="rev.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="rev.disableAttachmentButon"></textarea>
+
+                                </div>
+                            </form>
+                            <div style="padding-right:0px;text-align:right">
+                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="rev.cancelAttachment()" ng-disabled="rev.disableAttachmentButon">Cancel</button>
+                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="rev.uploadAttachment()" ng-disabled="rev.disableAttachmentButon">Upload Attachment</button>
 
                             </div>
                         </div>
-                        <div class="panel panel-review">
-                            <div class="panel-heading">Review Notes</div>
-                            <div class="panel-body">
-                                <p ng-bind-html="rev.review.notes"></p>
-                            </div>
-                        </div>
-                        <div class="panel panel-review">
-                            <div class="panel-heading">Risks Under Review</div>
-                            <div class="panel-body">
-                                <table class="table table-striped" style="width:100%;max-height:200px">
-                                    <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
-                                        <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
-                                            <strong>{{risk|riskCodeFilter}}</strong>
-                                        </td>
-                                        <td style="padding-bottom:5px;padding-left:5px">
-                                            {{risk|riskTitleFilter}}
-                                            <div style="font-size:8pt;margin-top:0.5em">
-                                                <div ng-bind-html="rev.getRiskComment(risk)"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-
-
-                            </div>
-                        </div>
-
                     </div>
-                    <div ng-show="rev.review.id > 0" class="col-lg-12">
-                        <div class="panel panel-review">
-                            <div class="panel-heading">Attachements</div>
-                            <div class="panel-body">
-                                <div>
-                                    <div style="margin:5px">
-                                        <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
-                                            <div class="dz-message">
-                                                Drop file here or click to attach.
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <form method="get" class="form-vertical">
-                                                <div class="form-group" style="margin-bottom:0px;margin-top:5px">
-                                                    <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
-                                                    <textarea ng-model="rev.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="rev.disableAttachmentButon"></textarea>
-
-                                                </div>
-                                            </form>
-                                            <div style="padding-right:0px;text-align:right">
-                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="rev.cancelAttachment()" ng-disabled="rev.disableAttachmentButon">Cancel</button>
-                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="rev.uploadAttachment()" ng-disabled="rev.disableAttachmentButon">Upload Attachment</button>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="margin:5px">
-                                        <table class="table table-striped" style="width:100%">
-                                            <tr ng-repeat="attach in rev.review.attachments" style="margin-top:15px">
-                                                <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                    <div style="float:left;clear:both">{{attach.post_content}}</div>
-                                                    <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}</div>
-                                                    <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
+                    <div style="margin:5px">
+                        <table class="table table-striped" style="width:100%">
+                            <tr ng-repeat="attach in rev.review.attachments" style="margin-top:15px">
+                                <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                    <div style="float:left;clear:both">{{attach.post_content}}</div>
+                                    <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}</div>
+                                    <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
                                                     </td>
                                                 </tr>                    
                                             </table>
@@ -108,9 +97,7 @@
                                     </div>
                                 </div>
                         </div>
-                        <!-- Comments -->
-                        <div class="col-xs-12" style="padding-right:0px;padding-left:0px">
-                        <div class="panel panel-review">
+        <div class="panel panel-review">
                                 <div class="panel-heading">Comments</div>
                                 <div class="panel-body">
                                     <div>
@@ -132,11 +119,6 @@
                                     </div>
                             </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
 </div>
 

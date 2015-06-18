@@ -50,30 +50,12 @@
                                                 <div class="controls">
                                                     <div class="input-prepend input-group">
                                                         <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                        <input style="max-width:260px" type="text" id="incidentDate" class="form-control" />
+                                                        <input type="date" ng-model="incident.incident.date" class="form-control" style="width:238px"></input>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <script>
-                                            jQuery(document).ready(function () {
-                                                jQuery('#incidentDate').daterangepicker({
-                                                        format: 'MMMM D, YYYY',
-                                                        separator: " - ",
-                                                        showDropdowns: true,
-                                                        drops: "down",
-                                                        singleDatePicker: true
-                                                    },
-                                                    function (start, end, label) {
-                                                        try {
-                                                            // Update the Angular controller
-                                                            angular.element("#incidentDate").controller().updateDate(start, end);
-                                                        } catch (e) {
-                                                            console.log(e.message);
-                                                        }
-                                                    });
-                                            });
-                                        </script>
+
                                         <div class="controls">
                                             <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
                                             <div class="col-sm-9" style="margin-top:5px">

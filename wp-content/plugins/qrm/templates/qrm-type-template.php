@@ -59,21 +59,22 @@
 		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
 			<h3>Quay Risk Manager</h3>
             <a ui-sref="explorer">Risk Explorer</a>
+             <a ui-sref="incidentExpl">Incident Explorer</a>
+            <a ui-sref="reviewExpl">Review Explorer</a>
             <a ui-sref="calender">Exposure Calender</a>
             <a ui-sref="rank">Risk Ranking</a>
             <a ui-sref="matrix">Tolerance Matrix</a>
-            <a ui-sref="analysis">Dashboard</a>
-            <a ui-sref="incidentExpl">Incidents</a>
-            <a ui-sref="reviewExpl">Reviews</a>
-		</nav>
+
+           <a ui-sref="analysis">Dashboard</a>
+            </nav>
  
         <!-- Page Content -->
         <div id="page-content-wrapper" class="container">
         	
         	<!-- Sticky Header -->
-            <div id="header_container">
-                <div id="header" style="padding-right:10px">
-                    <button id="menu-toggle" class="btn btn-sm btn-primary" style="border-radius:5px" dropdown-toggle><i class="fa fa-bars"></i>
+            <div id="header_container" class="qrmPrimMenu">
+                <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
+                    <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
                     </button> <span id="qrm-title" class="hidden-qrm"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span><span id="qrm-titleSM"><strong>QRM</strong></span>
                     <div id="welcome-name" class="pull-right hidden-qrm">Welcome, {{main.userName}}</div>
                 </div>

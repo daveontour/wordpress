@@ -184,7 +184,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
     }
     this.getTableHeightSm = function () {
         return {
-            height: "calc(100vh - 130px)"
+            height: "calc(100vh - 135px)"
         };
     }
 
@@ -614,6 +614,13 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     $scope.data = {
         comment: ""
     };
+    
+    
+    $scope.siteUsers = [];
+    
+    QRMDataService.siteUsers.forEach(function (e) {
+        $scope.siteUsers.push(e.ID);
+    });
 
     $scope.dropzoneConfig = {
         options: { // passed into the Dropzone constructor
@@ -2416,7 +2423,7 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
                 cellFilter: "date"
             },
             {
-                name: 'Active',
+                name: 'Resolved',
                 width: 70,
                 field: 'resolved',
                 cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
@@ -2450,7 +2457,7 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
 
             },
             {
-                name: 'Active',
+                name: 'Resolved',
                 width: 70,
                 field: 'resolved',
                 cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
@@ -2484,6 +2491,8 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
                     QRMDataService.incident.risks.sort(SortByProjectCode);
                 }
                 QRMDataService.incidentID = QRMDataService.incident.id;
+                QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+
                 incident.loading = false;
                 $state.go("incident");
             });
@@ -2599,22 +2608,12 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         $state.go("incidentExpl");
     }
 
-    this.updateDate = function (start, finish) {
-        inc.incident.date = start;
-        inc.updateIncident();
-    }
     this.updateIncident = function () {
 
         if (inc.incident.risks != null) {
             inc.incident.risks.sort(SortByProjectCode);
         }
 
-        var s = moment(inc.incident.date);
-        try {
-            jQuery('#incidentDate').data('daterangepicker').setStartDate(s);
-        } catch (e) {
-            //Do nothing, will happen on mobile interface
-        }
     }
 
     this.openDescriptionEditor = function () {
@@ -2739,12 +2738,23 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
             height: "calc(100vh - 100px)"
         };
     }
+   this.getTableHeightSM = function () {
+        return {
+            height: "calc(100vh - 105px)"
+        };
+    }
 
     this.gridOptions = {
         enableSorting: true,
         rowTemplate: '<div ng-click="grid.appScope.editReview(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
+                width: "100",
+                cellClass: 'compact',
+                field: 'reviewCode',
+                headerCellClass: 'header-hidden',
+
+            },{
                 name: 'title',
                 width: "*",
                 cellClass: 'compact',
@@ -2780,7 +2790,31 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
             }
     ]
     };
+    this.gridOptionsSM = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editReview(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+            {
+                width: "100",
+                cellClass: 'compact',
+                field: 'reviewCode',
+                headerCellClass: 'header-hidden',
 
+            },{
+                name: 'title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'title'
+
+            },
+            {
+                name: 'Scheduled Date',
+                width: 90,
+                field: 'scheddate',
+                cellFilter: 'date'
+            }
+    ]
+    };
     $scope.editReview = function (id) {
         review.editReview(id);
     }
@@ -2794,6 +2828,8 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                     QRMDataService.review.risks.sort(SortByProjectCode);
                 }
                 QRMDataService.reviewID = QRMDataService.review.id;
+                QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
+                QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
                 review.loading = false;
                 $state.go("review");
             });
@@ -2808,6 +2844,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
         remoteService.getAllReviews()
             .then(function (response) {
                 review.gridOptions.data = response.data.data
+                review.gridOptionsSM.data = response.data.data
             }).finally(function () {
                 review.loading = false;
             });
@@ -2954,32 +2991,10 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         $state.go("reviewExpl");
     }
 
-    this.updateSchedDate = function (start, finish) {
-        rev.review.scheddate = start;
-        rev.updateReview();
-    }
-    this.updateActualDate = function (start, finish) {
-        rev.review.actualdate = start;
-        rev.updateReview();
-    }
     this.updateReview = function () {
 
         if (rev.review.risks != null) {
             rev.review.risks.sort(SortByProjectCode);
-        }
-
-        var s = moment(rev.review.scheddate);
-        try {
-            jQuery('#reviewSchedDate').data('daterangepicker').setStartDate(s);
-        } catch (e) {
-            //Do nothing, will happen on mobile interface
-        }
-
-        var a = moment(rev.review.actualdate);
-        try {
-            jQuery('#reviewActualDate').data('daterangepicker').setStartDate(a);
-        } catch (e) {
-            //Do nothing, will happen on mobile interface
         }
     }
 

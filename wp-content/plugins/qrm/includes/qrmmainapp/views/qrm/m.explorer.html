@@ -1,26 +1,9 @@
 <div id="explorer-wrapper" class="container-fluid" style="padding-top:5px">
     <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <h2 style="margin-top:5px">Risk Explorer</h2>
+        <h2 class="m-header">Risk Explorer</h2>
     </div>
     <div class="row">
-        <div class="btn-group pull-left" dropdown>
-            <button type="button" class="btn btn-sm btn-info">Action</button>
-            <button type="button" class="btn btn-sm btn-info dropdown-toggle" dropdown-toggle>
-                <span class="caret"></span>
-                <span class="sr-only">Split button!</span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Action</a>
-                </li>
-                <li><a href="#">Another action</a>
-                </li>
-                <li><a href="#">Something else here</a>
-                </li>
-                <li class="divider"></li>
-                <li><a href="#">Separated link</a>
-                </li>
-            </ul>
-        </div>
+
         <div class="pull-right">
             <ui-select ng-model="exp.project" theme="select2" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:200px">
                 <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
