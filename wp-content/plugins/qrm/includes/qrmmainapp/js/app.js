@@ -1,14 +1,11 @@
 
 (function () {
-    angular.module('inspinia', [
-        'ui.router',                    // Routing
-        'oc.lazyLoad',                  // ocLazyLoad
-        'ui.bootstrap',                 // Ui Bootstrap
+    angular.module('qrm', [
+        'ui.router',                    
+        'oc.lazyLoad',                  
+        'ui.bootstrap',                 
         'ui.bootstrap.datepicker',
-
-        'ngIdle',                        // Idle timer
-        
-        
+        'ngIdle',                       
         'ui.grid',
         'ui.grid.autoResize',
         'ui.grid.moveColumns',
@@ -16,7 +13,7 @@
         'ngNotify',
         'ui.select',
         'ngSanitize',
-         'ngDialog',
+        'ngDialog',
         'textAngular',
         'angular-loading-bar', 
         'ngAnimate'

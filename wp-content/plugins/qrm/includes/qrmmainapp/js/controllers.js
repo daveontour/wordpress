@@ -22,40 +22,80 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
 
     QRM.mainController = this;
 
-    this.showStatusBoard = true;
+    this.showStatusBoard = false;
     this.showSpinner = false;
+    this.showSelectProject = true;
+    this.showLookingForRisks = false;
+    this.showNoRisks = false;
+    this.loading = false;
+
+    this.showLookingForReviews = false;
+    this.showNoReviews = false;
+
+    this.showLookingForIncidents = false;
+    this.showNoIncidents = false;
+
 
     this.pluginurl = pluginurl;
     this.loaderSrc = this.pluginurl + 'views/ajax-loader.gif'
 
-    this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>Please select a Risk Project from the selector above</span>");
-    this.class = "danger";
-
-
     this.lookingForRisks = function () {
-        this.statusMsg = $sce.trustAsHtml("<img src='" + pluginurl + "views/spinner.gif'><span style='font-size:inherit'> Loading for risks for project <strong>" + QRM.expController.project.title + "</strong></span>");
-        this.showStatusBoard = true;
-        //        this.showStatusBoard = false;
-        this.class = "info";
-        this.loading = true;
+        this.showSelectProject = false;
+        this.showLookingForRisks = true;
+        this.showNoRisks = false;
+        this.loading = false;
     }
 
     this.noRisksFound = function () {
-        this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>No risks found for risk project <strong>" + QRM.expController.project.title + "</strong></span>");
-        this.showStatusBoard = true;
-        this.class = "warning";
+        this.showSelectProject = false;
+        this.showLookingForRisks = false;
+        this.showNoRisks = true;
+        this.loading = false;
     }
 
     this.risksFound = function () {
-        this.showStatusBoard = false;
+        this.showSelectProject = false;
+        this.showLookingForRisks = false;
+        this.showNoRisks = false;
         this.loading = false;
     }
 
     this.loadingProject = function () {
-        this.statusMsg = $sce.trustAsHtml("<span style='font-size:inherit'>Loading Project</span>");
-        this.showStatusBoard = true;
-        this.class = "primary"
+        this.showSelectProject = false;
+        this.showLookingForRisks = false;
+        this.showNoRisks = false;
+        this.loading = true;
     }
+
+    this.lookingForIncidents = function () {
+        this.showLookingForIncidents = true;
+        this.showNoIncidents = false;
+    }
+
+    this.incidentsFound = function () {
+        this.showLookingForIncidents = false;
+        this.showNoIncidents = false;
+    }
+
+    this.noIncidentsFound = function () {
+        this.showLookingForIncidents = false;
+        this.showNoIncidents = true;
+    }
+    
+    this.lookingForReviews = function () {
+        this.showLookingForReviews = true;
+        this.showNoReviews = false;
+    }
+
+    this.reviewsFound = function () {
+        this.showLookingForReviews = false;
+        this.showNoReviews = false;
+    }
+
+    this.noReviewsFound = function () {
+        this.showLookingForReviews = false;
+        this.showNoReviews = true;
+    }    
 
     this.getBtnClass = function (btnClass) {
 
@@ -94,6 +134,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             QRM.mainController.risks.sort(SortByProjectCode);
             QRMDataService.risks = QRM.mainController.risks;
         });
+
 
     this.checkUserCap = function (action, risk) {
 
@@ -168,9 +209,6 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             return false;
         }
     }
-
-
-
 };
 
 function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
@@ -596,8 +634,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
     winWidth = $(window).innerWidth() - 10;
     $("#container").css("width", winWidth + "px");
     this.init();
-
-
 }
 
 function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
@@ -614,10 +650,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     $scope.data = {
         comment: ""
     };
-    
-    
+
+
     $scope.siteUsers = [];
-    
+
     QRMDataService.siteUsers.forEach(function (e) {
         $scope.siteUsers.push(e.ID);
     });
@@ -1347,7 +1383,6 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     this.ownerSelect = function () {
         cal.manager = "";
         cal.stateSelectorChanged();
-
     }
     this.managerSelect = function () {
         cal.owner = "";
@@ -1389,14 +1424,14 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
 
         var managerPass = new Array();
         datePass.forEach(function (risk) {
-            if (risk.manager.name == cal.manager.name || cal.manager == "") {
+            if (risk.manager == cal.manager || cal.manager == "") {
                 managerPass.push(risk);
             }
         });
 
         var ownerPass = new Array();
         managerPass.forEach(function (risk) {
-            if (risk.owner.name == cal.owner.name || cal.owner == "") {
+            if (risk.owner == cal.owner || cal.owner == "") {
                 ownerPass.push(risk);
             }
         });
@@ -1961,6 +1996,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
         });
         this.resetPZ();
         this.svgMatrix(this.risks);
+        this.closeFilters();
     }
     this.pan = function (dx, dy) {
 
@@ -2467,14 +2503,19 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
     ]
     };
     this.init = function () {
-        incident.loading = true;
+         QRM.mainController.lookingForIncidents();
         remoteService.getAllIncidents()
             .then(function (response) {
-                incident.gridOptions.data = response.data.data
-                incident.gridOptionsSM.data = response.data.data
+                incident.gridOptions.data = response.data.data;
+                incident.gridOptionsSM.data = response.data.data;
+                if (incident.gridOptions.data.length > 0){
+                    QRM.mainController.incidentsFound();
+                } else{
+                    QRM.mainController.noIncidentsFound();
+                }
             }).finally(function () {
-                incident.loading = false;
-            });
+ 
+        });
     }
 
     $scope.editIncident = function (id) {
@@ -2738,7 +2779,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
             height: "calc(100vh - 100px)"
         };
     }
-   this.getTableHeightSM = function () {
+    this.getTableHeightSM = function () {
         return {
             height: "calc(100vh - 105px)"
         };
@@ -2754,7 +2795,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                 field: 'reviewCode',
                 headerCellClass: 'header-hidden',
 
-            },{
+            }, {
                 name: 'title',
                 width: "*",
                 cellClass: 'compact',
@@ -2800,7 +2841,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                 field: 'reviewCode',
                 headerCellClass: 'header-hidden',
 
-            },{
+            }, {
                 name: 'title',
                 width: "*",
                 cellClass: 'compact',
@@ -2840,11 +2881,16 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
     }
 
     this.init = function () {
-        review.loading = true;
+        QRM.mainController.lookingForReviews();
         remoteService.getAllReviews()
             .then(function (response) {
-                review.gridOptions.data = response.data.data
-                review.gridOptionsSM.data = response.data.data
+                review.gridOptions.data = response.data.data;
+                review.gridOptionsSM.data = response.data.data;
+                if (review.gridOptions.data.length > 0){
+                    QRM.mainController.reviewsFound();
+                } else{
+                    QRM.mainController.noReviewsFound();
+                }
             }).finally(function () {
                 review.loading = false;
             });
@@ -3026,7 +3072,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
     }
 
     this.addComment = function () {
-      $scope.data.comment = "";
+        $scope.data.comment = "";
         ngDialog.openConfirm({
             template: "addReviewCommentModalDialogId",
             className: 'ngdialog-theme-default',
@@ -3063,11 +3109,11 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
                 return e.riskID == riskID
             });
             if (riskComment.length > 0) {
-                riskComment[0].comment = riskComment[0].comment+"<p>"+rev.commonComment+"</p>";
+                riskComment[0].comment = riskComment[0].comment + "<p>" + rev.commonComment + "</p>";
             } else {
                 var newRiskComment = {
-                    "riskID":riskID,
-                    "comment":"<p>"+rev.commonComment+"</p>"
+                    "riskID": riskID,
+                    "comment": "<p>" + rev.commonComment + "</p>"
                 }
                 rev.review.riskComments.push(newRiskComment);
             }
@@ -3153,120 +3199,122 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
 
 }
 
+var app = angular.module('qrm');
 
-var app = angular.module('inspinia');
+(function () {
 
-app.config(['ngDialogProvider', function (ngDialogProvider) {
-    ngDialogProvider.setDefaults({
-        className: 'ngdialog-theme-default',
-        plain: false,
-        showClose: false,
-        closeByDocument: false,
-        closeByEscape: false,
-        appendTo: false
-    });
+    app.config(['ngDialogProvider', function (ngDialogProvider) {
+        ngDialogProvider.setDefaults({
+            className: 'ngdialog-theme-default',
+            plain: false,
+            showClose: false,
+            closeByDocument: false,
+            closeByEscape: false,
+            appendTo: false
+        });
 }]);
-app.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
-    cfpLoadingBarProvider.includeSpinner = false;
+    app.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
+        cfpLoadingBarProvider.includeSpinner = false;
   }]);
-app.config(function ($provide) {
-    // this demonstrates how to register a new tool and add it to the default toolbar
-    //    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
-    //        taOptions.toolbar = [
-    //      ['h1', 'h2', 'h3', 'h4', 'p'],
-    //      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear', 'html'],
-    //      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
-    //  ];
-    //        return taOptions;
-    //  }]);
+    app.config(function ($provide) {
+        // this demonstrates how to register a new tool and add it to the default toolbar
+        //    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
+        //        taOptions.toolbar = [
+        //      ['h1', 'h2', 'h3', 'h4', 'p'],
+        //      ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear', 'html'],
+        //      ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent']
+        //  ];
+        //        return taOptions;
+        //  }]);
 
-    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
-        taOptions.toolbar = [
+        $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
+            taOptions.toolbar = [
       ['h1', 'h2', 'p'],
       ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo'],
       ['justifyRight', 'indent', 'outdent']
   ];
-        return taOptions;
+            return taOptions;
   }]);
-});
-app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', '$sce', MainCtrl]);
-app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', ExplorerCtrl]);
-app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
-app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
-app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
-app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
-app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
-app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);
-app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
-app.controller('ReviewExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewExplCtrl]);
-app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
+    });
+    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', '$sce', MainCtrl]);
+    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', ExplorerCtrl]);
+    app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
+    app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
+    app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
+    app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
+    app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
+    app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);
+    app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
+    app.controller('ReviewExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewExplCtrl]);
+    app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
 
-app.service('RemoteService', ['$http', RemoteService]);
-app.service('QRMDataService', DataService);
-app.filter('currencyFilter', function () {
-    return function (value) {
-        return '$' + Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    app.service('RemoteService', ['$http', RemoteService]);
+    app.service('QRMDataService', DataService);
+    app.filter('currencyFilter', function () {
+        return function (value) {
+            return '$' + Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
-    };
-});
-app.filter('percentFilter', function () {
-    return function (value) {
-        return Number(value).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "%";
+        };
+    });
+    app.filter('percentFilter', function () {
+        return function (value) {
+            return Number(value).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "%";
 
-    };
-});
-app.filter('nullFilter', function () {
-    return function (value) {
-        if (typeof (value) == 'undefined' || value == null) {
-            return "-";
-        } else {
-            return value;
+        };
+    });
+    app.filter('nullFilter', function () {
+        return function (value) {
+            if (typeof (value) == 'undefined' || value == null) {
+                return "-";
+            } else {
+                return value;
+            }
+        };
+    });
+    app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {
+        return function (input) {
+            if (typeof (input) == "object") input = input.ID;
+            if (input < 0) return "Not Assigned"
+            if (typeof (input) == 'undefined') return;
+            var user = $.grep(QRMDataService.siteUsers, function (e) {
+                return e.ID == input
+            })
+
+            if (typeof (user) == "undefined") return "Unknown";
+            if (user.length == 0) return "Not Found";
+            if (user.length > 1) return "Unknown (too many)";
+
+            return user[0].data.display_name;
         }
-    };
-});
-app.filter('usernameFilter', ['QRMDataService', function (QRMDataService) {
-    return function (input) {
-        if (typeof (input) == "object") input = input.ID;
-        if (input < 0) return "Not Assigned"
-        if (typeof (input) == 'undefined') return;
-        var user = $.grep(QRMDataService.siteUsers, function (e) {
-            return e.ID == input
-        })
-
-        if (typeof (user) == "undefined") return "Unknown";
-        if (user.length == 0) return "Not Found";
-        if (user.length > 1) return "Unknown (too many)";
-
-        return user[0].data.display_name;
-    }
 }]);
-app.filter('compoundRiskFilter', ['QRMDataService', function (QRMDataService) {
-    return function (input) {
+    app.filter('compoundRiskFilter', ['QRMDataService', function (QRMDataService) {
+        return function (input) {
 
-        if (typeof (input) == "object") return input.riskProjectCode + " - " + input.title;
-        var risk = $.grep(QRMDataService.risks, function (e) {
-            return e.id == input
-        })
-        return risk[0].riskProjectCode + " - " + risk[0].title;
-    }
+            if (typeof (input) == "object") return input.riskProjectCode + " - " + input.title;
+            var risk = $.grep(QRMDataService.risks, function (e) {
+                return e.id == input
+            })
+            return risk[0].riskProjectCode + " - " + risk[0].title;
+        }
 }]);
-app.filter('riskCodeFilter', ['QRMDataService', function (QRMDataService) {
-    return function (input) {
+    app.filter('riskCodeFilter', ['QRMDataService', function (QRMDataService) {
+        return function (input) {
 
-        if (typeof (input) == "object") return input.riskProjectCode;
-        var risk = $.grep(QRMDataService.risks, function (e) {
-            return e.id == input
-        })
-        return risk[0].riskProjectCode;
-    }
+            if (typeof (input) == "object") return input.riskProjectCode;
+            var risk = $.grep(QRMDataService.risks, function (e) {
+                return e.id == input
+            })
+            return risk[0].riskProjectCode;
+        }
 }]);
-app.filter('riskTitleFilter', ['QRMDataService', function (QRMDataService) {
-    return function (input) {
+    app.filter('riskTitleFilter', ['QRMDataService', function (QRMDataService) {
+        return function (input) {
 
-        if (typeof (input) == "object") return input.title;
-        var risk = $.grep(QRMDataService.risks, function (e) {
-            return e.id == input
-        })
-        return risk[0].title
-    }
+            if (typeof (input) == "object") return input.title;
+            var risk = $.grep(QRMDataService.risks, function (e) {
+                return e.id == input
+            })
+            return risk[0].title
+        }
 }]);
+})();

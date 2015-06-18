@@ -1604,7 +1604,7 @@ function SorterLayout(rankCtl, $scope) {
         risk.append("rect")
             .attr("width", this.itemWidth - 10)
             .attr("height", this.itemHeight - 5)
-            .attr("fill", 'aliceblue')
+            .attr("fill", 'lightgray')
             .style("stroke", 'gray')
             .attr("class", 'tolText')
             .on("mouseover", function (d) {
@@ -1688,7 +1688,7 @@ function SorterLayout(rankCtl, $scope) {
                 "g.risk {cursor:move }" +
                 ".marker {stroke-width: 4px; stroke-dasharray: 4px; stroke:red}" +
                 ".markervert {stroke-width: 4px; stroke:red}" +
-                "rect.subRankText {fill: aliceblue ;stroke: gray;}" +
+                "rect.subRankText {fill: lighrgray ;stroke: gray;}" +
                 "rect.subRankText:hover {fill: #157fcc ;stroke: gray;}" +
                 "rect.tol5 {fill: #ed5565;stroke: #E6E6E6;stroke-width: 2px; }" +
                 "rect.tol4 {fill: #f8ac59;stroke: #E6E6E6;stroke-width: 2px; }" +

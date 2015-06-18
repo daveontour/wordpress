@@ -12,6 +12,8 @@ if (! defined ( 'WPINC' )) {
 	die ();
 }
 
+register_activation_hook(__FILE__, 'qrmplugin_activate');
+
 // Required files for registering the post type and taxonomies.
 require plugin_dir_path ( __FILE__ ) .'includes/class-post-type.php';
 require plugin_dir_path ( __FILE__ ) .'includes/class-risk-post-type-registration.php';
@@ -223,4 +225,18 @@ function qrm_scripts_styles(){
 	wp_register_script('qrm-ngNotify',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" );
 	wp_register_script('qrm-nv',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/js/plugins/nv/nv.d3.min.js" );
 	
+}
+
+function qrmplugin_activate(){
+	//Create the page to access the application
+	$postdata = array('post_parent' => 0,
+			'post_status' => 'publish',
+			'post_title'   => 'Quay Risk Manager',
+			'post_name'  => 'riskmanager', /* the slug */
+			'page_template' => '../templates/qrm-type-template.php',
+			'post_type'   => 'page');
+	 $pageID = wp_insert_post($postdata);
+	 
+	 update_post_meta($pageID, '_wp_page_template', '../templates/qrm-type-template.php');
+	 
 }

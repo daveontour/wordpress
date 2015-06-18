@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="inspinia">
+<html ng-app="qrm">
 
 <head>
 
@@ -64,8 +64,8 @@
             <a ui-sref="calender">Exposure Calender</a>
             <a ui-sref="rank">Risk Ranking</a>
             <a ui-sref="matrix">Tolerance Matrix</a>
-
-           <a ui-sref="analysis">Dashboard</a>
+            <a ui-sref="analysis">Dashboard</a>
+            <div style="margin-top:25px;text-align:-webkit-center;color:white;font-weight:300;font-size:1.1em" id="welcome-name" >Welcome, {{main.userName}}</div>
             </nav>
  
         <!-- Page Content -->
@@ -75,8 +75,8 @@
             <div id="header_container" class="qrmPrimMenu">
                 <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
                     <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
-                    </button> <span id="qrm-title" class="hidden-qrm"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span><span id="qrm-titleSM"><strong>QRM</strong></span>
-                    <div id="welcome-name" class="pull-right hidden-qrm">Welcome, {{main.userName}}</div>
+                    </button> <span id="qrm-title"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span>
+                    
                 </div>
             </div>
             
@@ -100,14 +100,12 @@
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/metisMenu/metisMenu.min.js" ?>"></script>
 
     <!-- Custom and plugin javascript -->
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/inspinia.js" ?>"></script>
-
+    
     <!-- Main Angular scripts-->
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular.min.js" ?>"></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular-animate.min.js" ?>'></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/ui-router/angular-ui-router.min.js" ?>"></script>
-<!--  <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-0.13.0.min.js" ?>"></script> -->   
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-idle/angular-idle.js" ?>"></script>
 

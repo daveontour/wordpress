@@ -3,7 +3,6 @@
         <h2 class="m-header">Risk Explorer</h2>
     </div>
     <div class="row">
-
         <div class="pull-right">
             <ui-select ng-model="exp.project" theme="select2" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:200px">
                 <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
@@ -16,36 +15,14 @@
         </div>
     </div>
 
-    <div class="row" ng-show="!main.showStatusBoard">
-                <style>
-            .ui-grid-row:nth-child(odd):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-            
-            .ui-grid-row:nth-child(even):hover .ui-grid-cell {
-                background: #ffff99;
-            }
-        </style>
+    <div class="row">
         <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
             <div style="clear:both" ui-grid="exp.gridOptionsSm" ui-grid-auto-resize ng-style="exp.getTableHeightSm()" class="explorerGrid" ui-grid-move-columns></div>
         </div>
     </div>
 
-    <div class="col-xs-12" style="padding-left:0px;padding-right:0px;clear:both" ng-show="main.showStatusBoard">
+</div>
 
-        <div class="visible-xs visible-sm hidden-md hidden-lg" style="width:100%;height:300px;text-align:center;vertical-align:middle;padding-top:50px">
-            <button ng-show="!main.loading" style="font-size:10pt" ng-class="{'btn':true, 'btn-warning':main.getBtnClass('warning'),'btn-info':main.getBtnClass('info'),'btn-primary':main.getBtnClass('primary'), 'btn-danger':main.getBtnClass('danger')}" style="border-radius:5px" ng-bind-html="main.statusMsg">
-        </div>
-    </div>
-</div>
-<div ng-show="loading" id="target" class="loading">
-    <div class="loading-overlay">
-        <p class="loading-spinner">
-            <img ng-src="{{main.loaderSrc}}">
-            <span class="loading-text">loading</span>
-        </p>
-    </div>
-</div>
 
 <div ng-show="main.loading" class="loading" id="explorerloading">
     <div class="loading-overlay">
@@ -55,3 +32,7 @@
         </p>
     </div>
 </div>
+    
+<h1 ng-show="main.showSelectProject" class="status-msg">Please Select Project</h1> 
+<h1 ng-show="main.showLookingForRisks" class="status-msg">Loading Risks...</h1>
+<h1 ng-show="main.showNoRisks" class="status-msg">No Risks Were Found</h1>

@@ -45,7 +45,7 @@ class PageTemplater {
 		);
 		// Add your templates to this array.
 		$this->templates = array(
-				'qrmmainapp/index.php'    => 'Quay Risk Manager Main Page'
+				'../templates/qrm-type-template.php'    => 'Quay Risk Manager Main Page'
 		);
 
 	}

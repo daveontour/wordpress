@@ -1,5 +1,5 @@
 <div class="wrapper wrapper-content">
-    <div class="row" style="margin-top:-20px">
+    <div class="row" style="margin-top:-15px">
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Risk {{ctl.risk.riskProjectCode}} {{ctl.risk.title}}</div>
             <div class="panel-body" style="padding:5px;">
@@ -53,7 +53,7 @@
                         </tr>
                     </table>
                 </div>
-                            </div>
+            </div>
         </div>
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Probability and Impact</div>
@@ -179,7 +179,7 @@
                     </div>
                     <p></p>
                 </div>
-                            </div>
+            </div>
         </div>
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Mitigation and Response</div>
@@ -187,19 +187,25 @@
 
                 <div class="col-xs-12">
                     <h4>Mitigation Plan Summary</h4>
-                    <div ng-show="ctl.risk.mitigation.mitPlanSummary == null || ctl.risk.mitigation.mitPlanSummary == 'Summary of the Mitigation Plan'" style="text-align:center"><p>No Mitigation Plan Summary</p></div>
-                    <p  ng-show="ctl.risk.mitigation.mitPlanSummary != 'Summary of the Mitigation Plan'"ng-bind-html="ctl.risk.mitigation.mitPlanSummary"></p>
+                    <div ng-show="ctl.risk.mitigation.mitPlanSummary == null || ctl.risk.mitigation.mitPlanSummary == 'Summary of the Mitigation Plan'" style="text-align:center">
+                        <p>No Mitigation Plan Summary</p>
+                    </div>
+                    <p ng-show="ctl.risk.mitigation.mitPlanSummary != 'Summary of the Mitigation Plan'" ng-bind-html="ctl.risk.mitigation.mitPlanSummary"></p>
                 </div>
                 <div class="col-xs-12">
                     <h4>Mitigation Plan Summary Update</h4>
-                    <div ng-show="ctl.risk.mitigation.mitPlanSummaryUpdate == null || ctl.risk.mitigation.mitPlanSummaryUpdate == 'Update to the Summary of the Mitigation Plan'" style="text-align:center"><p>No Mitigation Plan Update</p></div>
+                    <div ng-show="ctl.risk.mitigation.mitPlanSummaryUpdate == null || ctl.risk.mitigation.mitPlanSummaryUpdate == 'Update to the Summary of the Mitigation Plan'" style="text-align:center">
+                        <p>No Mitigation Plan Update</p>
+                    </div>
 
-                    <p ng-show="ctl.risk.mitigation.mitPlanSummaryUpdate != 'Update to the Summary of the Mitigation Plan'"ng-bind-html="ctl.risk.mitigation.mitPlanSummaryUpdate"></p>
+                    <p ng-show="ctl.risk.mitigation.mitPlanSummaryUpdate != 'Update to the Summary of the Mitigation Plan'" ng-bind-html="ctl.risk.mitigation.mitPlanSummaryUpdate"></p>
                 </div>
                 <div class="col-xs-12">
                     <h4>Detail Mitigation Plan</h4>
-                    <div ng-show="risk.mitigation.mitPlan == null || risk.mitigation.mitPlan.length < 1" style="text-align:center"><p>No Mitigation Actions</p></div>
-                    <table ng-show="risk.mitigation.mitPlan.length > 0"class="table table-striped">
+                    <div ng-show="risk.mitigation.mitPlan == null || risk.mitigation.mitPlan.length < 1" style="text-align:center">
+                        <p>No Mitigation Actions</p>
+                    </div>
+                    <table ng-show="risk.mitigation.mitPlan.length > 0" class="table table-striped">
 
                         <tr ng-repeat="step in ctl.risk.mitigation.mitPlan" style="margin-top:15px">
                             <td>
@@ -224,17 +230,23 @@
                 </div>
                 <div class="col-xs-12">
                     <h4>Response Plan Summary</h4>
-                    <div ng-show="ctl.risk.response.respPlanSummary == null || ctl.risk.response.respPlanSummary == 'Summary of the Response Plan'" style="text-align:center"><p>No Response Plan Summary</p></div>
+                    <div ng-show="ctl.risk.response.respPlanSummary == null || ctl.risk.response.respPlanSummary == 'Summary of the Response Plan'" style="text-align:center">
+                        <p>No Response Plan Summary</p>
+                    </div>
                     <p ng-show="ctl.risk.response.respPlanSummary != 'Summary of the Response Plan'" ng-bind-html="ctl.risk.response.respPlanSummary"></p>
                 </div>
                 <div class="col-xs-12">
                     <h4>Response Plan Summary Update</h4>
-                    <div ng-show="ctl.risk.response.respPlanSummaryUpdate == null || ctl.risk.response.respPlanSummaryUpdate == 'Update to the Summary of the Mitigation Plan'" style="text-align:center"><p>No Response Plan Update</p></div>
+                    <div ng-show="ctl.risk.response.respPlanSummaryUpdate == null || ctl.risk.response.respPlanSummaryUpdate == 'Update to the Summary of the Mitigation Plan'" style="text-align:center">
+                        <p>No Response Plan Update</p>
+                    </div>
                     <p ng-show="ctl.risk.response.respPlanSummaryUpdate != 'Update to the Summary of the Mitigation Plan'" ng-bind-html="ctl.risk.response.respPlanSummaryUpdate"></p>
                 </div>
                 <div class="col-xs-12">
                     <h4>Detail Response Plan</h4>
-                    <div ng-show="ctl.risk.response.respPlan == null || ctl.risk.response.respPlan.length < 1" style="text-align:center"><p>No Response Actions</p></div>
+                    <div ng-show="ctl.risk.response.respPlan == null || ctl.risk.response.respPlan.length < 1" style="text-align:center">
+                        <p>No Response Actions</p>
+                    </div>
 
                     <table ng-show="ctl.risk.response.respPlan.length > 0" class="table table-striped">
                         <tr ng-repeat="step in ctl.risk.response.respPlan" style="margin-top:15px">
@@ -256,12 +268,11 @@
                         </tr>
                     </table>
                 </div>
-                            </div>
+            </div>
         </div>
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Risk Controls</div>
             <div class="panel-body" style="padding:5px;">
-
                 <div class="col-xs-12">
                     <div ng-show="ctl.risk.controls == null || ctl.risk.controls.length < 1" style="text-align:center">No Controls In Place</div>
                     <table ng-show="ctl.risk.controls.length >0" class="table table-striped">
@@ -285,7 +296,7 @@
                         </tr>
                     </table>
                 </div>
-                            </div>
+            </div>
         </div>
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Stakeholders</div>
@@ -299,110 +310,109 @@
                         </tr>
                     </table>
                 </div>
-                            </div>
+            </div>
         </div>
         <div class="panel">
             <div class="panel-heading" style="font-size:12pt">Audit Milestones</div>
             <div class="panel-body" style="padding:5px;">
 
-                                                    <div class="col-12-lg">
-                                        
-                                    </div>
-                                    <div class="col-12-lg">
-                                     <table class="table table-striped table-bordered table-hover dataTables-example">
-                                        <thead>
-                                            <tr>
-                                                <th>Audit Point</th>
-                                                <th>Date</th>
-                                                <th>Person</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th>Risk Identified</th>
-                                                <td>{{ctl.risk.audit.auditIdent.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditIdent.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Identification Reviewed</th>
-                                               <td>{{ctl.risk.audit.auditIdentRev.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditIdentRev.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Identification Approved</th>
-                                               <td>{{ctl.risk.audit.auditIdentApp.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditIdentApp.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Risk Evaluated</th>
-                                                <td>{{ctl.risk.audit.auditEval.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditEval.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Evaluation Reviewed</th>
-                                                <td>{{ctl.risk.audit.auditEvalRev.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditEvalRev.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Evaluation Approved</th>
-                                                <td>{{ctl.risk.audit.auditEvalApp.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditEvalApp.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Mitigation Plan</th>
-                                                <td>{{ctl.risk.audit.auditMit.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditMit.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Mitigation Reviewed</th>
-                                                <td>{{ctl.risk.audit.auditMitRev.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditMitRev.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Mitigation Approved</th>
-                                                <td>{{ctl.risk.audit.auditMitApp.auditDate}}</td>
-                                                <td>{{ctl.risk.audit.auditMitApp.auditPerson | usernameFilter}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    </div>
-                            </div>
+                <div class="col-12-lg">
+
+                </div>
+                <div class="col-12-lg">
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>Audit Point</th>
+                                <th>Date</th>
+                                <th>Person</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Risk Identified</th>
+                                <td>{{ctl.risk.audit.auditIdent.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditIdent.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Identification Reviewed</th>
+                                <td>{{ctl.risk.audit.auditIdentRev.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditIdentRev.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Identification Approved</th>
+                                <td>{{ctl.risk.audit.auditIdentApp.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditIdentApp.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Risk Evaluated</th>
+                                <td>{{ctl.risk.audit.auditEval.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditEval.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Evaluation Reviewed</th>
+                                <td>{{ctl.risk.audit.auditEvalRev.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditEvalRev.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Evaluation Approved</th>
+                                <td>{{ctl.risk.audit.auditEvalApp.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditEvalApp.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Mitigation Plan</th>
+                                <td>{{ctl.risk.audit.auditMit.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditMit.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Mitigation Reviewed</th>
+                                <td>{{ctl.risk.audit.auditMitRev.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditMitRev.auditPerson | usernameFilter}}</td>
+                            </tr>
+                            <tr>
+                                <th>Mitigation Approved</th>
+                                <td>{{ctl.risk.audit.auditMitApp.auditDate}}</td>
+                                <td>{{ctl.risk.audit.auditMitApp.auditPerson | usernameFilter}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-                <div class="col-xs-12" style="padding-right:0px;padding-left:0px">
-                    <div class="panel">
-                        <div class="panel-heading">Attachements</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%;padding:54px">
-                                        <div class="dz-message">
-                                            Drop file here or click to attach.
+        <div class="panel">
+            <div class="panel-heading">Attachements</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%;padding:54px">
+                            <div class="dz-message">
+                                Drop file here or click to attach.
+                            </div>
+                        </div>
+                        <div>
+                            <form method="get" class="form-vertical">
+                                <div class="form-group">
+                                    <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
+                                    <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
+                                    <div class="col-lg-12" style="padding-right:0px;padding-bottom:5px">
+                                        <div style="text-align:right">
+                                            <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
+                                            <button type="button" style="margin-top:5px" class="btn  btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <form method="get" class="form-vertical">
-                                            <div class="form-group">
-                                                <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
-                                                <textarea ng-model="ctl.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="ctl.disableAttachmentButon"></textarea>
-                                                <div class="col-lg-12" style="padding-right:0px;padding-bottom:5px">
-                                                    <div style="text-align:right">
-                                                        <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="ctl.cancelAttachment()" ng-disabled="ctl.disableAttachmentButon">Cancel</button>
-                                                        <button type="button" style="margin-top:5px" class="btn  btn-w-m btn-primary" ng-click="ctl.uploadAttachment()" ng-disabled="ctl.disableAttachmentButon">Upload Attachment</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
-                                <div class="col-lg-12" style="margin-top:5px">
-                                    <table class="table table-striped" style="width:100%">
-                                        <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
-                                            <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                <div style="float:left;clear:both">{{attach.post_content}}
-                                                </div>
-                                                <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
-                                                </div>
-                                                <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" style="margin-top:5px">
+                        <table class="table table-striped" style="width:100%">
+                            <tr ng-repeat="attach in ctl.risk.attachments" style="margin-top:15px">
+                                <td style="padding-bottom:5px;padding-left:15px;width:100%">
+                                    <div style="float:left;clear:both">{{attach.post_content}}
+                                    </div>
+                                    <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}
+                                    </div>
+                                    <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
                         </td>
                     </tr>
                     </tr>
@@ -410,9 +420,8 @@
             </div>
         </div>
     </div>
-                        </div></div>
-                <div class="col-xs-12" style="padding-right:0px;padding-left:0px">
-                        <div class="panel">
+                        </div>
+        <div class="panel">
                             <div class="panel-heading">Comments</div>
                             <div class="panel-body">
                                 <table class="table table-striped" style="width:100%">
@@ -432,9 +441,8 @@
                                                 </div>
                             </div>
                         </div>
-                    </div>
-            </div>        
- </div>
+    </div>        
+</div>
 
 <!-- This is the template used by Dropzone, won't be displayed -->
 <div id="preview-template" style="display: none;">

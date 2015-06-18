@@ -106,7 +106,7 @@
                                         <div class="col-sm-9" style="margin-top:5px">
                                             <ui-select ng-model="rev.riskID" on-select="rev.addRisk()" theme="select2" search-enabled=true style="width:400px">
                                                 <ui-select-match allow-clear=false placeholder="Select Review Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
-                                                <ui-select-choices repeat="risk.id as risk in main.risks track by risk.id">
+                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="risk.id as risk in main.risks track by risk.id">
                                                     <div style="width:100px;display:inline-block;font-weight:bold">{{risk.riskProjectCode}}</div>
                                                     <div style="display:inline">{{risk.title}}</div>
                                                 </ui-select-choices>
@@ -118,7 +118,7 @@
                                         <div class="col-sm-9" style="margin-top:5px">
                                             <ui-select ng-model="rev.projectID" on-select="rev.addProjectRisk()" theme="select2" search-enabled=true style="width:400px">
                                                 <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
-                                                <ui-select-choices repeat="project.id as project in rev.sortedParents track by project.id">
+                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="project.id as project in rev.sortedParents track by project.id">
                                                     <div ng-style="rev.rowStyle(project)">
                                                         <span ng-bind-html="project.title"></span>
                                                     </div>

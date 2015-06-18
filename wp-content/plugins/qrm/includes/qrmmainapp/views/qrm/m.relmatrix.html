@@ -34,6 +34,7 @@
                             <input icheck type="radio" name="status" value=2 ng-change="relMatrix.stateSelectorChanged()" ng-model="relMatrix.status.val"> Treated Tolerance </label>
                     </div>
                     <div style="text-align:right">
+                        <button type="button" class="btn btn-xs btn-s-m btn-info" ng-click="relMatrix.clearFilters()">Clear Filters</button>
                         <button type="button" class="btn btn-xs btn-s-m btn-info" ng-click="relMatrix.closeFilters()">Close</button>
                     </div>
                 </div>

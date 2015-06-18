@@ -128,6 +128,12 @@ class QRM {
 		}
 		
 		$incident->incidentCode = "INCIDENT-".$incident->id;
+		
+		wp_update_post ( array (
+		'ID' => $incident->id,
+		'post_title' => $incident->incidentCode." - ".$incident->title,
+		'post_type' => 'incident'
+				));
 
 		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
 		
@@ -241,6 +247,12 @@ class QRM {
 		}
 		
 		$review->reviewCode = "REVIEW-".$review->id;
+		
+		wp_update_post ( array (
+			'ID' => $review->id,
+			'post_title' => $review->reviewCode." - ".$review->title,
+			'post_type' => 'review'
+		));
 		
 		update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
 		
@@ -670,6 +682,12 @@ class QRM {
 			update_post_meta ( $postID, "audit", json_encode ( $auditObj ) );
 		}
 		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
+		
+		wp_update_post ( array (
+			'ID' => $risk->id,
+			'post_title' => $risk->riskProjectCode." - ".$risk->title,
+			'post_type' => 'risk'
+		));
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 		

@@ -2493,16 +2493,15 @@ body {
 .loading .loading-text {
   font-size: 1.5rem;
   color:rgb(103,106,108);
-
   line-height: 1.9125rem;
   text-shadow: white 0 0 1em, white 0 0 0.5em, white 0 0 0.25em;
   position: relative;
   display: block;
   text-transform: uppercase;
   font-weight: bold;
-    margin-left:-10px;
+  margin-left:-10px;
 }
-.loading .loading-text:after {
+.loading .loading-text-action:after {
   content: "...";
 }
 .loading .loading-spinner {
@@ -2514,6 +2513,16 @@ body {
   margin: -3.9375rem auto 0;
   color: #1a1d1d;
   text-align: center;
+}
+
+h1.status-msg{
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 100%;
 }
 
 .hidden-qrm{
@@ -2549,22 +2558,22 @@ body {
 }
 
 .panel-incident {
-    border-color: #bce8f1;
+    border-color: #ebccd1;
 }
 .panel-incident > .panel-heading {
-    color: #31708f;
-    background-color: #d9edf7;
-    border-color: #bce8f1;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
 .panel-incident > .panel-heading + .panel-collapse > .panel-body {
-    border-top-color: #bce8f1;
+    border-top-color: #ebccd1;
 }
 .panel-incident > .panel-heading .badge {
-    color: #d9edf7;
-    background-color: #31708f;
+    color: #f2dede;
+    background-color: #a94442;
 }
 .panel-incident > .panel-footer + .panel-collapse > .panel-body {
-    border-bottom-color: #bce8f1;
+    border-bottom-color: #ebccd1;
 }
 
 .panel-review {
@@ -2592,6 +2601,10 @@ body {
             
  .explorerGrid  .ui-grid-row:nth-child(even):hover .ui-grid-cell {
       background: #ffff99;
+}
+
+.explorerGrid {
+    background-color: white;
 }
 
 
@@ -2779,6 +2792,10 @@ h2.m-header{
 
 .qrmSecMenu {
      background-color: #47a3da;
+}
+
+body {
+    background-color: aliceblue;
 }
 
 

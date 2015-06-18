@@ -1,12 +1,11 @@
-
 function pageTitle($rootScope, $timeout) {
     return {
         link: function (scope, element) {
             var listener = function (event, toState, toParams, fromState, fromParams) {
                 // Default title - load on Dashboard 1
-                var title = 'INSPINIA | Responsive Admin Theme';
+                var title = 'QRM | Quay Risk Manager';
                 // Create your own title pattern
-                if (toState.data && toState.data.pageTitle) title = 'INSPINIA | ' + toState.data.pageTitle;
+                if (toState.data && toState.data.pageTitle) title = 'QRM | ' + toState.data.pageTitle;
                 $timeout(function () {
                     element.text(title);
                 });
@@ -15,19 +14,6 @@ function pageTitle($rootScope, $timeout) {
         }
     }
 };
-
-function sideNavigation($timeout) {
-    return {
-        restrict: 'A',
-        link: function (scope, element) {
-            // Call the metsiMenu plugin and plug it to sidebar navigation
-            $timeout(function () {
-               element.metisMenu();
-            });
-        }
-    };
-};
-
 
 function icheck($timeout) {
     return {
@@ -63,7 +49,6 @@ function icheck($timeout) {
     };
 }
 
-
 function riskmat(QRMDataService) {
     //Creates the risk matrices on the explorer page
     return {
@@ -88,7 +73,6 @@ function riskmat(QRMDataService) {
         }
     };
 }
-
 
 function dropzone() {
     function link (scope, element, attrs) {
@@ -129,9 +113,8 @@ function textAngularFocus($parse, $timeout, textAngularManager) {
 
 
 angular
-    .module('inspinia')
+    .module('qrm')
     .directive('pageTitle', pageTitle)
-    .directive('sideNavigation', sideNavigation)
     .directive('riskmat', ['QRMDataService',riskmat])
     .directive('icheck', icheck)
     .directive('dropzone', dropzone)
