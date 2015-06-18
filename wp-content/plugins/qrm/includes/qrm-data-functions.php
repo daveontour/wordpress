@@ -144,36 +144,8 @@ class QRM {
 		
 		
 	}
-	static function addIncidentComment() {
-		$comment = json_decode ( file_get_contents ( "php://input" ) );
-		$time = current_time ( 'mysql' );
-	
-		global $user_identity, $user_email, $user_ID, $current_user;
-		get_currentuserinfo ();
-	
-		$data = array (
-				'comment_post_ID' => $comment->incidentID,
-				'comment_author' => $current_user->display_name,
-				'comment_author_email' => $current_user->user_email,
-				'comment_content' => $comment->comment,
-				'comment_type' => '',
-				'comment_parent' => 0,
-				'user_id' => $user_ID,
-				'comment_date' => $time,
-				'comment_approved' => 1
-		);
-	
-		wp_insert_comment ( $data );
-	
 
-		$comments = get_comments ( array (
-				'post_id' => $comment->incidentID
-		) );
-		
-		
-		wp_send_json ( $comments );
-	}
-	static function addReviewComment() {
+	static function addGeneralComment() {
 		$comment = json_decode ( file_get_contents ( "php://input" ) );
 		$time = current_time ( 'mysql' );
 	
@@ -181,7 +153,7 @@ class QRM {
 		get_currentuserinfo ();
 	
 		$data = array (
-				'comment_post_ID' => $comment->reviewID,
+				'comment_post_ID' => $comment->ID,
 				'comment_author' => $current_user->display_name,
 				'comment_author_email' => $current_user->user_email,
 				'comment_content' => $comment->comment,
@@ -194,7 +166,7 @@ class QRM {
 	
 		wp_insert_comment ( $data );
 		$comments = get_comments ( array (
-				'post_id' => $comment->reviewID
+				'post_id' => $comment->ID
 		) );
 		wp_send_json ( $comments );
 	}
@@ -498,33 +470,6 @@ class QRM {
 			}
 		}
 		QRM::getSiteUsers ();
-	}
-	static function addComment() {
-		$comment = json_decode ( file_get_contents ( "php://input" ) );
-		$time = current_time ( 'mysql' );
-		
-		global $user_identity, $user_email, $user_ID, $current_user;
-		get_currentuserinfo ();
-		
-		$data = array (
-				'comment_post_ID' => $comment->riskID,
-				'comment_author' => $current_user->display_name,
-				'comment_author_email' => $current_user->user_email,
-				'comment_content' => $comment->comment,
-				'comment_type' => '',
-				'comment_parent' => 0,
-				'user_id' => $user_ID,
-				'comment_date' => $time,
-				'comment_approved' => 1 
-		);
-		
-		wp_insert_comment ( $data );
-		
-		$emptyRisk = new Risk ();
-		$emptyRisk->comments = get_comments ( array (
-				'post_id' => $comment->riskID 
-		) );
-		wp_send_json ( $emptyRisk );
 	}
 	static function getAttachments() {
 		$postID = json_decode ( file_get_contents ( "php://input" ) );

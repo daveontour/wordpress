@@ -500,21 +500,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.addComment = function (comment, riskID) {
-        data = {
-            comment: comment,
-            riskID: riskID
-        }
-        return $http({
-            method: 'POST',
-            url: ajaxurl,
-            params: {
-                action: "addComment"
-            },
-            cache: false,
-            data: JSON.stringify(data)
-        });
-    };
     this.updateRisksRelMatrix = function (data) {
         return $http({
             method: 'POST',
@@ -583,7 +568,7 @@ function RemoteService($http) {
             data: JSON.stringify(incidentID)
         });
     };
-        this.getReview = function (reviewID) {
+    this.getReview = function (reviewID) {
         return $http({
             method: 'POST',
             url: ajaxurl,
@@ -637,31 +622,16 @@ function RemoteService($http) {
             data: JSON.stringify(review)
         });
     };
-     this.addIncidentComment = function (comment, incidentID) {
+    this.addGeneralComment = function (comment, postID) {
         data = {
             comment: comment,
-            incidentID: incidentID
+            ID: postID
         }
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
-                action: "addIncidentComment"
-            },
-            cache: false,
-            data: JSON.stringify(data)
-        });
-    };
-    this.addReviewComment = function (comment, incidentID) {
-        data = {
-            comment: comment,
-            incidentID: incidentID
-        }
-        return $http({
-            method: 'POST',
-            url: ajaxurl,
-            params: {
-                action: "addIncidentComment"
+                action: "addGeneralComment"
             },
             cache: false,
             data: JSON.stringify(data)

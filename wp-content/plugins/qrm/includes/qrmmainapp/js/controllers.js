@@ -1094,10 +1094,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-            remoteService.addComment($scope.data.comment, QRMDataService.riskID)
+            remoteService.addGeneralComment($scope.data.comment, QRMDataService.riskID)
                 .then(function (response) {
                     ngNotify.set("Comment added to risk", "success");
-                    vm.risk.comments = response.data.comments;
+                    vm.risk.comments = response.data;
                 });
         }, function (reason) {
             // Restore the old values
@@ -1105,10 +1105,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         });
     }
     this.addCommentSm = function () {
-        remoteService.addComment($scope.data.comment, QRMDataService.riskID)
+        remoteService.addGeneralComment($scope.data.comment, QRMDataService.riskID)
             .then(function (response) {
                 ngNotify.set("Comment added to risk", "success");
-                vm.risk.comments = response.data.comments;
+                vm.risk.comments = response.data;
             });
 
         $scope.data.comment = "";
@@ -2662,7 +2662,7 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-            remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
+            remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
                 .then(function (response) {
                     ngNotify.set("Comment Added to Incident", "success");
                     inc.incident.comments = response.data;
@@ -2673,7 +2673,7 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         });
     }
     this.addCommentSM = function () {
-        remoteService.addIncidentComment($scope.data.comment, QRMDataService.incidentID)
+        remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
             .then(function (response) {
                 ngNotify.set("Comment Added to Incident", "success");
                 inc.incident.comments = response.data;
@@ -2937,7 +2937,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
     this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadAttachment = function () {
-        rev.dropzone.processFile(inc.dzfile);
+        rev.dropzone.processFile(rev.dzfile);
     }
     this.cancelAttachment = function () {
         rev.dropzone.removeAllFiles(true);
@@ -3011,13 +3011,13 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
     }
 
     this.addComment = function () {
-        $scope.data.comment = "";
+      $scope.data.comment = "";
         ngDialog.openConfirm({
             template: "addReviewCommentModalDialogId",
             className: 'ngdialog-theme-default',
             scope: $scope,
         }).then(function (value) {
-            remoteService.addReviewComment($scope.data.comment, QRMDataService.reviewID)
+            remoteService.addGeneralComment($scope.data.comment, QRMDataService.reviewID)
                 .then(function (response) {
                     ngNotify.set("Comment Added to Review", "success");
                     rev.review.comments = response.data;
@@ -3028,7 +3028,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         });
     }
     this.addCommentSM = function () {
-        remoteService.addReviewComment($scope.data.comment, QRMDataService.incidentID)
+        remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
             .then(function (response) {
                 ngNotify.set("Comment Added to Review", "success");
                 rev.review.comments = response.data;

@@ -2467,6 +2467,7 @@ body {
   pointer-events: none;
 }
 
+#savingreview.loading,
 #savingincident.loading,
 #target.loading,
 #explorerloading.loading,
