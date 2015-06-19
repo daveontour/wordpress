@@ -2,6 +2,7 @@
 <html ng-app="qrm">
 
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -23,6 +24,7 @@
     <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/bootstrap.min.css" ?>">
 
     <!-- All the QRM -->
+
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/dropzone/dropzone.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/angular-notify/angular-notify.min.css" ?>'>
@@ -47,12 +49,49 @@
 
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_angular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
+
 </head>
 
 <body ng-controller="MainCtrl as main" class="cbp-spmenu-push" style="height:calc(100vh - 61px)">
 
-	<div ui-view></div>
+	<ui-view/>
 	
+		<!-- Navigation Window -->
+<!-- 		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1"> -->
+<!-- 			<h3>Quay Risk Manager</h3> -->
+<!--             <a ui-sref="explorer">Risk Explorer</a> -->
+<!--             <a ui-sref="incidentExpl">Incident Explorer</a> -->
+<!--             <a ui-sref="reviewExpl">Review Explorer</a> -->
+<!--             <a ui-sref="calender">Exposure Calender</a> -->
+<!--             <a ui-sref="rank">Risk Ranking</a> -->
+<!--             <a ui-sref="matrix">Tolerance Matrix</a> -->
+<!--             <a ui-sref="analysis">Dashboard</a> -->
+<!--             <a href="#"  ng-click="main.logout()" >Logout ({{main.userName}})</a> -->
+<!--         </nav> -->
+ 
+        <!-- Page Content -->
+<!--         <div id="page-content-wrapper" class="container"> -->
+        	
+        	<!-- Sticky Header -->
+<!--             <div id="header_container" class="qrmPrimMenu hidden-qrm"> -->
+                <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
+                    <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
+<!--                     </button> <span id="qrm-title"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span> -->
+                    
+<!--                 </div> -->
+<!--             </div> -->
+            
+            <!-- Main Body -->
+<!--             <div id="container"> -->
+<!--                 <div id="content"> -->
+<!--                     <div ui-view></div> -->
+<!--                 </div> -->
+<!--             </div> -->
+
+            <!-- Sticky Footer (not used) -->
+            <!--<div id="footer_container"><div id="footer">Footer Content</div></div>-->
+<!--         </div> -->
+
     <!-- jQuery and Bootstrap -->
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js" ?>"></script>

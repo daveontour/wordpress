@@ -17,11 +17,131 @@ function SortByProjectCode(a, b) {
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
-function MainCtrl(QRMDataService, remoteService, $state, $sce) {
+function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
+
+    // This is the entry for the app
+    // If the user is not logged on, simply present the login screen
+    // If they are, switch the view according to the item they selected
+
+    var intro = this;
+
+    intro.sessionOK = false;
+
+    a = remoteService.getSiteUsers()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRMDataService.siteUsers = response.data.data;
+            }
+        });
+
+    b = remoteService.getCurrentUser()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRMDataService.currentUser = response.data;
+                QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
+            }
+        });
+    c = remoteService.getAllRisks()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRM.mainController.risks = response.data;
+                QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
+                    if (value.riskProjectCode == null) return false;
+                    return value != null;
+                });
+                QRM.mainController.risks.sort(SortByProjectCode);
+                QRMDataService.risks = QRM.mainController.risks;
+            }
+        });
+
+    if (postType == "risk" || postType == "review") {
+
+        //Add additional data fetch
+        d = remoteService.getProjects()
+            .then(function (response) {
+                if (response.data == "0" || response.data == "-1") {
+                    intro.sessionOK = false;
+                } else {
+                    intro.sessionOK = true;
+                    QRMDataService.handleGetProjects(response);
+                }
+
+            });
+
+        $q.all([a, b, c, d]).then(function () {
+            intro.switch();
+        });
+
+    } else {
+
+        $q.all([a, b, c]).then(function () {
+            intro.switch();
+        });
+        
+    }
+
+    this.switch = function () {
+
+        if (!intro.sessionOK) {
+            $state.go("login");
+            return;
+        }
+
+        switch (postType) {
+        case 'risk':
+            QRMDataService.selectProject(projectID);
+            QRMDataService.riskID = postID;
+            $state.go("qrm.risk");
+            break;
+        case 'riskproject':
+            $state.go("qrm.explorer");
+            break;
+        case 'review':
+            remoteService.getReview(postID)
+                .then(function (response) {
+                    QRMDataService.review = response.data;
+                    if (QRMDataService.review.risks != null) {
+                        QRMDataService.review.risks.sort(SortByProjectCode);
+                    }
+                    QRMDataService.reviewID = QRMDataService.review.id;
+                    QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
+                    QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+                    $state.go("qrm.review");
+                });
+            break;
+        case 'incident':
+            remoteService.getIncident(postID)
+                .then(function (response) {
+                    QRMDataService.incident = response.data;
+                    if (QRMDataService.incident.risks != null) {
+                        QRMDataService.incident.risks.sort(SortByProjectCode);
+                    }
+                    QRMDataService.incidentID = QRMDataService.incident.id;
+                    QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+                    $state.go("qrm.incident");
+                });
+            break;
+        default:
+            $state.go("qrm.explorer");
+            break;
+        }
+    }
+};
+
+function MainCtrl(QRMDataService, remoteService, $state) {
 
     QRM.mainController = this;
-    
-    console.log("Main Controller "+new Date());
+
+    console.log("Main Controller " + new Date());
 
     this.showStatusBoard = false;
     this.showSpinner = false;
@@ -187,8 +307,8 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             return false;
         }
     }
-    
-    this.logout = function(){
+
+    this.logout = function () {
         remoteService.logout()
             .finally(function () {
                 QRMDataService.siteUsers = null;
@@ -222,7 +342,7 @@ function MainCtrl(QRMDataService, remoteService, $state, $sce) {
             });
     }
 
-    this.init();
+    //    this.init();
 };
 
 function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
@@ -403,7 +523,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
     this.newRisk = function () {
         postType = null;
         QRMDataService.riskID = -1;
-        $state.go('risk');
+        $state.go('qrm.risk');
     }
     $scope.editRisk = function (riskID) {
         exp.editRisk(riskID);
@@ -416,7 +536,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
             .then(function (response) {
                 QRMDataService.pRisk = response.data;
                 QRMDataService.passRisk = true;
-                $state.go('risk');
+                $state.go('qrm.risk');
             }).finally(function () {
                 $scope.loading = true;
             });
@@ -732,7 +852,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     };
 
     this.riskAttachmentReady = function (dropzone, file) {
-         vm.dropzone = dropzone;
+        vm.dropzone = dropzone;
         vm.dzfile = file;
         vm.disableAttachmentButon = false;
         $scope.$apply();
@@ -886,7 +1006,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
 
     this.cancelRisk = function () {
-        $state.go('explorer');
+        $state.go('qrm.explorer');
     }
     this.getRisk = function () {
 
@@ -1338,23 +1458,12 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         }
 
         if (postType == "risk") {
+            vm.categories = QRMDataService.catData;
+            vm.objectives = QRMDataService.projectObjectives;
+            $scope.siteUsers = QRMDataService.siteUsers;
+            vm.riskID = postID;
+            vm.getRisk();
 
-            // Jumped here directly from risk list in WP
-            remoteService.getProjects()
-                .then(function (response) {
-
-                    QRMDataService.handleGetProjects(response);
-                    QRMDataService.selectProject(projectID);
-                    QRMDataService.riskID = postID;
-
-                    vm.project = QRMDataService.project;
-                    vm.categories = QRMDataService.catData;
-                    vm.objectives = QRMDataService.projectObjectives;
-                    $scope.siteUsers = QRMDataService.siteUsers;
-
-                    vm.riskID = postID;
-                    vm.getRisk();
-                });
             // Zero it out so no reoccurance
             postType = null;
         } else {
@@ -1470,7 +1579,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     }
     this.editRisk = function (id) {
         QRMDataService.riskID = id;
-        $state.go('index.risk');
+        $state.go('qrm.risk');
     }
     this.getRisks = function () {
         remoteService.getAllProjectRisks(QRMDataService.project.id)
@@ -1556,7 +1665,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
     this.project = QRMDataService.project;
     this.editRisk = function (id) {
         QRMDataService.riskID = id;
-        $state.go('risk');
+        $state.go('qrm.risk');
     }
 
     this.showInstructions = true;
@@ -2562,12 +2671,12 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
                 QRMDataService.incident.date = new Date(QRMDataService.incident.date);
 
                 incident.loading = false;
-                $state.go("incident");
+                $state.go("qrm.incident");
             });
     }
     this.newIncident = function () {
         QRMDataService.incidentID = -1;
-        $state.go('incident');
+        $state.go('qrm.incident');
     }
     this.init();
 }
@@ -2673,7 +2782,7 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
     this.cancelIncident = function () {
         QRMDataService.incident = null;
         QRMDataService.incidentID = -1;
-        $state.go("incidentExpl");
+        $state.go("qrm.incidentExpl");
     }
 
     this.updateIncident = function () {
@@ -2899,12 +3008,12 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                 QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
                 QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
                 review.loading = false;
-                $state.go("review");
+                $state.go("qrm.review");
             });
     }
     this.newReview = function () {
         QRMDataService.reviewID = -1;
-        $state.go('review');
+        $state.go('qrm.review');
     }
 
     this.init = function () {
@@ -3061,7 +3170,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
     this.cancelReview = function () {
         QRMDataService.review = null;
         QRMDataService.reviewID = -1;
-        $state.go("reviewExpl");
+        $state.go("qrm.reviewExpl");
     }
 
     this.updateReview = function () {
@@ -3130,7 +3239,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         }
 
         rev.review.risks.forEach(function (riskID) {
-           var riskComment = $.grep(rev.review.riskComments, function (e) {
+            var riskComment = $.grep(rev.review.riskComments, function (e) {
                 return e.riskID == riskID
             });
             if (riskComment.length > 0) {
@@ -3236,14 +3345,16 @@ function LoginCtrl($scope, $state, QRMDataService, $timeout, remoteService) {
         remoteService.login(login.username, login.pass)
             .then(function (response) {
                 var result = response.data;
-
                 if (result.loggedin == true) {
-                    QRM.mainController.init(); 
-                    $state.go("explorer");
+                    login.showError = false;
+                    login.username = "";
+                    login.pass = "";
+                    QRM.mainController.init();
+                    $state.go("qrm.explorer");
                 } else {
                     login.showError = true;
-                    this.username = "";
-                    this.pass = "";
+                    login.username = "";
+                    login.pass = "";
                 }
             });
     }
@@ -3286,7 +3397,8 @@ var app = angular.module('qrm');
             return taOptions;
   }]);
     });
-    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', '$sce', MainCtrl]);
+    app.controller('IntroCtrl', ['QRMDataService', 'RemoteService', '$state', '$timeout', '$q', IntroCtrl]);
+    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', MainCtrl]);
     app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', ExplorerCtrl]);
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);

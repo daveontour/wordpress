@@ -75,6 +75,7 @@ add_action("wp_ajax_saveReview", array(QRM, "saveReview"));
 add_action("wp_ajax_nopriv_login", array(QRM, "login") );
 add_action("wp_ajax_login", array(QRM, "login") );
 add_action("wp_ajax_logout", array(QRM, "logout") );
+add_action("wp_ajax_checkSession", array(QRM, "checkSession") );
 
 add_action('init', 'qrm_init_options');
 
@@ -128,6 +129,12 @@ function get_custom_post_type_template($single_template){
 	}
 	if ($post->post_type == 'riskproject'){
 		$single_template = dirname(__FILE__).'/templates/riskproject-type-template.php';
+	}
+	if ($post->post_type == 'incident'){
+		$single_template = dirname(__FILE__).'/templates/incident-type-template.php';
+	}
+	if ($post->post_type == 'review'){
+		$single_template = dirname(__FILE__).'/templates/review-type-template.php';
 	}
 	return $single_template;
 }

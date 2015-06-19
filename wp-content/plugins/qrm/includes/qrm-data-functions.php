@@ -1,5 +1,10 @@
 <?php
 class QRM {
+	
+	static function checkSession(){
+		// Will only arrive here if the session is logged on, so just need to send back a non-zero response
+		wp_send_json(array('loggedin'=>true));
+	}
 	static function login(){
 		$data = json_decode ( file_get_contents ( "php://input" ) );
 		$user = $data->user;
@@ -11,6 +16,7 @@ class QRM {
 		$info['remember'] = true;
 		
 		$user_signon = wp_signon( $info, false );
+
 		if ( is_wp_error($user_signon) ){
 			wp_send_json(array('loggedin'=>false, 'message'=>__('Wrong username or password.')));
 		} else {

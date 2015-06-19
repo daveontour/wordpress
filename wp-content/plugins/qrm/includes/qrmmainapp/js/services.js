@@ -400,7 +400,7 @@ function DataService() {
 function RemoteService($http) {
 
     this.getRisk = function (riskID, $scope) {
-        $scope.myPromise = $http({
+        return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
@@ -409,8 +409,6 @@ function RemoteService($http) {
             cache: false,
             data: riskID
         });
-        
-        return $scope.myPromise;
     };
     this.saveRisk = function (risk) {
 
@@ -658,6 +656,16 @@ function RemoteService($http) {
             url: ajaxurl,
             params: {
                 action: "logout",
+            },
+            cache: false
+        });
+    };
+    this.checkSession = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "checkSession",
             },
             cache: false
         });

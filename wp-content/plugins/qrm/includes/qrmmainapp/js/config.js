@@ -4,14 +4,28 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     IdleProvider.idle(5); // in seconds
     IdleProvider.timeout(120); // in seconds
 
-    $urlRouterProvider.otherwise("/login");
+    $urlRouterProvider.otherwise("/intro");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
-        debug: false
+        debug: true
     });
 
     $stateProvider
+          .state('qrm', {
+            url: "/qrm",
+            abstract:true,
+            templateUrl: function (params) {
+                    return pluginurl+"views/common/content.html"
+            }
+          }) 
+          .state('intro', {
+            url: "/intro",
+            controller:"IntroCtrl",
+            templateUrl: function (params) {
+                    return pluginurl+"views/qrm/intro.html"
+            }, 
+          })
           .state('login', {
             url: "/login",
             templateUrl: function (params) {
@@ -23,13 +37,11 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             }, 
             onEnter:function(){
                 closeMenu();
-                jQuery("#header_container").addClass("hidden-qrm");
             },
             onExit:function(){
-                jQuery("#header_container").removeClass("hidden-qrm");
             }
         })
-        .state('explorer', {
+        .state('qrm.explorer', {
             url: "/explorer",
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
@@ -43,13 +55,12 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 pageTitle: 'Risk Explorer'
             }, 
             onEnter:function(){
-                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
                 winWidth = $(document).width()-10;
                 $("#container").css("width", winWidth + "px");
             }
         })
-        .state('risk', {
+        .state('qrm.risk', {
             url: "/risk",
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
@@ -68,14 +79,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             }, 
             onEnter:function(){
-              jQuery("#header_container").removeClass("hidden-qrm");
                closeMenu();
             },
             onExit:function(){
                 QRM.mainController.lookingForRisks();
             }
         })
-        .state('calender', {
+        .state('qrm.calender', {
             url: "/calender",
             controller: 'CalenderController',
             controllerAs: 'cal',
@@ -91,7 +101,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             }
 
         })
-        .state('rank', {
+        .state('qrm.rank', {
             url: "/rank",
             controller: 'RankController',
             controllerAs: 'rank',
@@ -103,11 +113,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
-                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })
-        .state('matrix', {
+        .state('qrm.matrix', {
             url: "/matrix",
             controller: 'RelMatrixController',
             controllerAs: 'relMatrix',
@@ -119,11 +128,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
-                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })
-        .state('incidentExpl', {
+        .state('qrm.incidentExpl', {
             url: "/incidentExpl",
             controller: 'IncidentExplCtrl',
             controllerAs: 'incidentExpl',
@@ -138,7 +146,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 closeMenu();
             }
         })
-        .state('incident', {
+        .state('qrm.incident', {
             url: "/incident",
             controller: 'IncidentCtrl',
             controllerAs: 'incident',
@@ -158,11 +166,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             },
             onEnter:function(){
-                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })    
-        .state('reviewExpl', {
+        .state('qrm.reviewExpl', {
             url: "/reviewExpl",
             controller: 'ReviewExplCtrl',
             controllerAs: 'reviewExpl',
@@ -177,7 +184,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 closeMenu();
             }
         })  
-        .state('review', {
+        .state('qrm.review', {
             url: "/review",
             controller: 'ReviewCtrl',
             controllerAs: 'rev',
@@ -189,11 +196,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
-               jQuery("#header_container").removeClass("hidden-qrm");
                closeMenu();
             }
         })  
-        .state('analysis', {
+        .state('qrm.analysis', {
             url: "/analysis",
             controller: 'AnalysisController',
             controllerAs: 'analysis',
