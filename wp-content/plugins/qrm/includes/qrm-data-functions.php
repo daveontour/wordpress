@@ -1,61 +1,25 @@
 <?php
 class QRM {
-	static function router($fn) {
+	static function login(){
+		$data = json_decode ( file_get_contents ( "php://input" ) );
+		$user = $data->user;
+		$pass = $data->pass;
 		
-		// First do a security check
-		$caps = wp_get_current_user ()->caps;
+		$info = array();
+		$info['user_login'] = $user;
+		$info['user_password'] = $pass;
+		$info['remember'] = true;
 		
-		if (! in_array ( "risk_owner", $caps ) && ! in_array ( "risk_manager", $caps ) && ! in_array ( "risk_project_manager", $caps ) && ! in_array ( "risk_user", $caps ) && ! in_array ( "risk_admin", $caps ) && ! in_array ( "administrator", $caps )) // Fail Safe for the site admins have always got access
-{
-			http_response_code ( 400 );
-			echo '{"error":true,"msg":"Not Authorised"}';
-			exit ();
+		$user_signon = wp_signon( $info, false );
+		if ( is_wp_error($user_signon) ){
+			wp_send_json(array('loggedin'=>false, 'message'=>__('Wrong username or password.')));
+		} else {
+			wp_send_json(array('loggedin'=>true, 'message'=>__('Login successful, redirecting...')));
 		}
-		// Pass to the specific function
-		switch ($fn) {
-			
-			case "saveRisk" :
-				QRM::saveRisk ();
-				break;
-			case "getRisk" :
-				QRM::getRisk ();
-				break;
-			case "getAllRisks" :
-				QRM::getAllRisks ();
-				break;
-			case "addComment" :
-				QRM::addComments ();
-				break;
-			case "uploadFile" :
-				QRM::uploadFile ();
-				break;
-			case "getRiskAttachments" :
-				QRM::getRiskAttachments ();
-				break;
-			case "updateRisksRelMatrix" :
-				QRM::updateRisksRelMatrix ();
-				break;
-			case "getSiteUsers" :
-				QRM::getSiteUsers ();
-				break;
-			case "getSiteUsersCap" :
-				QRM::getSiteUsersCap ();
-				break;
-			case "getProjects" :
-				QRM::getProjects ();
-				break;
-			case "getProject" :
-				QRM::getProject ();
-				break;
-			case "saveSiteUsers" :
-				QRM::saveSiteUsers ();
-			case "saveProject" :
-				QRM::saveProject ();
-				break;
-			
-			default :
-				wp_die ( $wp->query_vars ['qrmfn'] );
-		}
+	}
+	static function logout(){
+		wp_destroy_current_session();
+		wp_send_json(array('loggedout'=>true, 'message'=>__('Logout successful, redirecting...')));		
 	}
 	static function getAllIncidents() {
 		global $post;

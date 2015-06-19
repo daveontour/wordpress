@@ -72,6 +72,9 @@ add_action("wp_ajax_addGeneralComment", array(QRM, "addGeneralComment"));
 add_action("wp_ajax_getAllReviews", array(QRM, "getAllReviews"));
 add_action("wp_ajax_getReview", array(QRM, "getReview"));
 add_action("wp_ajax_saveReview", array(QRM, "saveReview"));
+add_action("wp_ajax_nopriv_login", array(QRM, "login") );
+add_action("wp_ajax_login", array(QRM, "login") );
+add_action("wp_ajax_logout", array(QRM, "logout") );
 
 add_action('init', 'qrm_init_options');
 

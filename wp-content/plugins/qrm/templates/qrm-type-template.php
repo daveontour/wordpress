@@ -41,7 +41,6 @@
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/textAngular/textAngular.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/metisMenu/metisMenu.css" ?>'>
     <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/daterangepicker-bs3.css" ?>'>
     
     <!-- Main Inspinia CSS files -->
@@ -65,14 +64,14 @@
             <a ui-sref="rank">Risk Ranking</a>
             <a ui-sref="matrix">Tolerance Matrix</a>
             <a ui-sref="analysis">Dashboard</a>
-            <div style="margin-top:25px;text-align:-webkit-center;color:white;font-weight:300;font-size:1.1em" id="welcome-name" >Welcome, {{main.userName}}</div>
+            <a href="#"  ng-click="main.logout()" >Logout ({{main.userName}})</a>
             </nav>
  
         <!-- Page Content -->
         <div id="page-content-wrapper" class="container">
         	
         	<!-- Sticky Header -->
-            <div id="header_container" class="qrmPrimMenu">
+            <div id="header_container" class="qrmPrimMenu hidden-qrm">
                 <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
                     <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
                     </button> <span id="qrm-title"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span>
@@ -95,12 +94,7 @@
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/bootstrap.min.js" ?>"></script>
-
-    <!-- MetsiMenu -->
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/metisMenu/metisMenu.min.js" ?>"></script>
-
-    <!-- Custom and plugin javascript -->
-    
+   
     <!-- Main Angular scripts-->
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular.min.js" ?>"></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular-animate.min.js" ?>'></script>
@@ -108,7 +102,6 @@
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/ui-router/angular-ui-router.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js" ?>"></script>
     <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-idle/angular-idle.js" ?>"></script>
-
 
     <!-- QRM Customisations -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ui-grid/ui-grid-unstable.js" ?>'></script>
@@ -120,7 +113,6 @@
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular.min.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular-rangy.min.js" ?>'></script>
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular-sanitize.min.js" ?>'></script>
-
 
     <!--  Watch out for dependency order -->
     <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/d3/d3.min.js" ?>'></script>
@@ -188,6 +180,5 @@
         });
     </script>
 </body>
-
 </html>
 

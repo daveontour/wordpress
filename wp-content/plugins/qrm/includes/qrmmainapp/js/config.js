@@ -4,7 +4,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     IdleProvider.idle(5); // in seconds
     IdleProvider.timeout(120); // in seconds
 
-    $urlRouterProvider.otherwise("/explorer");
+    $urlRouterProvider.otherwise("/login");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
@@ -12,6 +12,23 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     });
 
     $stateProvider
+          .state('login', {
+            url: "/login",
+            templateUrl: function (params) {
+                    return pluginurl+"views/qrm/login.html"
+            }, 
+            controller: "LoginCtrl as login",
+            data: {
+                pageTitle: 'Login'
+            }, 
+            onEnter:function(){
+                closeMenu();
+                jQuery("#header_container").addClass("hidden-qrm");
+            },
+            onExit:function(){
+                jQuery("#header_container").removeClass("hidden-qrm");
+            }
+        })
         .state('explorer', {
             url: "/explorer",
             templateUrl: function (params) {
@@ -26,6 +43,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 pageTitle: 'Risk Explorer'
             }, 
             onEnter:function(){
+                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
                 winWidth = $(document).width()-10;
                 $("#container").css("width", winWidth + "px");
@@ -50,7 +68,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             }, 
             onEnter:function(){
-                closeMenu();
+              jQuery("#header_container").removeClass("hidden-qrm");
+               closeMenu();
             },
             onExit:function(){
                 QRM.mainController.lookingForRisks();
@@ -84,6 +103,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
+                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })
@@ -99,6 +119,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
+                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })
@@ -137,6 +158,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             },
             onEnter:function(){
+                jQuery("#header_container").removeClass("hidden-qrm");
                 closeMenu();
             }
         })    
@@ -167,7 +189,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
-                closeMenu();
+               jQuery("#header_container").removeClass("hidden-qrm");
+               closeMenu();
             }
         })  
         .state('analysis', {

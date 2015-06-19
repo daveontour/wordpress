@@ -637,4 +637,29 @@ function RemoteService($http) {
             data: JSON.stringify(data)
         });
     };
+    this.login = function (user, pass) {
+        data = {
+            user: user,
+            pass: pass
+        }
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "login",
+            },
+            cache: false,
+            data: JSON.stringify(data)
+        });
+    };
+    this.logout = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "logout",
+            },
+            cache: false
+        });
+    };
 }
