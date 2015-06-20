@@ -76,6 +76,7 @@ add_action("wp_ajax_nopriv_login", array(QRM, "login") );
 add_action("wp_ajax_login", array(QRM, "login") );
 add_action("wp_ajax_logout", array(QRM, "logout") );
 add_action("wp_ajax_checkSession", array(QRM, "checkSession") );
+add_action("wp_ajax_newPushDown", array(QRM, "newPushDown") );
 
 add_action('init', 'qrm_init_options');
 

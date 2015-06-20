@@ -17,13 +17,15 @@ function SortByProjectCode(a, b) {
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
-function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
+function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
 
     // This is the entry for the app
     // If the user is not logged on, simply present the login screen
     // If they are, switch the view according to the item they selected
 
     var intro = this;
+
+    $scope.introloading = true;
 
     intro.sessionOK = false;
 
@@ -86,7 +88,7 @@ function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
         $q.all([a, b, c]).then(function () {
             intro.switch();
         });
-        
+
     }
 
     this.switch = function () {
@@ -100,9 +102,11 @@ function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
         case 'risk':
             QRMDataService.selectProject(projectID);
             QRMDataService.riskID = postID;
+            $scope.introloading = false;
             $state.go("qrm.risk");
             break;
         case 'riskproject':
+            $scope.introloading = false;
             $state.go("qrm.explorer");
             break;
         case 'review':
@@ -115,6 +119,7 @@ function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
                     QRMDataService.reviewID = QRMDataService.review.id;
                     QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
                     QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+                    $scope.introloading = false;
                     $state.go("qrm.review");
                 });
             break;
@@ -127,10 +132,12 @@ function IntroCtrl(QRMDataService, remoteService, $state, $timeout, $q) {
                     }
                     QRMDataService.incidentID = QRMDataService.incident.id;
                     QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+                    $scope.introloading = false;
                     $state.go("qrm.incident");
                 });
             break;
         default:
+            $scope.introloading = false;
             $state.go("qrm.explorer");
             break;
         }
@@ -345,7 +352,7 @@ function MainCtrl(QRMDataService, remoteService, $state) {
     //    this.init();
 };
 
-function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
+function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog) {
 
     QRM.expController = this;
 
@@ -525,6 +532,44 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
         QRMDataService.riskID = -1;
         $state.go('qrm.risk');
     }
+
+    this.newPushDownRisk = function () {
+        
+        this.pushDown = QRMDataService.getTemplateRisk();
+        this.pushDown.title = "Title of the new Push Down Risk";
+        this.pushDown.description = "Description of the Push Down Risk";
+        this.pushDown.type = 1;
+        this.pushDown.projectID = QRMDataService.project.id;
+        this.pushDown.inherentProb = QRMDataService.project.matrix.maxProb +0.5;
+        this.pushDown.inherentImpact = QRMDataService.project.matrix.maxImpact + 0.5;
+        
+        var index = (Math.floor(this.pushDown.treatedProb - 1)) * QRMDataService.project.matrix.maxImpact + Math.floor(this.pushDown.treatedImpact - 1);
+        index = Math.min(index, QRMDataService.project.matrix.tolString.length - 1);
+        this.pushDown.treatedTolerance = QRMDataService.project.matrix.tolString.substring(index, index + 1);
+        
+        index = (Math.floor(this.pushDown.inherentProb - 1)) * QRMDataService.project.matrix.maxImpact + Math.floor(this.pushDown.inherentImpact - 1);
+        index = Math.min(index, QRMDataService.project.matrix.tolString.length - 1);
+        this.pushDown.inherentTolerance = QRMDataService.project.matrix.tolString.substring(index, index + 1);
+        
+        this.pushDown.currentProb = this.pushDown.inherentProb;
+        this.pushDown.currentImpact = this.pushDown.inherentImpact;
+        this.pushDown.currentTolerance = this.pushDown.inherentTolerance;
+
+
+        ngDialog.openConfirm({
+            template: "editPushDownDialogId",
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        }).then(function (value) {
+            remoteService.newPushDownRisk(exp.pushDown)
+                .then(function (response) {
+
+                }).finally(function () {
+                    exp.getAllProjectRisks();
+                });
+        });
+    }
+
     $scope.editRisk = function (riskID) {
         exp.editRisk(riskID);
     }
@@ -622,7 +667,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService) {
                     pass = true;
                 }
             } else {
-
                 exp.filterMatrixHighlightFlag = false;
 
                 if (exp.filterOptions.treated && r.treated) pass = true;
@@ -3397,9 +3441,9 @@ var app = angular.module('qrm');
             return taOptions;
   }]);
     });
-    app.controller('IntroCtrl', ['QRMDataService', 'RemoteService', '$state', '$timeout', '$q', IntroCtrl]);
+    app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', IntroCtrl]);
     app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', MainCtrl]);
-    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', ExplorerCtrl]);
+    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', ExplorerCtrl]);
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
     app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);

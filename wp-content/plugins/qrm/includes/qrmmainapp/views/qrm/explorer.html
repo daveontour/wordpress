@@ -126,11 +126,9 @@
                         <span class="sr-only">Split button!</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a>
+                        <li><a ng-click="exp.newRisk()" href="#">New Risk</a>
                         </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
+                        <li><a ng-click="exp.newPushDownRisk()" href="#">New 'Push Down' Risk</a>
                         </li>
                         <li class="divider"></li>
                         <li><a href="#">Separated link</a>
@@ -161,4 +159,22 @@
 
 <h1 ng-show="main.showSelectProject" class="status-msg">Please Select Project</h1> 
 <h1 ng-show="main.showLookingForRisks" class="status-msg">Loading Risks...</h1>
-<h1 ng-show="main.showNoRisks" class="status-msg">No Risks Were Found</h1>  
+<h1 ng-show="main.showNoRisks" class="status-msg">No Risks Were Found</h1> 
+
+<script type="text/ng-template" id="editPushDownDialogId">
+        <div class="ngdialog-message">
+            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Push Down Risk</h2></div>
+            <p>Creating a new 'Push Down Risk' will create a new risk with the same title and description in the current and descendant projects. You will be able to edit the description in the descendant projects, but the title will remain the same.</p>
+            <p>Push Down Risk Title</p>
+            <input ng-model="exp.pushDown.title"  style="width:100%">
+              <p></p>
+           <p>Risk Description</p>
+            <div text-angular ng-model="exp.pushDown.description" style="width:100%;margin-bottom:5px"></div>
+            <label><input icheck type="radio" name="type" value=1  ng-model="exp.pushDown.type"> Immediate Descendant Projects Only</label>
+            <label><input icheck type="radio" name="type" value=2  ng-model="exp.pushDown.type"> All Descendant Projects</label>
+        </div>
+        <div class="ngdialog-buttons">
+            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+        </div>
+</script>

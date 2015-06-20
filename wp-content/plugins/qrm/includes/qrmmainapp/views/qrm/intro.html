@@ -4,3 +4,12 @@
             <h3>Welcome to Quay Risk Manager</h3>
         </div>
     </div>
+
+<div ng-show="introloading" id="target" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>

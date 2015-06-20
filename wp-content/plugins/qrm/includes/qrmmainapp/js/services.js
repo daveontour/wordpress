@@ -670,4 +670,15 @@ function RemoteService($http) {
             cache: false
         });
     };
+    this.newPushDownRisk = function (pushdown) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "newPushDown",
+            },
+            cache: false,
+            data:JSON.stringify(pushdown)
+        });
+    };
 }

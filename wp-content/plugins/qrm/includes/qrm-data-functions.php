@@ -1,31 +1,41 @@
 <?php
 class QRM {
-	
-	static function checkSession(){
+	static function checkSession() {
 		// Will only arrive here if the session is logged on, so just need to send back a non-zero response
-		wp_send_json(array('loggedin'=>true));
+		wp_send_json ( array (
+				'loggedin' => true 
+		) );
 	}
-	static function login(){
+	static function login() {
 		$data = json_decode ( file_get_contents ( "php://input" ) );
 		$user = $data->user;
 		$pass = $data->pass;
 		
-		$info = array();
-		$info['user_login'] = $user;
-		$info['user_password'] = $pass;
-		$info['remember'] = true;
+		$info = array ();
+		$info ['user_login'] = $user;
+		$info ['user_password'] = $pass;
+		$info ['remember'] = true;
 		
-		$user_signon = wp_signon( $info, false );
-
-		if ( is_wp_error($user_signon) ){
-			wp_send_json(array('loggedin'=>false, 'message'=>__('Wrong username or password.')));
+		$user_signon = wp_signon ( $info, false );
+		
+		if (is_wp_error ( $user_signon )) {
+			wp_send_json ( array (
+					'loggedin' => false,
+					'message' => __ ( 'Wrong username or password.' ) 
+			) );
 		} else {
-			wp_send_json(array('loggedin'=>true, 'message'=>__('Login successful, redirecting...')));
+			wp_send_json ( array (
+					'loggedin' => true,
+					'message' => __ ( 'Login successful, redirecting...' ) 
+			) );
 		}
 	}
-	static function logout(){
-		wp_destroy_current_session();
-		wp_send_json(array('loggedout'=>true, 'message'=>__('Logout successful, redirecting...')));		
+	static function logout() {
+		wp_destroy_current_session ();
+		wp_send_json ( array (
+				'loggedout' => true,
+				'message' => __ ( 'Logout successful, redirecting...' ) 
+		) );
 	}
 	static function getAllIncidents() {
 		global $post;
@@ -38,7 +48,7 @@ class QRM {
 		$incs = array ();
 		
 		while ( $the_query->have_posts () ) :
-			$the_query->the_post ();			
+			$the_query->the_post ();
 			$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
 			array_push ( $incs, $incident );
 		endwhile
@@ -48,86 +58,83 @@ class QRM {
 		$data->data = $incs;
 		wp_send_json ( $data );
 	}
-	static function getIncident(){
+	static function getIncident() {
 		$incidentID = json_decode ( file_get_contents ( "php://input" ) );
 		$incident = json_decode ( get_post_meta ( $incidentID, "incidentdata", true ) );
 		$incident->comments = get_comments ( array (
-				'post_id' => $incidentID
+				'post_id' => $incidentID 
 		) );
 		$incident->attachments = get_children ( array (
 				"post_parent" => $incidentID,
-				"post_type" => "attachment"
+				"post_type" => "attachment" 
 		) );
 		
-		wp_send_json ( $incident);
+		wp_send_json ( $incident );
 	}
-	static function saveIncident(){
+	static function saveIncident() {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
 		$postdata = file_get_contents ( "php://input" );
 		$incident = json_decode ( $postdata );
 		
-		if ($incident->reportedby == 0 || $incident->reportedby == ""){
+		if ($incident->reportedby == 0 || $incident->reportedby == "") {
 			$incident->reportedby = $current_user->ID;
 		}
 		$postID = null;
 		
-		if (( $incident->id > 0 )) {
+		if (($incident->id > 0)) {
 			// Update the existing post
 			$post ['ID'] = $incident->id;
 			wp_update_post ( array (
-			'ID' => $incident->id,
-			'post_content' => $incident->description,
-			'post_title' => $incident->title,
-			'post_status' => 'publish',
-			'post_type' => 'incident',
-			'post_author' => $current_user->ID
+					'ID' => $incident->id,
+					'post_content' => $incident->description,
+					'post_title' => $incident->title,
+					'post_status' => 'publish',
+					'post_type' => 'incident',
+					'post_author' => $current_user->ID 
 			) );
 			$postID = $incident->id;
 		} else {
 			// Create a new one and record the ID
 			$postID = wp_insert_post ( array (
-				'post_content' => $incident->description,
-				'post_title' => $incident->title,
-				'post_status' => 'publish',
-				'post_type' => 'incident',
-				'post_author' => $current_user->ID
+					'post_content' => $incident->description,
+					'post_title' => $incident->title,
+					'post_status' => 'publish',
+					'post_type' => 'incident',
+					'post_author' => $current_user->ID 
 			) );
 			$incident->id = $postID;
 		}
 		
-		$incident->incidentCode = "INCIDENT-".$incident->id;
+		$incident->incidentCode = "INCIDENT-" . $incident->id;
 		
 		wp_update_post ( array (
-		'ID' => $incident->id,
-		'post_title' => $incident->incidentCode." - ".$incident->title,
-		'post_type' => 'incident'
-				));
-
+				'ID' => $incident->id,
+				'post_title' => $incident->incidentCode . " - " . $incident->title,
+				'post_type' => 'incident' 
+		) );
+		
 		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
 		
 		// Add any comments to the returned object
 		$incident->comments = get_comments ( array (
-				'post_id' => $postID
+				'post_id' => $postID 
 		) );
 		$incident->attachments = get_children ( array (
 				"post_parent" => $postID,
-				"post_type" => "attachment"
+				"post_type" => "attachment" 
 		) );
 		
 		wp_send_json ( $incident );
-		
-		
 	}
-
 	static function addGeneralComment() {
 		$comment = json_decode ( file_get_contents ( "php://input" ) );
 		$time = current_time ( 'mysql' );
-	
+		
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
-	
+		
 		$data = array (
 				'comment_post_ID' => $comment->ID,
 				'comment_author' => $current_user->display_name,
@@ -137,71 +144,71 @@ class QRM {
 				'comment_parent' => 0,
 				'user_id' => $user_ID,
 				'comment_date' => $time,
-				'comment_approved' => 1
+				'comment_approved' => 1 
 		);
-	
+		
 		wp_insert_comment ( $data );
 		$comments = get_comments ( array (
-				'post_id' => $comment->ID
+				'post_id' => $comment->ID 
 		) );
 		wp_send_json ( $comments );
 	}
-	static function getAllReviews(){
+	static function getAllReviews() {
 		global $post;
 		$args = array (
 				'post_type' => 'review',
-				'posts_per_page' => - 1
+				'posts_per_page' => - 1 
 		);
 		
 		$the_query = new WP_Query ( $args );
 		$revs = array ();
 		
 		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
-		array_push ( $revs, $review );
+			$the_query->the_post ();
+			$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
+			array_push ( $revs, $review );
 		endwhile
 		;
 		
 		$data = new Data ();
 		$data->data = $revs;
-		wp_send_json ( $data );		
+		wp_send_json ( $data );
 	}
-	static function getReview(){
+	static function getReview() {
 		$reviewID = json_decode ( file_get_contents ( "php://input" ) );
 		$review = json_decode ( get_post_meta ( $reviewID, "reviewdata", true ) );
 		$review->comments = get_comments ( array (
-				'post_id' => $reviewID
+				'post_id' => $reviewID 
 		) );
 		$review->attachments = get_children ( array (
 				"post_parent" => $reviewID,
-				"post_type" => "attachment"
+				"post_type" => "attachment" 
 		) );
 		
-		wp_send_json ( $review);
+		wp_send_json ( $review );
 	}
-	static function saveReview(){
+	static function saveReview() {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
 		$postdata = file_get_contents ( "php://input" );
 		$review = json_decode ( $postdata );
 		
-		if ($review->responsible == 0 || $review->responsible == ""){
+		if ($review->responsible == 0 || $review->responsible == "") {
 			$review->responsible = $current_user->ID;
 		}
 		$postID = null;
 		
-		if (( $review->id > 0 )) {
+		if (($review->id > 0)) {
 			// Update the existing post
 			$post ['ID'] = $reviewt->id;
 			wp_update_post ( array (
-			'ID' => $review->id,
-			'post_content' => $review->description,
-			'post_title' => $review->title,
-			'post_status' => 'publish',
-			'post_type' => 'review',
-			'post_author' => $current_user->ID
+					'ID' => $review->id,
+					'post_content' => $review->description,
+					'post_title' => $review->title,
+					'post_status' => 'publish',
+					'post_type' => 'review',
+					'post_author' => $current_user->ID 
 			) );
 			$postID = $review->id;
 		} else {
@@ -211,33 +218,32 @@ class QRM {
 					'post_title' => $review->title,
 					'post_status' => 'publish',
 					'post_type' => 'review',
-					'post_author' => $current_user->ID
+					'post_author' => $current_user->ID 
 			) );
 			$review->id = $postID;
 		}
 		
-		$review->reviewCode = "REVIEW-".$review->id;
+		$review->reviewCode = "REVIEW-" . $review->id;
 		
 		wp_update_post ( array (
-			'ID' => $review->id,
-			'post_title' => $review->reviewCode." - ".$review->title,
-			'post_type' => 'review'
-		));
+				'ID' => $review->id,
+				'post_title' => $review->reviewCode . " - " . $review->title,
+				'post_type' => 'review' 
+		) );
 		
 		update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
 		
 		// Add any comments to the returned object
 		$review->comments = get_comments ( array (
-				'post_id' => $postID
+				'post_id' => $postID 
 		) );
 		$review->attachments = get_children ( array (
 				"post_parent" => $postID,
-				"post_type" => "attachment"
+				"post_type" => "attachment" 
 		) );
 		
 		wp_send_json ( $review );
-		
-	}	
+	}
 	static function getCurrentUser() {
 		wp_send_json ( wp_get_current_user () );
 	}
@@ -264,7 +270,6 @@ class QRM {
 		wp_send_json ( $userSummary );
 	}
 	static function registerAudit() {
-		
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -277,17 +282,17 @@ class QRM {
 		$a->auditPerson = $current_user->ID;
 		
 		$auditObj = json_decode ( get_post_meta ( $riskID, "audit", true ) );
-		if ($auditObj == null){
+		if ($auditObj == null) {
 			$auditObjEval = new stdObject ();
 			$auditObjEval->auditComment = "Risk Entered";
 			$auditObjEval->auditDate = date ( "M j, Y" );
 			$auditObjEval->auditPerson = $current_user->ID;
-				
+			
 			$auditObjIdent = new stdObject ();
 			$auditObjIdent->auditComment = "Risk Entered";
 			$auditObjIdent->auditDate = date ( "M j, Y" );
 			$auditObjIdent->auditPerson = $current_user->ID;
-				
+			
 			$auditObj = new stdObject ();
 			$auditObj->auditIdent = $auditObjIdent;
 			$auditObj->auditEval = $auditObjEval;
@@ -319,7 +324,7 @@ class QRM {
 				$auditObj->auditMitApp = $a;
 				break;
 		}
-				
+		
 		update_post_meta ( $riskID, "audit", json_encode ( $auditObj ) );
 		
 		wp_send_json ( json_decode ( get_post_meta ( $riskID, "audit", true ) ) );
@@ -400,7 +405,6 @@ class QRM {
 		
 		exit ();
 	}
-	
 	static function updateRisksRelMatrix() {
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 		
@@ -515,28 +519,27 @@ class QRM {
 		global $post;
 		$args = array (
 				'post_type' => 'risk',
-				'posts_per_page' => - 1
+				'posts_per_page' => - 1 
 		);
-	
+		
 		$the_query = new WP_Query ( $args );
 		$risks = array ();
-	
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-			
-		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-			
-		// echo var_dump($post);
-			
-		$r = new stdObject();
-		$r->description = $risk->description;
-		$r->title = $risk->title;
-		$r->id = $risk->id;
-		$r->riskProjectCode = $risk->riskProjectCode;
-		$r->projectID = $risk->projectID;
 		
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
 			
-		array_push ( $risks, $r );
+			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+			
+			// echo var_dump($post);
+			
+			$r = new stdObject ();
+			$r->description = $risk->description;
+			$r->title = $risk->title;
+			$r->id = $risk->id;
+			$r->riskProjectCode = $risk->riskProjectCode;
+			$r->projectID = $risk->projectID;
+			
+			array_push ( $risks, $r );
 		endwhile
 		;
 		wp_send_json ( $risks );
@@ -587,34 +590,181 @@ class QRM {
 		$data->data = $risks;
 		wp_send_json ( $data );
 	}
-	static function saveRisk() {
+	static function newPushDown() {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
-				
+		
 		$postdata = file_get_contents ( "php://input" );
 		$risk = json_decode ( $postdata );
 		
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 		
-		if ($risk->manager == -1 || $risk->manager == ""){
-			if (in_array($current_user->ID, $project->managersID)){
+		// Test for Project Risk Owner
+		if ($current_user->ID != $project->projectRiskManager) {
+			wp_send_json ( array (
+					"status" => "failed",
+					"msg" => "not_project_riskmanager" 
+			) );
+			return;
+		}
+		
+		$riskTite = $risk->title;
+		$risk->owner = $project->projectRiskManager;
+		$risk->manager = $project->projectRiskManager;
+		$risk->title = $risk->title." (Push Down Parent)";
+		$risk->pushdownparent = true;
+		
+		// Create a new one and record the ID
+		$postID = wp_insert_post ( array (
+				'post_content' => $risk->description,
+				'post_title' => $risk->title,
+				'post_type' => 'risk',
+				'post_status' => 'publish',
+				'post_author' => 1 
+		) );
+		$risk->id = $postID;
+		
+		update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ) ) );
+		
+		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
+		
+		wp_update_post ( array (
+				'ID' => $risk->id,
+				'post_title' => $risk->riskProjectCode . " - " . $risk->title,
+				'post_type' => 'risk' 
+		) );
+		// The Bulk of the data is held in the post's meta data
+		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		
+		// Key Data for searching etc
+		update_post_meta ( $postID, "projectID", $risk->projectID );
+		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
+		update_post_meta ( $postID, "project", $project->post_title );
+		update_post_meta ( $postID, "pushdownparent", true );
+		
+		// Update the count for riskd for the impacted project
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $risk->projectID 
+		);
+		
+		$the_query = new WP_Query ( $args );
+		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
+		
+		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $risk->projectID ) );
+		echo var_dump($myposts);
+		// Restore the Original Title
+		$risk->title = $riskTite;
+		$children = array();
+		foreach ( $myposts as $post ) : setup_postdata( $post ); 
+			array_push($children, QRM::newPushDownChild($risk, $post->ID));
+			if ($risk->type == 2){
+				QRM::recurseChildren($risk, $post->ID, $children);
+			}
+		endforeach; 
+		wp_send_json ( $risk );
+	}
+	static function recurseChildren($risk, $projectID,$children){
+		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $projectID ) );
+		foreach ( $myposts as $post ) : setup_postdata( $post );
+			array_push($children, QRM::newPushDownChild($risk, $post->ID));
+			QRM::recurseChildren($risk, $post->ID);
+		endforeach;
+	}
+	static function newPushDownChild($parent, $projectID) {
+		
+		$risk = clone $parent;
+		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
+		
+		$risk->pushdownparent = false;
+		$risk->pushdownchild = true;
+		$risk->owner = $project->projectRiskManager;
+		$risk->manager = $project->projectRiskManager;
+		$risk->projectID = $projectID;
+		$risk->parentRiskID = $parent->id;
+		$risk->parentRiskProjectCode = $parent->riskProjectCode;
+		$risk->title = $risk->title." (Parent Risk = ".$parent->riskProjectCode.")";
+		
+		// Create a new one and record the ID
+		$postID = wp_insert_post ( array (
+				'post_content' => $risk->description,
+				'post_title' => $risk->title,
+				'post_type' => 'risk',
+				'post_status' => 'publish',
+				'post_author' => 1 
+		) );
+		$risk->id = $postID;
+		
+		update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ) ) );
+		
+		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
+		
+		wp_update_post ( array (
+				'ID' => $risk->id,
+				'post_title' => $risk->riskProjectCode . " - " . $risk->title,
+				'post_type' => 'risk' 
+		) );
+		// The Bulk of the data is held in the post's meta data
+		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		
+		// Key Data for searching etc
+		update_post_meta ( $postID, "projectID", $risk->projectID );
+		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
+		update_post_meta ( $postID, "project", $project->post_title );
+		update_post_meta ( $postID, "pushdownchild", true );
+		
+		// Update the count for riskd for the impacted project
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $risk->projectID 
+		);
+		
+		$the_query = new WP_Query ( $args );
+		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
+		
+		return $risk->id;
+	}
+	static function saveRisk() {
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+		
+		$postdata = file_get_contents ( "php://input" );
+		$risk = json_decode ( $postdata );
+		
+		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
+		
+		if ($risk->manager == - 1 || $risk->manager == "") {
+			if (in_array ( $current_user->ID, $project->managersID )) {
 				$risk->manager = $current_user->ID;
 			} else {
 				$risk->manager = $project->projectRiskManager;
 			}
 		}
-		if ($risk->owner == -1 || $risk->owner == ""){
-			if (in_array($current_user->ID, $project->ownersID)){
+		if ($risk->owner == - 1 || $risk->owner == "") {
+			if (in_array ( $current_user->ID, $project->ownersID )) {
 				$risk->owner = $current_user->ID;
 			} else {
 				$risk->owner = $project->projectRiskManager;
 			}
-		}		
+		}
 		$postID = null;
 		
 		if (! empty ( $risk->id )) {
 			// Update the existing post
 			$post ['ID'] = $risk->id;
+			
+			$pushdown = get_post_meta ( $risk->id, "pushdownchild", true );
+			if ($pushdown){
+				//its a push down child, so preserve the original title
+				$origrisk = json_decode ( get_post_meta ( $risk->id, "riskdata", true ) );
+				$risk->title = $origrisk->title;
+			}
 			wp_update_post ( array (
 					'ID' => $risk->id,
 					'post_content' => $risk->description,
@@ -635,35 +785,21 @@ class QRM {
 			) );
 			$risk->id = $postID;
 			
-			$auditObjEval = new stdObject ();
-			$auditObjEval->auditComment = "Risk Entered";
-			$auditObjEval->auditDate = date ( "M j, Y" );
-			$auditObjEval->auditPerson = $current_user->ID;
-			
-			$auditObjIdent = new stdObject ();
-			$auditObjIdent->auditComment = "Risk Entered";
-			$auditObjIdent->auditDate = date ( "M j, Y" );
-			$auditObjIdent->auditPerson = $current_user->ID;
-			
-			$auditObj = new stdObject ();
-			$auditObj->auditIdent = $auditObjIdent;
-			$auditObj->auditEval = $auditObjEval;
-			
-			update_post_meta ( $postID, "audit", json_encode ( $auditObj ) );
+			update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ) ) );
 		}
 		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
 		
 		wp_update_post ( array (
-			'ID' => $risk->id,
-			'post_title' => $risk->riskProjectCode." - ".$risk->title,
-			'post_type' => 'risk'
-		));
+				'ID' => $risk->id,
+				'post_title' => $risk->riskProjectCode . " - " . $risk->title,
+				'post_type' => 'risk' 
+		) );
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 		
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
-		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 		update_post_meta ( $postID, "project", $project->post_title );
 		
@@ -781,5 +917,22 @@ class QRM {
 		
 		// Return all the projects
 		QRM::getProjects ();
+	}
+	static function getAuditObject($current_user) {
+		$auditObjEval = new stdObject ();
+		$auditObjEval->auditComment = "Risk Entered";
+		$auditObjEval->auditDate = date ( "M j, Y" );
+		$auditObjEval->auditPerson = $current_user->ID;
+		
+		$auditObjIdent = new stdObject ();
+		$auditObjIdent->auditComment = "Risk Entered";
+		$auditObjIdent->auditDate = date ( "M j, Y" );
+		$auditObjIdent->auditPerson = $current_user->ID;
+		
+		$auditObj = new stdObject ();
+		$auditObj->auditIdent = $auditObjIdent;
+		$auditObj->auditEval = $auditObjEval;
+		
+		return $auditObj;
 	}
 }
