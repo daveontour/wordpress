@@ -1,19 +1,24 @@
 <div id="explorer-wrapper" class="container-fluid hidden-qrm">
     <div class="col-sm-12 col-md-12 col-lg-10  col-lg-offset-1">
     <div class="row">
-        <div class="hidden-xs col-sm-6 col-md-6 col-lg-6" style="padding-left:0px;padding-right:0px;clear:left">
-            <h3 style="display:inline">{{exp.project.title}}</h3>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="padding-right:0px">
-            <div class="pull-right">
-                <ui-select ng-model="exp.project" theme="select2" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:200px">
-                    <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-15" style="padding-right:0px;">
+            <div style="float:right">
+                <table>
+                <tr>
+                    <td style="padding-right:10px"><label class="control-label">Select Project: </label></td>
+                    <td>
+                 <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:250px;">
+                    <ui-select-match style="color:rgb(103,106,108);font-weight:700" allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
                     <ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
                         <div ng-style="exp.rowStyle(project)">
-                            <span ng-bind-html="project.title"></span>
+                            <span style="color:rgb(103,106,108)" ng-bind-html="project.title"></span> (<span style="color:rgb(103,106,108)" ng-bind-html="project.projectCode"></span>)
                         </div>
                     </ui-select-choices>
-                </ui-select>
+                </ui-select>                   
+                    
+                    </td>
+                    </tr></table>
+
             </div>
         </div>
     </div>
@@ -153,6 +158,15 @@
         <p class="loading-spinner">
             <img ng-src="{{main.loaderSrc}}">
             <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>
+
+<div ng-show="savingrisk" id="target2" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">saving</span>
         </p>
     </div>
 </div>

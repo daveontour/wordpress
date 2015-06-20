@@ -2469,6 +2469,7 @@ body {
 #savingreview.loading,
 #savingincident.loading,
 #target.loading,
+#target2.loading,
 #explorerloading.loading,
 #incidentloading.loading,
 #reviewloading.loading {
@@ -2535,13 +2536,13 @@ h1.status-msg{
    background-color:#afdefa;
     border-style:solid;
     border-width:2px;
-    border-color:#47a3da;
+    border-color:#0d77b6;
     border-top-width:2px;
     display:none;
     padding:10px;
     width:300px;
-    margin-top:10px;
-    margin-left:0px;
+    margin-top:-4px;
+    margin-left:-25px;
     position: fixed;
     z-index: 1;
 }
@@ -2787,7 +2788,6 @@ h2.m-header{
 
 .qrmPrimMenu {
     background-color: #0d77b6;
-    color:#af77b6;
 }
 
 .qrmSecMenu {
@@ -2796,6 +2796,13 @@ h2.m-header{
 
 body {
     background-color: aliceblue;
+}
+
+.selectize-control.single .selectize-input {
+    border-radius: 0px;
+    background-color: white;
+    height: 35px;
+    background-image:none;
 }
 
 

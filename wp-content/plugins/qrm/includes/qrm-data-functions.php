@@ -608,7 +608,7 @@ class QRM {
 			return;
 		}
 		
-		$riskTite = $risk->title;
+		$riskTitle = $risk->title;
 		$risk->owner = $project->projectRiskManager;
 		$risk->manager = $project->projectRiskManager;
 		$risk->title = $risk->title." (Push Down Parent)";
@@ -657,7 +657,7 @@ class QRM {
 		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $risk->projectID ) );
 		echo var_dump($myposts);
 		// Restore the Original Title
-		$risk->title = $riskTite;
+		$risk->title = $riskTitle;
 		$children = array();
 		foreach ( $myposts as $post ) : setup_postdata( $post ); 
 			array_push($children, QRM::newPushDownChild($risk, $post->ID));
@@ -665,13 +665,17 @@ class QRM {
 				QRM::recurseChildren($risk, $post->ID, $children);
 			}
 		endforeach; 
+		$risk->children = $children;
+		$risk->title = $risk->title." (Push Down Parent)";
+		update_post_meta ( $risk->id, "riskdata", json_encode ( $risk ) );
+		
 		wp_send_json ( $risk );
 	}
-	static function recurseChildren($risk, $projectID,$children){
+	static function recurseChildren($risk, $projectID,&$children){
 		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $projectID ) );
 		foreach ( $myposts as $post ) : setup_postdata( $post );
 			array_push($children, QRM::newPushDownChild($risk, $post->ID));
-			QRM::recurseChildren($risk, $post->ID);
+			QRM::recurseChildren($risk, $post->ID,$children);
 		endforeach;
 	}
 	static function newPushDownChild($parent, $projectID) {
@@ -760,7 +764,8 @@ class QRM {
 			$post ['ID'] = $risk->id;
 			
 			$pushdown = get_post_meta ( $risk->id, "pushdownchild", true );
-			if ($pushdown){
+			$pushdownparent = get_post_meta ( $risk->id, "pushdownparent", true );
+			if ($pushdown || $pushdownparent){
 				//its a push down child, so preserve the original title
 				$origrisk = json_decode ( get_post_meta ( $risk->id, "riskdata", true ) );
 				$risk->title = $origrisk->title;

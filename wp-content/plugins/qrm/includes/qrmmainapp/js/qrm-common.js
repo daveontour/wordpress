@@ -1920,7 +1920,6 @@ function closeMenu(){
      $("#qrm-titleSM").addClass("hidden-qrm");
     
 }
-
 function openMenu(){
     
      $("#header_container").addClass("sideMenuOpen");
@@ -1952,4 +1951,58 @@ function toggleMenu(){
         $("#qrm-titleSM").removeClass("hidden-qrm");
     }
     
+}
+function initData(QRMDataService,remoteService,$q){
+    
+    var intro = {};
+    
+     a = remoteService.getSiteUsers()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRMDataService.siteUsers = response.data.data;
+            }
+        });
+
+    b = remoteService.getCurrentUser()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRMDataService.currentUser = response.data;
+                QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
+            }
+        });
+    c = remoteService.getAllRisks()
+        .then(function (response) {
+            if (response.data == "0" || response.data == "-1") {
+                intro.sessionOK = false;
+            } else {
+                intro.sessionOK = true;
+                QRM.mainController.risks = response.data;
+                QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
+                    if (value.riskProjectCode == null) return false;
+                    return value != null;
+                });
+                QRM.mainController.risks.sort(SortByProjectCode);
+                QRMDataService.risks = QRM.mainController.risks;
+            }
+        });
+        d = remoteService.getProjects()
+            .then(function (response) {
+                if (response.data == "0" || response.data == "-1") {
+                    intro.sessionOK = false;
+                } else {
+                    intro.sessionOK = true;
+                    QRMDataService.handleGetProjects(response);
+                }
+
+            });
+    
+    return $q.all([a, b, c, d]);
+
+       
 }

@@ -5,6 +5,15 @@
             <div class="panel-body" style="padding:5px;">
                 <div class="col-xs-12">
                     <h4>Description</h4>
+                    <p ng-show="ctl.risk.pushdownchild">
+                        <label style="font-size:13px;font-weight:bold">Push Down Child Risk</label>
+                    </p>
+                    <p ng-show="ctl.risk.pushdownparent">
+                        <label style="font-size:13px;font-weight:bold">Push Down Parent Risk</label>
+                    </p>
+                    <p ng-show="ctl.risk.pushdownparent">
+                        <label style="font-size:13px;font-weight:bold">Push Down Child Risks:</label><span style="font-size:13px;font-weight:400;margin-left:10px;font-style:italic" ng-repeat="child in ctl.risk.children">{{child | riskCodeFilter}}</span>
+                    </p>
                     <p ng-bind-html="ctl.risk.description"></p>
                 </div>
                 <div class="col-xs-12">

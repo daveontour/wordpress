@@ -15,6 +15,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
           .state('qrm', {
             url: "/qrm",
             abstract:true,
+            controller:"QRMCtrl",
             templateUrl: function (params) {
                     return pluginurl+"views/common/content.html"
             }
@@ -166,6 +167,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             },
             onEnter:function(){
+               QRM.mainController.titleBar ="Risk Incidents";
                 closeMenu();
             }
         })    
@@ -196,7 +198,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }
             },
             onEnter:function(){
-               closeMenu();
+              QRM.mainController.titleBar ="Risk Reviews";
+                closeMenu();
             }
         })  
         .state('qrm.analysis', {
@@ -205,6 +208,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             controllerAs: 'analysis',
             templateUrl: pluginurl+"views/qrm/analysis.html", 
             onEnter:function(){
+               QRM.mainController.titleBar ="Analysis";
                 closeMenu();
             }
         });

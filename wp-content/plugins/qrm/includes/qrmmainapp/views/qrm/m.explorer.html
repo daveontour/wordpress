@@ -4,7 +4,7 @@
     </div>
     <div class="row">
         <div class="pull-right">
-            <ui-select ng-model="exp.project" theme="select2" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:200px">
+            <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:200px">
                 <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
                 <ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
                     <div ng-style="exp.rowStyle(project)">
