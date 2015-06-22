@@ -12,43 +12,7 @@ class Risk_Post_Type_Registrations {
 	}
 
 	protected function register_post_type() {
-		
-		/*
-		 * Risk Post Type
-		 */
-		
-		$labels = array(
-			'name'               => __( 'Risks', 'risk-post-type' ),
-			'singular_name'      => __( 'Risk', 'risk-post-type' ),
-			'add_new'            => __( 'Add Risk', 'risk-post-type' ),
-			'add_new_item'       => __( 'Add Risk', 'risk-post-type' ),
-			'edit_item'          => __( 'Edit Risk', 'risk-post-type' ),
-			'new_item'           => __( 'New Risk', 'risk-post-type' ),
-			'view_item'          => __( 'View Risk', 'risk-post-type' ),
-			'search_items'       => __( 'Search Risk', 'risk-post-type' ),
-			'not_found'          => __( 'No risks found', 'risk-post-type' ),
-			'not_found_in_trash' => __( 'No risks in the trash', 'risk-post-type' ),
-		);
 
-		$supports = array(
-			'revisions',
-			'comments',
-		    'title'
-		);
-
-		$args = array(
-			'labels'          => $labels,
-			'supports'        => $supports,
-			'public'          => true,
-			'capability_type' => 'post',
-			'rewrite'         => array( 'slug' => 'risk' ), // Permalinks format
-			'menu_position'   => 22,
-			'menu_icon'       => 'dashicons-id',
-		);
-
-		$args = apply_filters( 'risk_post_type_args', $args );
-		register_post_type( 'risk', $args );
-		
 		/*
 		 * Project Post Type
 		 */
@@ -64,12 +28,13 @@ class Risk_Post_Type_Registrations {
 				'search_items'       => __( 'Search Risk Project', 'riskproject-post-type' ),
 				'not_found'          => __( 'No risk projects found', 'riskproject-post-type' ),
 				'not_found_in_trash' => __( 'No risk projects in the trash', 'riskproject-post-type' ),
+		
 		);
 		
 		$supports = array(
 				'revisions',
 				'page-attributes',
-				
+		
 		);
 		
 		$args = array(
@@ -88,6 +53,48 @@ class Risk_Post_Type_Registrations {
 		
 		$args = apply_filters( 'riskproject_post_type_args', $args );
 		register_post_type( 'riskproject', $args );
+		/*
+		 * Risk Post Type
+		 */
+		
+		$labels = array(
+			'name'               => __( 'Risks', 'risk-post-type' ),
+			'singular_name'      => __( 'Risk', 'risk-post-type' ),
+			'add_new'            => __( 'Add Risk', 'risk-post-type' ),
+			'add_new_item'       => __( 'Add Risk', 'risk-post-type' ),
+			'edit_item'          => __( 'Edit Risk', 'risk-post-type' ),
+			'new_item'           => __( 'New Risk', 'risk-post-type' ),
+			'view_item'          => __( 'View Risk', 'risk-post-type' ),
+			'search_items'       => __( 'Search Risk', 'risk-post-type' ),
+			'not_found'          => __( 'No risks found', 'risk-post-type' ),
+			'not_found_in_trash' => __( 'No risks in the trash', 'risk-post-type' )
+		);
+
+		$supports = array(
+			'revisions',
+			'comments',
+		    'title'
+		);
+
+		$args = array(
+			'labels'          => $labels,
+			'supports'        => $supports,
+			'public'          => true,
+			'capability_type' => 'post',
+			'rewrite'         => array( 'slug' => 'risk' ), // Permalinks format
+			'menu_position'   => 22,
+			'menu_icon'       => 'dashicons-id',
+			'show_in_menu'		 => 'edit.php?post_type=riskproject',				
+			'capabilities' => array(
+					'create_posts' => false, // Removes support for the "Add New" function
+			),
+			'map_meta_cap' => true  // Allows editting and trashing which above disables
+		);
+
+		$args = apply_filters( 'risk_post_type_args', $args );
+		register_post_type( 'risk', $args );
+		
+
 		
 		/*
 		 * Incident Post Type
@@ -103,7 +110,7 @@ class Risk_Post_Type_Registrations {
 				'view_item'          => __( 'View Incident', 'incident-post-type' ),
 				'search_items'       => __( 'Search Incidnet', 'incident-post-type' ),
 				'not_found'          => __( 'No incidents found', 'incident-post-type' ),
-				'not_found_in_trash' => __( 'No incidents in the trash', 'incident-post-type' ),
+				'not_found_in_trash' => __( 'No incidents in the trash', 'incident-post-type' )
 		);
 		
 		$supports = array(
@@ -120,6 +127,11 @@ class Risk_Post_Type_Registrations {
 				'rewrite'         => array( 'slug' => 'incident'), // Permalinks format
 				'menu_position'   => 22,
 				'menu_icon'       => 'dashicons-id',
+				'show_in_menu'		 => 'edit.php?post_type=riskproject',
+				'capabilities' => array(
+						'create_posts' => false, // Removes support for the "Add New" function
+				),
+				'map_meta_cap' => true  // Allows editting and trashing which above disables
 		);
 		
 		$args = apply_filters( 'incident_post_type_args', $args );
@@ -139,7 +151,7 @@ class Risk_Post_Type_Registrations {
 				'view_item'          => __( 'View Review', 'review-post-type' ),
 				'search_items'       => __( 'Search Review', 'review-post-type' ),
 				'not_found'          => __( 'No reviews found', 'review-post-type' ),
-				'not_found_in_trash' => __( 'No reviews in the trash', 'review-post-type' ),
+				'not_found_in_trash' => __( 'No reviews in the trash', 'review-post-type' )
 		);
 		
 		$supports = array(
@@ -156,6 +168,11 @@ class Risk_Post_Type_Registrations {
 				'rewrite'         => array( 'slug' => 'review'), // Permalinks format
 				'menu_position'   => 22,
 				'menu_icon'       => 'dashicons-id',
+				'show_in_menu'		 => 'edit.php?post_type=riskproject',
+				'capabilities' => array(
+					'create_posts' => false, // Removes support for the "Add New" function
+				),
+				'map_meta_cap' => true  // Allows editting and trashing which above disables
 		);
 		
 		$args = apply_filters( 'review_post_type_args', $args );

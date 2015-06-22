@@ -45,7 +45,7 @@ $post_type_registrations->init ();
 $post_type_metaboxes = new Risk_Post_Type_Metaboxes ();
 $post_type_metaboxes->init ();
 
-wp_enqueue_style ('jquery-style','http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
+// wp_enqueue_style ('jquery-style','http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 
 
 //Ajax Callbacks
@@ -77,6 +77,8 @@ add_action("wp_ajax_login", array(QRM, "login") );
 add_action("wp_ajax_logout", array(QRM, "logout") );
 add_action("wp_ajax_checkSession", array(QRM, "checkSession") );
 add_action("wp_ajax_newPushDown", array(QRM, "newPushDown") );
+add_action("wp_ajax_installSample", array(QRM, "installSample") );
+add_action("wp_ajax_removeSample", array(QRM, "removeSample") );
 
 add_action('init', 'qrm_init_options');
 
@@ -112,7 +114,7 @@ function bs_riskproject_table_content( $column_name, $post_id ) {
 
 function bs_risk_table_content( $column_name, $post_id ) {
 	if ($column_name == 'project') {
-		echo get_post_meta ( $post_id, "project", true);
+		echo get_post_meta ( $post_id, "riskProjectTitle", true);
 	}
 
 	if ($column_name == 'owner') {
@@ -140,21 +142,43 @@ function get_custom_post_type_template($single_template){
 	return $single_template;
 }
 
-add_filter('page_template','qrm_custom_page_template');
-function qrm_custom_page_template($page_template){
-	if (is_page('qrm-explorer-page-slug')){
-		$page_template = dirname(__FILE__).'\templates\explorer-page.php';
-	}
-	return $page_template;	
-}
+// add_filter('page_template','qrm_custom_page_template');
+// function qrm_custom_page_template($page_template){
+// 	if (is_page('qrm-explorer-page-slug')){
+// 		$page_template = dirname(__FILE__).'\templates\explorer-page.php';
+// 	}
+// 	return $page_template;	
+// }
 
 function qrm_admin_menu_config (){
 
-	add_menu_page( 'Quay Risk Risk Manager', 'Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', plugins_url( 'myplugin/images/icon.png' ), "20.9" );
+	add_menu_page( 'Quay Risk Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) .'admin.php', '', 'dashicons-smiley', "20.9" );
 	
 	remove_meta_box('pageparentdiv', 'riskproject', 'normal');
 	remove_meta_box('pageparentdiv', 'riskproject', 'side');
+// 	remove_meta_box('submitdiv', 'riskproject', 'side');
+// 	remove_meta_box('submitdiv', 'riskproject', 'normal');
+	
+// 	remove_menu_page( 'edit.php?post_type=risk' );
+// 	remove_menu_page( 'edit.php?post_type=incident' );
+// 	remove_menu_page( 'edit.php?post_type=riskproject' );
+// 	remove_menu_page( 'edit.php?post_type=review' );
 }
+
+// Strip out the display placeholders for the risk project editor
+// add_action('admin_head-post.php', 'qrm_publishing_actions');
+// add_action('admin_head-post-new.php', 'qrm_publishing_actions');
+// function qrm_publishing_actions(){
+// 	global $post;
+// 	if($post->post_type == "riskproject"){
+// 		echo '<style type="text/css">
+// 					#postbox-container-1{
+// 						display:none;
+// 					}
+// 			</style>';
+// 	}
+// }
+
 
 function qrm_init_options(){
 	add_option("qrm_objective_id", 1000);
@@ -171,10 +195,19 @@ function qrm_prevent_riskproject_parent_deletion ($allcaps, $caps, $args) {
 	if (isset($args[0]) && isset($args[2]) && $args[0] == 'delete_post') {
 		$post = get_post ($args[2]);
 		if ($post->post_status == 'publish' && $post->post_type == 'riskproject') {
+			
+			//Prevent Deletion of parent with child projects 
 			$query = "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type = %s AND post_parent = %s";
 			$num_posts = $wpdb->get_var ($wpdb->prepare ($query, $post->post_type, $post->ID));
 			if ($num_posts > 0)
 				$allcaps[$caps[0]] = false;
+			
+			//Prevent deletion if there are still risks
+			$query = "SELECT COUNT(*) FROM wp_postmeta  JOIN wp_posts ON wp_postmeta.post_id = wp_posts.ID  AND wp_posts.post_type = 'risk' WHERE meta_key = 'projectID' AND meta_value = %s";
+			$num_posts = $wpdb->get_var ($wpdb->prepare ($query,  $post->ID));
+			if ($num_posts > 0)
+				$allcaps[$caps[0]] = false;
+				
 		}
 	}
 	return $allcaps;
@@ -182,7 +215,7 @@ function qrm_prevent_riskproject_parent_deletion ($allcaps, $caps, $args) {
 
 function qrm_scripts_styles(){
 	wp_register_style ('font-awesome',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/font-awesome/css/font-awesome.css" );
-	wp_register_style ('boosstrap',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/bootstrap.min.css" );
+	wp_register_style ('bootstrap',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/bootstrap.min.css" );
 	wp_register_style ('animate',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/animate.css" );
 	wp_register_style ('dropzone',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/dropzone/dropzone.css" );
 	wp_register_style ('ui-grid',plugin_dir_url ( __FILE__ )."includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css" );
@@ -206,14 +239,14 @@ function qrm_scripts_styles(){
 		
 	wp_register_script( 'qrm-jquery', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js',array(), "", true );
 	wp_register_script( 'qrm-jqueryui', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js',array(), "", true );
-	wp_register_script( 'qrm-boostrap', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/bootstrap.min.js', array(), "", true );
+	wp_register_script( 'qrm-bootstrap', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/bootstrap.min.js', array(), "", true );
 	wp_register_script( 'qrm-metis', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/metisMenu/jquery.metisMenu.js', array(), "", true );
 	wp_register_script( 'qrm-slimscroll', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/slimscroll/jquery.slimscroll.min.js', array(), "", true );
 	wp_register_script( 'qrm-pace', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/pace/pace.min.js', array(), "", true );
 	wp_register_script( 'qrm-inspinia', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/inspinia.js', array('qrm-jquery'), "", true );
 	wp_register_script( 'qrm-angular', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/angular/angular.min.js', array(), "", true );
 	wp_register_script( 'qrm-projadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/projectadmin.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
-	wp_register_script( 'qrm-test', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/test.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
+	wp_register_script( 'qrm-mainadmin', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/mainadmin.js', array('qrm-jquery', 'qrm-angular','qrm-common', 'qrm-services'), "", true );
 	wp_register_script( 'qrm-lazyload', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js', array(), "", true );
 	wp_register_script( 'qrm-router', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/ui-router/angular-ui-router.min.js', array(), "", true );
 	wp_register_script( 'qrm-bootstraptpl', plugin_dir_url ( __FILE__ ).'includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js', array(), "", true );

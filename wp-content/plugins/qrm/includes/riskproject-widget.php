@@ -3,19 +3,21 @@
 <table class="form-table">
 	<tr valign="top">
 		<th scope="row">Project Title</th>
-		<td><input ng-model="proj.title" style="width:100%" required></td>
+		<td><input ng-model="proj.title" style="width: 100%" required></td>
 	</tr>
-		<tr valign="top">
+	<tr valign="top">
 		<th scope="row">Project Description</th>
-		<td><textarea ng-model="proj.description" rows=4 style="width:100%" required></textarea></td>
+		<td><textarea ng-model="proj.description" rows=4 style="width: 100%"
+				required></textarea></td>
 	</tr>
-		<tr valign="top">
+	<tr valign="top">
 		<th scope="row">Project Code</th>
-		<td><input ng-model="proj.projectCode" required></td>
+		<td><input ng-model="proj.projectCode" required style="width: 100px"></td>
 	</tr>
 	<tr valign="top">
 		<th scope="row">Risk Project Manager</th>
-		<td><ui-select ng-model="proj.projectRiskManager" theme="select2" search-enabled=false style="width:350px"> <ui-select-match
+		<td><ui-select ng-model="proj.projectRiskManager" theme="select2"
+				search-enabled=false style="width:350px"> <ui-select-match
 				allow-clear=false placeholder="Select Project Risk Manager...">{{$select.selected.display_name}}</ui-select-match>
 			<ui-select-choices
 				repeat="person.ID as person in ref.riskProjectManagers">
@@ -26,22 +28,24 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">Parent Project</th>
-		<td><ui-select ng-model="proj.parent_id" theme="select2"  search-enabled=false
-				on-select="projectSelect($item, $model)" style="width:350px"> <ui-select-match
-				allow-clear=true placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
-			<ui-select-choices repeat="project.id as project in sortedParents track by project.id">
+		<td><ui-select ng-model="proj.parent_id" theme="select2"
+				search-enabled=false on-select="projectSelect($item, $model)"
+				style="width:350px"> <ui-select-match allow-clear=true
+				placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
+			<ui-select-choices
+				repeat="project.id as project in sortedParents track by project.id">
 			<div ng-style="rowStyle(project)">
 				<span ng-bind-html="project.title"></span>
 			</div>
 			</ui-select-choices> </ui-select></td>
 	</tr>
-	<tr valign="top">
-		<th scope="row">Quantitative Consequences</th>
-		<td><label class="checkbox-inline" style="padding-left: 0px"> <input
-				 type="checkbox" ng-model="proj.useAdvancedConsequences">
-				Enable Quantitative Consequences
-		</label></td>
-	</tr>
+	<!-- 	<tr valign="top"> -->
+	<!-- 		<th scope="row">Quantitative Consequences</th> -->
+	<!--		<td><label class="checkbox-inline" style="padding-left: 0px"> <input -->
+	<!-- 				 type="checkbox" ng-model="proj.useAdvancedConsequences"> -->
+	<!-- 				Enable Quantitative Consequences -->
+	<!-- 		</label></td> -->
+	<!-- 	</tr> -->
 	<tr valign="top">
 		<th scope="row">Tolerance Matrix</th>
 		<td>
@@ -62,14 +66,9 @@
 
 				<div style="width: 220px; height: 220px; margin-top: 80px"
 					id="svgDIV"></div>
-
-
 			</div>
-
-
 			<div
 				style="width: 220px; margin-left: 10px; margin-top: 10px; float: left">
-
 				<div ng-show="proj.matrix.maxProb > 7">
 					<input style="width: 80px; margin-left: 15px"
 						class="form-control pull-right" type="number" name="input"
@@ -125,77 +124,79 @@
 						ng-model="proj.matrix.probVal1" ng-change="matrixChange()"
 						max="100"> <label class="pull-right">P1 Percentage</label>
 				</div>
-
-
 			</div>
 		</td>
 	</tr>
 	<tr>
-	<th scope="row">Risk Owners</th>
-	<td><div style="clear: both; margin-top: 5px" id="ownerGrid"
-						ui-grid="gridOwnerOptions" ui-grid-auto-resize class="userGrid"></div></td>
+		<th scope="row">Risk Owners</th>
+		<td><div style="clear: both; margin-top: 5px" id="ownerGrid"
+				ui-grid="gridOwnerOptions" ui-grid-auto-resize class="userGrid"></div></td>
 	</tr>
 	<tr>
-	<th scope="row">Risk Managers</th>
-	<td><div style="clear: both; margin-top: 5px" id="managerGrid"
-						ui-grid="gridManagerOptions" ui-grid-auto-resize class="userGrid"></td>
-	</tr>	<tr>
-	<th scope="row">Risk Users</th>
-	<td><div style="clear: both; margin-top: 5px" id="userGrid"
-						ui-grid="gridUserOptions" ui-grid-auto-resize class="userGrid"></td>
+		<th scope="row">Risk Managers</th>
+		<td><div style="clear: both; margin-top: 5px" id="managerGrid"
+				ui-grid="gridManagerOptions" ui-grid-auto-resize class="userGrid"></td>
 	</tr>
 	<tr>
-	<th scope="row">Risk Categories</th>
-	<td>					<div class="col-lg-6">
-						<div style="margin-top: 10px" id="primCatGrid"
-							ui-grid="gridPrimCatOptions" ui-grid-auto-resize class="userGrid"></div>
-						<div style="margin-top: 5px">
-							<input style="margin-right: 5px" ng-model="ref.catText"
-								name="catText">
-							<button type="button" class="btn btn-xs btn-primary"
-								ng-click="addCat(true)">Add New Primary</button>
-						</div>
-					</div>
-
-
-					<div class="col-lg-6">
-						<div style="margin-top: 10px" id="secCatGrid"
-							ui-grid="gridSecCatOptions" ui-grid-auto-resize class="userGrid"></div>
-						<div style="margin-top: 5px">
-							<input style="margin-right: 5px" ng-disabled="primCatID==0"
-								ng-model="ref.catSubText">
-							<button ng-disabled="primCatID==0" type="button"
-								class="btn btn-xs btn-primary" ng-click="addCat(false)">Add New
-								Secondary</button>
-						</div>
-					</div>
-				</div>
-	</td>
+		<th scope="row">Risk Users</th>
+		<td><div style="clear: both; margin-top: 5px" id="userGrid"
+				ui-grid="gridUserOptions" ui-grid-auto-resize class="userGrid"></td>
 	</tr>
+</table>
+<table class="form-table" style="width: 100%">
+
+	<tr>
+		<td style="padding-bottom: 0px;padding-top:0px">
+		<div style="display: block; font-weight:600;font-size: 14px">Risk Categories</div>
+		</td>
+		</tr>
 		<tr>
-	<th scope="row">Project Objectives</th>
-	<td>			<div class="row" style="margin-top: 5px">
-				
-				
-				<div class="col-lg-12" style="margin-top: 10px;background-color:white"
-					ui-grid="gridObjectiveOptions" ui-grid-auto-resize
-					ui-grid-tree-view class="userGrid"></div>
-
-
-				</div>
-				<div class="row" style="margin-top: 5px">
-								<div class="col-xs-12 col-sm-6 col-lg-4" style="clear: both">
-					<input type="text" style="width: 100%" ng-model="ref.objectiveText">
-				</div>
-				<div class="col-xs-12 col-sm-6 col-lg-4" style="margin-top: 4px">
-					<button type="button" class="btn btn-w-m btn-xs btn-primary"
-						ng-click="addObjective(true)">Add Objective</button>
-					<button type="button" class="btn btn-w-m btn-xs btn-primary"
-						ng-click="addObjective(false)">Add Sub Objective</button>
-				</div>
+		<td style="padding-top:0px">
+			<div style="margin-top: 10px" id="primCatGrid"
+				ui-grid="gridPrimCatOptions" ui-grid-auto-resize class="userGrid"></div>
+			<div style="margin-top: 5px">
+				<input style="margin-right: 5px" ng-model="ref.catText"
+					name="catText">
+				<button type="button" class="btn btn-xs btn-primary"
+					ng-click="addCat(true)">Add New Primary</button>
 			</div>
-	</td>
+		</td>
+		<td  style="padding-top:0px">
+			<div style="margin-top: 10px" id="secCatGrid"
+				ui-grid="gridSecCatOptions" ui-grid-auto-resize class="userGrid"></div>
+			<div style="margin-top: 5px">
+				<input style="margin-right: 5px" ng-disabled="primCatID==0"
+					ng-model="ref.catSubText">
+				<button ng-disabled="primCatID==0" type="button"
+					class="btn btn-xs btn-primary" ng-click="addCat(false)">Add New
+					Secondary</button>
+			</div>
+		</td>
 	</tr>
+
+
+	<tr>
+		<td colspan=2>
+<div style="display: block; font-weight:600; font-size: 14px">Project Objectives</div>
+<div class="row" style="margin-top: 5px">
+	<div class="col-lg-12"
+		style="margin-top: 10px; background-color: white"
+		ui-grid="gridObjectiveOptions" ui-grid-auto-resize ui-grid-tree-view
+		class="userGrid">
+	</div>
+
+	<div  style="margin-top:5px">
+		<input type="text" style="width: 100%" ng-model="ref.objectiveText">
+	</div>
+	<div style="margin-top: 5px">
+		<button type="button" class="btn btn-w-m btn-xs btn-primary"
+			ng-click="addObjective(true)">Add Objective</button>
+		<button type="button" class="btn btn-w-m btn-xs btn-primary"
+			ng-click="addObjective(false)">Add Sub Objective</button>
+	</div>
+</div>
+</td>
+</tr>
 </table>
 
 <script>
@@ -209,7 +210,7 @@ jQuery(document).ready(function(){
 	
 </script>
 <!-- Templates for dialog boxes -->
-    <script type="text/ng-template" id="deleteObjectiveModalDialogId">
+<script type="text/ng-template" id="deleteObjectiveModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Objective</h3>
             <p>Please confirm that you wish to delete the objective <i>{{dialogObjective.title}}</i></p>
@@ -219,7 +220,7 @@ jQuery(document).ready(function(){
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
        </div>
     </script>
-    <script type="text/ng-template" id="editObjectiveModalDialogId">
+<script type="text/ng-template" id="editObjectiveModalDialogId">
         <div class="ngdialog-message">
             <h3>Edit Objective</h3>
             <p><input ng-model="dialogObjective.title" style="width:100%"></p>
@@ -229,7 +230,7 @@ jQuery(document).ready(function(){
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
        </div>
     </script>
-        <script type="text/ng-template" id="deleteCategoryModalDialogId">
+<script type="text/ng-template" id="deleteCategoryModalDialogId">
         <div class="ngdialog-message">
             <h3>Delete Category</h3>
             <p>Please confirm that you wish to delete the category <i>{{dialogCategory.title}}</i></p>
@@ -240,7 +241,7 @@ jQuery(document).ready(function(){
             <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Confirm</button>
         </div>
     </script>
-        <script type="text/ng-template" id="editCategoryModalDialogId">
+<script type="text/ng-template" id="editCategoryModalDialogId">
         <div class="ngdialog-message">
             <h3>Edit Category</h3>
             <p><input ng-model="dialogCategory.title" style="width:100%"></p>

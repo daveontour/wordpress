@@ -4,7 +4,6 @@ class Risk_Post_Type_Metaboxes {
 
 	public function init() {
 		add_action( 'add_meta_boxes', array( $this, 'riskproject_meta_boxes' ) );
-		add_action( 'save_post', array( $this, 'save_meta_boxes' ),  10, 2 );
 	}
 
 
@@ -63,45 +62,4 @@ class Risk_Post_Type_Metaboxes {
  	 	
 	 	<?php 
 	}
-	
-
-	function save_meta_boxes( $post_id ) {
-
-		global $post;
-
-		// Verify nonce
-		if ( !isset( $_POST['risk_fields'] ) || !wp_verify_nonce( $_POST['risk_fields'], basename(__FILE__) ) ) {
-			return $post_id;
-		}
-		// Check Autosave
-		if ( (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || ( defined('DOING_AJAX') && DOING_AJAX) || isset($_REQUEST['bulk_edit']) ) {
-			return $post_id;
-		}
-		// Don't save if only a revision
-		if ( isset( $post->post_type ) && $post->post_type == 'revision' ) {
-			return $post_id;
-		}
-		// Check permissions
-		if ( !current_user_can( 'edit_post', $post->ID ) ) {
-			return $post_id;
-		}
-		$meta['start_date'] = ( isset( $_POST['start_date'] ) ? esc_textarea( $_POST['start_date'] ) : '' );
-		$meta['end_date'] = ( isset( $_POST['end_date'] ) ? esc_textarea( $_POST['end_date'] ) : '' );
-		
-		foreach ( $meta as $key => $value ) {
-			update_post_meta( $post->ID, $key, $value );
-		}
-		
-		//Get the risdk for updating
-		$meta2 = get_post_custom( $post->ID );		
-		$risk = ! isset( $meta2['risk'][0] ) ? new Risk() :unserialize($meta2['risk'][0]);
-		
-		$risk->endDate = $meta['end_date'];
-		$risk->startDate = $meta['start_date'];
-		$risk->causes = ( isset( $_POST['causes'] ) ? esc_textarea( $_POST['causes'] ) : '' );
-		$risk->consequences = ( isset( $_POST['consequences'] ) ? esc_textarea( $_POST['consequences'] ) : '' );
-		
-		update_post_meta($post->ID, 'risk', $risk);
-	}
-
 }

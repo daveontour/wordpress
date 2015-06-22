@@ -6,6 +6,15 @@ class QRM {
 				'loggedin' => true 
 		) );
 	}
+	
+	static function installSample(){
+		require plugin_dir_path ( __FILE__ ) .'/qrm-sample.php';
+		wp_send_json(json_encode( array( "msg" => QRMSample::installSample())));
+			}
+	static function removeSample(){
+		require plugin_dir_path ( __FILE__ ) .'/qrm-sample.php';
+		wp_send_json(json_encode( array( "msg" => QRMSample::removeSample())));
+	}
 	static function login() {
 		$data = json_decode ( file_get_contents ( "php://input" ) );
 		$user = $data->user;
@@ -259,9 +268,7 @@ class QRM {
 			$u->user_email = $user->data->user_email;
 			$u->ID = $user->ID;
 			$u->bAdmin = $user->has_cap ( "risk_admin" );
-			$u->bProjMgr = $user->has_cap ( "risk_project_manager" );
-			$u->bOwner = $user->has_cap ( "risk_owner" );
-			$u->bManager = $user->has_cap ( "risk_manager" );
+
 			$u->bUser = $user->has_cap ( "risk_user" );
 			
 			array_push ( $userSummary, $u );
@@ -433,22 +440,10 @@ class QRM {
 				
 				$wpUser = get_user_by ( "id", $u->ID );
 				$wpUser->remove_cap ( "risk_admin" );
-				$wpUser->remove_cap ( "risk_project_manager" );
-				$wpUser->remove_cap ( "risk_owner" );
-				$wpUser->remove_cap ( "risk_manager" );
 				$wpUser->remove_cap ( "risk_user" );
 				
 				if (isset ( $u->caps->risk_admin ) && $u->caps->risk_admin == true) {
 					$wpUser->add_cap ( "risk_admin" );
-				}
-				if (isset ( $u->caps->risk_project_manager ) && $u->caps->risk_project_manager == true) {
-					$wpUser->add_cap ( "risk_project_manager" );
-				}
-				if (isset ( $u->caps->risk_owner ) && $u->caps->risk_owner == true) {
-					$wpUser->add_cap ( "risk_owner" );
-				}
-				if (isset ( $u->caps->risk_manager ) && $u->caps->risk_manager == true) {
-					$wpUser->add_cap ( "risk_manager" );
 				}
 				if (isset ( $u->caps->risk_user ) && $u->caps->risk_user == true) {
 					$wpUser->add_cap ( "risk_user" );
@@ -639,6 +634,7 @@ class QRM {
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 		update_post_meta ( $postID, "project", $project->post_title );
 		update_post_meta ( $postID, "pushdownparent", true );
@@ -717,6 +713,7 @@ class QRM {
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 		update_post_meta ( $postID, "project", $project->post_title );
 		update_post_meta ( $postID, "pushdownchild", true );
@@ -805,6 +802,7 @@ class QRM {
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 		update_post_meta ( $postID, "project", $project->post_title );
 		
@@ -903,6 +901,7 @@ class QRM {
 		// Fill in all the other meta data
 		update_post_meta ( $postID, "projectriskmanager", get_user_by ( "id", $project->projectRiskManager )->display_name );
 		update_post_meta ( $postID, "projectCode", $project->projectCode );
+		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 		update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
 		

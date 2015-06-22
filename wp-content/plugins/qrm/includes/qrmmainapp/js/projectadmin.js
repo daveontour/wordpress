@@ -65,7 +65,7 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
 
         /*
          *   $scope.parentProjectID keeps track of the valid original parent Project ID
-         *   in case it is changed to a value that would create a circular reference (set whenthe editor is first initaited)
+         *   in case it is changed to a value that would create a circular reference (set when the editor is first initaited)
          */
 
         if (typeof (item) == "undefined" || typeof (model) == "undefined") {
@@ -478,28 +478,28 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
             $scope.gridOwnerApi = gridApi;
         },
         columnDefs: [
-
             {
                 name: 'name',
                 width: 150,
                 field: 'display_name',
-                type: 'text'
+                type: 'text',
+                enableHiding: false
 
             },
             {
                 name: 'emailAddress',
                 width: "*",
                 field: 'user_email',
-                type: 'text'
-
-
+                type: 'text',
+                enableHiding: false
             }, {
-                name: 'Owner',
-                width: 80,
+                name: 'Risk Owner',
+                width: 140,
                 type: 'text',
                 field: 'caps.risk_user',
                 cellTemplate: '<input style="height:15px" type="checkbox"  ng-change="grid.appScope.changeOwner(row.entity)" ng-model="row.entity.pOwner" ng-checked="row.entity.pOwner">',
-                cellClass: 'cellCentered'
+                cellClass: 'cellCentered',
+                enableHiding: false
             }
         ]
     };
@@ -511,30 +511,27 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         },
         rowHeight: 30,
         columnDefs: [
-
             {
                 name: 'name',
                 width: 150,
                 field: 'display_name',
-                type: 'text'
-
-
-            },
+                type: 'text',
+                enableHiding: false
+           },
             {
                 name: 'emailAddress',
                 width: "*",
                 field: 'user_email',
-                type: 'text'
-
-
+                type: 'text',
+                enableHiding: false
             }, {
-                name: 'Manager',
-                width: 80,
+                name: 'Risk Manager',
+                width: 140,
                 field: 'caps.risk_user',
                 cellTemplate: '<input style="height:15px" type="checkbox"  ng-change="grid.appScope.changeManager(row.entity)" ng-model="row.entity.pManager" ng-checked="row.entity.pManager">',
                 cellClass: 'cellCentered',
-                type: 'text'
-
+                type: 'text',
+                enableHiding: false
             }
         ]
     };
@@ -546,29 +543,27 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         },
         rowHeight: 30,
         columnDefs: [
-
             {
                 name: 'name',
                 width: 150,
                 field: 'display_name',
-                type: 'text'
-
-
+                type: 'text',
+                enableHiding: false
             },
             {
                 name: 'emailAddress',
                 width: "*",
                 field: 'user_email',
-                type: 'text'
-
-
+                type: 'text',
+                enableHiding: false
             }, {
-                name: 'User',
-                width: 80,
+                name: 'Risk User',
+                width: 140,
                 field: 'caps.risk_user',
                 cellTemplate: '<input style="height:15px" type="checkbox" ng-change="grid.appScope.changeUser(row.entity)" ng-model="row.entity.pUser" ng-checked="row.entity.pUser">',
                 cellClass: 'cellCentered',
-                type: 'text'
+                type: 'text',
+                enableHiding: false
 
             }
         ]
@@ -617,6 +612,16 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
             // Will happen for in the case where "Add a New" is used
             project = QRMDataService.getDefaultProject();
             project.id = projectID;
+            
+            $scope.projectsLinear.push(project);
+            $scope.sortedParents = [];
+            $scope.projMap = new Map();
+
+             $scope.sortedParents = parentSort($scope.projectsLinear);
+            $scope.projMap = new Map();
+            $scope.projectsLinear.forEach(function (e) {
+                $scope.projMap.put(e.id, e);
+            });
         }
 
         $scope.proj = project;
@@ -630,21 +635,15 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
         remoteService.getSiteUsersCap()
             .then(function (response) {
-                $scope.ref.riskProjectManagers = jQuery.grep(response.data, function (e) {
-                    return e.bProjMgr
-                });
-                $scope.gridOwnerOptions.data = jQuery.grep(response.data, function (e) {
+                response.data.forEach(function (e) {
                     e.pOwner = ($.inArray(e.ID, $scope.proj.ownersID) > -1);
-                    return e.bOwner
-                });
-                $scope.gridManagerOptions.data = jQuery.grep(response.data, function (e) {
                     e.pManager = ($.inArray(e.ID, $scope.proj.managersID) > -1);
-                    return e.bManager
-                });
-                $scope.gridUserOptions.data = jQuery.grep(response.data, function (e) {
                     e.pUser = ($.inArray(e.ID, $scope.proj.usersID) > -1);
-                    return e.bUser
-                });
+                })
+                $scope.ref.riskProjectManagers = response.data;
+                $scope.gridOwnerOptions.data = response.data;
+                $scope.gridManagerOptions.data = response.data;
+                $scope.gridUserOptions.data = response.data;
 
             });
 
@@ -687,7 +686,6 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
             $scope.handleGetProjects(response);
             // projectID is dynamically set by the PHP that generates the page
             projCtrl.editProject($scope.projMap.get(projectID));
-
         });
 }
 
@@ -712,6 +710,6 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
         appendTo: false
     });
 }]);
-app.controller('projectCtrl', ['$scope', 'ngNotify', 'remoteService', 'QRMDataService','ngDialog', ProjectController]);
-app.service('remoteService', ['$http', RemoteService ]);
+app.controller('projectCtrl', ['$scope', 'ngNotify', 'remoteService', 'QRMDataService', 'ngDialog', ProjectController]);
+app.service('remoteService', ['$http', RemoteService]);
 app.service('QRMDataService', DataService);
