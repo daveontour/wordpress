@@ -79,6 +79,7 @@ add_action("wp_ajax_checkSession", array(QRM, "checkSession") );
 add_action("wp_ajax_newPushDown", array(QRM, "newPushDown") );
 add_action("wp_ajax_installSample", array(QRM, "installSample") );
 add_action("wp_ajax_removeSample", array(QRM, "removeSample") );
+add_action("wp_ajax_downloadJSON", array(QRM, "downloadJSON") );
 
 add_action('init', 'qrm_init_options');
 

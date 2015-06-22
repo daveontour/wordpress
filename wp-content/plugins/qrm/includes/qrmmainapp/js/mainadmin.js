@@ -11,6 +11,13 @@ function SampleController($scope, remoteService, ngNotify){
             alert(response.data.msg);
 		});
     }
+    
+        $scope.downloadJSON = function(){
+             remoteService.downloadJSON()
+		.then(function (response) {
+            window.location = 'download.php';
+		});
+    }
 }
 
 function UserController($scope, remoteService, ngNotify){
@@ -172,6 +179,17 @@ app.service('remoteService', function ($http, $modal) {
 			url: ajaxurl,
 			params: {
 				action: "saveSiteUsers"
+			},
+			data: data,
+			cache: false
+		});
+	};
+    this.downloadJSON = function (data) {
+		return $http({
+			method: 'POST',
+			url: ajaxurl,
+			params: {
+				action: "downloadJSON"
 			},
 			data: data,
 			cache: false

@@ -6,7 +6,35 @@ class QRM {
 				'loggedin' => true 
 		) );
 	}
-	
+	static function downloadJSON(){
+		
+		global $post;
+		$args = array (
+				'post_type' => 'riskproject',
+				'posts_per_page' => - 1
+		);
+		$the_query = new WP_Query ( $args );
+		$projects = array ();
+		
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+		$project->rankOrder = get_post_meta ( $post->ID, "rankOrder", true );
+		array_push ( $projects, $project );
+		endwhile;
+		
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename=QRMData.json');
+		header('Content-Transfer-Encoding: binary');
+		header('Connection: Keep-Alive');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Pragma: public');
+		echo json_encode($projects);
+		
+		
+	}
 	static function installSample(){
 		require plugin_dir_path ( __FILE__ ) .'/qrm-sample.php';
 		wp_send_json(json_encode( array( "msg" => QRMSample::installSample())));
@@ -790,7 +818,6 @@ class QRM {
 			update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ) ) );
 		}
 		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
-		
 		wp_update_post ( array (
 				'ID' => $risk->id,
 				'post_title' => $risk->riskProjectCode . " - " . $risk->title,
