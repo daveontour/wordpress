@@ -181,7 +181,7 @@ class QRMSample {
 			
 			wp_update_post ( array (
 			'ID' => $review->id,
-			'post_title' => $review->reviewCode . " - " . $review->title." (sample)",
+			'post_title' => $review->reviewCode . " - " . $review->title,
 			'post_type' => 'review'
 					) );
 			
@@ -243,9 +243,7 @@ class QRMSample {
 				'meta_value' => true,
 				'post_type' => 'riskproject' 
 		);
-		
-
-		
+				
 		$args ['post_type'] = "risk";
 		foreach ( get_posts ( $args ) as $post ) {
 			wp_delete_post ( $post->ID, true );
