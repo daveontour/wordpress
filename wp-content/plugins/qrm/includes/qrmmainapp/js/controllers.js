@@ -199,8 +199,6 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
     }
 };
 
-
-
 function MainCtrl(QRMDataService, remoteService, $state) {
 
     QRM.mainController = this;

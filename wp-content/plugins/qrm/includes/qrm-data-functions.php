@@ -6,42 +6,83 @@ class QRM {
 				'loggedin' => true 
 		) );
 	}
-	static function downloadJSON(){
+	static function downloadJSON() {
+		header ( 'Content-Description: File Transfer' );
+		header ( 'Content-Type: application/octet-stream' );
+		header ( 'Content-Disposition: attachment; filename=QRMData.json' );
+		header ( 'Content-Transfer-Encoding: binary' );
+		header ( 'Connection: Keep-Alive' );
+		header ( 'Expires: 0' );
+		header ( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+		header ( 'Pragma: public' );
 		
 		global $post;
+		
 		$args = array (
 				'post_type' => 'riskproject',
-				'posts_per_page' => - 1
+				'posts_per_page' => - 1 
 		);
 		$the_query = new WP_Query ( $args );
 		$projects = array ();
 		
 		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
-		$project->rankOrder = get_post_meta ( $post->ID, "rankOrder", true );
-		array_push ( $projects, $project );
-		endwhile;
+			$the_query->the_post ();
+			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+			array_push ( $projects, $project );
+		endwhile
+		;
 		
-		header('Content-Description: File Transfer');
-		header('Content-Type: application/octet-stream');
-		header('Content-Disposition: attachment; filename=QRMData.json');
-		header('Content-Transfer-Encoding: binary');
-		header('Connection: Keep-Alive');
-		header('Expires: 0');
-		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-		header('Pragma: public');
-		echo json_encode($projects);
+		$args ["post_type"] = 'risk';
+		$the_query = new WP_Query ( $args );
+		$risks = array ();
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+			$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
+			array_push ( $risks, $risk );
+		endwhile
+		;
 		
+		$args ["post_type"] = 'review';
+		$the_query = new WP_Query ( $args );
+		$reviews = array ();
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+			$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
+			array_push ( $reviews, $review );
+		endwhile
+		;
 		
+		$args ["post_type"] = 'incident';
+		$the_query = new WP_Query ( $args );
+		$incidents = array ();
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+			$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
+			array_push ( $incidents, $incident );
+		endwhile
+		;
+		
+		$export = new stdObject ();
+		$export->projects = $projects;
+		$export->risks = $risks;
+		$export->incidents = $incidents;
+		$export->reviews = $reviews;
+		
+		echo json_encode ( $export );
+		exit ( 0 );
 	}
-	static function installSample(){
-		require plugin_dir_path ( __FILE__ ) .'/qrm-sample.php';
-		wp_send_json(json_encode( array( "msg" => QRMSample::installSample())));
-			}
-	static function removeSample(){
-		require plugin_dir_path ( __FILE__ ) .'/qrm-sample.php';
-		wp_send_json(json_encode( array( "msg" => QRMSample::removeSample())));
+	static function installSample() {
+		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		wp_send_json ( array (
+				"msg" => QRMSample::installSample () 
+		) );
+	}
+	static function removeSample() {
+		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		wp_send_json ( array (
+				"msg" => QRMSample::removeSample () 
+		) );
 	}
 	static function login() {
 		$data = json_decode ( file_get_contents ( "php://input" ) );
@@ -296,7 +337,7 @@ class QRM {
 			$u->user_email = $user->data->user_email;
 			$u->ID = $user->ID;
 			$u->bAdmin = $user->has_cap ( "risk_admin" );
-
+			
 			$u->bUser = $user->has_cap ( "risk_user" );
 			
 			array_push ( $userSummary, $u );
@@ -507,7 +548,6 @@ class QRM {
 		foreach ( $risks as $risk ) {
 			update_post_meta ( $risk->id, "rank", $risk->rank );
 		}
-		
 		exit ();
 	}
 	static function getProjects() {
@@ -522,7 +562,6 @@ class QRM {
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
-			$project->rankOrder = get_post_meta ( $post->ID, "rankOrder", true );
 			array_push ( $projects, $project );
 		endwhile
 		;
@@ -634,7 +673,7 @@ class QRM {
 		$riskTitle = $risk->title;
 		$risk->owner = $project->projectRiskManager;
 		$risk->manager = $project->projectRiskManager;
-		$risk->title = $risk->title." (Push Down Parent)";
+		$risk->title = $risk->title . " (Push Down Parent)";
 		$risk->pushdownparent = true;
 		
 		// Create a new one and record the ID
@@ -678,32 +717,43 @@ class QRM {
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		
-		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $risk->projectID ) );
-		echo var_dump($myposts);
+		$myposts = get_posts ( array (
+				'posts_per_page' => - 1,
+				'post_type' => 'riskproject',
+				'post_parent' => $risk->projectID 
+		) );
+		echo var_dump ( $myposts );
 		// Restore the Original Title
 		$risk->title = $riskTitle;
-		$children = array();
-		foreach ( $myposts as $post ) : setup_postdata( $post ); 
-			array_push($children, QRM::newPushDownChild($risk, $post->ID));
-			if ($risk->type == 2){
-				QRM::recurseChildren($risk, $post->ID, $children);
+		$children = array ();
+		foreach ( $myposts as $post ) :
+			setup_postdata ( $post );
+			array_push ( $children, QRM::newPushDownChild ( $risk, $post->ID ) );
+			if ($risk->type == 2) {
+				QRM::recurseChildren ( $risk, $post->ID, $children );
 			}
-		endforeach; 
+		endforeach
+		;
 		$risk->children = $children;
-		$risk->title = $risk->title." (Push Down Parent)";
+		$risk->title = $risk->title . " (Push Down Parent)";
 		update_post_meta ( $risk->id, "riskdata", json_encode ( $risk ) );
 		
 		wp_send_json ( $risk );
 	}
-	static function recurseChildren($risk, $projectID,&$children){
-		$myposts = get_posts( array( 'posts_per_page' => -1, 'post_type'=> 'riskproject', 'post_parent' => $projectID ) );
-		foreach ( $myposts as $post ) : setup_postdata( $post );
-			array_push($children, QRM::newPushDownChild($risk, $post->ID));
-			QRM::recurseChildren($risk, $post->ID,$children);
-		endforeach;
+	static function recurseChildren($risk, $projectID, &$children) {
+		$myposts = get_posts ( array (
+				'posts_per_page' => - 1,
+				'post_type' => 'riskproject',
+				'post_parent' => $projectID 
+		) );
+		foreach ( $myposts as $post ) :
+			setup_postdata ( $post );
+			array_push ( $children, QRM::newPushDownChild ( $risk, $post->ID ) );
+			QRM::recurseChildren ( $risk, $post->ID, $children );
+		endforeach
+		;
 	}
 	static function newPushDownChild($parent, $projectID) {
-		
 		$risk = clone $parent;
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
 		
@@ -714,7 +764,7 @@ class QRM {
 		$risk->projectID = $projectID;
 		$risk->parentRiskID = $parent->id;
 		$risk->parentRiskProjectCode = $parent->riskProjectCode;
-		$risk->title = $risk->title." (Parent Risk = ".$parent->riskProjectCode.")";
+		$risk->title = $risk->title . " (Parent Risk = " . $parent->riskProjectCode . ")";
 		
 		// Create a new one and record the ID
 		$postID = wp_insert_post ( array (
@@ -790,8 +840,8 @@ class QRM {
 			
 			$pushdown = get_post_meta ( $risk->id, "pushdownchild", true );
 			$pushdownparent = get_post_meta ( $risk->id, "pushdownparent", true );
-			if ($pushdown || $pushdownparent){
-				//its a push down child, so preserve the original title
+			if ($pushdown || $pushdownparent) {
+				// its a push down child, so preserve the original title
 				$origrisk = json_decode ( get_post_meta ( $risk->id, "riskdata", true ) );
 				$risk->title = $origrisk->title;
 			}
@@ -866,6 +916,8 @@ class QRM {
 		
 		if (! empty ( $project->id ) && $project->id > 0) {
 			// Update the existing post
+			$oldProject = json_decode ( get_post_meta ( $project->id, "projectdata", true ) );
+			
 			$post ['ID'] = $project->id;
 			wp_update_post ( array (
 					'ID' => $project->id,
@@ -876,6 +928,11 @@ class QRM {
 					'post_parent' => $project->parent_id 
 			) );
 			$postID = $project->id;
+			
+			if ($oldProject->projectCode != $project->projectCode) {
+				// Update the riskProjectCode of all the risks
+				QRM::updateRiskProjectCodes ( $project->id, $project->projectCode );
+			}
 		} else {
 			// Create a new one and record the ID
 			$postID = wp_insert_post ( array (
@@ -948,6 +1005,27 @@ class QRM {
 		
 		// Return all the projects
 		QRM::getProjects ();
+	}
+	static function updateRiskProjectCodes($projectID, $projectCode) {
+		$args = array (
+				'posts_per_page' => - 1,
+				'meta_key' => 'projectID',
+				'meta_value' => $projectID,
+				'post_type' => 'risk' 
+		);
+		foreach ( get_posts ( $args ) as $post ) {
+			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+			$risk->riskProjectCode = $projectCode . $post->ID;
+			
+			wp_update_post ( array (
+					'ID' => $post->ID,
+					'post_title' => $risk->riskProjectCode . " - " . $risk->title,
+					'post_type' => 'risk'
+			) );
+
+			update_post_meta ( $post->ID, "riskdata", json_encode($risk));
+			update_post_meta ( $post->ID, "riskProjectCode", $risk->riskProjectCode );
+		}
 	}
 	static function getAuditObject($current_user) {
 		$auditObjEval = new stdObject ();

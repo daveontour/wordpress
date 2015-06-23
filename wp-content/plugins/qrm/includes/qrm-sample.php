@@ -2,7 +2,8 @@
 class QRMSample {
 	static function installSample() {
 		// return "Install sample";
-		$projects = json_decode ( file_get_contents ( __DIR__ . "/projects.json" ) );
+			
+		$import = json_decode ( file_get_contents ( __DIR__ . "/QRMData.json" ) );
 		
 		$projIDMap = array ();
 		$objIDMap = array ();
@@ -17,9 +18,9 @@ class QRMSample {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
-		foreach ( $projects as $p ) {
+		
+		foreach ( $import->projects as $project ) {
 			
-			$project = json_decode ( $p->meta_value );
 			$project->title = $project->title . " (sample)";
 			$project->riskProjectManager = $current_user->ID;
 			array_push ( $project->ownersID, $current_user->ID );
@@ -81,7 +82,7 @@ class QRMSample {
 		
 		foreach ( $projIDMap as $oldValue => $newValue ) {
 			$project = json_decode ( get_post_meta ( $newValue, "projectdata", true ) );
-			$project->parent_id = $projIDMap [$project->parent_id];
+			if ($project->parent_id != 0)$project->parent_id = $projIDMap [$project->parent_id];
 			update_post_meta ( $newValue, "projectdata", json_encode ( $project ) );
 			wp_update_post ( array (
 					'ID' => $newValue,
@@ -90,13 +91,11 @@ class QRMSample {
 		}
 		
 		$rs = file_get_contents ( __DIR__ . "/risks.json" );
-		echo var_dump ( $rs );
 		$risks = json_decode ( $rs );
-		echo var_dump ( $risks );
 		
-		foreach ( $risks as $r ) {
+		foreach ( $import->risks as $risk ) {
 			
-			$risk = json_decode ( $r->meta_value );
+			
 			$risk->title = $risk->title . " (sample)";
 			$risk->manager = $current_user->ID;
 			$risk->owner = $current_user->ID;
@@ -151,7 +150,7 @@ class QRMSample {
 			update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 			update_post_meta ( $postID, "project", $project->post_title );
 			
-			// Update the count for riskd for the impacted project
+			// Update the count for risks for the impacted project
 			$args = array (
 					'post_type' => 'risk',
 					'posts_per_page' => - 1,
@@ -163,9 +162,7 @@ class QRMSample {
 			update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		}
 		
-		$reviews = json_decode ( file_get_contents ( __DIR__ . "/reviews.json" ) );
-		foreach ( $reviews as $r ) {
-			$review = json_decode ( $r->meta_value );
+		foreach ( $import->reviews as $review ) {
 			$review->responsible = $current_user->ID;
 			$review->title = $review->title." (sample)";
 			$postID = wp_insert_post ( array (
@@ -203,9 +200,9 @@ class QRMSample {
 		}
 		
 		
-		$incidents = json_decode ( file_get_contents ( __DIR__ . "/incidents.json" ) );
-		foreach ( $incidents as $r ) {
-			$incident = json_decode ( $r->meta_value );
+		
+		foreach ( $import->incidents as $incident ) {
+
 			$incident->reportedby = $current_user->ID;
 			$incident->title = $incident->title." (sample)";
 			$postID = wp_insert_post ( array (
@@ -235,6 +232,8 @@ class QRMSample {
 				
 			update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
 		}
+		
+		return "Sample Data Installed";
 	}
 	static function removeSample() {
 		$args = array (
@@ -261,5 +260,8 @@ class QRMSample {
 		foreach ( get_posts ( $args ) as $post ) {
 			wp_delete_post ( $post->ID, true );
 		}
+		
+		return "Sample Data Removed";
+		
 	}
 }
