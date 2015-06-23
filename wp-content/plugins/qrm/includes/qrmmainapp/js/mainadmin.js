@@ -12,11 +12,12 @@ function SampleController($scope, remoteService, ngNotify){
 		});
     }
     
-        $scope.downloadJSON = function(){
-             remoteService.downloadJSON()
-		.then(function (response) {
-            window.location = 'download.php';
-		});
+    $scope.downloadJSON = function(){
+            $("body").append("<iframe src='" + ajaxurl+"?action=downloadJSON"+ "' style='display: none;' ></iframe>");
+    }
+    
+     $scope.downloadJSON = function(){
+            $("body").append("<iframe src='" + ajaxurl+"?action=downloadXML"+ "' style='display: none;' ></iframe>");
     }
 }
 
