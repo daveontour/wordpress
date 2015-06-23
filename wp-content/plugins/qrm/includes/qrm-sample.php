@@ -1,9 +1,22 @@
 <?php
 class QRMSample {
-	static function installSample() {
-		// return "Install sample";
-			
+	
+	static  function installImport($filename){
+		$import = json_decode ( file_get_contents ($filename ) );
+		if (QRMSample::processImport($import,false)){
+			return "Imported Successfully";
+		}
+	}
+	
+	static  function installSample(){
 		$import = json_decode ( file_get_contents ( __DIR__ . "/QRMData.json" ) );
+		if (QRMSample::processImport($import, true)){
+			return "Sample Data Installed";
+		}
+	}
+	
+	static function processImport($import, $sample) {
+		
 		
 		$projIDMap = array ();
 		$objIDMap = array ();
@@ -21,7 +34,7 @@ class QRMSample {
 		
 		foreach ( $import->projects as $project ) {
 			
-			$project->title = $project->title . " (sample)";
+			if ($sample)$project->title = $project->title . " (sample)";
 			$project->riskProjectManager = $current_user->ID;
 			array_push ( $project->ownersID, $current_user->ID );
 			array_push ( $project->managersID, $current_user->ID );
@@ -77,7 +90,7 @@ class QRMSample {
 			update_post_meta ( $postID, "projectTitle", $project->title );
 			update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 			update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
-			update_post_meta ( $postID, "sampleqrmdata", true );
+			update_post_meta ( $postID, "sampleqrmdata", $sample );
 		}
 		
 		foreach ( $projIDMap as $oldValue => $newValue ) {
@@ -96,7 +109,7 @@ class QRMSample {
 		foreach ( $import->risks as $risk ) {
 			
 			
-			$risk->title = $risk->title . " (sample)";
+			if ($sample)$risk->title = $risk->title . " (sample)";
 			$risk->manager = $current_user->ID;
 			$risk->owner = $current_user->ID;
 			$risk->projectID = $projIDMap [$risk->projectID];
@@ -140,7 +153,7 @@ class QRMSample {
 			
 			// // The Bulk of the data is held in the post's meta data
 			update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
-			update_post_meta ( $postID, "sampleqrmdata", true );
+			update_post_meta ( $postID, "sampleqrmdata", $sample );
 			
 			// Fill in all the other meta data
 			// Key Data for searching etc
@@ -164,7 +177,7 @@ class QRMSample {
 		
 		foreach ( $import->reviews as $review ) {
 			$review->responsible = $current_user->ID;
-			$review->title = $review->title." (sample)";
+			if ($sample)$review->title = $review->title." (sample)";
 			$postID = wp_insert_post ( array (
 					'post_content' => $review->description,
 					'post_title' => $review->title,
@@ -174,7 +187,7 @@ class QRMSample {
 			) );
 			$review->id = $postID;
 			$review->reviewCode = "REVIEW-" . $review->id;
-			update_post_meta ( $postID, "sampleqrmdata", true );
+			update_post_meta ( $postID, "sampleqrmdata", $sample );
 			
 			wp_update_post ( array (
 			'ID' => $review->id,
@@ -204,7 +217,7 @@ class QRMSample {
 		foreach ( $import->incidents as $incident ) {
 
 			$incident->reportedby = $current_user->ID;
-			$incident->title = $incident->title." (sample)";
+			if ($sample)$incident->title = $incident->title." (sample)";
 			$postID = wp_insert_post ( array (
 					'post_content' => $incident->description,
 					'post_title' => $incident->title,
@@ -214,7 +227,7 @@ class QRMSample {
 			) );
 			$incident->id = $postID;
 			$incident->incidentCode = "INCIDENT-" . $incident->id;
-			update_post_meta ( $postID, "sampleqrmdata", true );
+			update_post_meta ( $postID, "sampleqrmdata", $sample );
 				
 			wp_update_post ( array (
 			'ID' => $incident->id,
@@ -233,7 +246,7 @@ class QRMSample {
 			update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
 		}
 		
-		return "Sample Data Installed";
+		return true;
 	}
 	static function removeSample() {
 		$args = array (

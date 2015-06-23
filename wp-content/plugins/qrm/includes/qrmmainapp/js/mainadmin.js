@@ -1,4 +1,6 @@
 function SampleController($scope, remoteService, ngNotify) {
+    
+    var samp = this; 
     $scope.installSample = function () {
         remoteService.installSample()
             .then(function (response) {
@@ -11,14 +13,78 @@ function SampleController($scope, remoteService, ngNotify) {
                 alert(response.data.msg);
             });
     }
-
-    $scope.downloadJSON = function () {
+    
+    this.downloadJSON = function () {
         $("body").append("<iframe src='" + ajaxurl + "?action=downloadJSON' style='display: none;' ></iframe>");
     }
 
-    $scope.downloadXML = function () {
-        $("body").append("<iframe src='" + ajaxurl + "?action=downloadXML' style='display: none;' ></iframe>");
+    
+    this.riskAttachmentReady = function (dropzone, file) {
+        samp.dropzone = dropzone;
+        samp.dzfile = file;
+        samp.disableAttachmentButon = false;
+        $scope.$apply();
     }
+
+    this.uploadAttachmentDescription = "";
+    this.disableAttachmentButon = true;
+    this.dropzone = "";
+    this.uploadImport = function () {
+        samp.dropzone.processFile(samp.dzfile);
+    }
+    this.cancelUpload = function () {
+        samp.dropzone.removeAllFiles(true);
+        samp.uploadAttachmentDescription = null;
+        samp.disableAttachmentButon = true;
+        samp.dropzone = null;
+        samp.dzfile = null;
+        $scope.$apply();
+    }
+    $scope.dropzoneConfig = {
+        options: { // passed into the Dropzone constructor
+            url: ajaxurl + "?action=uploadImport",
+            previewTemplate: document.querySelector('#preview-template').innerHTML,
+            parallelUploads: 1,
+            thumbnailHeight: 100,
+            thumbnailWidth: 100,
+            maxFilesize: 3,
+            filesizeBase: 1000,
+            autoProcessQueue: false,
+            thumbnail: function (file, dataUrl) {
+                if (file.previewElement) {
+                    file.previewElement.classList.remove("dz-file-preview");
+                    var images = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
+                    for (var i = 0; i < images.length; i++) {
+                        var thumbnailElement = images[i];
+                        thumbnailElement.alt = file.name;
+                        thumbnailElement.src = dataUrl;
+                    }
+                    setTimeout(function () {
+                        file.previewElement.classList.add("dz-image-preview");
+                    }, 1);
+                }
+            },
+            init: function () {
+                this.on("addedfile", function (file) {
+                    samp.riskAttachmentReady(this, file);
+                });
+                this.on('complete', function (file) {
+                    file.previewElement.classList.add('dz-complete');
+                    samp.cancelUpload();
+                    alert("File Imported");
+//                    ngNotify.set("Attachment added to risk", "success");
+//                    remoteService.getAttachments(vm.riskID)
+//                        .then(function (response) {
+//                            vm.risk.attachments = response.data;
+//                        });
+                });
+            },
+//            sending: function (file, xhr, formData) {
+//                formData.append("postID", QRMDataService.riskID);
+//                formData.append("description", vm.uploadAttachmentDescription);
+//            }
+        },
+    };
 }
 
 function UserController($scope, remoteService, ngNotify) {
@@ -96,6 +162,23 @@ function UserController($scope, remoteService, ngNotify) {
 
 }
 
+function dropzone() {
+    function link (scope, element, attrs) {
+        var config, dropzone;
+        config = scope[attrs.dropzone];
+        // create a Dropzone for the element with the given options
+        dropzone = new Dropzone(element[0], config.options);
+        // bind the given event handlers
+        angular.forEach(config.eventHandlers, function (handler, event) {
+            dropzone.on(event, handler);
+        });
+    };
+    
+    return{
+        link:link
+    }
+}
+
 var app = angular.module('myApp', [
 'ngNotify',
 'ngDialog',
@@ -104,6 +187,7 @@ var app = angular.module('myApp', [
 'ui.bootstrap'
 ]);
 
+(function(){
 app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
         className: 'ngdialog-theme-default',
@@ -185,18 +269,8 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
-    this.downloadJSON = function (data) {
-        return $http({
-            method: 'POST',
-            url: ajaxurl,
-            params: {
-                action: "downloadJSON"
-            },
-            data: data,
-            cache: false
-        });
-    };
 });
-
 app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);
 app.controller('sampleCtrl', ['$scope', 'remoteService', 'ngNotify', SampleController]);
+app.directive('dropzone', dropzone);  
+})();

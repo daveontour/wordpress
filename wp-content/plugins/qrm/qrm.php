@@ -62,6 +62,7 @@ add_action("wp_ajax_saveRisk", array(QRM, "saveRisk"));
 add_action("wp_ajax_updateRisksRelMatrix", array(QRM, "updateRisksRelMatrix"));
 add_action("wp_ajax_getAttachments", array(QRM, "getAttachments"));
 add_action("wp_ajax_uploadFile", array(QRM, "uploadFile"));
+add_action("wp_ajax_uploadImport", array(QRM, "uploadImport"));
 add_action("wp_ajax_getCurrentUser", array(QRM, "getCurrentUser"));
 add_action("wp_ajax_saveRankOrder", array(QRM, "saveRankOrder"));
 add_action("wp_ajax_registerAudit", array(QRM, "registerAudit"));
@@ -186,6 +187,15 @@ function qrm_init_options(){
 	add_option("qrm_category_id", 1000);
 	
 	qrm_scripts_styles();
+}
+
+// Allow json and qrm file to be uploaded for data import
+add_filter('upload_mimes','add_custom_mime_types');
+function add_custom_mime_types($mimes){
+	return array_merge($mimes,array (
+			'qrm' => 'application/qrm',
+			'json' => 'application/json'
+	));
 }
 
 function qrm_prevent_riskproject_parent_deletion ($allcaps, $caps, $args) {
