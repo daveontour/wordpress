@@ -2806,4 +2806,10 @@ body {
     background-image:none;
 }
 
+a.disable-link {
+   pointer-events: none;
+   cursor: default;
+   color:rgb(103,106,108);
+}
+
 

@@ -371,7 +371,7 @@ function MainCtrl(QRMDataService, remoteService, $state) {
                 $state.go("login");
             });
     }
-
+    
     this.titleBar = "Please Select Project";
 
     this.init = function () {
@@ -813,6 +813,9 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
             QRM.mainController.titleBar = this.project.title;
             this.getAllProjectRisks(this.project.id);
             this.clearFilters();
+        
+            jQuery("a.disable-noproject").removeClass("disable-link");            
+        
             $timeout(function () {
                 $scope.$apply()
             });

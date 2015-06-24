@@ -12,6 +12,8 @@ if (! defined ( 'WPINC' )) {
 	die ();
 }
 
+defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+
 register_activation_hook(__FILE__, 'qrmplugin_activate');
 
 // Required files for registering the post type and taxonomies.
