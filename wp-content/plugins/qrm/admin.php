@@ -21,12 +21,7 @@ wp_enqueue_script ( 'qrm-mainadmin' );
 wp_enqueue_script ( 'qrm-dropzone' );
 
 ?>
-<style>
-#wpcontent {
-	height: 100%;
-	padding-left: 0px;
-}
-</style>
+
 
 <script type="text/javascript">
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
@@ -70,7 +65,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 							<button type="button" class="btn btn-w-m btn-sm btn-primary"
 								ng-click="installSample()">Install Sample Data</button>
 							<button type="button" style="margin-left: 10px"
-								class="btn btn-w-m btn-sm btn-warning" ng-click="removeSample()">Remove
+								class="btn btn-w-m btn-sm btn-danger" ng-click="removeSample()">Remove
 								Sample Data</button>
 						</div>
 						</p>
@@ -107,30 +102,26 @@ wp_enqueue_script ( 'qrm-dropzone' );
 					</div>
 					<div ng-controller="sampleCtrl as samp">
 						<div>
-							<h4>Data Export/Import</h4>
-							<p>Data from Quay Risk Manager can be exported into a single file
-								to allow offline backup or transferring the data to another
-								instance of Quay Risk Manager</p>
-
 							<div>
-								<div style="float: left; width: 200px">
+								<div style="float: left; width: 250px;text-align:-webkit-center">
 									<h4>Data Export</h4>
 									<button type="button" class="btn btn-w-m btn-sm btn-primary"
 										ng-click="samp.downloadJSON()">Export Data</button>
+										<p style="margin-top:10px">The data from QRM will be dowloaded in a single file in a form suitable for importation to another RRM instance</p>
 								</div>
 
-								<div style="width: 300px; float: left">
+								<div style="width: 300px; float: left;margin-left:10px;text-align:-webkit-center">
 									<h4>Data Import</h4>
 									<div dropzone="dropzoneConfig" class="dropzone dz-clickable"
-										style="width: 300px">
+										style="width: 300px;padding: 15px 15px;margin:2px">
 										<div class="dz-message">Drop import file here or click to
-											attach. (*.json or *.qrm)</div>
+											select.<br/>Files must have been exported from another instance of QRM</div>
 									</div>
 									<div>
-										<div style="float: right">
+										<div style="text-align:-webkit-center">
 											<button type="button"
 												style="margin-top: 5px; margin-right: 5px"
-												class="btn btn-w-m btn-danger"
+												class="btn btn-w-m btn-warning"
 												ng-click="samp.cancelUpload()"
 												ng-disabled="samp.disableAttachmentButon">Cancel</button>
 											<button type="button" style="margin-top: 5px"
@@ -155,7 +146,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 <!-- This is the template used by Dropzone, won't be displayed -->
 <div id="preview-template" style="display: none;">
 
-	<div class="dz-preview dz-file-preview">
+	<div class="dz-preview dz-file-preview" style="margin:0px">
 		<div class="dz-image">
 			<img data-dz-thumbnail />
 		</div>

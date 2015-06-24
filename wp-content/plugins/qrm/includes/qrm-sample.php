@@ -36,9 +36,9 @@ class QRMSample {
 			
 			if ($sample)$project->title = $project->title . " (sample)";
 			$project->riskProjectManager = $current_user->ID;
-			array_push ( $project->ownersID, $current_user->ID );
-			array_push ( $project->managersID, $current_user->ID );
-			array_push ( $project->usersID, $current_user->ID );
+			$project->ownersID = array($current_user->ID);
+			$project->mangersID = array($current_user->ID);
+			$project->usersID = array($current_user->ID);
 			
 			$postID = wp_insert_post ( array (
 					'post_content' => $project->description,
@@ -85,7 +85,7 @@ class QRMSample {
 			update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
 			
 			// Fill in all the other meta data
-			update_post_meta ( $postID, "projectriskmanager", get_user_by ( "id", $project->projectRiskManager )->display_name );
+			update_post_meta ( $postID, "projectRiskManager", get_user_by ( "id", $project->projectRiskManager )->display_name );
 			update_post_meta ( $postID, "projectCode", $project->projectCode );
 			update_post_meta ( $postID, "projectTitle", $project->title );
 			update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
@@ -154,13 +154,17 @@ class QRMSample {
 			// // The Bulk of the data is held in the post's meta data
 			update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 			update_post_meta ( $postID, "sampleqrmdata", $sample );
+			update_post_meta ( $postID, "audit", json_encode($risk->audit) );
 			
-			// Fill in all the other meta data
-			// Key Data for searching etc
+			
+			$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
 			update_post_meta ( $postID, "projectID", $risk->projectID );
 			update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
 			update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 			update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
+			update_post_meta ( $postID, "manager", get_user_by ( "id", $risk->manager )->data->display_name );
+			update_post_meta ( $postID, "ownerID", $risk->owner);
+			update_post_meta ( $postID, "managerID", $risk->manager);
 			update_post_meta ( $postID, "project", $project->post_title );
 			
 			// Update the count for risks for the impacted project

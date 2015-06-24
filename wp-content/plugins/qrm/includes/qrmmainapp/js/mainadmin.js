@@ -112,7 +112,7 @@ function UserController($scope, remoteService, ngNotify) {
     };
     $scope.gridOptions = {
         enableSorting: true,
-        minRowsToShow: 10,
+        minRowsToShow: 8,
         rowHeight: 30,
         columnDefs: [
             {
