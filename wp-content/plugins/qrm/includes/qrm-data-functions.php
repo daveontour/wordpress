@@ -1,12 +1,18 @@
 <?php
 class QRM {
-	static function checkSession() {
-		// Will only arrive here if the session is logged on, so just need to send back a non-zero response
-		wp_send_json ( array (
-				'loggedin' => true 
-		) );
+	
+	static function qrmUser(){
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();		
+		return ($current_user->has_cap("risk_admin") || $current_user->has_cap("risk_user"));
+	}
+	static function checkSession() {	
+			wp_send_json ( array (
+					'loggedin' => QRM::qrmUser()
+			) );
 	}
 	static function downloadJSON() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		header ( 'Content-Description: File Transfer' );
 		header ( 'Content-Type: application/octet-stream' );
 		header ( 'Content-Disposition: attachment; filename=QRMData.json' );
@@ -73,12 +79,14 @@ class QRM {
 		exit ( 0 );
 	}
 	static function installSample() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::installSample () 
 		) );
 	}
 	static function removeSample() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::removeSample () 
@@ -96,14 +104,19 @@ class QRM {
 		
 		$user_signon = wp_signon ( $info, false );
 		
+	
 		if (is_wp_error ( $user_signon )) {
 			wp_send_json ( array (
 					'loggedin' => false,
 					'message' => __ ( 'Wrong username or password.' ) 
 			) );
 		} else {
+			
+			$qrmuser = $user_signon->allcaps["risk_admin"] || $user_signon->allcaps["risk_user"];
+			
 			wp_send_json ( array (
 					'loggedin' => true,
+					'qrmuser' => $qrmuser,
 					'message' => __ ( 'Login successful, redirecting...' ) 
 			) );
 		}
@@ -116,6 +129,7 @@ class QRM {
 		) );
 	}
 	static function getAllIncidents() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $post;
 		$args = array (
 				'post_type' => 'incident',
@@ -131,12 +145,10 @@ class QRM {
 			array_push ( $incs, $incident );
 		endwhile
 		;
-		
-		$data = new Data ();
-		$data->data = $incs;
-		wp_send_json ( $data );
+			wp_send_json ( $incs );
 	}
 	static function getIncident() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$incidentID = json_decode ( file_get_contents ( "php://input" ) );
 		$incident = json_decode ( get_post_meta ( $incidentID, "incidentdata", true ) );
 		$incident->comments = get_comments ( array (
@@ -150,6 +162,7 @@ class QRM {
 		wp_send_json ( $incident );
 	}
 	static function saveIncident() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -207,6 +220,7 @@ class QRM {
 		wp_send_json ( $incident );
 	}
 	static function addGeneralComment() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$comment = json_decode ( file_get_contents ( "php://input" ) );
 		$time = current_time ( 'mysql' );
 		
@@ -232,6 +246,7 @@ class QRM {
 		wp_send_json ( $comments );
 	}
 	static function getAllReviews() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $post;
 		$args = array (
 				'post_type' => 'review',
@@ -248,11 +263,10 @@ class QRM {
 		endwhile
 		;
 		
-		$data = new Data ();
-		$data->data = $revs;
-		wp_send_json ( $data );
+		wp_send_json ( $revs );
 	}
 	static function getReview() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$reviewID = json_decode ( file_get_contents ( "php://input" ) );
 		$review = json_decode ( get_post_meta ( $reviewID, "reviewdata", true ) );
 		$review->comments = get_comments ( array (
@@ -266,6 +280,7 @@ class QRM {
 		wp_send_json ( $review );
 	}
 	static function saveReview() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -323,9 +338,11 @@ class QRM {
 		wp_send_json ( $review );
 	}
 	static function getCurrentUser() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		wp_send_json ( wp_get_current_user () );
 	}
 	static function getSiteUsersCap() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all' 
 		) );
@@ -346,6 +363,7 @@ class QRM {
 		wp_send_json ( $userSummary );
 	}
 	static function registerAudit() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -406,6 +424,7 @@ class QRM {
 		wp_send_json ( json_decode ( get_post_meta ( $riskID, "audit", true ) ) );
 	}
 	static function getSiteUsers() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all' 
 		) );
@@ -415,6 +434,7 @@ class QRM {
 		exit ();
 	}
 	static function uploadFile() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		if (! function_exists ( 'wp_handle_upload' )) {
 			require_once (ABSPATH . 'wp-admin/includes/file.php');
 		}
@@ -482,6 +502,7 @@ class QRM {
 		exit ();
 	}
 	static function uploadImport() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		if (! function_exists ( 'wp_handle_upload' )) {
 			require_once (ABSPATH . 'wp-admin/includes/file.php');
 		}
@@ -522,6 +543,7 @@ class QRM {
 		exit ();
 	}
 	static function updateRisksRelMatrix() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 		
 		foreach ( $risks as $risk ) {
@@ -546,6 +568,7 @@ class QRM {
 		exit ();
 	}
 	static function saveSiteUsers() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$users = json_decode ( file_get_contents ( "php://input" ) );
 		
 		if ($users == null) {
@@ -571,6 +594,7 @@ class QRM {
 		QRM::getSiteUsers ();
 	}
 	static function getAttachments() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$postID = json_decode ( file_get_contents ( "php://input" ) );
 		$attachments = get_children ( array (
 				"post_parent" => $postID,
@@ -579,6 +603,7 @@ class QRM {
 		wp_send_json ( $attachments );
 	}
 	static function getRisk() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -606,6 +631,7 @@ class QRM {
 		wp_send_json ( $risk );
 	}
 	static function saveRankOrder() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 		
 		foreach ( $risks as $risk ) {
@@ -614,6 +640,7 @@ class QRM {
 		exit ();
 	}
 	static function getProjects() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $post;
 		$args = array (
 				'post_type' => 'riskproject',
@@ -634,6 +661,7 @@ class QRM {
 		wp_send_json ( $data );
 	}
 	static function getProject() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$projectID = json_decode ( file_get_contents ( "php://input" ) );
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
 		$data = new Data ();
@@ -641,6 +669,7 @@ class QRM {
 		wp_send_json ( $data );
 	}
 	static function getAllRisks() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $post;
 		$args = array (
 				'post_type' => 'risk',
@@ -670,6 +699,7 @@ class QRM {
 		wp_send_json ( $risks );
 	}
 	static function getAllProjectRisks() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$projectID = json_decode ( file_get_contents ( "php://input" ) );
 		if ($projectID == null) {
 			wp_send_json ( array () );
@@ -711,6 +741,7 @@ class QRM {
 		wp_send_json ( $data );
 	}
 	static function newPushDown() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -799,6 +830,7 @@ class QRM {
 		wp_send_json ( $risk );
 	}
 	static function recurseChildren($risk, $projectID, &$children) {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$myposts = get_posts ( array (
 				'posts_per_page' => - 1,
 				'post_type' => 'riskproject',
@@ -812,6 +844,7 @@ class QRM {
 		;
 	}
 	static function newPushDownChild($parent, $projectID) {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$risk = clone $parent;
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
 		
@@ -868,6 +901,7 @@ class QRM {
 		return $risk->id;
 	}
 	static function saveRisk() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -979,6 +1013,7 @@ class QRM {
 		wp_send_json ( $risk );
 	}
 	static function saveProject() {
+		if (!QRM::qrmUser()) wp_die(-3);
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
@@ -1080,6 +1115,7 @@ class QRM {
 		QRM::getProjects ();
 	}
 	static function updateRiskProjectCodes($projectID, $projectCode) {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$args = array (
 				'posts_per_page' => - 1,
 				'meta_key' => 'projectID',
@@ -1101,6 +1137,7 @@ class QRM {
 		}
 	}
 	static function getAuditObject($current_user) {
+		if (!QRM::qrmUser()) wp_die(-3);
 		$auditObjEval = new stdObject ();
 		$auditObjEval->auditComment = "Risk Entered";
 		$auditObjEval->auditDate = date ( "M j, Y" );

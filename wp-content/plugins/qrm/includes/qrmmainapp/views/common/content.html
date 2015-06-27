@@ -1,48 +1,48 @@
 <!-- Wrapper-->
 <div id="wrapper">
-		<!-- Navigation Window -->
-		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
-			<h3>Quay Risk Manager</h3>
-            <a ui-sref="qrm.explorer">Risk Explorer</a>
-            <a ui-sref="qrm.incidentExpl">Incident Explorer</a>
-            <a ui-sref="qrm.reviewExpl">Review Explorer</a>
-            <a ui-sref="qrm.calender" class="disable-noproject disable-link">Exposure Calender</a>
-            <a ui-sref="qrm.rank" class="disable-noproject disable-link">Risk Ranking</a>
-            <a ui-sref="qrm.matrix" class="disable-noproject disable-link">Tolerance Matrix</a>
-            <a ui-sref="qrm.analysis" class="disable-noproject disable-link">Dashboard</a>
-            <a href="#"  ng-click="main.logout()" >Logout ({{main.userName}})</a>
-        </nav>
- 
-        <!-- Page Content -->
-        <div id="page-content-wrapper" class="container">
-        	
-        	<!-- Sticky Header -->
-            <div id="header_container" class="qrmPrimMenu">
-                <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
-                    <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
-                    </button> <span id="qrm-title" style="font-size:1.2em"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span> 
-                    <span style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBar"></span>
-                </div>
+    <!-- Navigation Window -->
+    <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
+        <h3>Quay Risk Manager</h3>
+        <a href="#" ng-click="main.go('qrm.explorer')">Risk Explorer</a>
+        <a href="#" ng-click="main.go('qrm.incidentExpl')">Incident Explorer</a>
+        <a href="#" ng-click="main.go('qrm.reviewExpl')">Review Explorer</a>
+        <a href="#" ng-click="main.go('qrm.calender')" class="disable-noproject disable-link">Exposure Calender</a>
+        <a href="#" ng-click="main.go('qrm.rank')" class="disable-noproject disable-link">Risk Ranking</a>
+        <a href="#" ng-click="main.go('qrm.matrix')" class="disable-noproject disable-link">Tolerance Matrix</a>
+        <a href="#" ng-click="main.go('qrm.analysis')" class="disable-noproject disable-link">Dashboard</a>
+        <a href="#" ng-click="main.logout()">Logout ({{main.userName}})</a>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="container">
+
+        <!-- Sticky Header -->
+        <div id="header_container" class="qrmPrimMenu">
+            <div id="header" style="padding-right:10px;color:#afdefa" class="qrmPrimMenu">
+                <button id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
+                </button> <span id="qrm-title" style="font-size:1.2em"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span>
+                <span style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBar"></span>
             </div>
-            
-            <!-- Main Body -->
-            <div id="container">
-                <div id="content">
-                    <div ui-view></div>
-                </div>
-            </div>
-                <script>
-        $(function () {
-            $(window).bind("load resize", function () {
-                closeMenu();
-                winWidth = $(window).width() - 10;
-                $("#container").css("width", winWidth + "px");
-            })
-        });
-        $("#container").css("width", $(window).width() + "px");
-        $("#menu-toggle").click(function (e) {
-			toggleMenu();
-        });
-    </script>
         </div>
+
+        <!-- Main Body -->
+        <div id="container">
+            <div id="content">
+                <div ui-view></div>
+            </div>
+        </div>
+        <script>
+            $(function () {
+                $(window).bind("load resize", function () {
+                    closeMenu();
+                    winWidth = $(window).width() - 10;
+                    $("#container").css("width", winWidth + "px");
+                })
+            });
+            $("#container").css("width", $(window).width() + "px");
+            $("#menu-toggle").click(function (e) {
+                toggleMenu();
+            });
+        </script>
+    </div>
 </div>

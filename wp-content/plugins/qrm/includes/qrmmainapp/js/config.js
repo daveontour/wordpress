@@ -4,7 +4,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     IdleProvider.idle(5); // in seconds
     IdleProvider.timeout(120); // in seconds
 
-    $urlRouterProvider.otherwise("/intro");
+    //    $urlRouterProvider.otherwise("/intro");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
@@ -12,203 +12,195 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     });
 
     $stateProvider
-          .state('qrm', {
-            url: "/qrm",
-            abstract:true,
-            controller:"QRMCtrl",
+        .state('qrm', {
+            abstract: true,
+            controller: "QRMCtrl",
             templateUrl: function (params) {
-                    return pluginurl+"views/common/content.html"
+                return pluginurl + "views/common/content.html"
             }
-          }) 
-          .state('intro', {
-            url: "/intro",
-            controller:"IntroCtrl",
+        })
+        .state('intro', {
+            controller: "IntroCtrl",
             templateUrl: function (params) {
-                    return pluginurl+"views/qrm/intro.html"
-            }, 
-          })
-          .state('login', {
-            url: "/login",
+                return pluginurl + "views/qrm/intro.html"
+            },
+        })
+        .state('nonQRM', {
+            controller: "NonQRMCtrl",
             templateUrl: function (params) {
-                    return pluginurl+"views/qrm/login.html"
-            }, 
+                return pluginurl + "views/qrm/nonqrm.html"
+            },
+        })
+        .state('login', {
+            templateUrl: function (params) {
+                return pluginurl + "views/qrm/login.html"
+            },
             controller: "LoginCtrl as login",
             data: {
                 pageTitle: 'Login'
-            }, 
-            onEnter:function(){
+            },
+            onEnter: function () {
                 closeMenu();
             },
-            onExit:function(){
-            }
+            onExit: function () {}
         })
         .state('qrm.explorer', {
-            url: "/explorer",
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.explorer.html"
+                    return pluginurl + "views/qrm/m.explorer.html"
                 } else {
-                    return pluginurl+"views/qrm/explorer.html"
+                    return pluginurl + "views/qrm/explorer.html"
                 }
-            }, 
+            },
             controller: "ExplorerCtrl as exp",
             data: {
                 pageTitle: 'Risk Explorer'
-            }, 
-            onEnter:function(){
+            },
+            onEnter: function () {
                 closeMenu();
-                winWidth = $(document).width()-10;
+                winWidth = $(document).width() - 10;
                 $("#container").css("width", winWidth + "px");
             }
         })
         .state('qrm.risk', {
-            url: "/risk",
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.risk.html"
+                    return pluginurl + "views/qrm/m.risk.html"
                 } else {
-                    return pluginurl+"views/qrm/risk.html"
+                    return pluginurl + "views/qrm/risk.html"
                 }
-            }, 
+            },
             controller: "RiskCtrl as ctl",
             resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
-                        files: [pluginurl+"js/daterangepicker.js", pluginurl+"css/daterangepicker-bs3.css"],
+                        files: [pluginurl + "js/daterangepicker.js", pluginurl + "css/daterangepicker-bs3.css"],
                         cache: true
                     });
                 }]
-            }, 
-            onEnter:function(){
-               closeMenu();
             },
-            onExit:function(){
+            onEnter: function () {
+                closeMenu();
+            },
+            onExit: function () {
                 QRM.mainController.lookingForRisks();
             }
         })
         .state('qrm.calender', {
-            url: "/calender",
             controller: 'CalenderController',
             controllerAs: 'cal',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.calender.html"
+                    return pluginurl + "views/qrm/m.calender.html"
                 } else {
-                    return pluginurl+"views/qrm/calender.html"
+                    return pluginurl + "views/qrm/calender.html"
                 }
             },
-            onEnter:function(){
+            onEnter: function () {
                 closeMenu();
             }
 
         })
         .state('qrm.rank', {
-            url: "/rank",
             controller: 'RankController',
             controllerAs: 'rank',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.rank.html"
+                    return pluginurl + "views/qrm/m.rank.html"
                 } else {
-                    return pluginurl+"views/qrm/rank.html"
+                    return pluginurl + "views/qrm/rank.html"
                 }
             },
-            onEnter:function(){
+            onEnter: function () {
                 closeMenu();
             }
         })
         .state('qrm.matrix', {
-            url: "/matrix",
             controller: 'RelMatrixController',
             controllerAs: 'relMatrix',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.relmatrix.html"
+                    return pluginurl + "views/qrm/m.relmatrix.html"
                 } else {
-                    return pluginurl+"views/qrm/relmatrix.html"
+                    return pluginurl + "views/qrm/relmatrix.html"
                 }
             },
-            onEnter:function(){
+            onEnter: function () {
                 closeMenu();
             }
         })
         .state('qrm.incidentExpl', {
-            url: "/incidentExpl",
             controller: 'IncidentExplCtrl',
             controllerAs: 'incidentExpl',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.incidentExplorer.html"
+                    return pluginurl + "views/qrm/m.incidentExplorer.html"
                 } else {
-                    return pluginurl+"views/qrm/incidentExplorer.html"
+                    return pluginurl + "views/qrm/incidentExplorer.html"
                 }
             },
-            onEnter:function(){
+            onEnter: function () {
                 closeMenu();
             }
         })
         .state('qrm.incident', {
-            url: "/incident",
             controller: 'IncidentCtrl',
             controllerAs: 'incident',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.incident.html"
+                    return pluginurl + "views/qrm/m.incident.html"
                 } else {
-                    return pluginurl+"views/qrm/incident.html"
+                    return pluginurl + "views/qrm/incident.html"
                 }
             },
-             resolve: {
+            resolve: {
                 loadPlugin: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
-                        files: [pluginurl+"js/daterangepicker.js", pluginurl+"css/daterangepicker-bs3.css"],
+                        files: [pluginurl + "js/daterangepicker.js", pluginurl + "css/daterangepicker-bs3.css"],
                         cache: true
                     });
                 }]
             },
-            onEnter:function(){
-               QRM.mainController.titleBar ="Risk Incidents";
+            onEnter: function () {
+                QRM.mainController.titleBar = "Risk Incidents";
                 closeMenu();
             }
-        })    
+        })
         .state('qrm.reviewExpl', {
-            url: "/reviewExpl",
             controller: 'ReviewExplCtrl',
             controllerAs: 'reviewExpl',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.reviewExplorer.html"
+                    return pluginurl + "views/qrm/m.reviewExplorer.html"
                 } else {
-                    return pluginurl+"views/qrm/reviewExplorer.html"
+                    return pluginurl + "views/qrm/reviewExplorer.html"
                 }
             },
-            onEnter:function(){
+            onEnter: function () {
                 closeMenu();
             }
-        })  
+        })
         .state('qrm.review', {
-            url: "/review",
             controller: 'ReviewCtrl',
             controllerAs: 'rev',
             templateUrl: function (params) {
                 if (jQuery(window).width() < 768) {
-                    return pluginurl+"views/qrm/m.review.html"
+                    return pluginurl + "views/qrm/m.review.html"
                 } else {
-                    return pluginurl+"views/qrm/review.html"
+                    return pluginurl + "views/qrm/review.html"
                 }
             },
-            onEnter:function(){
-              QRM.mainController.titleBar ="Risk Reviews";
+            onEnter: function () {
+                QRM.mainController.titleBar = "Risk Reviews";
                 closeMenu();
             }
-        })  
+        })
         .state('qrm.analysis', {
-            url: "/analysis",
             controller: 'AnalysisController',
             controllerAs: 'analysis',
-            templateUrl: pluginurl+"views/qrm/analysis.html", 
-            onEnter:function(){
-               QRM.mainController.titleBar ="Analysis";
+            templateUrl: pluginurl + "views/qrm/analysis.html",
+            onEnter: function () {
+                QRM.mainController.titleBar = "Analysis";
                 closeMenu();
             }
         });
@@ -216,6 +208,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
 angular
     .module('qrm')
     .config(config)
-    .run(function($rootScope, $state) {
+    .run(function ($rootScope, $state) {
         $rootScope.$state = $state;
+
+        // This tells the app where to go in the first instance
+        $state.go("intro");
     });
