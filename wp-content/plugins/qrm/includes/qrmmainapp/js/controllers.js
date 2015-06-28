@@ -3323,6 +3323,10 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         rev.review.risks = jQuery.grep(rev.review.risks, function (value) {
             return value != riskID;
         });
+
+        rev.review.riskComments = jQuery.grep(rev.review.riskComments, function (value) {
+            return value.riskID != riskID;
+        });
     }
     this.reviewAttachmentReady = function (dropzone, file) {
         rev.dropzone = dropzone;

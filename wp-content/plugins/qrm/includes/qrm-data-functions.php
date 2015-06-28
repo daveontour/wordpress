@@ -207,6 +207,22 @@ class QRM {
 		) );
 		
 		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
+		update_post_meta ( $postID, "incidenttitle", $incident->incidentCode . " - " . $incident->title );
+		
+		// record the incident in the risk metadata
+		
+		$args = array (
+				'posts_per_page' => - 1,
+				'meta_key' => 'incident',
+				'meta_value' => $postID,
+				'post_type' => 'risk'
+		);
+		foreach ( get_posts ( $args ) as $post ) {
+			delete_post_meta( $post->ID, "incident", $postID );
+		}
+		foreach ($incident->risks as $risk){					
+			add_post_meta($risk, "incident", $postID);
+		}
 		
 		// Add any comments to the returned object
 		$incident->comments = get_comments ( array (
@@ -325,6 +341,19 @@ class QRM {
 		) );
 		
 		update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
+		
+		$args = array (
+				'posts_per_page' => - 1,
+				'meta_key' => 'review',
+				'meta_value' => $postID,
+				'post_type' => 'risk'
+		);
+		foreach ( get_posts ( $args ) as $post ) {
+			delete_post_meta( $post->ID, "review", $postID );
+		}
+		foreach ($review->risks as $risk){
+			add_post_meta($risk, "review", $postID);
+		}
 		
 		// Add any comments to the returned object
 		$review->comments = get_comments ( array (
