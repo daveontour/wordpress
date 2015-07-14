@@ -670,6 +670,17 @@ function RemoteService($http) {
             cache: false
         });
     };
+    
+    this.getJSON = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getJSON",
+            },
+            cache: false
+        });
+    };
     this.newPushDownRisk = function (pushdown) {
         return $http({
             method: 'POST',

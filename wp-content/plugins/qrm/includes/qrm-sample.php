@@ -22,11 +22,15 @@ class QRMSample {
 		$objIDMap = array ();
 		$catIDMap = array ();
 		$riskIDMap = array ();
+		$reviewIDMap = array ();
+		$incidentIDMap = array ();
 		
 		$projIDMap [0] = 0;
 		$objIDMap [0] = 0;
 		$riskIDMap [0] = 0;
 		$catIDMap [0] = 0;
+		$incidentIDMap[0] = 0;
+		$reviewIDMap[0] = 0;
 		
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
@@ -108,7 +112,6 @@ class QRMSample {
 		
 		foreach ( $import->risks as $risk ) {
 			
-			
 			if ($sample)$risk->title = $risk->title . " (sample)";
 			$risk->manager = $current_user->ID;
 			$risk->owner = $current_user->ID;
@@ -155,9 +158,6 @@ class QRMSample {
 			update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 			update_post_meta ( $postID, "sampleqrmdata", $sample );
 			update_post_meta ( $postID, "audit", json_encode($risk->audit) );
-			
-			
-			$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
 			update_post_meta ( $postID, "projectID", $risk->projectID );
 			update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
 			update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
@@ -166,6 +166,17 @@ class QRMSample {
 			update_post_meta ( $postID, "ownerID", $risk->owner);
 			update_post_meta ( $postID, "managerID", $risk->manager);
 			update_post_meta ( $postID, "project", $project->post_title );
+			
+			if ($risk->reviews != null){
+				foreach ($risk->reviews as $reviewID){
+					add_post_meta($postID, 'review', $reviewID);
+				}
+			}
+			if ($risk->incidents != null){
+				foreach ($risk->incidents as $incidentID){
+					add_post_meta($postID, 'incident', $incidentID);
+				}
+			}
 			
 			// Update the count for risks for the impacted project
 			$args = array (
@@ -189,6 +200,8 @@ class QRMSample {
 					'post_type' => 'review',
 					'post_author' => $current_user->ID
 			) );
+				
+			$reviewIDMap [$review->id] = $postID;
 			$review->id = $postID;
 			$review->reviewCode = "REVIEW-" . $review->id;
 			update_post_meta ( $postID, "sampleqrmdata", $sample );
@@ -214,9 +227,21 @@ class QRMSample {
 			}
 			
 			update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
+			update_post_meta ( $postID, "reviewtitle", $review->reviewCode . " - " . $review->title );
 		}
 		
-		
+		//Fix up the risk references to the reviews
+		foreach ( $reviewIDMap as $oldID => $newID ) {
+			$args = array (
+					'posts_per_page' => - 1,
+					'meta_key' => 'review',
+					'meta_value' => $oldID,
+					'post_type' => 'risk'
+			);
+			foreach ( get_posts ( $args ) as $post ) {
+				update_post_meta($post->ID, 'review', intval($newID), $oldID);
+			}
+		}		
 		
 		foreach ( $import->incidents as $incident ) {
 
@@ -229,6 +254,7 @@ class QRMSample {
 					'post_type' => 'incident',
 					'post_author' => $current_user->ID
 			) );
+			$incidentIDMap [$incident->id] = $postID;
 			$incident->id = $postID;
 			$incident->incidentCode = "INCIDENT-" . $incident->id;
 			update_post_meta ( $postID, "sampleqrmdata", $sample );
@@ -248,15 +274,31 @@ class QRMSample {
 			}
 				
 			update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
+			update_post_meta ( $postID, "incidenttitle", $incident->incidentCode . " - " . $incident->title );
+				
 		}
 		
+		echo var_dump($incidentIDMap);
+		echo var_dump($reviewIDMap);
+				//Fix up the risk references to the incident
+		foreach ( $incidentIDMap as $oldID => $newID ) {
+			$args = array (
+					'posts_per_page' => - 1,
+					'meta_key' => 'incident',
+					'meta_value' => $oldID,
+					'post_type' => 'risk'
+			);
+			foreach ( get_posts ( $args ) as $post ) {
+				update_post_meta($post->ID, 'incident', intval($newID), $oldID);
+			}
+		}	
 		return true;
 	}
 	static function removeSample() {
 		$args = array (
 				'posts_per_page' => - 1,
-				'meta_key' => 'sampleqrmdata',
-				'meta_value' => true,
+// 				'meta_key' => 'sampleqrmdata',
+// 				'meta_value' => true,
 				'post_type' => 'riskproject' 
 		);
 				

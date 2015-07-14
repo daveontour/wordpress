@@ -234,6 +234,7 @@ function MainCtrl(QRMDataService, remoteService, $state) {
     this.showLookingForRisks = false;
     this.showNoRisks = false;
     this.loading = false;
+    this.sideOpen = false;
 
     this.showLookingForReviews = false;
     this.showNoReviews = false;
@@ -247,7 +248,6 @@ function MainCtrl(QRMDataService, remoteService, $state) {
 
 
     this.go = function (state) {
-        debugger;
         $state.go(state);
     }
 
@@ -406,6 +406,46 @@ function MainCtrl(QRMDataService, remoteService, $state) {
                 QRMDataService.currentUser = null;
                 $state.go("login");
             });
+    }
+
+    this.toggleMenu = function () {
+
+        var open = $("#header_container").hasClass("sideMenuOpen");
+        console.log("Side Menu Open " + open);
+
+        //Currently Open, so want to close side menu
+        if (open) {
+            $("#header_container").removeClass("sideMenuOpen");
+            $("#footer_container").removeClass("sideMenuOpen");
+            $("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
+            $("body").toggleClass('cbp-spmenu-push-toright');
+         } else {
+            // Open the side menu
+            $("#header_container").addClass("sideMenuOpen");
+            $("#footer_container").addClass("sideMenuOpen");
+            $("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
+            $("body").toggleClass('cbp-spmenu-push-toright');
+        }
+        
+        QRM.mainController.sideOpen = !open;
+
+//        $("#header_container").toggleClass("sideMenuOpen");
+//        $("#footer_container").toggleClass("sideMenuOpen");
+//        $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
+//        $("body").toggleClass('cbp-spmenu-push-toright');
+//
+//        if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")) {
+//            $("#qrm-title").removeClass("hidden-qrm");
+//            $("#qrm-subtitle").removeClass("hidden-qrm");
+//            $("#welcome-name").removeClass("hidden-qrm");
+//            $("#qrm-titleSM").addClass("hidden-qrm");
+//        } else {
+//            $("#qrm-subtitle").addClass("hidden-qrm");
+//            $("#qrm-title").addClass("hidden-qrm");
+//            $("#welcome-name").addClass("hidden-qrm");
+//            $("#qrm-titleSM").removeClass("hidden-qrm");
+//        }
+
     }
 
     this.titleBar = "Please Select Project";
@@ -882,6 +922,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         var index = (prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1;
         return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
+    
+    this.riskReport = function(){
+        remoteService.getJSON()
+            .then(function (response) {
+ 
+            }).finally(function () {
+                
+            });
+    }
 
     this.cellStyle = function (prob, impact, tol) {
 
@@ -1281,6 +1330,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 vm.treatedAbsProb = probFromMatrix(vm.risk.treatedProb, vm.project.matrix);
                 vm.inherentAbsProb = probFromMatrix(vm.risk.inherentProb, vm.project.matrix);
             }
+            
+            vm.risk.inherentAbsProb = vm.inherentAbsProb;
+            vm.risk.treatedAbsProb = vm.treatedAbsProb;
+            
         } catch (e) {
             alert("Error" + e.message);
         }
@@ -1390,7 +1443,6 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
 
     }
 
-
     this.addMit = function () {
         vm.risk.mitigation.mitPlan.push({
             description: "No Description of the Action Entered ",
@@ -1404,7 +1456,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         vm.risk.response.respPlan.push({
             description: "No Description of the Action Entered ",
             person: -1,
-            cost: "No Cost Allocated"
+            cost: 0
         });
     }
     this.addControl = function () {

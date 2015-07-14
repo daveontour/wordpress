@@ -39,6 +39,7 @@
 }
 .blue {
     text-align: center;
+    color:white !important;
     background-color:#1c84c6 !important;
     padding: 5px;
 }
