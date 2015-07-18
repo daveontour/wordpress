@@ -1,8 +1,0 @@
-[
-	{
-		"meta_id" : 4883,
-		"post_id" : 1567,
-		"meta_key" : "incidentdata",
-		"meta_value" : "{\"title\":\"Incident Title\",\"description\":\"Description of the incident\",\"id\":1567,\"incidentCode\":\"INCIDENT-1567\",\"resolved\":false,\"identified\":false,\"evaluated\":true,\"controls\":false,\"consequences\":true,\"causes\":false,\"reportedby\":1,\"lessons\":\"Enter the lessons learnt as a result of this incident\",\"actions\":\"Enter a summary of actions taken to resolve the incident\",\"date\":\"2015-06-22T23:35:09.173Z\",\"risks\":[1541]}"
-	}
-]
