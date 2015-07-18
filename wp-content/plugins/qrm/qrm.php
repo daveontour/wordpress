@@ -149,7 +149,7 @@ class PageTemplater {
 		add_filter('wp_insert_post_data',array( $this, 'register_project_templates' ));
 		add_filter('template_include',array( $this, 'view_project_template'));
 		// Add your templates to this array.
-		$this->templates = array('../templates/qrm-type-template.php'    => 'Quay Risk Manager Main Page');
+		$this->templates = array('templates/qrm-type-template.php'    => 'Quay Risk Manager Main Page');
 
 	}
 	public function register_project_templates( $atts ) {
@@ -1608,11 +1608,11 @@ if (! class_exists ( 'QuayRiskManager' )) :
 					'post_status' => 'publish',
 					'post_title' => 'Quay Risk Manager',
 					'post_name' => 'riskmanager', /* the slug */
-					'page_template' => '../templates/qrm-type-template.php',
+					'page_template' => 'templates/qrm-type-template.php',
 					'post_type' => 'page' 
 			);
 			$pageID = wp_insert_post ( $postdata );
-			update_post_meta ( $pageID, '_wp_page_template', '../templates/qrm-type-template.php' );
+			update_post_meta ( $pageID, '_wp_page_template', 'templates/qrm-type-template.php' );
 		}
 		
 		public  function get_custom_post_type_template($single_template) {
