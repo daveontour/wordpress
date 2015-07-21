@@ -923,15 +923,29 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
     
-    this.riskReport = function(){
-        remoteService.getJSON()
+    
+    this.riskDetailReport = function(){
+        remoteService.getReportRiskJSON([], QRMDataService.project.id)
             .then(function (response) {
- 
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="reportID"]').val(1);
+                $('#reportForm').attr('action', response.data.reportServerURL);
+                $("#reportForm").submit();
             }).finally(function () {
                 
             });
     }
-
+    this.riskSummaryDateFormatReport = function(){
+        remoteService.getReportRiskJSON([], QRMDataService.project.id)
+            .then(function (response) {
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="reportID"]').val(2);
+                $('#reportForm').attr('action', response.data.reportServerURL);
+                $("#reportForm").submit();
+            }).finally(function () {
+                
+            });
+    }
     this.cellStyle = function (prob, impact, tol) {
 
         var vh = 100 / (QRMDataService.project.matrix.maxProb)
@@ -1611,6 +1625,17 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 }
             }
         });
+    }
+    
+    this.riskDetailReport = function(){
+         remoteService.getReportRiskJSON([vm.riskID], null)
+            .then(function (response) {
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('#reportForm').attr('action', response.data.reportServerURL);
+                $("#reportForm").submit();
+            }).finally(function () {
+                
+            });
     }
 
     // Handle formatting of objectives

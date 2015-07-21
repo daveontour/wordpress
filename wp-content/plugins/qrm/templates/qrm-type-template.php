@@ -142,6 +142,11 @@
 			toggleMenu();
         });
     </script>
+    <form id="reportForm" method="post" style="display: none;" target="qrmIframe">
+	    <input type="hidden" name="reportData" />
+	    <input type="hidden" name="reportID" />
+    </form>
+    <iframe name="qrmIframe" style="display: none"></iframe>
 </body>
 </html>
 

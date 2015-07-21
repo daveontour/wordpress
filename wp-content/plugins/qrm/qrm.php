@@ -195,7 +195,40 @@ class QRM {
 	}
 
 	static function getJSON(){
-		$export = commonJSON();
+		$export = QRM::commonJSON();
+		wp_send_json($export);
+	}
+	
+	static function exportMetadata(&$export){
+		global  $current_user;
+		$export->userEmail = $current_user->user_email;
+		$export->userLogin = $current_user->user_login;
+		$export->userDisplayName = $current_user->display_name;
+		$export->siteName = "Quay Systems";
+		$export->siteKey = "fdfjdsflkdsjflkdsfjsdlf";		
+		$export->siteID = "QUAYSYSTEMS1";
+		$export->reportServerURL = "http://localhost:8080/report";
+	}
+	
+	static function getReportRiskJSON(){
+		$export = QRM::commonJSON();
+		QRM::exportMetadata($export);
+		$config = json_decode ( file_get_contents ( "php://input" ) );
+		
+		//Remove risks not included in request
+		// Note - need to reindex after filter so a array is returned
+		if (isset($config->projectID) && $config->projectID != null){
+		$export->risks = array_values(array_filter($export->risks, function ($risk) use ($config) {
+			return $risk->projectID == $config->projectID;
+		}));
+		}
+
+		
+		if (isset($config->risks) && sizeof($config->risks) > 0 ){
+			$export->risks = array_values(array_filter($export->risks, function ($risk) use ($config) {
+				return in_array($risk->ID, $config->risks);
+			}));
+		}
 		wp_send_json($export);
 	}
 
@@ -211,7 +244,7 @@ class QRM {
 		header ( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
 		header ( 'Pragma: public' );
 
-		$export = commonJSON();
+		$export = QRM::commonJSON();
 
 		echo json_encode ( $export );
 
@@ -244,6 +277,8 @@ class QRM {
 		$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
 		$risk->incidents = get_post_meta ( $post->ID, "incident" );
 		$risk->reviews = get_post_meta ( $post->ID, "review" );
+		$risk->projectID = get_post_meta($post->ID, projectID,true);
+		$risk->ID = $post->ID;
 		$risk->comments = get_comments ( array (
 				'post_id' => $post->ID
 		) );
@@ -252,6 +287,13 @@ class QRM {
 		}
 		if ($risk->seccat == 0){
 			$risk->seccat = new stdObject();
+		}
+		if (isset ( $risk->response->respPlan )) {
+			foreach ( $risk->response->respPlan as $step ) {
+				if ($step->cost == "No Cost Allocated") {
+					$step->cost = 0;
+				}
+			}
 		}
 		array_push ( $risks, $risk );
 		endwhile
@@ -1581,20 +1623,21 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			wp_enqueue_script('qrm-ngNotify');
 			wp_enqueue_script('qrm-services');
 			?>
-			 	<script>
+<script>
 					projectID = <?php echo $post->ID; ?>;
 			 	</script>
-			 	<style>
-			 	.form-table th {
-			 		text-align:right
-			 	}
-			 	</style>
-			 	
-		   <div ng-app="myApp" style="width:100%;height:100%" ng-controller="projectCtrl">
+<style>
+.form-table th {
+	text-align: right
+}
+</style>
+
+<div ng-app="myApp" style="width: 100%; height: 100%"
+	ng-controller="projectCtrl">
 		            <?php include 'riskproject-widget.php';?>
 		   </div>
-		 	 	
-			 	<?php 
+
+<?php 
 			}
 		
 		public function qrm_init_options() {
@@ -1668,6 +1711,7 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_action ( "wp_ajax_removeSample", array (QRM,"removeSample" ) );
 			add_action ( "wp_ajax_downloadJSON", array (QRM,"downloadJSON" ) );
 			add_action ( "wp_ajax_getJSON", array (QRM,"downloadJSON" ) );
+			add_action ( "wp_ajax_getReportRiskJSON", array(QRM, "getReportRiskJSON"));
 		}
 		
 		public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
@@ -1975,5 +2019,4 @@ function QRMMaster() {
 	return QuayRiskManager::instance ();
 }
 
-// Global for backwards compatibility.
 $GLOBALS['quayriskmanager'] = QRMMaster();

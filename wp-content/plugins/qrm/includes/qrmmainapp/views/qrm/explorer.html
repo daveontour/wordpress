@@ -1,158 +1,178 @@
 <div id="explorer-wrapper" class="container-fluid hidden-qrm">
     <div class="col-sm-12 col-md-12 col-lg-10  col-lg-offset-1">
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-15" style="padding-right:0px;">
-            <div style="float:right">
-                <table>
-                <tr>
-                    <td style="padding-right:10px"><label class="control-label">Select Project: </label></td>
-                    <td>
-                 <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:250px;">
-                    <ui-select-match style="color:rgb(103,106,108);font-weight:700" allow-clear=false placeholder="Select Project...">{{$select.selected.title}} ({{$select.selected.projectCode}})</ui-select-match>
-                    <ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
-                        <div ng-style="exp.rowStyle(project)">
-                            <span style="color:rgb(103,106,108)" ng-bind-html="project.title"></span> (<span style="color:rgb(103,106,108)" ng-bind-html="project.projectCode"></span>)
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-15" style="padding-right:0px;">
+                <div style="float:right">
+                    <table>
+                        <tr>
+                            <td style="padding-right:10px">
+                                <label class="control-label">Select Project: </label>
+                            </td>
+                            <td>
+                                <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:250px;">
+                                    <ui-select-match style="color:rgb(103,106,108);font-weight:700" allow-clear=false placeholder="Select Project...">{{$select.selected.title}} ({{$select.selected.projectCode}})</ui-select-match>
+                                    <ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
+                                        <div ng-style="exp.rowStyle(project)">
+                                            <span style="color:rgb(103,106,108)" ng-bind-html="project.title"></span> (<span style="color:rgb(103,106,108)" ng-bind-html="project.projectCode"></span>)
+                                        </div>
+                                    </ui-select-choices>
+                                </ui-select>
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
+            <div class="hidden-xs col-sm-12 col-md-12 col-lg-12" style="padding-left:0px;padding-right:0px">
+                <div class="pull-left  hidden-xs hidden-sm">
+                    <div style="float:left;margin-top:10px;width:180px;height:180px">
+                        <div>
+                            <label class="control-label">Untreated State</label>
                         </div>
-                    </ui-select-choices>
-                </ui-select>                   
-                    
-                    </td>
-                    </tr></table>
-
-            </div>
-        </div>
-    </div>
-    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <div class="hidden-xs col-sm-12 col-md-12 col-lg-12" style="padding-left:0px;padding-right:0px">
-            <div class="pull-left  hidden-xs hidden-sm">
-                <div style="float:left;margin-top:10px;width:180px;height:180px">
-                    <div>
-                        <label class="control-label">Untreated State</label>
+                        <riskmat treated="false"></riskmat>
                     </div>
-                    <riskmat treated="false"></riskmat>
+                    <div style="float:left;margin-left:15px; margin-top:10px;width:180px;height:180px">
+                        <div>
+                            <label class="control-label">Treated State</label>
+                        </div>
+                        <riskmat treated="true"></riskmat>
+                    </div>
                 </div>
-                <div style="float:left;margin-left:15px; margin-top:10px;width:180px;height:180px">
-                    <div>
-                        <label class="control-label">Treated State</label>
+
+                <div class="form-group pull-left" style="margin-left:15px;margin-top:5px">
+                    <form method="get" class="form-horizontal">
+                        <div>
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <label class="control-label">Status</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox-inline" style="padding-left:0px">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.treated"> Treated </label>
+                                    </td>
+                                    <td>
+                                        <label class="checkbox-inline">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.untreated"> Un Treated </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <label class="control-label">Tolerance</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox-inline" style="padding-left:0px">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.tolEx"> Extreme </label>
+                                    </td>
+                                    <td>
+                                        <label class="checkbox-inline">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.tolHigh"> High </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox-inline" style="padding-left:0px">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.tolSig"> Significant </label>
+                                    </td>
+
+                                    <td>
+                                        <label class="checkbox-inline">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.tolModerate"> Moderate </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox-inline" style="padding-left:0px">
+                                            <input icheck type="checkbox" ng-model="exp.filterOptions.tolLow"> Low </label>
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-group" style="float:left;margin-left:15px;margin-top:5px">
+                    <form method="get" class="form-horizontal">
+                        <label class=" control-label">Exposure</label>
+                        <div class="">
+                            <label class="checkbox-inline" style="padding-left:0px">
+                                <input icheck type="checkbox" ng-model="exp.filterOptions.expInactive"> Inactive</label>
+                            <label class="checkbox-inline" style="padding-left:0px">
+                                <input icheck type="checkbox" ng-model="exp.filterOptions.expActive"> Active</label>
+                            <label class="checkbox-inline" style="padding-left:0px">
+                                <input icheck type="checkbox" ng-model="exp.filterOptions.expPending"> Pending</label>
+                        </div>
+                        <label class="control-label">Risk Owner</label>
+                        <div>
+                            <select ng-model="exp.filterOptions.owner" ng-options="person as (person | usernameFilter) for person in exp.project.ownersID" class="form-control"></select>
+                        </div>
+                        <label class="control-label" style="clear:both">Risk Manager</label>
+                        <div class="">
+                            <select ng-model="exp.filterOptions.manager" ng-options="person as (person | usernameFilter)  for person in exp.project.managersID" class="form-control"></select>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
+            <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
+                <div style="width:100%; text-align:right">
+                    <div class="dropdown" style="display:inline">
+                        <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
+                Action <span class="caret"></span>
+            </a>
+                        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                            <li><a ng-click="exp.newPushDownRisk()" href="#">New 'Push Down' Risk</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Reports</a>
+                                <ul class="dropdown-menu">
+                                   <li><a ng-click="exp.riskDetailReport()" href="#">Risk Detail Report</a></li>
+                                  <li><a ng-click="exp.riskSummaryDateFormatReport()" href="#">Risk Summary (Date Format)</a></li>
+<!--
+                                    <li><a tabindex="-1" href="#">Second level</a>
+                                    </li>
+                                    <li class="dropdown-submenu">
+                                        <a href="#">Even More..</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">3rd level</a>
+                                            </li>
+                                            <li><a href="#">3rd level</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#">Second level</a>
+                                    </li>
+                                    <li><a href="#">Second level</a>
+                                    </li>
+-->
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
-                    <riskmat treated="true"></riskmat>
+                    <button style="margin-left:5px" class="btn btn-w-m btn-primary hidden-xs" ng-click="exp.clearFilters()">Clear Filters</button>
+                    <button style="margin-left:5px" class="btn btn-w-m btn-primary hidden-xs" ng-show="main.checkUserCap('new_risk')" ng-click="exp.newRisk()">New Risk</button>
                 </div>
             </div>
-
-            <div class="form-group pull-left" style="margin-left:15px;margin-top:5px">
-                <form method="get" class="form-horizontal">
-                    <div>
-                        <table>
-                            <tr>
-                                <td colspan="2">
-                                    <label class="control-label">Status</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-inline" style="padding-left:0px">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.treated"> Treated </label>
-                                </td>
-                                <td>
-                                    <label class="checkbox-inline">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.untreated"> Un Treated </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <label class="control-label">Tolerance</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-inline" style="padding-left:0px">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.tolEx"> Extreme </label>
-                                </td>
-                                <td>
-                                    <label class="checkbox-inline">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.tolHigh"> High </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-inline" style="padding-left:0px">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.tolSig"> Significant </label>
-                                </td>
-
-                                <td>
-                                    <label class="checkbox-inline">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.tolModerate"> Moderate </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-inline" style="padding-left:0px">
-                                        <input icheck type="checkbox" ng-model="exp.filterOptions.tolLow"> Low </label>
-                                </td>
-
-                            </tr>
-                        </table>
-
-                    </div>
-                </form>
-            </div>
-
-            <div class="form-group" style="float:left;margin-left:15px;margin-top:5px">
-                <form method="get" class="form-horizontal">
-                    <label class=" control-label">Exposure</label>
-                    <div class="">
-                        <label class="checkbox-inline" style="padding-left:0px">
-                            <input icheck type="checkbox" ng-model="exp.filterOptions.expInactive"> Inactive</label>
-                        <label class="checkbox-inline" style="padding-left:0px">
-                            <input icheck type="checkbox" ng-model="exp.filterOptions.expActive"> Active</label>
-                        <label class="checkbox-inline" style="padding-left:0px">
-                            <input icheck type="checkbox" ng-model="exp.filterOptions.expPending"> Pending</label>
-                    </div>
-                    <label class="control-label">Risk Owner</label>
-                    <div>
-                        <select ng-model="exp.filterOptions.owner" ng-options="person as (person | usernameFilter) for person in exp.project.ownersID" class="form-control"></select>
-                    </div>
-                    <label class="control-label" style="clear:both">Risk Manager</label>
-                    <div class="">
-                        <select ng-model="exp.filterOptions.manager" ng-options="person as (person | usernameFilter)  for person in exp.project.managersID" class="form-control"></select>
-                    </div>
-                </form>
-            </div>
-
         </div>
-    </div>
-    <div  class="row" style="padding-left:0px;padding-right:0px;clear:left">
-        <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
-            <div style="width:100%; text-align:right">
-                <div class="btn-group  hidden-xs" dropdown>
-                    <button type="button" class="btn btn-info">Action</button>
-                    <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                        <span class="caret"></span>
-                        <span class="sr-only">Split button!</span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a ng-click="exp.newRisk()" href="#">New Risk</a>
-                        </li>
-                        <li><a ng-click="exp.newPushDownRisk()" href="#">New 'Push Down' Risk</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a>
-                        </li>
-                    </ul>
-                </div>
-                <button style="margin-left:5px" class="btn btn-w-m btn-primary hidden-xs" ng-click="exp.clearFilters()">Clear Filters</button>
-                <button style="margin-left:5px" class="btn btn-w-m btn-primary hidden-xs" ng-show="main.checkUserCap('new_risk')" ng-click="exp.newRisk()">New Risk</button>
+        <div class="row" style="padding-left:0px;padding-right:0px">
+            <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
+                <div style="clear:both" id="explorerGrid" ui-grid="exp.gridOptions" ui-grid-auto-resize ng-style="exp.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
             </div>
         </div>
     </div>
-    <div class="row" style="padding-left:0px;padding-right:0px">
-        <div class="col-lg-12" style="margin-top:5px;padding-left:0px;padding-right:0px">
-            <div style="clear:both" id="explorerGrid" ui-grid="exp.gridOptions" ui-grid-auto-resize ng-style="exp.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
-        </div>
-    </div>
-  </div>
 </div>
-       
+
 <div ng-show="loading" id="target" class="loading">
     <div class="loading-overlay">
         <p class="loading-spinner">
@@ -171,24 +191,28 @@
     </div>
 </div>
 
-<h1 ng-show="main.showSelectProject" class="status-msg">Please Select Project</h1> 
-<h1 ng-show="main.showLookingForRisks" class="status-msg" >Loading Risks...</h1>
-<h1 ng-show="main.showNoRisks" class="status-msg">No Risks Were Found</h1> 
+<h1 ng-show="main.showSelectProject" class="status-msg">Please Select Project</h1>
+<h1 ng-show="main.showLookingForRisks" class="status-msg">Loading Risks...</h1>
+<h1 ng-show="main.showNoRisks" class="status-msg">No Risks Were Found</h1>
 
 <script type="text/ng-template" id="editPushDownDialogId">
-        <div class="ngdialog-message">
-            <div style="width:100%; margin-left:auto;margin-right:auto"><h2>Push Down Risk</h2></div>
-            <p>Creating a new 'Push Down Risk' will create a new risk with the same title and description in the current and descendant projects. You will be able to edit the description in the descendant projects, but the title will remain the same.</p>
-            <p>Push Down Risk Title</p>
-            <input ng-model="exp.pushDown.title"  style="width:100%">
-              <p></p>
-           <p>Risk Description</p>
-            <div text-angular ng-model="exp.pushDown.description" style="width:100%;margin-bottom:5px"></div>
-            <label><input icheck type="radio" name="type" value=1  ng-model="exp.pushDown.type"> Immediate Descendant Projects Only</label>
-            <label><input icheck type="radio" name="type" value=2  ng-model="exp.pushDown.type"> All Descendant Projects</label>
+    <div class="ngdialog-message">
+        <div style="width:100%; margin-left:auto;margin-right:auto">
+            <h2>Push Down Risk</h2>
         </div>
-        <div class="ngdialog-buttons">
-            <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
-            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
-        </div>
+        <p>Creating a new 'Push Down Risk' will create a new risk with the same title and description in the current and descendant projects. You will be able to edit the description in the descendant projects, but the title will remain the same.</p>
+        <p>Push Down Risk Title</p>
+        <input ng-model="exp.pushDown.title" style="width:100%">
+        <p></p>
+        <p>Risk Description</p>
+        <div text-angular ng-model="exp.pushDown.description" style="width:100%;margin-bottom:5px"></div>
+        <label>
+            <input icheck type="radio" name="type" value=1 ng-model="exp.pushDown.type"> Immediate Descendant Projects Only</label>
+        <label>
+            <input icheck type="radio" name="type" value=2 ng-model="exp.pushDown.type"> All Descendant Projects</label>
+    </div>
+    <div class="ngdialog-buttons">
+        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog('button')">Cancel</button>
+        <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(confirmValue)">Save</button>
+    </div>
 </script>

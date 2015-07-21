@@ -681,6 +681,18 @@ function RemoteService($http) {
             cache: false
         });
     };
+    this.getReportRiskJSON = function (risks,projectID) {
+        var data = {risks:risks, projectID:projectID};
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReportRiskJSON",
+            },
+            data:JSON.stringify(data),
+            cache: false
+        });
+    };
     this.newPushDownRisk = function (pushdown) {
         return $http({
             method: 'POST',
