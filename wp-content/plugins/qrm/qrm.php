@@ -1581,6 +1581,7 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_action('init', array( $this, 'register_types' ) );
 			add_action('init', array ($this,'qrm_init_options' ));
 			add_action('init', array ($this,'qrm_scripts_styles' ));
+			add_action('init', array ($this,'qrm_init_user_cap' ));
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
@@ -1643,6 +1644,39 @@ if (! class_exists ( 'QuayRiskManager' )) :
 		public function qrm_init_options() {
 			add_option ( "qrm_objective_id", 1000 );
 			add_option ( "qrm_category_id", 1000 );
+		}
+		public function qrm_init_user_cap(){
+			add_role( 'risk_admin', 'Risk Administrator', array(
+					'read' => true
+			));
+			
+			$role = get_role( 'risk_admin' );
+			$role->add_cap( 'risk_admin' );
+			$role->add_cap( 'edit_posts' );
+			$role->add_cap( 'edit_pages' );
+			$role->add_cap( 'edit_others_posts' );
+			$role->add_cap( 'edit_others_pages' );
+			$role->add_cap( 'edit_private_posts' );
+			$role->add_cap( 'edit_private_pages' );
+			$role->add_cap( 'edit_published_posts' );
+			$role->add_cap( 'edit_published_pages' );
+			$role->add_cap('publish_pages');
+			$role->add_cap('publish_posts');
+			$role->add_cap( 'delete_pages' );
+			$role->add_cap( 'delete_posts' );
+			$role->add_cap( 'delete_others_posts' );
+			$role->add_cap( 'delete_others_pages' );
+			$role->add_cap( 'delete_private_posts' );
+			$role->add_cap( 'delete_private_pages' );
+			$role->add_cap( 'delete_published_posts' );
+			$role->add_cap( 'delete_published_pages' );
+			$role->add_cap( 'manage_options' );
+			$role->add_cap( 'manage_links' );
+			$role->add_cap( 'manage_categories' );
+				
+			$role = get_role("administrator");
+			$role->add_cap( 'risk_admin' );
+				
 		}
 		public function qrmplugin_activate() {
 			// Create the page to access the application
