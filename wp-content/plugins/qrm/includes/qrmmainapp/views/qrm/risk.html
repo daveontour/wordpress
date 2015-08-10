@@ -12,8 +12,8 @@
                             <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                                 <li class="dropdown-submenu">
                                     <a tabindex="-1" href="#">Reports</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a ng-click="ctl.riskDetailReport()" href="#">Risk Detail Report</a>
+                                    <ul class="dropdown-menu" style="left:100px">
+                                        <li><a ng-click="ctl.riskReport(1)" href="#">Risk Detail Report</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -25,14 +25,15 @@
                 </div>
                 <div style="padding-right:5px" class="col-xs-12 col-sm-6 hidden-md hidden-lg">
                     <div style="float:right;clear:left">
-                        <div class="btn-group" dropdown>
-                            <button type="button" class="btn btn-sm btn-danger">Action</button>
-                            <button type="button" style="margin-right:5px" class="btn btn-sm btn-danger dropdown-toggle" dropdown-toggle>
-                                <span class="caret"></span>
-                                <span class="sr-only">Split button!</span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a ng-click="ctl.riskDetailReport()" href="#">Risk Detail Report</a>
+                        <div class="dropdown" style="display:inline">
+                            <a role="button" data-toggle="dropdown" class="btn btn-sm btn-info" href="#">Action <span class="caret"></span> </a>
+                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                <li class="dropdown-submenu">
+                                    <a tabindex="-1" href="#">Reports</a>
+                                    <ul class="dropdown-menu" style="left:100px">
+                                        <li><a ng-click="ctl.riskReport(1)" href="#">Risk Detail Report</a>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>

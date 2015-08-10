@@ -1,16 +1,18 @@
 function SortByProjectCode(a, b) {
-    if (a == null || b == null) return 0;
+    if (a === null || b === null) {
+        return 0;
+    }
 
     var aName, bName;
-    if (typeof (a) == "object") {
+    if (typeof (a) === "object") {
         aName = a.riskProjectCode.toLowerCase();
         bName = b.riskProjectCode.toLowerCase();
     } else {
         aName = $.grep(QRM.mainController.risks, function (e) {
-            return e.id == a
+            return e.id == a;
         })[0].riskProjectCode;
         bName = $.grep(QRM.mainController.risks, function (e) {
-            return e.id == b
+            return e.id == b;
         })[0].riskProjectCode;
     }
 
@@ -19,7 +21,7 @@ function SortByProjectCode(a, b) {
 
 function QRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
 
-    a = remoteService.getSiteUsers()
+    var a = remoteService.getSiteUsers()
         .then(function (response) {
             if (response.data == "0" || response.data == "-1") {
                 //                intro.sessionOK = false;
@@ -27,37 +29,37 @@ function QRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
                 //                intro.sessionOK = true;
                 QRMDataService.siteUsers = response.data.data;
             }
-        });
-
-    b = remoteService.getCurrentUser()
+        }),
+        b = remoteService.getCurrentUser()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 //                intro.sessionOK = false;
             } else {
                 //                intro.sessionOK = true;
                 QRMDataService.currentUser = response.data;
                 QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
             }
-        });
-    c = remoteService.getAllRisks()
+        }),
+        c = remoteService.getAllRisks()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 //                intro.sessionOK = false;
             } else {
                 //                intro.sessionOK = true;
                 QRM.mainController.risks = response.data;
                 QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
-                    if (value.riskProjectCode == null) return false;
+                    if (value.riskProjectCode === null) {
+                        return false;
+                    }
                     return value != null;
                 });
                 QRM.mainController.risks.sort(SortByProjectCode);
                 QRMDataService.risks = QRM.mainController.risks;
             }
-        });
-
-    d = remoteService.getProjects()
+        }),
+        d = remoteService.getProjects()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 //                intro.sessionOK = false;
             } else {
                 //                intro.sessionOK = true;
@@ -65,7 +67,7 @@ function QRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
             }
 
         });
-};
+}
 
 function NonQRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
 
@@ -86,9 +88,9 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
     intro.sessionOK = false;
     intro.qrmUser = false;
 
-    z = remoteService.checkSession()
+    var z = remoteService.checkSession()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 intro.sessionOK = false;
             } else {
                 intro.sessionOK = true;
@@ -96,9 +98,9 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
             }
         });
 
-    a = remoteService.getSiteUsers()
+    var a = remoteService.getSiteUsers()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 intro.sessionOK = false;
             } else {
                 intro.sessionOK = true;
@@ -108,7 +110,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
             }
         });
 
-    b = remoteService.getCurrentUser()
+    var b = remoteService.getCurrentUser()
         .then(function (response) {
             if (response.data == "0" || response.data == "-1") {
                 intro.sessionOK = false;
@@ -120,9 +122,9 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
                 }
             }
         });
-    c = remoteService.getAllRisks()
+    var c = remoteService.getAllRisks()
         .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
+            if (response.data === "0" || response.data === "-1") {
                 intro.sessionOK = false;
             } else {
                 intro.sessionOK = true;
@@ -178,47 +180,47 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
         }
 
         switch (postType) {
-        case 'risk':
-            QRMDataService.selectProject(projectID);
-            QRMDataService.riskID = postID;
-            $scope.introloading = false;
-            $state.go("qrm.risk");
-            break;
-        case 'riskproject':
-            $scope.introloading = false;
-            $state.go("qrm.explorer");
-            break;
-        case 'review':
-            remoteService.getReview(postID)
-                .then(function (response) {
-                    QRMDataService.review = response.data;
-                    if (QRMDataService.review.risks != null) {
-                        QRMDataService.review.risks.sort(SortByProjectCode);
-                    }
-                    QRMDataService.reviewID = QRMDataService.review.id;
-                    QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
-                    QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
-                    $scope.introloading = false;
-                    $state.go("qrm.review");
-                });
-            break;
-        case 'incident':
-            remoteService.getIncident(postID)
-                .then(function (response) {
-                    QRMDataService.incident = response.data;
-                    if (QRMDataService.incident.risks != null) {
-                        QRMDataService.incident.risks.sort(SortByProjectCode);
-                    }
-                    QRMDataService.incidentID = QRMDataService.incident.id;
-                    QRMDataService.incident.date = new Date(QRMDataService.incident.date);
-                    $scope.introloading = false;
-                    $state.go("qrm.incident");
-                });
-            break;
-        default:
-            $scope.introloading = false;
-            $state.go("qrm.explorer");
-            break;
+            case 'risk':
+                QRMDataService.selectProject(projectID);
+                QRMDataService.riskID = postID;
+                $scope.introloading = false;
+                $state.go("qrm.risk");
+                break;
+            case 'riskproject':
+                $scope.introloading = false;
+                $state.go("qrm.explorer");
+                break;
+            case 'review':
+                remoteService.getReview(postID)
+                    .then(function (response) {
+                        QRMDataService.review = response.data;
+                        if (QRMDataService.review.risks != null) {
+                            QRMDataService.review.risks.sort(SortByProjectCode);
+                        }
+                        QRMDataService.reviewID = QRMDataService.review.id;
+                        QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
+                        QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+                        $scope.introloading = false;
+                        $state.go("qrm.review");
+                    });
+                break;
+            case 'incident':
+                remoteService.getIncident(postID)
+                    .then(function (response) {
+                        QRMDataService.incident = response.data;
+                        if (QRMDataService.incident.risks != null) {
+                            QRMDataService.incident.risks.sort(SortByProjectCode);
+                        }
+                        QRMDataService.incidentID = QRMDataService.incident.id;
+                        QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+                        $scope.introloading = false;
+                        $state.go("qrm.incident");
+                    });
+                break;
+            default:
+                $scope.introloading = false;
+                $state.go("qrm.explorer");
+                break;
         }
     }
 };
@@ -337,64 +339,64 @@ function MainCtrl(QRMDataService, remoteService, $state) {
 
         switch (action) {
 
-        case "edit_risk_grid":
+            case "edit_risk_grid":
 
-            if (risk.owner == userID) return true;
-            if (risk.manager == userID) return true;
-            if (QRMDataService.project.projectRiskManager == userID) return true;
-            return false;
-            break;
+                if (risk.owner == userID) return true;
+                if (risk.manager == userID) return true;
+                if (QRMDataService.project.projectRiskManager == userID) return true;
+                return false;
+                break;
 
-        case "view_risk_grid":
+            case "view_risk_grid":
 
-            if (risk.owner == userID) return true;
-            if (risk.manager == userID) return true;
-            if (QRMDataService.project.projectRiskManager == userID) return true;
-            if (p.ownersID.indexOf(userID) > -1) return true;
-            if (p.managersID.indexOf(userID) > -1) return true;
-            if (p.usersID.indexOf(userID) > -1) return true;
+                if (risk.owner == userID) return true;
+                if (risk.manager == userID) return true;
+                if (QRMDataService.project.projectRiskManager == userID) return true;
+                if (p.ownersID.indexOf(userID) > -1) return true;
+                if (p.managersID.indexOf(userID) > -1) return true;
+                if (p.usersID.indexOf(userID) > -1) return true;
 
-            return false;
-            break;
+                return false;
+                break;
 
-        case "delete_risk_grid":
-            if (risk.owner == userID) return true;
-            if (QRMDataService.project.projectRiskManager == userID) return true;
-            return false;
-            break;
+            case "delete_risk_grid":
+                if (risk.owner == userID) return true;
+                if (QRMDataService.project.projectRiskManager == userID) return true;
+                return false;
+                break;
 
 
-        case "new_risk":
+            case "new_risk":
 
-            if (typeof (p) == 'undefined') return false;
+                if (typeof (p) == 'undefined') return false;
 
-            if (p.projectRiskManager == userID) return true;
+                if (p.projectRiskManager == userID) return true;
 
-            if (typeof (p.ownersID) == 'undefined') return false;
-            if (p.ownersID.indexOf(userID) > -1) return true;
+                if (typeof (p.ownersID) == 'undefined') return false;
+                if (p.ownersID.indexOf(userID) > -1) return true;
 
-            if (typeof (p.managersID) == 'undefined') return false;
-            if (p.managersID.indexOf(userID) > -1) return true;
+                if (typeof (p.managersID) == 'undefined') return false;
+                if (p.managersID.indexOf(userID) > -1) return true;
 
-            return false;
-            break;
+                return false;
+                break;
 
-        case "save_risk":
-            if (QRMDataService.riskID < 0) return true;
-            if (typeof (QRMDataService.risk) == 'undefined') return false;
-            if (QRMDataService.risk.owner == userID) return true;
-            if (QRMDataService.risk.manager == userID) return true;
-            if (QRMDataService.project.projectRiskManager == userID) return true;
-            return false;
-            break;
-        case "new_incident":
-            return true;
-            break;
-        case "new_review":
-            return true;
-            break;
-        default:
-            return false;
+            case "save_risk":
+                if (QRMDataService.riskID < 0) return true;
+                if (typeof (QRMDataService.risk) == 'undefined') return false;
+                if (QRMDataService.risk.owner == userID) return true;
+                if (QRMDataService.risk.manager == userID) return true;
+                if (QRMDataService.project.projectRiskManager == userID) return true;
+                return false;
+                break;
+            case "new_incident":
+                return true;
+                break;
+            case "new_review":
+                return true;
+                break;
+            default:
+                return false;
         }
     }
 
@@ -419,32 +421,32 @@ function MainCtrl(QRMDataService, remoteService, $state) {
             $("#footer_container").removeClass("sideMenuOpen");
             $("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
             $("body").toggleClass('cbp-spmenu-push-toright');
-         } else {
+        } else {
             // Open the side menu
             $("#header_container").addClass("sideMenuOpen");
             $("#footer_container").addClass("sideMenuOpen");
             $("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
             $("body").toggleClass('cbp-spmenu-push-toright');
         }
-        
+
         QRM.mainController.sideOpen = !open;
 
-//        $("#header_container").toggleClass("sideMenuOpen");
-//        $("#footer_container").toggleClass("sideMenuOpen");
-//        $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
-//        $("body").toggleClass('cbp-spmenu-push-toright');
-//
-//        if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")) {
-//            $("#qrm-title").removeClass("hidden-qrm");
-//            $("#qrm-subtitle").removeClass("hidden-qrm");
-//            $("#welcome-name").removeClass("hidden-qrm");
-//            $("#qrm-titleSM").addClass("hidden-qrm");
-//        } else {
-//            $("#qrm-subtitle").addClass("hidden-qrm");
-//            $("#qrm-title").addClass("hidden-qrm");
-//            $("#welcome-name").addClass("hidden-qrm");
-//            $("#qrm-titleSM").removeClass("hidden-qrm");
-//        }
+        //        $("#header_container").toggleClass("sideMenuOpen");
+        //        $("#footer_container").toggleClass("sideMenuOpen");
+        //        $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
+        //        $("body").toggleClass('cbp-spmenu-push-toright');
+        //
+        //        if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")) {
+        //            $("#qrm-title").removeClass("hidden-qrm");
+        //            $("#qrm-subtitle").removeClass("hidden-qrm");
+        //            $("#welcome-name").removeClass("hidden-qrm");
+        //            $("#qrm-titleSM").addClass("hidden-qrm");
+        //        } else {
+        //            $("#qrm-subtitle").addClass("hidden-qrm");
+        //            $("#qrm-title").addClass("hidden-qrm");
+        //            $("#welcome-name").addClass("hidden-qrm");
+        //            $("#qrm-titleSM").removeClass("hidden-qrm");
+        //        }
 
     }
 
@@ -528,16 +530,16 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 headerCellClass: 'header-hidden',
                 cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
                     switch (Number(row.entity.currentTolerance)) {
-                    case 1:
-                        return 'blue compact';
-                    case 2:
-                        return 'green compact';
-                    case 3:
-                        return 'yellow compact';
-                    case 4:
-                        return 'orange compact';
-                    case 5:
-                        return 'red compact';
+                        case 1:
+                            return 'blue compact';
+                        case 2:
+                            return 'green compact';
+                        case 3:
+                            return 'yellow compact';
+                        case 4:
+                            return 'orange compact';
+                        case 5:
+                            return 'red compact';
                     }
                 }
 
@@ -583,16 +585,16 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 name: "Risk ID",
                 cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
                     switch (Number(row.entity.currentTolerance)) {
-                    case 1:
-                        return 'blue compact';
-                    case 2:
-                        return 'green compact';
-                    case 3:
-                        return 'yellow compact';
-                    case 4:
-                        return 'orange compact';
-                    case 5:
-                        return 'red compact';
+                        case 1:
+                            return 'blue compact';
+                        case 2:
+                            return 'green compact';
+                        case 3:
+                            return 'yellow compact';
+                        case 4:
+                            return 'orange compact';
+                        case 5:
+                            return 'red compact';
                     }
                 }
 
@@ -771,8 +773,8 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                     var tI = Math.floor(Number(el.treatedImpact));
 
 
-                    exp.valPre[((iP - 1) * maxImpact) + iI - 1] ++;
-                    exp.valPost[((tP - 1) * maxImpact) + tI - 1] ++;
+                    exp.valPre[((iP - 1) * maxImpact) + iI - 1]++;
+                    exp.valPost[((tP - 1) * maxImpact) + tI - 1]++;
 
                 });
 
@@ -922,28 +924,18 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         var index = (prob - 1) * QRMDataService.project.matrix.maxImpact + impact - 1;
         return (Number(QRMDataService.project.matrix.tolString.substring(index, index + 1)) == tol)
     }
-    
-    
-    this.riskDetailReport = function(){
+
+
+
+    this.riskReport = function (reportID) {
         remoteService.getReportRiskJSON([], QRMDataService.project.id)
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="reportID"]').val(1);
+                $('input[name="reportID"]').val(reportID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
             }).finally(function () {
-                
-            });
-    }
-    this.riskSummaryDateFormatReport = function(){
-        remoteService.getReportRiskJSON([], QRMDataService.project.id)
-            .then(function (response) {
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="reportID"]').val(2);
-                $('#reportForm').attr('action', response.data.reportServerURL);
-                $("#reportForm").submit();
-            }).finally(function () {
-                
+
             });
     }
     this.cellStyle = function (prob, impact, tol) {
@@ -1175,31 +1167,36 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
     this.probChange = function () {
 
+        if (!vm.risk.useCalProb) {
+            vm.risk.likeType = 4;
+            vm.risk.likePostType = 4;
+        }
+
         switch (Number(vm.risk.likeType)) {
-        case 1:
-            vm.risk.likeT = 365;
-            break;
-        case 2:
-            vm.risk.likeT = 30;
-            break;
-        case 3:
-            //do nothing, will already be set by model
-            break;
-        default:
-            vm.risk.likeT = 0;
+            case 1:
+                vm.risk.likeT = 365;
+                break;
+            case 2:
+                vm.risk.likeT = 30;
+                break;
+            case 3:
+                //do nothing, will already be set by model
+                break;
+            default:
+                vm.risk.likeT = 0;
         }
         switch (Number(vm.risk.likePostType)) {
-        case 1:
-            vm.risk.likePostT = 365;
-            break;
-        case 2:
-            vm.risk.likePostT = 30;
-            break;
-        case 3:
-            //do nothing, will already be set by model
-            break;
-        default:
-            vm.risk.likePostT = 0;
+            case 1:
+                vm.risk.likePostT = 365;
+                break;
+            case 2:
+                vm.risk.likePostT = 30;
+                break;
+            case 3:
+                //do nothing, will already be set by model
+                break;
+            default:
+                vm.risk.likePostT = 0;
         }
 
 
@@ -1314,6 +1311,11 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
 
         try {
 
+            if (!vm.risk.useCalProb) {
+                vm.risk.likeType = 4;
+                vm.risk.likePostType = 4;
+            }
+
             var index = (Math.floor(vm.risk.treatedProb - 1)) * vm.project.matrix.maxImpact + Math.floor(vm.risk.treatedImpact - 1);
             index = Math.min(index, vm.project.matrix.tolString.length - 1);
 
@@ -1344,10 +1346,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 vm.treatedAbsProb = probFromMatrix(vm.risk.treatedProb, vm.project.matrix);
                 vm.inherentAbsProb = probFromMatrix(vm.risk.inherentProb, vm.project.matrix);
             }
-            
+
             vm.risk.inherentAbsProb = vm.inherentAbsProb;
             vm.risk.treatedAbsProb = vm.treatedAbsProb;
-            
+
         } catch (e) {
             alert("Error" + e.message);
         }
@@ -1356,21 +1358,21 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
 
         var panelClass;
         switch (Number(vm.risk.currentTolerance)) {
-        case 5:
-            panelClass = "panel-danger";
-            break;
-        case 4:
-            panelClass = "panel-warning";
-            break;
-        case 3:
-            panelClass = "panel-sig";
-            break;
-        case 2:
-            panelClass = "panel-info";
-            break;
-        case 1:
-            panelClass = "panel-success";
-            break;
+            case 5:
+                panelClass = "panel-danger";
+                break;
+            case 4:
+                panelClass = "panel-warning";
+                break;
+            case 3:
+                panelClass = "panel-sig";
+                break;
+            case 2:
+                panelClass = "panel-info";
+                break;
+            case 1:
+                panelClass = "panel-success";
+                break;
         }
 
         jQuery("div.panel")
@@ -1626,15 +1628,16 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             }
         });
     }
-    
-    this.riskDetailReport = function(){
-         remoteService.getReportRiskJSON([vm.riskID], null)
+
+    this.riskReport = function (reportID) {
+        remoteService.getReportRiskJSON([vm.riskID], null)
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="reportID"]').val(reportID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
             }).finally(function () {
-                
+
             });
     }
 
@@ -1765,24 +1768,24 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         var now = new Date();
         cal.risks.forEach(function (risk) {
             switch (Number(cal.status.val)) {
-            case 0:
-                datePass.push(risk);
-                break;
-            case 1:
-                if (moment(risk.end) < now) {
+                case 0:
                     datePass.push(risk);
-                }
-                break;
-            case 2:
-                if (moment(risk.start) > now) {
-                    datePass.push(risk);
-                }
-                break;
-            case 3:
-                if (moment(risk.start) < now && moment(risk.end) > now) {
-                    datePass.push(risk);
-                }
-                break;
+                    break;
+                case 1:
+                    if (moment(risk.end) < now) {
+                        datePass.push(risk);
+                    }
+                    break;
+                case 2:
+                    if (moment(risk.start) > now) {
+                        datePass.push(risk);
+                    }
+                    break;
+                case 3:
+                    if (moment(risk.start) < now && moment(risk.end) > now) {
+                        datePass.push(risk);
+                    }
+                    break;
 
             }
         });
@@ -1995,49 +1998,49 @@ function AnalysisController($scope, QRMDataService, $state, remoteService, ngNot
         }
 
         switch (type.id) {
-        case "ownerT":
-            nv.addGraph(function () {
-                ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
-                ac.chart.xAxis.axisLabel("Risk Owner").axisLabelDistance(30);
-                d3.select('#chart svg').datum(QRMDataService.owners).call(ac.chart);
-                nv.utils.windowResize(ac.chart.update);
-                return ac.chart;
-            });
+            case "ownerT":
+                nv.addGraph(function () {
+                    ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+                    ac.chart.xAxis.axisLabel("Risk Owner").axisLabelDistance(30);
+                    d3.select('#chart svg').datum(QRMDataService.owners).call(ac.chart);
+                    nv.utils.windowResize(ac.chart.update);
+                    return ac.chart;
+                });
 
-            break;
-        case "managerT":
-            nv.addGraph(function () {
-                ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
-                ac.chart.xAxis.axisLabel("Risk Manager").axisLabelDistance(30);
-                d3.select('#chart svg').datum(QRMDataService.managers).call(ac.chart);
+                break;
+            case "managerT":
+                nv.addGraph(function () {
+                    ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+                    ac.chart.xAxis.axisLabel("Risk Manager").axisLabelDistance(30);
+                    d3.select('#chart svg').datum(QRMDataService.managers).call(ac.chart);
 
-                nv.utils.windowResize(ac.chart.update);
+                    nv.utils.windowResize(ac.chart.update);
 
-                return ac.chart;
-            });
-            break;
-        case "cat":
-            nv.addGraph(function () {
-                ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
-                ac.chart.xAxis.axisLabel("Risk Category").axisLabelDistance(30);
-                d3.select('#chart svg').datum(QRMDataService.categories).call(ac.chart);
+                    return ac.chart;
+                });
+                break;
+            case "cat":
+                nv.addGraph(function () {
+                    ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+                    ac.chart.xAxis.axisLabel("Risk Category").axisLabelDistance(30);
+                    d3.select('#chart svg').datum(QRMDataService.categories).call(ac.chart);
 
-                nv.utils.windowResize(ac.chart.update);
+                    nv.utils.windowResize(ac.chart.update);
 
-                return ac.chart;
-            });
-            break;
-        case "status":
-            nv.addGraph(function () {
-                ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
-                ac.chart.xAxis.axisLabel("Risk Status").axisLabelDistance(30);
-                d3.select('#chart svg').datum(QRMDataService.status).call(ac.chart);
+                    return ac.chart;
+                });
+                break;
+            case "status":
+                nv.addGraph(function () {
+                    ac.chart.yAxis.axisLabel("Number of Risks").tickFormat(d3.format(',.2f'));
+                    ac.chart.xAxis.axisLabel("Risk Status").axisLabelDistance(30);
+                    d3.select('#chart svg').datum(QRMDataService.status).call(ac.chart);
 
-                nv.utils.windowResize(ac.chart.update);
+                    nv.utils.windowResize(ac.chart.update);
 
-                return ac.chart;
-            });
-            break;
+                    return ac.chart;
+                });
+                break;
         }
     }
 
@@ -2143,33 +2146,33 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
                 var impact = null;
 
                 switch (Number(relMatrixCtrl.status.val)) {
-                case 0:
-                    if (d.treated) {
-                        prob = (d.treatedClean) ? d.treatedProb : d.newTreatedProb;
-                        impact = (d.treatedClean) ? d.treatedImpact : d.newTreatedImpact;
-                    } else {
-                        prob = (d.untreatedClean) ? d.inherentProb : d.newInherentProb;
-                        impact = (d.untreatedClean) ? d.inherentImpact : d.newInherentImpact;
-                    }
-                    break;
-                case 1:
-                    if (d.untreatedClean) {
-                        prob = d.inherentProb;
-                        impact = d.inherentImpact;
-                    } else {
-                        prob = d.newInherentProb;
-                        impact = d.newInherentImpact;
-                    }
-                    break;
-                case 2:
-                    if (d.treatedClean) {
-                        prob = d.treatedProb;
-                        impact = d.treatedImpact;
-                    } else {
-                        prob = d.newTreatedProb;
-                        impact = d.newTreatedImpact;
-                    }
-                    break;
+                    case 0:
+                        if (d.treated) {
+                            prob = (d.treatedClean) ? d.treatedProb : d.newTreatedProb;
+                            impact = (d.treatedClean) ? d.treatedImpact : d.newTreatedImpact;
+                        } else {
+                            prob = (d.untreatedClean) ? d.inherentProb : d.newInherentProb;
+                            impact = (d.untreatedClean) ? d.inherentImpact : d.newInherentImpact;
+                        }
+                        break;
+                    case 1:
+                        if (d.untreatedClean) {
+                            prob = d.inherentProb;
+                            impact = d.inherentImpact;
+                        } else {
+                            prob = d.newInherentProb;
+                            impact = d.newInherentImpact;
+                        }
+                        break;
+                    case 2:
+                        if (d.treatedClean) {
+                            prob = d.treatedProb;
+                            impact = d.treatedImpact;
+                        } else {
+                            prob = d.newTreatedProb;
+                            impact = d.newTreatedImpact;
+                        }
+                        break;
 
                 }
 
@@ -2192,15 +2195,15 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
         var state = "Current State";
 
         switch (Number(relMatrixCtrl.status.val)) {
-        case 0:
-            state = "Current State";
-            break;
-        case 1:
-            state = "Un Treated State";
-            break;
-        case 2:
-            state = "Treated State";
-            break;
+            case 0:
+                state = "Current State";
+                break;
+            case 1:
+                state = "Un Treated State";
+                break;
+            case 2:
+                state = "Treated State";
+                break;
 
         }
 
@@ -2515,15 +2518,15 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
 
 
         switch (Number(relMatrixCtrl.status.val)) {
-        case 0:
-            state = "Current State";
-            break;
-        case 1:
-            state = "Un Treated State";
-            break;
-        case 2:
-            state = "Treated State";
-            break;
+            case 0:
+                state = "Current State";
+                break;
+            case 1:
+                state = "Un Treated State";
+                break;
+            case 2:
+                state = "Treated State";
+                break;
         }
 
         topSVG.append("text")
@@ -2614,26 +2617,26 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
                 var prob = (QRMDataService.project.matrix.maxProb + 1) - (d.y / QRMDataService.relMatrixGridSizeY);
 
                 switch (Number(relMatrixCtrl.status.val)) {
-                case 0:
-                    if (d.treated) {
-                        d.treatedClean = false;
-                        d.newTreatedImpact = impact;
-                        d.newTreatedProb = prob;
-                    } else {
+                    case 0:
+                        if (d.treated) {
+                            d.treatedClean = false;
+                            d.newTreatedImpact = impact;
+                            d.newTreatedProb = prob;
+                        } else {
+                            d.untreatedClean = false;
+                            d.newInherentImpact = impact;
+                            d.newInherentProb = prob;
+                        }
+                        break;
+                    case 1:
                         d.untreatedClean = false;
                         d.newInherentImpact = impact;
                         d.newInherentProb = prob;
-                    }
-                    break;
-                case 1:
-                    d.untreatedClean = false;
-                    d.newInherentImpact = impact;
-                    d.newInherentProb = prob;
-                    break;
-                case 2:
-                    d.treatedClean = false;
-                    d.newTreatedImpact = impact;
-                    d.newTreatedProb = prob;
+                        break;
+                    case 2:
+                        d.treatedClean = false;
+                        d.newTreatedImpact = impact;
+                        d.newTreatedProb = prob;
                 }
 
                 d3.event.sourceEvent.stopPropagation();
@@ -2657,33 +2660,33 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
                     var prob = null;
                     var impact = null;
                     switch (Number(relMatrixCtrl.status.val)) {
-                    case 0:
-                        if (d.treated) {
-                            prob = (d.treatedClean) ? d.treatedProb : d.newTreatedProb;
-                            impact = (d.treatedClean) ? d.treatedImpact : d.newTreatedImpact;
-                        } else {
-                            prob = (d.untreatedClean) ? d.inherentProb : d.newInherentProb;
-                            impact = (d.untreatedClean) ? d.inherentImpact : d.newInherentImpact;
-                        }
-                        break;
-                    case 1:
-                        if (d.untreatedClean) {
-                            prob = d.inherentProb;
-                            impact = d.inherentImpact;
-                        } else {
-                            prob = d.newInherentProb;
-                            impact = d.newInherentImpact;
-                        }
-                        break;
-                    case 2:
-                        if (d.treatedClean) {
-                            prob = d.treatedProb;
-                            impact = d.treatedImpact;
-                        } else {
-                            prob = d.newTreatedProb;
-                            impact = d.newTreatedImpact;
-                        }
-                        break;
+                        case 0:
+                            if (d.treated) {
+                                prob = (d.treatedClean) ? d.treatedProb : d.newTreatedProb;
+                                impact = (d.treatedClean) ? d.treatedImpact : d.newTreatedImpact;
+                            } else {
+                                prob = (d.untreatedClean) ? d.inherentProb : d.newInherentProb;
+                                impact = (d.untreatedClean) ? d.inherentImpact : d.newInherentImpact;
+                            }
+                            break;
+                        case 1:
+                            if (d.untreatedClean) {
+                                prob = d.inherentProb;
+                                impact = d.inherentImpact;
+                            } else {
+                                prob = d.newInherentProb;
+                                impact = d.newInherentImpact;
+                            }
+                            break;
+                        case 2:
+                            if (d.treatedClean) {
+                                prob = d.treatedProb;
+                                impact = d.treatedImpact;
+                            } else {
+                                prob = d.newTreatedProb;
+                                impact = d.newTreatedImpact;
+                            }
+                            break;
                     }
 
                     var x = (impact - 1) * QRMDataService.relMatrixGridSizeX;
