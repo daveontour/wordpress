@@ -107,7 +107,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 									<h4>Data Export</h4>
 									<button type="button" class="btn btn-w-m btn-sm btn-primary"
 										ng-click="samp.downloadJSON()">Export Data</button>
-										<p style="margin-top:10px">The data from QRM will be dowloaded in a single file in a form suitable for importation to another RRM instance</p>
+										<p style="margin-top:10px">The data from QRM will be dowloaded in a single file in a form suitable for importation to another QRM instance</p>
 								</div>
 
 								<div style="width: 300px; float: left;margin-left:10px;text-align:-webkit-center">
@@ -131,11 +131,41 @@ wp_enqueue_script ( 'qrm-dropzone' );
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
+					</div>
+					<div ng-controller="repCtrl as rep">
+						<div style="float: left;clear:both">
+							<div>
+							<h4>Report Generation</h4>
+							<p>Quay Risk Manager uses a remote web service to generate reports in PDF Format<br/>
+							You can produce reports without registering for this service, but they will include a watermark<br/>
+							Contact Quay Systems at hjdfhdsjfhsdkjf to register for the service without water marks</p>
+							<table style="width:600px; border-collapse:collapse">
+								<tr valign="top">
+									<th style="width:150px;padding-top:0.5em;padding-bottom:0.5em">Report Server URL</th>
+									<td><input ng-model="url" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th style="width:150px;padding-top:0.5em;padding-bottom:0.5em">Site Name</th>
+									<td><input ng-model="siteName" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th style="width:150px;padding-top:0.5em;padding-bottom:0.5em">Site ID</th>
+									<td><input ng-model="siteID"  style="width: 100%"></td>
+								</tr>
+								<tr valign="top">
+									<th style="width:150px;padding-top:0.5em;padding-bottom:0.5em">Site Key</th>
+									<td><input ng-model="siteKey" style="width: 100%"></td>
+								</tr>
+								<tr>
+								<th></th>
+								<td align="right" style="padding-top:0.75em;"><button type="button" class="btn btn-w-m btn-sm btn-primary"
+									ng-click="saveChanges()">Save Changes</button></td>
+							</table>
 
 							</div>
-
 						</div>
-
 					</div>
 				</div>
 			</div>

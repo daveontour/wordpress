@@ -931,6 +931,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         remoteService.getReportRiskJSON([], QRMDataService.project.id)
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="action"]').val("execute_report");
                 $('input[name="reportID"]').val(reportID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
@@ -1634,6 +1635,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="reportID"]').val(reportID);
+                $('input[name="action"]').val("execute_report");
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
             }).finally(function () {
@@ -1885,6 +1887,120 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         $scope.$apply();
 
     }
+
+
+}
+
+function ReportArchiveController($scope, QRMDataService, $state, remoteService, ngNotify, $http, uiGridConstants) {
+
+    QRM.mainController.titleBar = QRMDataService.project.title;
+    var repController = this;
+
+    this.getTableHeight = function () {
+        return {
+            height: "calc(100vh - 100px)"
+        };
+    }
+    this.getTableHeightSM = function () {
+        return {
+            height: "calc(100vh - 105px)"
+        };
+    }
+
+    this.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+            {
+                name: 'Title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'reportTitle'
+
+            },
+            {
+                name: 'Submitted Date',
+                width: 180,
+                field: "submittedDate",
+                sort: { direction: uiGridConstants.DESC }
+            },
+            {
+                name: 'Completed Date',
+                width: 180,
+                field: "completedDate"
+            },
+            {
+                name: 'Complete',
+                width: 100,
+                field: 'completed',
+                cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatCompletedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatCompletedCol(row, false)" class="fa fa-close"></i>',
+                cellClass: 'cellCentered'
+
+            },
+            {
+                name: 'Download',
+                width: 200,
+                field: "id",
+                cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}">Download</a></div>',
+                cellClass:'cellCentered',
+                headerCellClass:'cellCentered'
+
+            }
+    ]
+    };
+    this.gridOptionsSM = {
+        enableSorting: true,
+        rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
+        columnDefs: [
+           {
+                name: 'Title',
+                width: "*",
+                cellClass: 'compact',
+                field: 'reportTitle'
+            },
+            {
+                name: 'Submitted Date',
+                width: 180,
+                field: "submittedDate"
+            },
+            {
+                name: 'Download',
+                width: 200,
+                field: "id",
+                cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}">Download</a></div>',
+                cellClass:'cellCentered',
+                headerCellClass:'cellCentered'
+            }
+    ]
+    };
+
+    $scope.formatCompletedCol = function (row, check) {
+        if (row.entity.completed && check) {
+            return true;
+        }
+        if (!row.entity.completed && !check) {
+            return true;
+        }
+        return false;
+    };
+    
+    remoteService.getServerMeta()
+        .then(function (response) {
+            var meta = response.data;
+            $scope.reportServerURL = meta.reportServerURL;
+            $scope.userEmail = meta.userEmail;
+            $scope.userLogin = meta.userLogin;
+            $scope.siteKey = meta.siteKey;
+            var url = meta.reportServerURL+"?callback=JSON_CALLBACK&action=get_userreports&userEmail="+meta.userEmail+"&userLogin="+meta.userLogin+"&siteKey="+meta.siteKey;
+            $http.jsonp(url)
+            .success(function (data) {
+                debugger;
+                repController.gridOptions.data = data;
+                repController.gridOptionsSM.data = data;
+            })
+            .error(function (data) {
+                alert("Error Retrieving Archived Reports");
+            });
+        });
 
 
 }
@@ -3681,6 +3797,7 @@ var app = angular.module('qrm');
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
     app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
+    app.controller('ReportArchiveController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', '$http','uiGridConstants', ReportArchiveController]);
     app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
     app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
     app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);

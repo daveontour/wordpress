@@ -204,10 +204,16 @@ class QRM {
 		$export->userEmail = $current_user->user_email;
 		$export->userLogin = $current_user->user_login;
 		$export->userDisplayName = $current_user->display_name;
-		$export->siteName = "Quay Systems";
-		$export->siteKey = "fdfjdsflkdsjflkdsfjsdlf";		
-		$export->siteID = "QUAYSYSTEMS1";
-		$export->reportServerURL = "http://localhost:8080/report";
+		$export->siteName = get_option("qrm_siteName");
+		$export->siteKey = get_option("qrm_siteKey");		
+		$export->siteID = get_option("qrm_siteID");
+		$export->reportServerURL = get_option("qrm_reportServerURL");;
+		
+	}
+	static function getServerMeta(){
+		$export = new stdObject();
+		QRM::exportMetadata($export);
+		wp_send_json($export);
 	}
 	
 	static function getReportRiskJSON(){
@@ -427,6 +433,27 @@ class QRM {
 		) );
 
 		wp_send_json ( $incident );
+	}
+	static function getReportOptions(){
+		
+		$options = new stdObject ();
+		
+		$options->siteKey = get_option("qrm_siteKey");
+		$options->siteName = get_option("qrm_siteName");
+		$options->siteID = get_option("qrm_siteID");
+		$options->url = get_option("qrm_reportServerURL");
+		
+		wp_send_json ( $options );
+		
+	}
+	static function saveReportOptions(){
+		$options = json_decode ( file_get_contents ( "php://input" ) );
+		
+		update_option("qrm_siteKey", $options->siteKey);
+		update_option("qrm_siteName", $options->siteName);
+		update_option("qrm_siteID", $options->siteID);
+		update_option("qrm_reportServerURL", $options->url);
+		
 	}
 	static function saveIncident() {
 		if (! QRM::qrmUser ())
@@ -1582,6 +1609,12 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_action('init', array ($this,'qrm_init_options' ));
 			add_action('init', array ($this,'qrm_scripts_styles' ));
 			add_action('init', array ($this,'qrm_init_user_cap' ));
+			
+			// 
+			add_option("qrm_siteKey", "Demo Key");
+			add_option("qrm_siteName", "Demo Site");
+			add_option("qrm_siteID", "demo1");
+			add_option("qrm_reportServerURL", "http://localhost:8080/report");
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
@@ -1746,6 +1779,10 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_action ( "wp_ajax_downloadJSON", array (QRM,"downloadJSON" ) );
 			add_action ( "wp_ajax_getJSON", array (QRM,"downloadJSON" ) );
 			add_action ( "wp_ajax_getReportRiskJSON", array(QRM, "getReportRiskJSON"));
+			add_action ( "wp_ajax_getReportOptions", array(QRM, "getReportOptions"));
+			add_action ( "wp_ajax_saveReportOptions", array(QRM, "saveReportOptions"));
+			add_action ( "wp_ajax_getServerMeta", array(QRM, "getServerMeta"));
+				
 		}
 		
 		public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {

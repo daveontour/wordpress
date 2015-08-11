@@ -145,6 +145,7 @@
     <form id="reportForm" method="post" style="display: none;" target="qrmIframe">
 	    <input type="hidden" name="reportData" />
 	    <input type="hidden" name="reportID" />
+	    <input type="hidden" name="action" />
     </form>
     <iframe name="qrmIframe" style="display: none"></iframe>
 </body>

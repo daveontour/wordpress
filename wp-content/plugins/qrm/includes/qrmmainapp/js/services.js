@@ -410,6 +410,16 @@ function RemoteService($http) {
             data: riskID
         });
     };
+    this.getServerMeta = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getServerMeta"
+            },
+            cache: false
+        });
+    };
     this.saveRisk = function (risk) {
 
         return $http({

@@ -86,6 +86,31 @@ function SampleController($scope, remoteService, ngNotify) {
         },
     };
 }
+function ReportController($scope, remoteService) {
+
+    $scope.saveChanges = function (e) {
+    	
+    	var options = new Object();
+    	
+        options.url = $scope.url = $scope.url;
+        options.siteName = $scope.siteName;
+        options.siteID = $scope.siteID;
+        options.siteKey = $scope.siteKey;
+    	
+        remoteService.saveReportOptions(options)
+            .then(function (response) {
+                alert("Changes Saved");
+            });
+    };
+    
+    remoteService.getReportOptions()
+        .then(function (response) {          
+            $scope.url = response.data.url;
+            $scope.siteName = response.data.siteName;
+            $scope.siteID = response.data.siteID;
+            $scope.siteKey = response.data.siteKey;
+        });
+}
 
 function UserController($scope, remoteService, ngNotify) {
 
@@ -269,8 +294,32 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
+    
+    this.saveReportOptions = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveReportOptions"
+            },
+            data: data,
+            cache: false
+        });
+    };
+    
+    this.getReportOptions = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReportOptions"
+            },
+            cache: false
+        });
+    };
 });
 app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);
 app.controller('sampleCtrl', ['$scope', 'remoteService', 'ngNotify', SampleController]);
+app.controller('repCtrl', ['$scope', 'remoteService', ReportController]);
 app.directive('dropzone', dropzone);  
 })();

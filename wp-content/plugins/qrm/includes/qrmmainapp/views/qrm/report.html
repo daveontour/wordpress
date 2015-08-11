@@ -1,0 +1,22 @@
+<div id="report-wrapper" class="container-fluid" style="padding-left:5px;padding-right:5px">
+    <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
+    <div class="pull-left" style="padding-left:0px">
+        <h2 style="margin-top:5px">Archived Reports</h2>
+    </div>
+    </div>
+    <div  class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
+        <div style="clear:both" id="reportGrid" ui-grid="rep.gridOptions" ui-grid-auto-resize ng-style="rep.getTableHeight()" class="explorerGrid"></div>
+    </div>
+</div>
+
+<div id="incidentloading" ng-show="rep.loading" class="loading">
+    <div class="loading-overlay">
+        <p class="loading-spinner">
+            <img ng-src="{{main.loaderSrc}}">
+            <span class="loading-text">loading</span>
+        </p>
+    </div>
+</div>
+
+<h1 ng-show="main.showLookingForIncidents" class="status-msg">Loading Reports...</h1>
+<h1 ng-show="main.showNoIncidents" class="status-msg">No Reports Were Found</h1>
