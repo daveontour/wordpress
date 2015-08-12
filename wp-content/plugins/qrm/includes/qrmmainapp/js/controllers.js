@@ -463,7 +463,6 @@ function MainCtrl(QRMDataService, remoteService, $state) {
     this.toggleMenu = function () {
 
         var open = $("#header_container").hasClass("sideMenuOpen");
-        console.log("Side Menu Open " + open);
 
         //Currently Open, so want to close side menu
         if (open) {
@@ -519,8 +518,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     QRM.mainController.titleBar = QRMDataService.project.title;
     QRM.expController = this;
     
-    $scope.reports = QRMDataService.reports
-    
+    $scope.reports = QRMDataService.reports   
     $scope.getMyCtrlScope = function() {
          return $scope;   
     }
@@ -991,7 +989,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     }
 
     this.rowClass = function (prob) {
-        if (prob > QRMDataService.project.matrix.maxProb) {ß
+        if (prob > QRMDataService.project.matrix.maxProb) {
             return true;
         } else {
             return false;
@@ -1033,6 +1031,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
 
 function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog, $q) {
 
+    $scope.reports = QRMDataService.reports   
+    $scope.getMyCtrlScope = function() {
+         return $scope;   
+    }
     var vm = this;
     this.riskID = QRMDataService.riskID;
     this.reviewType = -1;
@@ -1705,6 +1707,19 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         }
 
     }
+    
+    $scope.riskReport = function (reportID) {
+        remoteService.getReportRiskJSON([vm.riskID], null)
+            .then(function (response) {
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="action"]').val("execute_report");
+                $('input[name="reportID"]').val($scope.reportReqID);
+                $('#reportForm').attr('action', response.data.reportServerURL);
+                $("#reportForm").submit();
+            }).finally(function () {
+
+            });
+    }
     this.init = function () {
 
         if (QRMDataService.passRisk) {
@@ -1934,6 +1949,11 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
 
     QRM.mainController.titleBar = QRMDataService.project.title;
     var repController = this;
+    
+    $scope.userEmail = QRMDataService.userEmail;
+    $scope.reportServerURL = QRMDataService.reportServerURL;
+    $scope.userLogin = QRMDataService.userLogin;
+    $scope.siteKey = QRMDataService.siteKey;
 
     this.getTableHeight = function () {
         return {
@@ -1979,7 +1999,17 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
                 name: 'Download',
                 width: 130,
                 field: "id",
-                cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}">Download</a></div>',
+                cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}" >Download</a></div>',
+                cellClass:'cellCentered',
+                headerCellClass:'cellCentered',
+                enableSorting:false,
+                enableHiding:false
+            },
+            {
+                name: 'Remove',
+                width: 130,
+                field: "id",
+                cellTemplate:'<div><a ng-click="grid.appScope.reportReqID = row.entity.id;grid.appScope.removeReport()" href="#">Remove</a></div>',
                 cellClass:'cellCentered',
                 headerCellClass:'cellCentered',
                 enableSorting:false,
@@ -2026,25 +2056,41 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
         return false;
     };
     
-    remoteService.getServerMeta()
-        .then(function (response) {
-            var meta = response.data;
-            $scope.reportServerURL = meta.reportServerURL;
-            $scope.userEmail = meta.userEmail;
-            $scope.userLogin = meta.userLogin;
-            $scope.siteKey = meta.siteKey;
-            var url = meta.reportServerURL+"?callback=JSON_CALLBACK&action=get_userreports&userEmail="+meta.userEmail+"&userLogin="+meta.userLogin+"&siteKey="+meta.siteKey;
-            $http.jsonp(url)
+    this.refresh = function(){
+       
+        var url = QRMDataService.reportServerURL+"?callback=JSON_CALLBACK&action=get_userreports&userEmail="+QRMDataService.userEmail+"&userLogin="+QRMDataService.userLogin+"&siteKey="+QRMDataService.siteKey+"&siteID="+QRMDataService.siteID;
+        $http.jsonp(url)
             .success(function (data) {
-                repController.gridOptions.data = data;
-                repController.gridOptionsSM.data = data;
+                if (data.error){
+                    alert(data.error);
+                } else {
+                    
+                    repController.gridOptions.data = data;
+                    repController.gridOptionsSM.data = data;
+                }
             })
             .error(function (data) {
                 alert("Error Retrieving Archived Reports");
             });
-        });
-
-
+    }
+    
+    $scope.removeReport = function(){
+        var url = QRMDataService.reportServerURL+"?callback=JSON_CALLBACK&action=remove_report&id="+$scope.reportReqID+"&userEmail="+QRMDataService.userEmail+"&userLogin="+QRMDataService.userLogin+"&siteKey="+QRMDataService.siteKey+"&siteID="+QRMDataService.siteID;
+        $http.jsonp(url)
+            .success(function (data) {
+                if (data.error){
+                    alert(data.error);
+                } else {
+                    repController.gridOptions.data = data;
+                    repController.gridOptionsSM.data = data;
+                }
+            })
+            .error(function (data) {
+                alert("Error Retrieving Archived Reports");
+            });
+    }
+    
+    this.refresh();
 }
 
 function RankController($scope, QRMDataService, $state, remoteService, ngNotify) {

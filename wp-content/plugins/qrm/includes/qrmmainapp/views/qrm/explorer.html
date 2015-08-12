@@ -139,17 +139,7 @@
                             <li class="dropdown-submenu">
                                 <a tabindex="-1" href="#">Reports</a>
                                 <ul class="dropdown-menu" style="left:100px">
-                                   <li><a ng-click="exp.riskReport(1)" href="#">Risk Detail Report</a></li>
-                                   <li><a ng-click="exp.riskReport(2)" href="#">Risk Summary - Exposure</a></li>
-                                   <li><a ng-click="exp.riskReport(3)" href="#">Risk Summary - Impact</a></li>
-                                   <li><a ng-click="exp.riskReport(4)" href="#">Risk Summary - Managers</a></li>
-                                   <li><a ng-click="exp.riskReport(5)" href="#">Risk Summary - Owners</a></li>
-                                   <li><a ng-click="exp.riskReport(6)" href="#">Risk Summary - Tolerance</a></li>
-                                   <li><a ng-click="exp.riskReport(7)" href="#">Risk Summary - Treatment</a></li>
-                                   <li><a ng-click="exp.riskReport(8)" href="#">Risk Summary - Ranking</a></li>
-                                    <li class="divider"></li>
-
-                                    <li ng-repeat="r in reports">
+                                    <li ng-repeat="r in reports | filter:r.showRiskExplorer:true">
                                         <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
                                     </li>
 <!--
