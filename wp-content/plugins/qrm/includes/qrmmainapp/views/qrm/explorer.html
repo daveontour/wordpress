@@ -131,6 +131,8 @@
                         <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
                 Action <span class="caret"></span>
             </a>
+                        
+
                         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                             <li><a ng-click="exp.newPushDownRisk()" href="#">New 'Push Down' Risk</a></li>
                             <li class="divider"></li>
@@ -145,6 +147,11 @@
                                    <li><a ng-click="exp.riskReport(6)" href="#">Risk Summary - Tolerance</a></li>
                                    <li><a ng-click="exp.riskReport(7)" href="#">Risk Summary - Treatment</a></li>
                                    <li><a ng-click="exp.riskReport(8)" href="#">Risk Summary - Ranking</a></li>
+                                    <li class="divider"></li>
+
+                                    <li ng-repeat="r in reports">
+                                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
+                                    </li>
 <!--
                                     <li><a tabindex="-1" href="#">Second level</a>
                                     </li>

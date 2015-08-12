@@ -21,59 +21,73 @@ function SortByProjectCode(a, b) {
 
 function QRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
 
-    var a = remoteService.getSiteUsers()
-        .then(function (response) {
-            if (response.data == "0" || response.data == "-1") {
-                //                intro.sessionOK = false;
-            } else {
-                //                intro.sessionOK = true;
-                QRMDataService.siteUsers = response.data.data;
-            }
-        }),
-        b = remoteService.getCurrentUser()
-        .then(function (response) {
-            if (response.data === "0" || response.data === "-1") {
-                //                intro.sessionOK = false;
-            } else {
-                //                intro.sessionOK = true;
-                QRMDataService.currentUser = response.data;
-                QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
-            }
-        }),
-        c = remoteService.getAllRisks()
-        .then(function (response) {
-            if (response.data === "0" || response.data === "-1") {
-                //                intro.sessionOK = false;
-            } else {
-                //                intro.sessionOK = true;
-                QRM.mainController.risks = response.data;
-                QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
-                    if (value.riskProjectCode === null) {
-                        return false;
-                    }
-                    return value != null;
-                });
-                QRM.mainController.risks.sort(SortByProjectCode);
-                QRMDataService.risks = QRM.mainController.risks;
-            }
-        }),
-        d = remoteService.getProjects()
-        .then(function (response) {
-            if (response.data === "0" || response.data === "-1") {
-                //                intro.sessionOK = false;
-            } else {
-                //                intro.sessionOK = true;
-                QRMDataService.handleGetProjects(response);
-            }
-
-        });
+//    alert("QRM Controller");
+//    var a = remoteService.getSiteUsers()
+//        .then(function (response) {
+//            if (response.data == "0" || response.data == "-1") {
+//                //                intro.sessionOK = false;
+//            } else {
+//                //                intro.sessionOK = true;
+//                QRMDataService.siteUsers = response.data.data;
+//            }
+//        }),
+//        b = remoteService.getCurrentUser()
+//        .then(function (response) {
+//            if (response.data === "0" || response.data === "-1") {
+//                //                intro.sessionOK = false;
+//            } else {
+//                //                intro.sessionOK = true;
+//                QRMDataService.currentUser = response.data;
+//                QRM.mainController.userName = QRMDataService.currentUser.data.display_name;
+//            }
+//        }),
+//        c = remoteService.getAllRisks()
+//        .then(function (response) {
+//            if (response.data === "0" || response.data === "-1") {
+//                //                intro.sessionOK = false;
+//            } else {
+//                //                intro.sessionOK = true;
+//                QRM.mainController.risks = response.data;
+//                QRM.mainController.risks = jQuery.grep(QRM.mainController.risks, function (value) {
+//                    if (value.riskProjectCode === null) {
+//                        return false;
+//                    }
+//                    return value != null;
+//                });
+//                QRM.mainController.risks.sort(SortByProjectCode);
+//                QRMDataService.risks = QRM.mainController.risks;
+//            }
+//        }),
+//        d = remoteService.getProjects()
+//        .then(function (response) {
+//            if (response.data === "0" || response.data === "-1") {
+//                //                intro.sessionOK = false;
+//            } else {
+//                //                intro.sessionOK = true;
+//                QRMDataService.handleGetProjects(response);
+//            }
+//
+//        }),
+//        e = remoteService.getServerMeta()
+//            .then(function (response) {
+//                alert("Got Server Meta Data");
+//                var url = response.data.reportServerURL+"?callback=JSON_CALLBACK&action=get_availablereports";
+//                $http.jsonp(url)
+//                .success(function (data) {
+//                    alert("Got Available Reports");
+//                    QRMDataService.reports = data;
+//                })
+//                .error(function (data) {
+//                    alert("Error Retrieving Available Reports");
+//                });
+//            });
 }
 
 function NonQRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
 
 }
 
-function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
+function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, $http) {
 
     // This is the entry for the app
     // If the user is not logged on, simply present the login screen
@@ -140,6 +154,25 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
                 }
             }
         });
+    
+        var e = remoteService.getServerMeta()
+            .then(function (response) {
+               
+                QRMDataService.reportServerURL = response.data.reportServerURL;
+                QRMDataService.siteKey = response.data.siteKey;
+                QRMDataService.siteName = response.data.siteName;
+                QRMDataService.siteID = response.data.siteID;
+                QRMDataService.userEmail = response.data.userEmail;
+                QRMDataService.userLogin = response.data.userLogin;
+                QRMDataService.userDisplayName = response.data.userDisplayName;
+                $http.jsonp(QRMDataService.reportServerURL+"?action=get_availablereports&callback=JSON_CALLBACK")
+                .success(function (data) {
+                    QRMDataService.reports = data;
+                })
+                .error(function (data) {
+                    alert("Error Retrieving Available Reports");
+                });
+            });
 
     //postType is a global variable, set by PHP when the page get's created on the server
 
@@ -158,17 +191,34 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) 
                 }
             });
 
-        $q.all([z, a, b, c, d]).then(function () {
-            intro.switch();
+        $q.all([z, a, b, c, d, e]).then(function () {
+            $http.jsonp(QRMDataService.reportServerURL+"?action=get_availablereports&callback=JSON_CALLBACK")
+                .success(function (data) {
+                    QRMDataService.reports = data;
+                    intro.switch();
+                })
+                .error(function (data) {
+                    alert("Error Retrieving Available Reports");
+                    intro.switch();
+                });
         });
 
     } else {
-        $q.all([z, a, b, c]).then(function () {
-            intro.switch();
+        $q.all([z, a, b, c, e]).then(function () {
+            $http.jsonp(QRMDataService.reportServerURL+"?action=get_availablereports&callback=JSON_CALLBACK")
+                .success(function (data) {
+                    QRMDataService.reports = data;
+                    intro.switch();
+                })
+                .error(function (data) {
+                    alert("Error Retrieving Available Reports");
+                    intro.switch();
+                });
         });
     }
 
     this.switch = function () {
+
 
         if (!intro.sessionOK) {
             $state.go("login");
@@ -431,28 +481,13 @@ function MainCtrl(QRMDataService, remoteService, $state) {
 
         QRM.mainController.sideOpen = !open;
 
-        //        $("#header_container").toggleClass("sideMenuOpen");
-        //        $("#footer_container").toggleClass("sideMenuOpen");
-        //        $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
-        //        $("body").toggleClass('cbp-spmenu-push-toright');
-        //
-        //        if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")) {
-        //            $("#qrm-title").removeClass("hidden-qrm");
-        //            $("#qrm-subtitle").removeClass("hidden-qrm");
-        //            $("#welcome-name").removeClass("hidden-qrm");
-        //            $("#qrm-titleSM").addClass("hidden-qrm");
-        //        } else {
-        //            $("#qrm-subtitle").addClass("hidden-qrm");
-        //            $("#qrm-title").addClass("hidden-qrm");
-        //            $("#welcome-name").addClass("hidden-qrm");
-        //            $("#qrm-titleSM").removeClass("hidden-qrm");
-        //        }
-
     }
 
     this.titleBar = "Please Select Project";
 
     this.init = function () {
+        
+
 
         remoteService.getSiteUsers()
             .then(function (response) {
@@ -482,8 +517,13 @@ function MainCtrl(QRMDataService, remoteService, $state) {
 function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog) {
 
     QRM.mainController.titleBar = QRMDataService.project.title;
-
     QRM.expController = this;
+    
+    $scope.reports = QRMDataService.reports
+    
+    $scope.getMyCtrlScope = function() {
+         return $scope;   
+    }
 
     this.getTableHeight = function () {
         return {
@@ -926,13 +966,12 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     }
 
 
-
-    this.riskReport = function (reportID) {
+    $scope.riskReport = function (reportID) {
         remoteService.getReportRiskJSON([], QRMDataService.project.id)
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="action"]').val("execute_report");
-                $('input[name="reportID"]').val(reportID);
+                $('input[name="reportID"]').val($scope.reportReqID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
             }).finally(function () {
@@ -952,7 +991,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     }
 
     this.rowClass = function (prob) {
-        if (prob > QRMDataService.project.matrix.maxProb) {
+        if (prob > QRMDataService.project.matrix.maxProb) {ß
             return true;
         } else {
             return false;
@@ -1938,12 +1977,13 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
             },
             {
                 name: 'Download',
-                width: 200,
+                width: 130,
                 field: "id",
                 cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}">Download</a></div>',
                 cellClass:'cellCentered',
-                headerCellClass:'cellCentered'
-
+                headerCellClass:'cellCentered',
+                enableSorting:false,
+                enableHiding:false
             }
     ]
     };
@@ -1960,15 +2000,18 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
             {
                 name: 'Submitted Date',
                 width: 180,
-                field: "submittedDate"
+                field: "submittedDate",
+                sort: { direction: uiGridConstants.DESC }
             },
             {
                 name: 'Download',
-                width: 200,
+                width: 130,
                 field: "id",
                 cellTemplate:'<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}">Download</a></div>',
                 cellClass:'cellCentered',
-                headerCellClass:'cellCentered'
+                headerCellClass:'cellCentered',
+                enableSorting:false,
+                enableHiding:false
             }
     ]
     };
@@ -1993,7 +2036,6 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
             var url = meta.reportServerURL+"?callback=JSON_CALLBACK&action=get_userreports&userEmail="+meta.userEmail+"&userLogin="+meta.userLogin+"&siteKey="+meta.siteKey;
             $http.jsonp(url)
             .success(function (data) {
-                debugger;
                 repController.gridOptions.data = data;
                 repController.gridOptionsSM.data = data;
             })
@@ -3789,7 +3831,7 @@ var app = angular.module('qrm');
             return taOptions;
   }]);
     });
-    app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', IntroCtrl]);
+    app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', '$http', IntroCtrl]);
     app.controller('QRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', QRMCtrl]);
     app.controller('NonQRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', NonQRMCtrl]);
     app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', MainCtrl]);
