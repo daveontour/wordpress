@@ -14,7 +14,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     $stateProvider
         .state('qrm', {
             abstract: true,
-            controller: "QRMCtrl",
+            controller: "QRMCtrl as qrmctrl",
             templateUrl: function (params) {
                 return pluginurl + "views/common/content.html"
             }

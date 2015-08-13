@@ -2631,7 +2631,7 @@ h1.status-msg{
 	display: block;
 	color: #fff;
 	font-size: 1.1em;
-	font-weight: bold;
+/*	font-weight: bold; */
 }
 
 .cbp-spmenu a:hover {

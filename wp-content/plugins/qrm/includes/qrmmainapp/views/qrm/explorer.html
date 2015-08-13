@@ -17,7 +17,9 @@
                                         </div>
                                     </ui-select-choices>
                                 </ui-select>
-
+                            </td>
+                            <td>
+                                <label class="checkbox-inline"><input icheck type="checkbox" ng-model="exp.childProjects"> Including Sub Projects</label>
                             </td>
                         </tr>
                     </table>
@@ -139,7 +141,7 @@
                             <li class="dropdown-submenu">
                                 <a tabindex="-1" href="#">Reports</a>
                                 <ul class="dropdown-menu" style="left:100px">
-                                    <li ng-repeat="r in reports | filter:r.showRiskExplorer:true">
+                                    <li ng-repeat="r in qrmctrl.reports | filter:{showRiskExplorer:true}">
                                         <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
                                     </li>
 <!--

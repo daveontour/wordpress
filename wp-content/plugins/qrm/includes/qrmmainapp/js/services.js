@@ -454,7 +454,7 @@ function RemoteService($http) {
             data: {auditType:auditType, auditComment:auditComment,riskID:riskID}
         });
     };
-    this.getAllProjectRisks = function (projectID) {
+    this.getAllProjectRisks = function (projectID, childProjects) {
         return $http({
             method: 'POST',
             url: ajaxurl,
@@ -462,7 +462,7 @@ function RemoteService($http) {
                 action: "getAllProjectRisks"
             },
             cache: false,
-            data: projectID
+            data: {projectID:projectID, childProjects:childProjects}
         }).error(function (data, status, headers, config) {
             alert(data.msg);
         });
@@ -691,8 +691,8 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.getReportRiskJSON = function (risks,projectID) {
-        var data = {risks:risks, projectID:projectID};
+    this.getReportRiskJSON = function (risks,projectID, childProjects) {
+        var data = {risks:risks, projectID:projectID, childProjects:childProjects};
         return $http({
             method: 'POST',
             url: ajaxurl,

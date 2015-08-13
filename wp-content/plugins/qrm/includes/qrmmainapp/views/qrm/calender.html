@@ -40,6 +40,9 @@
                             <label>
                                 <input icheck type="radio" name="status" value=3 ng-change="cal.stateSelectorChanged()" ng-model="cal.status.val"> Active </label>
                         </div>
+                        <div class="checkbox">
+                            <label class="checkbox-inline"><input icheck type="checkbox" ng-model="cal.childProjects"> Including Sub Projects</label>
+                        </div>
                     </div>
                 </div>
             </form>
