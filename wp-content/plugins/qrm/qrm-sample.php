@@ -38,7 +38,7 @@ class QRMSample {
 		
 		foreach ( $import->projects as $project ) {
 			
-			if ($sample)$project->title = $project->title . " (sample)";
+			if ($sample)$project->title = $project->title . "**";
 			$project->riskProjectManager = $current_user->ID;
 			$project->ownersID = array($current_user->ID);
 			$project->mangersID = array($current_user->ID);
@@ -112,7 +112,7 @@ class QRMSample {
 		
 		foreach ( $import->risks as $risk ) {
 			
-			if ($sample)$risk->title = $risk->title . " (sample)";
+			if ($sample)$risk->title = $risk->title . "**";
 			$risk->manager = $current_user->ID;
 			$risk->owner = $current_user->ID;
 			$risk->projectID = $projIDMap [$risk->projectID];
@@ -192,7 +192,7 @@ class QRMSample {
 		
 		foreach ( $import->reviews as $review ) {
 			$review->responsible = $current_user->ID;
-			if ($sample)$review->title = $review->title." (sample)";
+			if ($sample)$review->title = $review->title."**";
 			$postID = wp_insert_post ( array (
 					'post_content' => $review->description,
 					'post_title' => $review->title,
@@ -246,7 +246,7 @@ class QRMSample {
 		foreach ( $import->incidents as $incident ) {
 
 			$incident->reportedby = $current_user->ID;
-			if ($sample)$incident->title = $incident->title." (sample)";
+			if ($sample)$incident->title = $incident->title."**";
 			$postID = wp_insert_post ( array (
 					'post_content' => $incident->description,
 					'post_title' => $incident->title,
@@ -277,9 +277,6 @@ class QRMSample {
 			update_post_meta ( $postID, "incidenttitle", $incident->incidentCode . " - " . $incident->title );
 				
 		}
-		
-		echo var_dump($incidentIDMap);
-		echo var_dump($reviewIDMap);
 				//Fix up the risk references to the incident
 		foreach ( $incidentIDMap as $oldID => $newID ) {
 			$args = array (
@@ -297,8 +294,8 @@ class QRMSample {
 	static function removeSample() {
 		$args = array (
 				'posts_per_page' => - 1,
-// 				'meta_key' => 'sampleqrmdata',
-// 				'meta_value' => true,
+				'meta_key' => 'sampleqrmdata',
+				'meta_value' => true,
 				'post_type' => 'riskproject' 
 		);
 				

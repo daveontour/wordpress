@@ -229,24 +229,26 @@ class QRM {
 			}
 		}
 
-		$export = QRM::commonJSON($ids);
+		//Pass the project array and the risk ID array
+		//commonJSON will apply the non null condition
+		$export = QRM::commonJSON($ids,$config->riskIDs);
 		QRM::exportMetadata($export);
 		
 		//Remove risks not included in request
 		// Note - need to reindex after filter so a array is returned
 		
-		if (isset($config->projectID) && $config->projectID != null){
-		$export->risks = array_values(array_filter($export->risks, function ($risk) use ($ids) {
-			return in_array($risk->projectID,$ids);
-		}));
-		}
+// 		if (isset($config->projectID) && $config->projectID != null){
+// 		$export->risks = array_values(array_filter($export->risks, function ($risk) use ($ids) {
+// 			return in_array($risk->projectID,$ids);
+// 		}));
+// 		}
 
 		
-		if (isset($config->risks) && sizeof($config->risks) > 0 ){
-			$export->risks = array_values(array_filter($export->risks, function ($risk) use ($config) {
-				return in_array($risk->ID, $config->risks);
-			}));
-		}
+// 		if (isset($config->risks) && sizeof($config->risks) > 0 ){
+// 			$export->risks = array_values(array_filter($export->risks, function ($risk) use ($config) {
+// 				return in_array($risk->ID, $config->risks);
+// 			}));
+// 		}
 		wp_send_json($export);
 	}
 
@@ -276,8 +278,11 @@ class QRM {
 				'post_type' => 'riskproject',
 				'posts_per_page' => - 1
 		);
-		
-		
+		// Restrict Selection to just the selected project
+			if (sizeof($projectIDs) > 0){
+			$args['post__in'] = $projectIDs;
+		}
+
 
 		$the_query = new WP_Query ( $args );
 		$projects = array ();
@@ -288,17 +293,38 @@ class QRM {
 			array_push ( $projects, $project );
 		endwhile
 		;
+		
 
-		$args ["post_type"] = 'risk';
-		if (sizeof($projectIDs) > 0){
-			$args['meta_query'] = array(
-					array(
-							'key' => 'projectID',
-							'value' => $projectIDs,
-							'compare' => 'IN'
-					)
+
+		//Restrict selection just to the selected risks
+		if (sizeof($riskIDs) > 0){
+			
+			$args = array( 'post_type' => 'risk', 
+							'post__in' => $riskIDs, 
+							'post_per_page' => -1 	
 			);
+			
+		} else if (sizeof($projectIDs) > 0){
+			
+			$args = array('post_type' => 'risk', 
+					      'post_per_page' => -1,
+						  'meta_query' => array(
+									array(
+										'key' => 'projectID',
+										'value' => $projectIDs,
+										'compare' => 'IN'
+									)
+						)
+			);
+			
+		} else {
+			
+			$args = array( 'post_type' => 'risk', 
+						   'post_per_page' => -1 
+					     );
+		
 		}
+		
 		$the_query = new WP_Query ( $args );
 		$risks = array ();
 		while ( $the_query->have_posts () ) :
@@ -329,6 +355,10 @@ class QRM {
 		endwhile
 		;
 
+		$args = array( 'post_type' => 'review',
+					   'post_per_page' => -1
+		);
+		
 		$args ["post_type"] = 'review';
 		$the_query = new WP_Query ( $args );
 		$reviews = array ();
@@ -339,7 +369,10 @@ class QRM {
 		endwhile
 		;
 
-		$args ["post_type"] = 'incident';
+		$args = array( 'post_type' => 'incident',
+					   'post_per_page' => -1
+		);
+		
 		$the_query = new WP_Query ( $args );
 		$incidents = array ();
 		while ( $the_query->have_posts () ) :
@@ -356,7 +389,7 @@ class QRM {
 		$export->reviews = $reviews;
 
 		$users = array();
-		$user_query = new WP_User_Query ( array ('fields' => 'all'));
+		$user_query = new WP_User_Query ( array ('fields' => "all"));
 		foreach ($user_query->results as $user){
 			$u = new stdObject();
 			$u->id = $user->data->ID;
@@ -1039,19 +1072,12 @@ class QRM {
 		$projectRiskManager = get_post_meta ( $risk->projectID, "projectRiskManager", true );
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 		if (! ($current_user->ID == $projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
-			wp_send_json ( array (
-					"msg" => "You are not authorised to make changes to this risk"
-			) );
+			wp_send_json ( array ("msg" => "You are not authorised to view this risk") );
 			exit ( 0 );
 		}
 
-		$risk->comments = get_comments ( array (
-				'post_id' => $riskID
-		) );
-		$risk->attachments = get_children ( array (
-				"post_parent" => $riskID,
-				"post_type" => "attachment"
-		) );
+		$risk->comments = get_comments ( array ('post_id' => $riskID) );
+		$risk->attachments = get_children ( array ("post_parent" => $riskID,"post_type" => "attachment") );
 		$risk->audit = json_decode ( get_post_meta ( $riskID, "audit", true ) );
 		$risk->incidents = QRM::getRiskIncidents ( $riskID );
 		$risk->reviews = QRM::getRiskReviews ( $riskID );

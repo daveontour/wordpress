@@ -19,7 +19,7 @@
                                 </ui-select>
                             </td>
                             <td>
-                                <label class="checkbox-inline"><input icheck type="checkbox" ng-model="exp.childProjects"> Including Sub Projects</label>
+                                <label class="checkbox-inline"><input icheck type="checkbox" ng-model="exp.childProjects" ng-change="exp.getAllProjectRisks();"> Including Sub Projects</label>
                             </td>
                         </tr>
                     </table>

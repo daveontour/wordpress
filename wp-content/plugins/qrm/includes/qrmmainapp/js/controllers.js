@@ -639,9 +639,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         exp.filterRisks();
     }, true);
 
-    $scope.$watch("exp.childProjects", function () {
-        exp.getAllProjectRisks();
-    }, true);
     // General purpose functions
     this.newRisk = function () {
         postType = null;
@@ -710,11 +707,16 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         $scope.loading = true;
         remoteService.getRisk(QRMDataService.riskID, $scope)
             .then(function (response) {
+                if (response.data.msg){
+                    $scope.loading = false;
+                    alert(response.data.msg);
+                    return;
+                }
                 QRMDataService.pRisk = response.data;
                 QRMDataService.passRisk = true;
                 $state.go('qrm.risk');
             }).finally(function () {
-                $scope.loading = true;
+                $scope.loading = false;
             });
     }
     this.deleteRisk = function (riskID) {
@@ -942,8 +944,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
             return false;
         }
     }
-
-
+    
     this.init = function () {
         remoteService.getProjects()
             .then(function (response) {
@@ -965,8 +966,12 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                     exp.projectSelect(null, postID);
                     postType = null;
                 } else {
-                    if (QRMDataService.project.id > 0) exp.getAllProjectRisks(QRMDataService.project.id);
+                     if (QRMDataService.project.id > 0) exp.getAllProjectRisks(QRMDataService.project.id);
                 }
+            
+//                $scope.$watch("exp.childProjects", function () {
+//                    exp.getAllProjectRisks();
+//                }, true);
             });
     }
 
@@ -1656,7 +1661,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
     
     $scope.riskReport = function (reportID) {
-        remoteService.getReportRiskJSON([vm.riskID], null)
+        remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false)
             .then(function (response) {
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="action"]').val("execute_report");
