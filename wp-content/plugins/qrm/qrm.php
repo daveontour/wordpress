@@ -301,13 +301,13 @@ class QRM {
 			
 			$args = array( 'post_type' => 'risk', 
 							'post__in' => $riskIDs, 
-							'post_per_page' => -1 	
+							'posts_per_page' => -1 	
 			);
 			
 		} else if (sizeof($projectIDs) > 0){
 			
 			$args = array('post_type' => 'risk', 
-					      'post_per_page' => -1,
+					      'posts_per_page' => -1,
 						  'meta_query' => array(
 									array(
 										'key' => 'projectID',
@@ -320,10 +320,12 @@ class QRM {
 		} else {
 			
 			$args = array( 'post_type' => 'risk', 
-						   'post_per_page' => -1 
+						   'posts_per_page' => -1 
 					     );
 		
 		}
+		
+	
 		
 		$the_query = new WP_Query ( $args );
 		$risks = array ();
@@ -354,6 +356,8 @@ class QRM {
 			array_push ( $risks, $risk );
 		endwhile
 		;
+		
+
 
 		$args = array( 'post_type' => 'review',
 					   'post_per_page' => -1
