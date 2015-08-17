@@ -19,6 +19,42 @@ function SortByProjectCode(a, b) {
     return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }
 
+function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
+   ajaxChatRequest = $.ajax({
+      url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey+"&reset="+reset,
+      type: "GET",
+      timeout: 90000,
+      dataType: "jsonp",
+      success: function (m) {
+          ajaxChatRequest = null;
+
+         if (m.msg) {
+             QRM.mainController.notify(m.message, m.duration);
+  //          alert(m.message);
+            startChatChannel(pollURL, userEmail, siteKey, QRMDataService, false);
+            return;
+         }
+         if (m.timeout) {
+            startChatChannel(pollURL, userEmail, siteKey, QRMDataService, true);
+            return;
+         }
+          if (m.reportReady){
+            QRM.mainController.notify("Report Ready.  Downloading Now.", 1000);
+                 $('input[name="userEmail"]').val(QRMDataService.userEmail);
+                $('input[name="userLogin"]').val(QRMDataService.userLogin);
+                $('input[name="siteKey"]').val(QRMDataService.siteKey);
+                $('input[name="action"]').val("get_report");
+                $('input[name="id"]').val(m.reportID);
+                $('#getReportForm').attr('action', QRMDataService.reportServerURL, false);
+                $("#getReportForm").submit();
+          }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+           alert("Could connect to report server (1)");
+      }
+   });
+}
+
 function QRMCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q) {
      //Leave the reports in a spot where everyone can find them
      this.reports = QRMDataService.reports;
@@ -161,7 +197,8 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
 
     this.switch = function () {
 
-       
+            
+        
         if (!intro.sessionOK) {
             $state.go("login");
             return;
@@ -217,10 +254,17 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
     }
 };
 
-function MainCtrl(QRMDataService, remoteService, $state) {
+function MainCtrl(QRMDataService, remoteService, $state, ngNotify) {
     
 
     QRM.mainController = this;
+    
+    this.notify = function(message,duration){
+        ngNotify.config({
+            duration:duration
+         });
+         ngNotify.set(message, "info");
+    };
 
 
     this.showStatusBoard = false;
@@ -456,7 +500,7 @@ function MainCtrl(QRMDataService, remoteService, $state) {
     //    this.init();
 };
 
-function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog) {
+function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog, $http) {
 
     QRM.mainController.titleBar = QRMDataService.project.title;
     QRM.expController = this;
@@ -914,16 +958,17 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
 
 
     $scope.riskReport = function (reportID) {
+        QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportRiskJSON([], QRMDataService.project.id, exp.childProjects)
             .then(function (response) {
+                QRM.mainController.notify("Sending Data for Processing", 5000);
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="action"]').val("execute_report");
                 $('input[name="reportID"]').val($scope.reportReqID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
-            }).finally(function () {
-
-            });
+                startChatChannel(QRMDataService.reportServerURL+"Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            })
     }
     this.cellStyle = function (prob, impact, tol) {
 
@@ -1624,16 +1669,17 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
 
     this.riskReport = function (reportID) {
+        QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportRiskJSON([vm.riskID], null)
             .then(function (response) {
+                QRM.mainController.notify("Sending Data for Processing", 5000);
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="reportID"]').val(reportID);
                 $('input[name="action"]').val("execute_report");
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
-            }).finally(function () {
-
-            });
+                startChatChannel(QRMDataService.reportServerURL+"Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            });;
     }
 
     // Handle formatting of objectives
@@ -1668,8 +1714,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 $('input[name="reportID"]').val($scope.reportReqID);
                 $('#reportForm').attr('action', response.data.reportServerURL);
                 $("#reportForm").submit();
-            }).finally(function () {
-
+                startChatChannel(QRMDataService.reportServerURL+"Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService);
             });
     }
     this.init = function () {
@@ -3162,7 +3207,7 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
             inc.incident.risks.push(inc.riskID);
             var unq = [];
             $.each(inc.incident.risks, function (i, el) {
-                if ($.inArray(el, unq) === -1) unq.push(el);
+                if (($.inArray(el, unq) == -1) &&(el != null)) unq.push(el);
             });
             inc.incident.risks = unq
 
@@ -3533,7 +3578,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
             rev.review.risks.push(rev.riskID);
             var unq = [];
             $.each(rev.review.risks, function (i, el) {
-                if ($.inArray(el, unq) === -1) unq.push(el);
+                if (($.inArray(el, unq) == -1) && (el != null)) unq.push(el);
             });
             rev.review.risks = unq
             rev.review.risks.sort(SortByProjectCode);
@@ -3837,8 +3882,8 @@ var app = angular.module('qrm');
     app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', '$http', IntroCtrl]);
     app.controller('QRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', QRMCtrl]);
     app.controller('NonQRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', NonQRMCtrl]);
-    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', MainCtrl]);
-    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', ExplorerCtrl]);
+    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', MainCtrl]);
+    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', "$http",ExplorerCtrl]);
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
     app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);

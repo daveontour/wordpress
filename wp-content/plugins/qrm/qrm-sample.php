@@ -17,7 +17,6 @@ class QRMSample {
 	
 	static function processImport($import, $sample) {
 		
-		
 		$projIDMap = array ();
 		$objIDMap = array ();
 		$catIDMap = array ();
@@ -291,13 +290,17 @@ class QRMSample {
 		}	
 		return true;
 	}
-	static function removeSample() {
+	static function removeSample($all = false) {
+		
 		$args = array (
 				'posts_per_page' => - 1,
-				'meta_key' => 'sampleqrmdata',
-				'meta_value' => true,
 				'post_type' => 'riskproject' 
 		);
+		
+		if (!$all){
+			$args['meta_key'] = "sampleqrmdata";
+			$args['meta_value'] = true;
+		}
 				
 		$args ['post_type'] = "risk";
 		foreach ( get_posts ( $args ) as $post ) {
@@ -316,8 +319,6 @@ class QRMSample {
 		foreach ( get_posts ( $args ) as $post ) {
 			wp_delete_post ( $post->ID, true );
 		}
-		
 		return "Sample Data Removed";
-		
 	}
 }

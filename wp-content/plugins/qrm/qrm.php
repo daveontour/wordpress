@@ -556,7 +556,7 @@ class QRM {
 				'post_type' => 'incident'
 		) );
 
-		update_post_meta ( $postID, "incidentdata", json_encode ( $incident ) );
+		update_post_meta ( $postID, "incidentdata", json_encode ( $incident,JSON_HEX_QUOT ) );
 		update_post_meta ( $postID, "incidenttitle", $incident->incidentCode . " - " . $incident->title );
 
 		// record the incident in the risk metadata
@@ -756,7 +756,7 @@ class QRM {
 				'post_type' => 'review'
 		) );
 
-		update_post_meta ( $postID, "reviewdata", json_encode ( $review ) );
+		update_post_meta ( $postID, "reviewdata", json_encode ( $review,JSON_HEX_QUOT ) );
 		update_post_meta ( $postID, "reviewtitle", $review->reviewCode . " - " . $review->title );
 
 		$args = array (
@@ -1066,8 +1066,10 @@ class QRM {
 		get_currentuserinfo ();
 
 		$riskID = json_decode ( file_get_contents ( "php://input" ) );
+		
+		$json = get_post_meta ( $riskID, "riskdata", true );
 		$risk = json_decode ( get_post_meta ( $riskID, "riskdata", true ) );
-
+		
 		// Make sure the user is authorised to get the risk
 		$projectRiskManager = get_post_meta ( $risk->projectID, "projectRiskManager", true );
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
@@ -1195,8 +1197,9 @@ class QRM {
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 				
+		
 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-				
+
 			$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 			if (! ($current_user->ID == $project->projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
 				continue;
@@ -1301,7 +1304,6 @@ class QRM {
 				'post_type' => 'riskproject',
 				'post_parent' => $risk->projectID
 		) );
-		echo var_dump ( $myposts );
 		// Restore the Original Title
 		$risk->title = $riskTitle;
 		$children = array ();
@@ -1467,7 +1469,7 @@ class QRM {
 			) );
 			$risk->id = $postID;
 				
-			update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ) ) );
+			update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ), JSON_HEX_QUOT ) );
 		}
 		$risk->riskProjectCode = get_post_meta ( $risk->projectID, "projectCode", true ) . $postID;
 		wp_update_post ( array (
@@ -1476,7 +1478,7 @@ class QRM {
 				'post_type' => 'risk'
 		) );
 		// The Bulk of the data is held in the post's meta data
-		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		update_post_meta ( $postID, "riskdata", json_encode ( $risk , JSON_HEX_QUOT) );
 
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
@@ -1690,11 +1692,11 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_action('init', array ($this,'qrm_scripts_styles' ));
 			add_action('init', array ($this,'qrm_init_user_cap' ));
 			
-			// 
-			add_option("qrm_siteKey", "Demo Key");
-			add_option("qrm_siteName", "Demo Site");
-			add_option("qrm_siteID", "demo1");
-			add_option("qrm_reportServerURL", "http://localhost:8080/report");
+			
+			add_option("qrm_siteKey", "3182129");
+			add_option("qrm_siteName", "Quay Risk Manager Site");
+			add_option("qrm_siteID", "Quay Risk Manager Site");
+			add_option("qrm_reportServerURL", "http://qrm.quaysystems.com.au:8080/report");
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
@@ -1738,19 +1740,17 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			wp_enqueue_script('qrm-services');
 			?>
 <script>
-					projectID = <?php echo $post->ID; ?>;
-			 	</script>
+						projectID = <?php echo $post->ID; ?>;
+				 	</script>
 <style>
 .form-table th {
 	text-align: right
 }
 </style>
-
 <div ng-app="myApp" style="width: 100%; height: 100%"
 	ng-controller="projectCtrl">
-		            <?php include 'riskproject-widget.php';?>
-		   </div>
-
+			            <?php include 'riskproject-widget.php';?>
+			  	 </div>
 <?php 
 			}
 		
@@ -1822,6 +1822,7 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			if ($post->post_type == 'review') {
 				$single_template = dirname ( __FILE__ ) . '/templates/review-type-template.php';
 			}
+			
 			return $single_template;
 		}
 		public function defineAJAXFunctions() {

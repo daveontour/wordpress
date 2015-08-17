@@ -703,6 +703,8 @@ function RemoteService($http) {
             cache: false
         });
     };
+    
+    
     this.newPushDownRisk = function (pushdown) {
         return $http({
             method: 'POST',

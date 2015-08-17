@@ -147,6 +147,13 @@
 	    <input type="hidden" name="reportID" />
 	    <input type="hidden" name="action" />
     </form>
+    <form id="getReportForm" method="post" style="display: none;" target="qrmIframe">
+	    <input type="hidden" name="userEmail" />
+	    <input type="hidden" name="userLogin" />
+	    <input type="hidden" name="siteKey" />
+	    <input type="hidden" name="id" />
+	    <input type="hidden" name="action" value="get_report"/>
+    </form>
     <iframe name="qrmIframe" style="display: none"></iframe>
 </body>
 </html>
