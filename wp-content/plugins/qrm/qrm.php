@@ -228,10 +228,10 @@ class QRM {
 				array_push($ids, $child->ID);
 			}
 		}
-
+		
 		//Pass the project array and the risk ID array
 		//commonJSON will apply the non null condition
-		$export = QRM::commonJSON($ids,$config->riskIDs);
+		$export = QRM::commonJSON($ids,$config->risks);
 		QRM::exportMetadata($export);
 		
 		//Remove risks not included in request
@@ -325,8 +325,6 @@ class QRM {
 		
 		}
 		
-	
-		
 		$the_query = new WP_Query ( $args );
 		$risks = array ();
 		while ( $the_query->have_posts () ) :
@@ -335,7 +333,8 @@ class QRM {
 			$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
 			$risk->incidents = get_post_meta ( $post->ID, "incident" );
 			$risk->reviews = get_post_meta ( $post->ID, "review" );
-			$risk->projectID = get_post_meta($post->ID, projectID,true);
+			$risk->projectID = get_post_meta($post->ID, "projectID",true);
+			$risk->rank = get_post_meta($post->ID, "rank",true);
 			$risk->ID = $post->ID;
 			$risk->comments = get_comments ( array (
 					'post_id' => $post->ID
