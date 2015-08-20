@@ -1700,8 +1700,22 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_option("qrm_siteName", "Quay Risk Manager Site");
 			add_option("qrm_siteID", "Quay Risk Manager Site");
 			add_option("qrm_reportServerURL", "http://qrm.quaysystems.com.au:8080/report");
+			
+			$this->activate_au();
+
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
+		}
+		
+		
+		public function activate_au() {
+			require_once ( 'wp_autoupdate.php' );
+			$plugin_current_version = '2.0';
+			$plugin_remote_path = plugin_dir_url( __FILE__ ) . 'update.php';
+			$plugin_slug = plugin_basename( __FILE__ );
+			$license_user = 'user';
+			$license_key = 'abcd';
+			new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug, $license_user, $license_key );
 		}
 		
 		public function riskproject_meta_boxes() {
