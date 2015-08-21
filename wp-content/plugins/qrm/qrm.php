@@ -1699,7 +1699,7 @@ if (! class_exists ( 'QuayRiskManager' )) :
 			add_option("qrm_siteKey", "3182129");
 			add_option("qrm_siteName", "Quay Risk Manager Site");
 			add_option("qrm_siteID", "Quay Risk Manager Site");
-			add_option("qrm_reportServerURL", "http://qrm.quaysystems.com.au:8080/report");
+			add_option("qrm_reportServerURL", "http://www.quaysystems.com.au:8080/qrmreportserver/report");
 			
 			$this->activate_au();
 

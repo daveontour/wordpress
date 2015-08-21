@@ -9,7 +9,7 @@
         <a href="#" ng-click="main.go('qrm.calender')" class="disable-noproject disable-link">Exposure Calender</a>
         <a href="#" ng-click="main.go('qrm.rank')" class="disable-noproject disable-link">Risk Ranking</a>
         <a href="#" ng-click="main.go('qrm.matrix')" class="disable-noproject disable-link">Tolerance Matrix</a>
-        <a href="#" ng-click="main.go('qrm.analysis')" class="disable-noproject disable-link">Dashboard</a>
+        <a href="#" ng-click="main.go('qrm.analysis')" class="disable-noproject disable-link">Analysis Tools</a>
         <a href="#" ng-click="main.go('qrm.reportarchive')" >Report Archive</a>
         <a href="#" ng-click="main.logout()">Logout ({{main.userName}})</a>
     </nav>
@@ -23,7 +23,8 @@
                 <button ng-click="main.toggleMenu()" id="menu-toggle" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white" dropdown-toggle><i class="fa fa-bars"></i>
                 </button> <span class="hidden-xs" ng-show="!main.sideOpen" id="qrm-title" style="font-size:1.2em"><strong>Q</strong>uay <strong>R</strong>isk <strong>M</strong>anager</span>
                 <span ng-show="main.sideOpen"  style="font-size:1.2em"><strong>QRM</strong></span>
-                <span id="qrm-subtitle"  ng-show="!main.sideOpen" style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBar"></span>
+                <span class="hidden-xs hidden-sm"  id="qrm-subtitle"  ng-show="!main.sideOpen" style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBar"></span>
+                <span class="hidden-md hidden-lg"  ng-show="!main.sideOpen" style="margin-left:20px;font-size:1.0em" ng-bind-html="main.titleBarSM"></span>
             </div>
         </div>
 
@@ -42,9 +43,6 @@
                 })
             });
             $("#container").css("width", $(window).width() + "px");
-//            $("#menu-toggle").click(function (e) {
-//                toggleMenu();
-//            });
         </script>
     </div>
 </div>

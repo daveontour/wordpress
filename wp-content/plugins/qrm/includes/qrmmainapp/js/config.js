@@ -7,8 +7,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     //    $urlRouterProvider.otherwise("/intro");
 
     $ocLazyLoadProvider.config({
-        // Set to true if you want to see what and when is dynamically loaded
-        debug: true
+        debug: false
     });
 
     $stateProvider
@@ -212,7 +211,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         .state('qrm.analysis', {
             controller: 'AnalysisController',
             controllerAs: 'analysis',
-            templateUrl: pluginurl + "views/qrm/analysis.html",
+            templateUrl: function (params) {
+                if (jQuery(window).width() < 768) {
+                    return pluginurl + "views/qrm/m.analysis.html"
+                } else {
+                    return pluginurl + "views/qrm/analysis.html"
+                }
+            },
             onEnter: function () {
                 QRM.mainController.titleBar = "Analysis";
                 closeMenu();

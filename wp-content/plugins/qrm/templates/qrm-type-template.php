@@ -12,7 +12,14 @@
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
 		var pluginurl = '<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/" ?>';
 		var postID = <?php echo $post->ID ?>;
-		var postType = '<?php echo $type ?>';
+		var postType = '<?php if ($type){
+							echo $type;
+		} else {
+			echo "firstproject";
+		}
+							
+	?>';
+
 		<?php if(isset($projectID))echo 'var projectID = '.$projectID.';' ?>
 	</script>
 
