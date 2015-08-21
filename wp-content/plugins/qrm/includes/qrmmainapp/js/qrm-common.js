@@ -964,8 +964,17 @@ d3.gantt = function (calController) {
         top: 30,
         right: 10,
         bottom: 20,
+        left: 80
+    };
+    
+    if (jQuery(window).width() < 768) {
+        margin = {
+        top: 30,
+        right: 10,
+        bottom: 20,
         left: 50
     };
+                }
     var timeDomainStart = d3.time.day.offset(new Date(), -3);
     var timeDomainEnd = d3.time.hour.offset(new Date(), +3);
     var timeDomainMode = FIT_TIME_DOMAIN_MODE; // fixed or fit
@@ -1086,16 +1095,14 @@ d3.gantt = function (calController) {
                 return "rotate(-45)" 
                 });
 
+        
         svg.append("text")
             .attr("text-anchor", "middle")
-            .style("font-size", "20px")
-            .style("font-weight", "normal")
+            .attr("class", "calHeadText")
             .style("fill", "rgb(103,106,108)")
             .attr("transform", "translate(" + [width / 2, 0] + ")")
             .text(calController.project.title);
-
-
-
+        
         svg.append("g")
             .attr("class", "y axis")
             .transition()

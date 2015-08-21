@@ -193,6 +193,12 @@ class QRM {
 				'loggedin' => QRM::qrmUser ()
 		) );
 	}
+	static function getGuestObject(){
+		$guest = new stdObject();
+		$guest->msg = "Guest logins cannot save data";
+		$guest->error = true;
+		return $guest;
+	}
 
 	static function getJSON(){
 		$export = QRM::commonJSON();
@@ -516,8 +522,13 @@ class QRM {
 	static function saveIncident() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		global $user_identity, $user_email, $user_ID, $current_user;
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
 
 		$postdata = file_get_contents ( "php://input" );
 		$incident = json_decode ( $postdata );
@@ -656,9 +667,13 @@ class QRM {
 		$comment = json_decode ( file_get_contents ( "php://input" ) );
 		$time = current_time ( 'mysql' );
 
-		global $user_identity, $user_email, $user_ID, $current_user;
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
-
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+		}
+		
 		$data = array (
 				'comment_post_ID' => $comment->ID,
 				'comment_author' => $current_user->display_name,
@@ -716,8 +731,13 @@ class QRM {
 	static function saveReview() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		global $user_identity, $user_email, $user_ID, $current_user;
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
 
 		$postdata = file_get_contents ( "php://input" );
 		$review = json_decode ( $postdata );
@@ -818,9 +838,15 @@ class QRM {
 	static function registerAudit() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		global $user_identity, $user_email, $user_ID, $current_user;
+	
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
-
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+		
 		$audit = json_decode ( file_get_contents ( "php://input" ) );
 		$riskID = $audit->riskID;
 
@@ -895,6 +921,14 @@ class QRM {
 			require_once (ABSPATH . 'wp-admin/includes/file.php');
 		}
 
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+		
 		$uploadedfile = $_FILES ['file'];
 		$upload_overrides = array (
 				'test_form' => false
@@ -1004,6 +1038,14 @@ class QRM {
 			wp_die ( - 3 );
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+		
 		foreach ( $risks as $risk ) {
 			$r = json_decode ( get_post_meta ( $risk->riskID, "riskdata", true ) );
 			$r->inherentProb = $risk->newInherentProb;
@@ -1091,6 +1133,15 @@ class QRM {
 	static function saveRankOrder() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
+		
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+		
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 
 		foreach ( $risks as $risk ) {
@@ -1342,6 +1393,14 @@ class QRM {
 	static function newPushDownChild($parent, $projectID) {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
+		
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
 		$risk = clone $parent;
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
 
@@ -1400,8 +1459,13 @@ class QRM {
 	static function saveRisk() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		global $user_identity, $user_email, $user_ID, $current_user;
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
 
 		$postdata = file_get_contents ( "php://input" );
 		$risk = json_decode ( $postdata );
@@ -1518,9 +1582,16 @@ class QRM {
 	static function saveProject() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		global $user_identity, $user_email, $user_ID, $current_user;
-		get_currentuserinfo ();
 
+
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+		
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+		
 		$postdata = file_get_contents ( "php://input" );
 		$project = json_decode ( $postdata );
 

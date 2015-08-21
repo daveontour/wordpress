@@ -111,8 +111,8 @@
                                 </form>
                             </div>
                             <div style="padding-right:0px;text-align:right">
-                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="incident.cancelAttachment()" ng-disabled="incident.disableAttachmentButon">Cancel</button>
-                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="incident.uploadAttachment()" ng-disabled="incident.disableAttachmentButon">Upload Attachment</button>
+                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-xs btn-s-m btn-danger" ng-click="incident.cancelAttachment()" ng-disabled="incident.disableAttachmentButon">Cancel</button>
+                                <button type="button" style="margin-top:5px" class="btn btn-xs btn-s-m btn-primary" ng-click="incident.uploadAttachment()" ng-disabled="incident.disableAttachmentButon">Upload Attachment</button>
 
                             </div>
 
@@ -137,7 +137,7 @@
                                 <div class="panel-body">
                                     <textarea placeholder="Comment on the Incident" ng-model="data.comment" style="height:100px;width:100%"></textarea>
                                     <div style="margin-top:5px;margin-bottom:5px;text-align:right">
-                                        <button ng-click="incident.addCommentSM()" class="btn btn-primary btn-sm">Add Comment</button>
+                                        <button ng-click="incident.addCommentSM()" class="btn btn-primary btn-xs btn-s-m">Add Comment</button>
                                     </div>
                                     <table class="table table-striped" style="width:100%">
                                                 <tr ng-repeat="comment in incident.incident.comments" style="margin-top:15px">

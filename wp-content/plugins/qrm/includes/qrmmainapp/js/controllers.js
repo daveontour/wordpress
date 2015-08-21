@@ -143,13 +143,13 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
             QRMDataService.userEmail = response.data.userEmail;
             QRMDataService.userLogin = response.data.userLogin;
             QRMDataService.userDisplayName = response.data.userDisplayName;
-//            $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
-//                .success(function (data) {
-//                    QRMDataService.reports = data;
-//                })
-//                .error(function (data) {
-//                    alert("Error Retrieving Available Reports");
-//                });
+            //            $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
+            //                .success(function (data) {
+            //                    QRMDataService.reports = data;
+            //                })
+            //                .error(function (data) {
+            //                    alert("Error Retrieving Available Reports");
+            //                });
         });
 
     //postType is a global variable, set by PHP when the page get's created on the server
@@ -175,7 +175,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
 
     } else {
         $q.all([z, a, b, c, e]).then(function () {
-           intro.switch();
+            intro.switch();
         });
     }
 
@@ -467,7 +467,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
 
     this.init = function (login) {
 
-         var a = remoteService.getSiteUsers()
+        var a = remoteService.getSiteUsers()
             .then(function (response) {
                 QRMDataService.siteUsers = response.data.data;
             });
@@ -487,31 +487,31 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
                 QRM.mainController.risks.sort(SortByProjectCode);
                 QRMDataService.risks = QRM.mainController.risks;
             });
-    
+
         remoteService.getServerMeta()
             .then(function (response) {
-            QRMDataService.reportServerURL = response.data.reportServerURL;
-            QRMDataService.siteKey = response.data.siteKey;
-            QRMDataService.siteName = response.data.siteName;
-            QRMDataService.siteID = response.data.siteID;
-            QRMDataService.userEmail = response.data.userEmail;
-            QRMDataService.userLogin = response.data.userLogin;
-            QRMDataService.userDisplayName = response.data.userDisplayName;
-            $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
-                .success(function (data) {
-                    QRMDataService.reports = data;
-                })
-                .error(function (data) {
-                    alert("Error Retrieving Available Reports");
-                })
-                .finally(function(){
-                    if (login){
-                        $state.go("qrm.explorer");
-                        postType = "firstproject";
-                    }
-                });
-        });
-        
+                QRMDataService.reportServerURL = response.data.reportServerURL;
+                QRMDataService.siteKey = response.data.siteKey;
+                QRMDataService.siteName = response.data.siteName;
+                QRMDataService.siteID = response.data.siteID;
+                QRMDataService.userEmail = response.data.userEmail;
+                QRMDataService.userLogin = response.data.userLogin;
+                QRMDataService.userDisplayName = response.data.userDisplayName;
+                $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
+                    .success(function (data) {
+                        QRMDataService.reports = data;
+                    })
+                    .error(function (data) {
+                        alert("Error Retrieving Available Reports");
+                    })
+                    .finally(function () {
+                        if (login) {
+                            $state.go("qrm.explorer");
+                            postType = "firstproject";
+                        }
+                    });
+            });
+
     }
 
     //    this.init();
@@ -1034,10 +1034,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 if (postType == "riskproject") {
                     exp.projectSelect(null, postID);
                     postType = null;
-                } else if (postType == "firstproject"){
+                } else if (postType == "firstproject") {
                     exp.projectSelect(null, QRMDataService.sortedParents[0].id);
                     postType = null;
-                }else {
+                } else {
                     if (QRMDataService.project.id > 0) exp.getAllProjectRisks(QRMDataService.project.id);
                 }
             });
@@ -1047,6 +1047,14 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     winWidth = $(window).innerWidth() - 10;
     $("#container").css("width", winWidth + "px");
     this.init();
+
+    //    var uiSelect = angular.element("#uiSelectID").controller('uiSelect');
+    //// focus the focusser, putting focus onto select but without opening the dropdown
+    //uiSelect.focusser[0].focus();
+    //
+    //// Open the select without focusing the search box.  I use this on mobile to
+    //// prevent keyboard from popping up automatically when clicking into the box
+    //uiSelect.open = true;
 }
 
 function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog, $q) {
@@ -1301,13 +1309,19 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         vm.risk.attachments = [];
         remoteService.saveRisk(vm.risk)
             .then(function (response) {
+                if (response.data.error) {
+                    $scope.savingrisk = false;
+                    alert(response.data.msg);
+                    return;
+                }
                 vm.risk = response.data;
                 // Update the risk with changes that may have been made by the host.
                 QRMDataService.riskID = vm.risk.riskID;
                 QRMDataService.risk = vm.risk;
                 vm.updateRisk();
                 ngNotify.set("Risk Saved", "success");
-            }).finally(function () {
+            })
+            .finally(function () {
                 $scope.savingrisk = false;
             });
     };
@@ -1562,6 +1576,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         }).then(function (value) {
             remoteService.addGeneralComment($scope.data.comment, QRMDataService.riskID)
                 .then(function (response) {
+                    if (response.data.error) {
+                        alert(response.data.msg);
+                        return;
+                    }
                     ngNotify.set("Comment added to risk", "success");
                     vm.risk.comments = response.data;
                 });
@@ -1573,6 +1591,10 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     this.addCommentSm = function () {
         remoteService.addGeneralComment($scope.data.comment, QRMDataService.riskID)
             .then(function (response) {
+                if (response.data.error) {
+                    alert(response.data.msg);
+                    return;
+                }
                 ngNotify.set("Comment added to risk", "success");
                 vm.risk.comments = response.data;
             });
@@ -2143,7 +2165,11 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
     this.saveChanges = function () {
         myLayout.normaliseRanks();
         var rankOrder = myLayout.orderedIDs;
-        remoteService.saveRankOrder(myLayout.items).then(function () {
+        remoteService.saveRankOrder(myLayout.items).then(function (response) {
+            if (response.data.error) {
+                alert(response.data.msg);
+                return;
+            }
             ngNotify.set("Rank Order Saved", "success");
         })
     }
@@ -2612,6 +2638,10 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
 
         remoteService.updateRisksRelMatrix(relMatChanges)
             .then(function (response) {
+                if (response.data.error) {
+                    alert(response.data.msg);
+                    return;
+                }
                 relMatrixCtrl.risks.forEach(function (item) {
                     item.treatedImpact = (item.treatedClean) ? item.treatedImpact : item.newTreatedImpact;
                     item.treatedProb = (item.treatedClean) ? item.treatedProb : item.newTreatedProb;
@@ -3444,6 +3474,11 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         }).then(function (value) {
             remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
                 .then(function (response) {
+
+                    if (response.data.error) {
+                        alert(response.data.msg);
+                        return;
+                    }
                     ngNotify.set("Comment Added to Incident", "success");
                     inc.incident.comments = response.data;
                 });
@@ -3455,6 +3490,10 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
     this.addCommentSM = function () {
         remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
             .then(function (response) {
+                if (response.data.error) {
+                    alert(response.data.msg);
+                    return;
+                }
                 ngNotify.set("Comment Added to Incident", "success");
                 inc.incident.comments = response.data;
                 $scope.data.comment = "";
@@ -3469,6 +3508,11 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
         }
         remoteService.saveIncident(inc.incident)
             .then(function (response) {
+                if (response.data.error) {
+                    $scope.savingincident = false;
+                    alert(response.data.msg);
+                    return;
+                }
                 $scope.savingincident = false;
                 ngNotify.set("Incident Saved", "success");
                 inc.incident = response.data;
@@ -3831,6 +3875,10 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         }).then(function (value) {
             remoteService.addGeneralComment($scope.data.comment, QRMDataService.reviewID)
                 .then(function (response) {
+                    if (response.data.error) {
+                        alert(response.data.msg);
+                        return;
+                    }
                     ngNotify.set("Comment Added to Review", "success");
                     rev.review.comments = response.data;
                 });
@@ -3842,6 +3890,10 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
     this.addCommentSM = function () {
         remoteService.addGeneralComment($scope.data.comment, QRMDataService.incidentID)
             .then(function (response) {
+                if (response.data.error) {
+                    alert(response.data.msg);
+                    return;
+                }
                 ngNotify.set("Comment Added to Review", "success");
                 rev.review.comments = response.data;
                 $scope.data.comment = "";
@@ -3922,6 +3974,11 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         }
         remoteService.saveReview(rev.review)
             .then(function (response) {
+                if (response.data.error) {
+                    $scope.savingreview = false;
+                    alert(response.data.msg);
+                    return;
+                }
                 $scope.savingreview = false;
                 ngNotify.set("Review Saved", "success");
                 rev.review = response.data;
@@ -4025,7 +4082,7 @@ var app = angular.module('qrm');
     app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', '$http', IntroCtrl]);
     app.controller('QRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', QRMCtrl]);
     app.controller('NonQRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', NonQRMCtrl]);
-    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify','$http', MainCtrl]);
+    app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', '$http', MainCtrl]);
     app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', "$http", ExplorerCtrl]);
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);

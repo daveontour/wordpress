@@ -987,6 +987,31 @@ text {
     fill: #000;
 }
 
+@media screen and (min-width: 768px) {
+    text {
+        font-size: 15px;
+        font-family: Arial;
+        fill: #000;
+    }
+    
+    text.calHeadText {
+        font-size: 20px;
+        font-weight: normal;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    text {
+        font-size: 10px;
+        font-family: Arial;
+        fill: #000;
+    }
+    
+    text.calHeadText {
+        font-size: 15px;
+        font-weight: normal;
+    }
+}
 text.tolText {
     font-size: 16px;
     font-family: Arial;
