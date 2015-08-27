@@ -1065,6 +1065,28 @@ rect.tolNoHover5 {
     stroke-width: 2px;
 }
 
+.bluefill {
+    color: #1c84c6;
+}
+
+.greenfill {
+    color: #1ab394;
+}
+
+.yellowfill {
+    color: #ffff55;
+}
+
+.orangefill{
+    color: #f8ac59;
+}
+
+.redfill {
+    color: #ed5565;
+}
+
+
+
 rect.tolc1 {
     fill: #1c84c6;
     stroke: #E6E6E6;

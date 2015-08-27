@@ -716,4 +716,15 @@ function RemoteService($http) {
             data:JSON.stringify(pushdown)
         });
     };
+    this.createDummyRiskEntry = function (projectID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "createDummyRiskEntry",
+            },
+            cache: false,
+            data:JSON.stringify(projectID)
+        });
+    };
 }

@@ -9,7 +9,7 @@
                                 <label class="control-label">Select Project: </label>
                             </td>
                             <td>
-                                <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:250px;">
+                                <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:400px;">
                                     <ui-select-match style="color:rgb(103,106,108);font-weight:700" allow-clear=false placeholder="Select Project...">{{$select.selected.title}} ({{$select.selected.projectCode}})</ui-select-match>
                                     <ui-select-choices repeat="project.id as project in exp.sortedParents track by project.id">
                                         <div ng-style="exp.rowStyle(project)">

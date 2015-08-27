@@ -25,7 +25,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             },
         })
         .state('nonQRM', {
-            controller: "NonQRMCtrl",
+            controller: "LoginCtrl as login",
             templateUrl: function (params) {
                 return pluginurl + "views/qrm/nonqrm.html"
             },

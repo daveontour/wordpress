@@ -12,6 +12,7 @@
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
 		var pluginurl = '<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/" ?>';
 		var postID = <?php echo $post->ID ?>;
+		var lostPasswordURL = '<?php echo wp_lostpassword_url(); ?>';
 		var postType = '<?php if ($type){
 							echo $type;
 		} else {

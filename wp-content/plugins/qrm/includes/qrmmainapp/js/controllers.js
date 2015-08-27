@@ -143,13 +143,6 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
             QRMDataService.userEmail = response.data.userEmail;
             QRMDataService.userLogin = response.data.userLogin;
             QRMDataService.userDisplayName = response.data.userDisplayName;
-            //            $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
-            //                .success(function (data) {
-            //                    QRMDataService.reports = data;
-            //                })
-            //                .error(function (data) {
-            //                    alert("Error Retrieving Available Reports");
-            //                });
         });
 
     //postType is a global variable, set by PHP when the page get's created on the server
@@ -193,12 +186,12 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
             return;
         }
 
-        $http.jsonp(QRMDataService.reportServerURL + "?action=get_availablereports&callback=JSON_CALLBACK")
+        $http.jsonp(QRMDataService.reportServerURL + "/report?action=get_availablereports&callback=JSON_CALLBACK")
             .success(function (data) {
                 QRMDataService.reports = data;
             })
             .error(function (data) {
-                alert("Error Retrieving Available Reports");
+                alert("Report Server Unavavailable");
             })
             .finally(function () {
                 switch (postType) {
@@ -517,7 +510,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
     //    this.init();
 };
 
-function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog, $http) {
+function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog, $http,uiGridConstants) {
 
     if (QRMDataService.project.title) {
         QRM.mainController.titleBar = "Risk Explorer - " + QRMDataService.project.title;
@@ -564,14 +557,9 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
 
     this.gridOptions = {
         enableSorting: true,
-        //        minRowsToShow: 10,
-        //        rowHeight: 25,
         rowTemplate: '<div ng-click="grid.appScope.editRisk(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                //               name: 'currentTolerance',
-                //                field:'currentTolerance',
-                //                cellTemplate: '<i class="fa fa-circle"> {{grid.appScope.formatCodeCol(grid, row)}}</i>',
                 field: 'riskProjectCode',
                 enableColumnMoving: false,
                 width: 80,
@@ -591,6 +579,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                     }
                 }
 
+            },{
+               headerCellClass: 'header-hidden',
+                width:50,    
+               field:'currentTolerance',
+               cellTemplate: '<i class="fa fa-circle {{grid.appScope.formatCodeCol(grid, row)}}"></i>',
+                cellClass: 'cellCentered',
+                sort: {
+                    direction: uiGridConstants.DESC
+                    }
             },
             {
                 name: 'title',
@@ -604,7 +601,10 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 width: 70,
                 field: 'treated',
                 cellTemplate: '<i style="color:green" ng-show="grid.appScope.formatTreatedCol(row, true)" class="fa fa-check"></i><i  style="color:red" ng-show="grid.appScope.formatTreatedCol(row, false)" class="fa fa-close"></i>',
-                cellClass: 'cellCentered'
+                cellClass: 'cellCentered',
+                sort: {
+                    direction: uiGridConstants.ASC
+                    }
 
             },
             {
@@ -701,7 +701,21 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         }
     };
     this.filterOptions = this.resetFilter();
-
+    
+    $scope.formatCodeCol = function(grid, row ){
+        switch (Number(row.entity.currentTolerance)) {
+                        case 1:
+                            return 'bluefill';
+                        case 2:
+                            return 'greenfill';
+                        case 3:
+                            return 'yellowfill';
+                        case 4:
+                            return 'orangefill';
+                        case 5:
+                            return 'redfill';
+                    }
+    }
     $scope.$watch("exp.filterOptions", function () {
         exp.filterRisks();
     }, true);
@@ -712,7 +726,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         QRMDataService.riskID = -1;
         $state.go('qrm.risk');
     }
-
+    
     this.newPushDownRisk = function () {
 
         this.pushDown = QRMDataService.getTemplateRisk();
@@ -794,7 +808,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
         QRM.mainController.lookingForRisks();
         remoteService.getAllProjectRisks(exp.project.id, exp.childProjects)
             .then(function (response) {
-
                 if (response.data == "0" || response.data == "-1") {
                     $state.go("login");
                     return;
@@ -989,9 +1002,9 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="action"]').val("execute_report");
                 $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL);
+                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
                 $("#reportForm").submit();
-                startChatChannel(QRMDataService.reportServerURL + "Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
             })
     }
     this.cellStyle = function (prob, impact, tol) {
@@ -1048,13 +1061,6 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
     $("#container").css("width", winWidth + "px");
     this.init();
 
-    //    var uiSelect = angular.element("#uiSelectID").controller('uiSelect');
-    //// focus the focusser, putting focus onto select but without opening the dropdown
-    //uiSelect.focusser[0].focus();
-    //
-    //// Open the select without focusing the search box.  I use this on mobile to
-    //// prevent keyboard from popping up automatically when clicking into the box
-    //uiSelect.open = true;
 }
 
 function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog, $q) {
@@ -1299,6 +1305,27 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 });
             });
     };
+ 
+        this.newDummyRisk = function (){
+            
+                    vm.updateRisk();
+        //Zero out the comments as these are managed separately
+        vm.risk.comments = [];
+        vm.risk.projectID = QRMDataService.project.id;
+        vm.risk.attachments = [];
+        remoteService.createDummyRiskEntry(vm.risk)
+            .then(function (response) {
+                 ngNotify.set("Risk Saved", "success");
+            })
+            .finally(function () {
+ 
+        });
+
+       
+    }
+
+    
+    
     this.saveRisk = function () {
         $scope.savingrisk = true;
         // Ensure all the changes have been made
@@ -1722,9 +1749,9 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 $('input[name="reportData"]').val(JSON.stringify(response.data));
                 $('input[name="reportID"]').val(reportID);
                 $('input[name="action"]').val("execute_report");
-                $('#reportForm').attr('action', response.data.reportServerURL);
+                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
                 $("#reportForm").submit();
-                startChatChannel(QRMDataService.reportServerURL + "Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
             });;
     }
 
@@ -1762,6 +1789,14 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 $("#reportForm").submit();
                 startChatChannel(QRMDataService.reportServerURL + "Msg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService);
             });
+    }
+    
+    this.showDummy = function(){
+        if (QRMDataService.siteID == "bephra" && QRMDataService.siteKey=="01123581321"){
+            return true;
+        } else {
+            return false;
+        }
     }
     this.init = function () {
 
@@ -4033,6 +4068,10 @@ function LoginCtrl($scope, $state, QRMDataService, $timeout, remoteService) {
                 }
             });
     }
+    
+    this.lostPassword = function () {
+    	window.open(lostPasswordURL,"_self") 
+    }
 }
 
 var app = angular.module('qrm');
@@ -4083,7 +4122,7 @@ var app = angular.module('qrm');
     app.controller('QRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', QRMCtrl]);
     app.controller('NonQRMCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$timeout', '$q', NonQRMCtrl]);
     app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', '$http', MainCtrl]);
-    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', "$http", ExplorerCtrl]);
+    app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngDialog', "$http","uiGridConstants", ExplorerCtrl]);
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
     app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
