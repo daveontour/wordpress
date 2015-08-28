@@ -1801,7 +1801,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
     
     this.showDummy = function(){
-        if (QRMDataService.siteID == "bephra" && QRMDataService.siteKey=="01123581321"){
+        if (QRMDataService.siteID == "bep" && QRMDataService.siteKey=="01123581321"){
             return true;
         } else {
             return false;

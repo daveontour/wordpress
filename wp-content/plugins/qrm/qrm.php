@@ -2,7 +2,7 @@
 /*** 
  * Plugin Name: Quay Systems Risk Manager 
  * Description: Quay Risk Manager 
- * Version: 2.7.6
+ * Version: 2.7.7
  * Author: Dave Burton
  * License: Commercial
  */
@@ -1871,7 +1871,7 @@ final class QuayRiskManager {
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
 		public function activate_au() {
-			$plugin_current_version = '2.7.6';
+			$plugin_current_version = '2.7.7';
 			$plugin_remote_path = 'http://www.quaysystems.com.au/wp-admin/admin-ajax.php?action=getUpdateInfo';
 			$plugin_slug = plugin_basename( __FILE__ );
 			new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug);
