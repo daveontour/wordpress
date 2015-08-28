@@ -1306,9 +1306,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             });
     };
  
-        this.newDummyRisk = function (){
-            
-                    vm.updateRisk();
+    this.newDummyRisk = function (){
+        vm.updateRisk();
         //Zero out the comments as these are managed separately
         vm.risk.comments = [];
         vm.risk.projectID = QRMDataService.project.id;
@@ -1319,13 +1318,23 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             })
             .finally(function () {
  
-        });
-
-       
+        });      
+    }
+    this.newDummyRisks = function (){
+        vm.updateRisk();
+        //Zero out the comments as these are managed separately
+        vm.risk.comments = [];
+        vm.risk.projectID = QRMDataService.project.id;
+        vm.risk.attachments = [];
+        remoteService.createDummyRiskEntries(vm.risk)
+            .then(function (response) {
+                 ngNotify.set("Risks Saved", "success");
+            })
+            .finally(function () {
+ 
+        });      
     }
 
-    
-    
     this.saveRisk = function () {
         $scope.savingrisk = true;
         // Ensure all the changes have been made

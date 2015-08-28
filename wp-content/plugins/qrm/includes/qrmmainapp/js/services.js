@@ -104,13 +104,13 @@ function DataService() {
             });
         });
         userMap.put("", {
-                "id": "",
-                "ownCount": 0,
-                "manCount": 0
-            });
+            "id": "",
+            "ownCount": 0,
+            "manCount": 0
+        });
 
         var now = moment();
-        
+
         this.projectRisks.forEach(function (r) {
 
             var tol = r.currentTolerance;
@@ -123,72 +123,75 @@ function DataService() {
             var man = jQuery.grep(map.get("RiskManager").get(tol).values, function (o) {
                 return Number(o.id) == Number(r.manager);
             })
+            
             man[0].value = man[0].value + 1;
             userMap.get(r.manager).manCount++;
-            
+
 
             var cat = jQuery.grep(map.get("Categories").get(tol).values, function (o) {
-                var c =(typeof(r.primcat.title)=='undefined')?"Unassigned":r.primcat.title;
+                var c = (typeof (r.primcat.title) == 'undefined') ? "Unassigned" : r.primcat.title;
                 return o.label == c;
             })
-            
-            if (cat.length == 0){
-                map.get("Categories").get(tol).values.push({"label":r.primcat.title, value:1})
+
+            if (cat.length == 0) {
+                map.get("Categories").get(tol).values.push({
+                    "label": r.primcat.title,
+                    value: 1
+                })
             } else {
-                cat[0].value = cat[0].value+1;
+                cat[0].value = cat[0].value + 1;
             }
-            
-                            
 
             var endDiff = now.diff(moment(r.end));
             var startDiff = now.diff(moment(r.start));
-            
+
             var status = 0
 
             if (endDiff > 0) status = -1;
             if (startDiff < 0) status = 1;
             if (startDiff > 0 && endDiff < 0) status = 0;
-            
-             var status = jQuery.grep(map.get("Status").get(tol).values, function (o) {
+
+            var status = jQuery.grep(map.get("Status").get(tol).values, function (o) {
                 return Number(o.state) == Number(status);
             })
             status[0].value = status[0].value + 1;
-            
-
         });
-        
+
         this.categories = map.get("Categories").valArray;
-        
+
         //Sort the array according to greatest total value
         var countArray = userMap.valArray;
         countArray.sort(function (a, b) {
             return Number(b.ownCount) - Number(a.ownCount);
         });
-         for (var i = 5; i > 0; i--){
+        for (var i = 5; i > 0; i--) {
             var sortOwn = new Array();
             var arr = map.get("RiskOwner").get(i).values;
-            countArray.forEach(function (a){
-                var item = jQuery.grep(arr, function(b){
-                    return Number(b.id) == Number (a.id);
+            countArray.forEach(function (a) {
+                var item = jQuery.grep(arr, function (b) {
+                    return Number(b.id) == Number(a.id);
                 })
-                sortOwn.push(item[0]);
-                map.get("RiskOwner").get(i).values = sortOwn;
+                if (item.length > 0){
+                    sortOwn.push(item[0]);
+                    map.get("RiskOwner").get(i).values = sortOwn;
+                }
             });
         }
-        this.owners = map.get("RiskOwner").valArray;
-
-        countArray.sort(function (a, b) {
+         this.owners = map.get("RiskOwner").valArray;
+         countArray.sort(function (a, b) {
             return Number(b.manCount) - Number(a.manCount);
         });
-         for (var i = 5; i > 0; i--){
+        for (var i = 5; i > 0; i--) {
             var manOwn = new Array();
             var arr = map.get("RiskManager").get(i).values;
-            countArray.forEach(function (a){
-                var item = jQuery.grep(arr, function(b){
-                    return Number(b.id) == Number (a.id);
+            countArray.forEach(function (a) {
+                var item = jQuery.grep(arr, function (b) {
+                    return Number(b.id) == Number(a.id);
                 })
-                manOwn.push(item[0]);
-                map.get("RiskManager").get(i).values = manOwn;
+                if (item.length > 0){
+                    manOwn.push(item[0]);
+                    map.get("RiskManager").get(i).values = manOwn;
+                }
             });
         }
         this.managers = map.get("RiskManager").valArray;
@@ -253,21 +256,26 @@ function DataService() {
             "color": "#1c84c6",
             values: new Array()
         });
-
+        
+        
         this.siteUsers.forEach(function (u) {
-            for (var i = 5; i > 0; i--) {
-                ownMap.get(i).values.push({
-                    "label": u.data.display_name,
-                    "value": 0,
-                    "id": u.data.ID
-                });
-                manMap.get(i).values.push({
-                    "label": u.data.display_name,
-                    "value": 0,
-                    "id": u.data.ID
-                });
+             for (var i = 5; i > 0; i--) {
+                if (jQuery.inArray(u.ID, ds.project.ownersID) > -1  || u.ID == ds.project.projectRiskManager ) {
+                    ownMap.get(i).values.push({
+                        "label": u.data.display_name,
+                        "value": 0,
+                        "id": u.data.ID
+                    });
+                }
+                if (jQuery.inArray(u.ID, ds.project.managersID) > -1 || u.ID == ds.project.projectRiskManager  ) {
+                    manMap.get(i).values.push({
+                        "label": u.data.display_name,
+                        "value": 0,
+                        "id": u.data.ID
+                    });
+                }
             }
-        });
+         });
         
         map.put("Categories", new Map());
         var catMap = map.get("Categories");
@@ -296,18 +304,18 @@ function DataService() {
             "color": "#1c84c6",
             "values": new Array()
         });
-        
-        this.catData.forEach(function(c){
-            if (c.primCat){
-            for (var i = 5; i > 0; i--) {
-                catMap.get(i).values.push({
-                    "label": c.title,
-                    "value": 0
-                });
-            } 
+
+        this.catData.forEach(function (c) {
+            if (c.primCat) {
+                for (var i = 5; i > 0; i--) {
+                    catMap.get(i).values.push({
+                        "label": c.title,
+                        "value": 0
+                    });
+                }
             }
         });
-        
+
         map.put("Status", new Map());
         var sMap = map.get("Status");
         sMap.put(5, {
@@ -335,15 +343,27 @@ function DataService() {
             "color": "#1c84c6",
             values: new Array()
         });
-        
+
         for (var i = 5; i > 0; i--) {
-                sMap.get(i).values.push({"label": "Inactive","value": 0, state: -1 });
-                sMap.get(i).values.push({"label": "Active","value": 0, state: 0 });
-                sMap.get(i).values.push({"label": "Pending","value": 0, state: 1 });
+            sMap.get(i).values.push({
+                "label": "Inactive",
+                "value": 0,
+                state: -1
+            });
+            sMap.get(i).values.push({
+                "label": "Active",
+                "value": 0,
+                state: 0
+            });
+            sMap.get(i).values.push({
+                "label": "Pending",
+                "value": 0,
+                state: 1
+            });
         }
 
-        
- //For the undefined
+
+        //For the undefined
         for (var i = 5; i > 0; i--) {
             ownMap.get(i).values.push({
                 "label": "Unassigned",
@@ -363,8 +383,8 @@ function DataService() {
 
         return map;
     }
-    
-        this.getDefaultProject = function () {
+
+    this.getDefaultProject = function () {
         return {
             id: -1,
             title: "Project Title",
@@ -443,7 +463,7 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.registerAudit = function (auditType,auditComment,riskID) {
+    this.registerAudit = function (auditType, auditComment, riskID) {
         return $http({
             method: 'POST',
             url: ajaxurl,
@@ -451,7 +471,11 @@ function RemoteService($http) {
                 action: "registerAudit"
             },
             cache: false,
-            data: {auditType:auditType, auditComment:auditComment,riskID:riskID}
+            data: {
+                auditType: auditType,
+                auditComment: auditComment,
+                riskID: riskID
+            }
         });
     };
     this.getAllProjectRisks = function (projectID, childProjects) {
@@ -462,7 +486,10 @@ function RemoteService($http) {
                 action: "getAllProjectRisks"
             },
             cache: false,
-            data: {projectID:projectID, childProjects:childProjects}
+            data: {
+                projectID: projectID,
+                childProjects: childProjects
+            }
         }).error(function (data, status, headers, config) {
             alert(data.msg);
         });
@@ -680,7 +707,7 @@ function RemoteService($http) {
             cache: false
         });
     };
-    
+
     this.getJSON = function () {
         return $http({
             method: 'POST',
@@ -691,20 +718,24 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.getReportRiskJSON = function (risks,projectID, childProjects) {
-        var data = {risks:risks, projectID:projectID, childProjects:childProjects};
+    this.getReportRiskJSON = function (risks, projectID, childProjects) {
+        var data = {
+            risks: risks,
+            projectID: projectID,
+            childProjects: childProjects
+        };
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
                 action: "getReportRiskJSON",
             },
-            data:JSON.stringify(data),
+            data: JSON.stringify(data),
             cache: false
         });
     };
-    
-    
+
+
     this.newPushDownRisk = function (pushdown) {
         return $http({
             method: 'POST',
@@ -713,7 +744,7 @@ function RemoteService($http) {
                 action: "newPushDown",
             },
             cache: false,
-            data:JSON.stringify(pushdown)
+            data: JSON.stringify(pushdown)
         });
     };
     this.createDummyRiskEntry = function (projectID) {
@@ -724,7 +755,18 @@ function RemoteService($http) {
                 action: "createDummyRiskEntry",
             },
             cache: false,
-            data:JSON.stringify(projectID)
+            data: JSON.stringify(projectID)
+        });
+    };
+    this.createDummyRiskEntries = function (projectID) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "createDummyRiskEntryMultiple",
+            },
+            cache: false,
+            data: JSON.stringify(projectID)
         });
     };
 }

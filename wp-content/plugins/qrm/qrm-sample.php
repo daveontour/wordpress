@@ -308,7 +308,7 @@ class QRMSample {
 		}
 		return true;
 	}
-	static function removeSample($all = true) {
+	static function removeSample($all = false) {
 		$args = array (
 				'posts_per_page' => - 1,
 				'post_type' => 'riskproject' 
@@ -338,6 +338,40 @@ class QRMSample {
 		}
 		return "Sample Data Removed";
 	}
+	static function createDummyRiskEntryMultiple() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+	
+		if ($user_login == "guest") {
+			wp_send_json ( QRM::getGuestObject () );
+			return;
+		}
+	
+		$risk = json_decode ( file_get_contents ( "php://input" ) );
+		$args = array (
+				'post_type' => 'riskproject',
+				'posts_per_page' => - 1
+		);
+		global $post;
+		$the_query = new WP_Query ( $args );
+		$projects = array ();
+		
+		while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+			$risk->projectID = $post->ID;
+			$idx = rand ( 10, 20 );
+			for($i = 0; $i < $idx; $i ++) {
+				QRMSample::createDummyRiskEntryCommon ( $risk, $project );
+			}
+		endwhile
+		;
+		
+		return "OK";
+	
+	}
 	static function createDummyRiskEntry() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -349,28 +383,36 @@ class QRMSample {
 			return;
 		}
 		
-		$risk = json_decode ( file_get_contents ( "php://input" ) );
-		
+		$risk = json_decode ( file_get_contents ( "php://input" ) );	
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 		
+		return QRMSample::createDummyRiskEntryCommon($risk, $project);
+	
+	}
+	
+	static function createDummyRiskEntryCommon($risk, $project) {
+
 		$lorem = new LoremIpsumGenerator ();
+		$now = mktime ();
+		$month = 60 * 60 * 24 * 30;
+		$day = 60 * 60 * 24;
+		$past = (rand ( 0, 1 ) == 1) ? 1 : - 1;
+		$start = $now + $past * rand ( 0, 300 ) * $day;
 		
-		if (in_array ( $current_user->ID, $project->managersID )) {
-			$risk->manager = $current_user->ID;
-		} else {
-			$risk->manager = $project->projectRiskManager;
-		}
-		if (in_array ( $current_user->ID, $project->ownersID )) {
-			$risk->owner = $current_user->ID;
-		} else {
+		
+		$risk->owner = $project->ownersID [array_rand ( $project->ownersID, 1 )];
+		$risk->manager = $project->managersID [array_rand ( $project->managersID, 1 )];	
+		
+		if ($risk->owner == null){
 			$risk->owner = $project->projectRiskManager;
 		}
-		
+		if ($risk->manager == null){
+			$risk->manager = $project->projectRiskManager;
+		}
 		$risk->title = $lorem->getContent ( rand ( 6, 15 ), "plain", false );
 		$risk->description = $lorem->getContent ( rand ( 150, 300 ), "html", false );
 		$risk->cause = $lorem->getContent ( rand ( 50, 300 ), "html", false );
 		$risk->consequence = $lorem->getContent ( rand ( 50, 300 ), "html", false );
-		
 		$risk->treated = rand ( 0, 1 ) == 1;
 		$risk->impRep = rand ( 0, 1 ) == 1;
 		$risk->impSafety = rand ( 0, 1 ) == 1;
@@ -385,13 +427,6 @@ class QRMSample {
 		$risk->mitigation->mitPlanSummary = $lorem->getContent ( rand ( 100, 200 ), "html", false );
 		$risk->mitigation->mitPlanSummaryUpdate = $lorem->getContent ( rand ( 100, 200 ), "html", false );
 		$risk->estContingency = rand ( 1000, 5000 );
-		
-		$now = mktime ();
-		$month = 60 * 60 * 24 * 30;
-		$day = 60 * 60 * 24;
-		$past = (rand ( 0, 1 ) == 1) ? 1 : - 1;
-		$start = $now + $past * rand ( 0, 300 ) * $day;
-		
 		$risk->start = date ( "Y-m-d", $start );
 		$risk->end = date ( "Y-m-d", $start + rand ( 2, 24 ) * $month );
 		

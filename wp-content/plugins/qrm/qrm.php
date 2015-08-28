@@ -2,7 +2,7 @@
 /*** 
  * Plugin Name: Quay Systems Risk Manager 
  * Description: Quay Risk Manager 
- * Version: 2.7.5
+ * Version: 2.7.6
  * Author: Dave Burton
  * License: Commercial
  */
@@ -426,6 +426,14 @@ final class QRM {
 		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::createDummyRiskEntry ()
+		) );
+	}
+	static function createDummyRiskEntryMultiple() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		wp_send_json ( array (
+				"msg" => QRMSample::createDummyRiskEntryMultiple ()
 		) );
 	}
 	static function removeSample() {
@@ -1863,7 +1871,7 @@ final class QuayRiskManager {
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
 		public function activate_au() {
-			$plugin_current_version = '2.7.5';
+			$plugin_current_version = '2.7.6';
 			$plugin_remote_path = 'http://www.quaysystems.com.au/wp-admin/admin-ajax.php?action=getUpdateInfo';
 			$plugin_slug = plugin_basename( __FILE__ );
 			new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug);
@@ -2024,6 +2032,7 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_saveReportOptions", array(QRM, "saveReportOptions"));
 			add_action ( "wp_ajax_getServerMeta", array(QRM, "getServerMeta"));				
 			add_action ( "wp_ajax_createDummyRiskEntry", array(QRM, "createDummyRiskEntry"));				
+			add_action ( "wp_ajax_createDummyRiskEntryMultiple", array(QRM, "createDummyRiskEntryMultiple"));				
 		}
 		public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
 			// Prevent the deletion of any riskproject post that has children projects
