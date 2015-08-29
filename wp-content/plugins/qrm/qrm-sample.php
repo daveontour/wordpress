@@ -381,7 +381,10 @@ class QRMSample {
 		$prob = $lowerlimit + ($upperlimit - $lowerlimit) * ($qprob - floor($qprob));
 		return $prob;
 	}
-	
+	static function make_seed(){
+		list($usec, $sec) = explode(' ', microtime());
+		return (float) $sec + ((float) $usec * 100000);
+	}
 	static function createDummyRiskEntryMultiple() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -402,6 +405,7 @@ class QRMSample {
 		$the_query = new WP_Query ( $args );
 		$projects = array ();
 		
+		srand(QRMSample::make_seed());
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
@@ -435,7 +439,7 @@ class QRMSample {
 	}
 	
 	static function createDummyRiskEntryCommon($risk, $project) {
-
+		srand(QRMSample::make_seed());
 		$lorem = new LoremIpsumGenerator ();
 		$now = mktime ();
 		$month = 60 * 60 * 24 * 30;
