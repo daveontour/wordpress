@@ -340,9 +340,7 @@ class QRMSample {
 	}
 	
 	static function probFromMatrix($qprob, $mat) {
-	
-		// The the risk likelihood parameters to match the matrix settings.
-		$lowerLimit = 0.0;
+			$lowerLimit = 0.0;
 		$upperLimit = 0.0;
 		
 		switch (intval(floor($qprob))) {
