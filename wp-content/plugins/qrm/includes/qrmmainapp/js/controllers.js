@@ -45,12 +45,12 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
                 $('input[name="siteKey"]').val(QRMDataService.siteKey);
                 $('input[name="action"]').val("get_report");
                 $('input[name="id"]').val(m.reportID);
-                $('#getReportForm').attr('action', QRMDataService.reportServerURL, false);
+                $('#getReportForm').attr('action', QRMDataService.reportServerURL+"/report", false);
                 $("#getReportForm").submit();
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            alert("Could connect to report server (1)");
+            alert("Could connect to report server");
         }
     });
 }
@@ -1801,7 +1801,7 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
     }
     
     this.showDummy = function(){
-        if (QRMDataService.siteID == "bep" && QRMDataService.siteKey=="01123581321"){
+        if (QRMDataService.siteID == "bephra" && QRMDataService.siteKey=="0112358132134"){
             return true;
         } else {
             return false;
@@ -2094,7 +2094,7 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
                 name: 'Download',
                 width: 130,
                 field: "id",
-                cellTemplate: '<div><a href="{{grid.appScope.reportServerURL}}?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}" >Download</a></div>',
+                cellTemplate: '<div><a href="{{grid.appScope.reportServerURL}}/report?action=get_report&userEmail={{grid.appScope.userEmail}}&userLogin={{grid.appScope.userLogin}}&siteKey={{grid.appScope.siteKey}}&id={{row.entity.id}}" >Download</a></div>',
                 cellClass: 'cellCentered',
                 headerCellClass: 'cellCentered',
                 enableSorting: false,
@@ -2155,7 +2155,7 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
 
     this.refresh = function () {
 
-        var url = QRMDataService.reportServerURL + "?callback=JSON_CALLBACK&action=get_userreports&userEmail=" + QRMDataService.userEmail + "&userLogin=" + QRMDataService.userLogin + "&siteKey=" + QRMDataService.siteKey + "&siteID=" + QRMDataService.siteID;
+        var url = QRMDataService.reportServerURL + "/report?callback=JSON_CALLBACK&action=get_userreports&userEmail=" + QRMDataService.userEmail + "&userLogin=" + QRMDataService.userLogin + "&siteKey=" + QRMDataService.siteKey + "&siteID=" + QRMDataService.siteID;
         $http.jsonp(url)
             .success(function (data) {
                 if (data.error) {
@@ -2172,7 +2172,7 @@ function ReportArchiveController($scope, QRMDataService, $state, remoteService, 
     }
 
     $scope.removeReport = function () {
-        var url = QRMDataService.reportServerURL + "?callback=JSON_CALLBACK&action=remove_report&id=" + $scope.reportReqID + "&userEmail=" + QRMDataService.userEmail + "&userLogin=" + QRMDataService.userLogin + "&siteKey=" + QRMDataService.siteKey + "&siteID=" + QRMDataService.siteID;
+        var url = QRMDataService.reportServerURL + "/report?callback=JSON_CALLBACK&action=remove_report&id=" + $scope.reportReqID + "&userEmail=" + QRMDataService.userEmail + "&userLogin=" + QRMDataService.userLogin + "&siteKey=" + QRMDataService.siteKey + "&siteID=" + QRMDataService.siteID;
         $http.jsonp(url)
             .success(function (data) {
                 if (data.error) {

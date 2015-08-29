@@ -308,7 +308,7 @@ class QRMSample {
 		}
 		return true;
 	}
-	static function removeSample($all = false) {
+	static function removeSample($all = true) {
 		$args = array (
 				'posts_per_page' => - 1,
 				'post_type' => 'riskproject' 
@@ -338,6 +338,52 @@ class QRMSample {
 		}
 		return "Sample Data Removed";
 	}
+	
+	static function probFromMatrix($qprob, $mat) {
+	
+		// The the risk likelihood parameters to match the matrix settings.
+		$lowerLimit = 0.0;
+		$upperLimit = 0.0;
+		
+		switch (intval(floor($qprob))) {
+			case 1:
+				$lowerlimit = 0.0;
+				$upperlimit = $mat->probVal1;
+				break;
+			case 2:
+				$lowerlimit = $mat->probVal1;
+				$upperlimit = $mat->probVal2;
+				break;
+			case 3:
+				$lowerlimit = $mat->probVal2;
+				$upperlimit = $mat->probVal3;
+				break;
+			case 4:
+				$lowerlimit = $mat->probVal3;
+				$upperlimit = $mat->probVal4;
+				break;
+			case 5:
+				$lowerlimit = $mat->probVal4;
+				$upperlimit = $mat->probVal5;
+				break;
+			case 6:
+				$lowerlimit = $mat->probVal5;
+				$upperlimit = $mat->probVal6;
+				break;
+			case 7:
+				$lowerlimit = $mat->probVal6;
+				$upperlimit = $mat->probVal7;
+				break;
+			case 8:
+				$lowerlimit = $mat->probVal7;
+				$upperlimit = $mat->probVal8;
+				break;
+		}
+	
+		$prob = $lowerlimit + ($upperlimit - $lowerlimit) * ($qprob - floor($qprob));
+		return $prob;
+	}
+	
 	static function createDummyRiskEntryMultiple() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -461,6 +507,8 @@ class QRMSample {
 		$risk->inherentImpact = $i + rand ( 5, 95 ) / 100;
 		$risk->treatedProb = rand ( 1, $p - 1 ) + rand ( 5, 95 ) / 100;
 		$risk->treatedImpact = rand ( 1, $i - 1 ) + rand ( 5, 95 ) / 100;
+ 		$risk->inherentAbsProb = QRMSample::probFromMatrix($risk->inherentProb, $project->matrix);
+ 		$risk->treatedAbsProb = QRMSample::probFromMatrix($risk->treatedProb, $project->matrix);
 		
 		$index = (floor ( $risk->treatedProb - 1 )) * $project->matrix->maxImpact + floor ( $risk->treatedImpact - 1 );
 		$index = min ( $index, strlen ( $project->matrix->tolString ) - 1 );
