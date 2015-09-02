@@ -13,6 +13,7 @@
 		var pluginurl = '<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/" ?>';
 		var postID = <?php echo $post->ID ?>;
 		var lostPasswordURL = '<?php echo wp_lostpassword_url(); ?>';
+		var siteURL = '<?php echo site_url(); ?>';
 		var postType = '<?php if ($type){
 							echo $type;
 		} else {

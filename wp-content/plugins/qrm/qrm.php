@@ -2,7 +2,7 @@
 /*** 
  * Plugin Name: Quay Systems Risk Manager 
  * Description: Quay Risk Manager 
- * Version: 2.7.7
+ * Version: 2.8.0
  * Author: Dave Burton
  * License: Commercial
  */
@@ -420,6 +420,14 @@ final class QRM {
 				"msg" => QRMSample::installSample ()
 		) );
 	}
+	static function installSampleProjects() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		wp_send_json ( array (
+				"msg" => QRMSample::createSampleProjects()
+		) );
+	}
 	static function createDummyRiskEntry() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -440,8 +448,9 @@ final class QRM {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		$all = json_decode ( file_get_contents ( "php://input" ) );
 		wp_send_json ( array (
-				"msg" => QRMSample::removeSample ()
+				"msg" => QRMSample::removeSample ($all)
 		) );
 	}
 	static function login() {
@@ -1685,7 +1694,7 @@ final class QRM {
 		update_post_meta ( $postID, "projectCode", $project->projectCode );
 		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
-		update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
+		update_post_meta ( $postID, "maxImpact", $project->matrix->maxImpact );
 
 		// Update number of risk
 		// Update the count for riskd for the impacted project
@@ -1860,9 +1869,9 @@ final class QuayRiskManager {
 			add_action('init', array ($this,'qrm_init_user_cap' ));
 			
 			
-			add_option("qrm_siteKey", "93182129");
+//			add_option("qrm_siteKey", "93182129");
 			add_option("qrm_siteName", "Quay Risk Manager Site");
-			add_option("qrm_siteID", "QRMSiteUnregistered");
+//			add_option("qrm_siteID", "QRMSiteUnregistered");
 			add_option("qrm_reportServerURL", "http://report.quaysystems.com.au:8080");
 			
 			$this->activate_au();
@@ -1871,7 +1880,7 @@ final class QuayRiskManager {
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
 		public function activate_au() {
-			$plugin_current_version = '2.7.7';
+			$plugin_current_version = '2.8.0';
 			$plugin_remote_path = 'http://www.quaysystems.com.au/wp-admin/admin-ajax.php?action=getUpdateInfo';
 			$plugin_slug = plugin_basename( __FILE__ );
 			new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug);
@@ -2024,6 +2033,7 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_checkSession", array (QRM,"checkSession") );
 			add_action ( "wp_ajax_newPushDown", array (QRM,"newPushDown" ) );
 			add_action ( "wp_ajax_installSample", array (QRM,"installSample") );
+			add_action ( "wp_ajax_installSampleProjects", array (QRM,"installSampleProjects") );
 			add_action ( "wp_ajax_removeSample", array (QRM,"removeSample" ) );
 			add_action ( "wp_ajax_downloadJSON", array (QRM,"downloadJSON" ) );
 			add_action ( "wp_ajax_getJSON", array (QRM,"downloadJSON" ) );

@@ -1,12 +1,12 @@
 <div id="explorer-wrapper" class="container-fluid hidden-qrm">
     <div class="col-sm-12 col-md-12 col-lg-10  col-lg-offset-1">
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-15" style="padding-right:0px;">
-                <div style="float:right">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-15" style="padding-left:0px;">
+                <div style="float:left">
                     <table>
                         <tr>
                             <td style="padding-right:10px">
-                                <label class="control-label">Select Project: </label>
+                                <label class="control-label">Project: </label>
                             </td>
                             <td>
                                 <ui-select ng-model="exp.project" theme="selectize" search-enabled=false on-select="exp.projectSelect($item, $model)" style="width:400px;">
@@ -122,6 +122,13 @@
                             <select ng-model="exp.filterOptions.manager" ng-options="person as (person | usernameFilter)  for person in exp.project.managersID" class="form-control"></select>
                         </div>
                     </form>
+                </div>
+                
+                <div class="pull-right hidden-xs hidden-sm hidden-md" style="padding:left:20px">
+                    <div style="text-align:center">
+                    <h1 style="font-size:20px;letter-spacing:0;margin-top:30px" class="logo-name">Quay Risk Manager</h1>
+                    <h1 style="font-size:18px;letter-spacing:0;margin-top:5px" class="logo-name">{{siteName}}</h1>
+                    </div>
                 </div>
 
             </div>

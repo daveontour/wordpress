@@ -2,18 +2,38 @@ function SampleController($scope, remoteService, ngNotify) {
     
     var samp = this; 
     $scope.installSample = function () {
+    	
         remoteService.installSample()
             .then(function (response) {
                 alert(response.data.msg);
             });
     }
-    $scope.removeSample = function () {
-        remoteService.removeSample()
+    $scope.installSampleProjects = function () {
+    	debugger;
+    	alert("Installing Sample Data. (takes a while)");
+        remoteService.installSampleProjects()
             .then(function (response) {
-                alert(response.data.msg);
+            	alert(response.data.msg);
             });
     }
-    
+    $scope.removeSample = function () {
+    	alert("Removing Sample Data");
+        remoteService.removeSample(false)
+            .then(function (response) {
+            	alert(response.data.msg);
+            });
+    }
+
+    $scope.removeAllData = function () {
+    	var r = confirm("Press confirm you wish to remove all the data from Quay Risk Manager");
+    	if (r == true) {
+        	alert("Removing All Data");
+            remoteService.removeSample(true)
+            .then(function (response) {
+               	alert(response.data.msg);
+            });
+    	} 
+    }
     this.downloadJSON = function () {
         $("body").append("<iframe src='" + ajaxurl + "?action=downloadJSON' style='display: none;' ></iframe>");
     }
@@ -72,17 +92,8 @@ function SampleController($scope, remoteService, ngNotify) {
                     file.previewElement.classList.add('dz-complete');
                     samp.cancelUpload();
                     alert("File Imported");
-//                    ngNotify.set("Attachment added to risk", "success");
-//                    remoteService.getAttachments(vm.riskID)
-//                        .then(function (response) {
-//                            vm.risk.attachments = response.data;
-//                        });
                 });
             },
-//            sending: function (file, xhr, formData) {
-//                formData.append("postID", QRMDataService.riskID);
-//                formData.append("description", vm.uploadAttachmentDescription);
-//            }
         },
     };
 }
@@ -273,13 +284,24 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
-    this.removeSample = function () {
+    this.installSampleProjects = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "installSampleProjects"
+            },
+            cache: false
+        });
+    };
+    this.removeSample = function (all) {
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
                 action: "removeSample"
             },
+            data:all,
             cache: false
         });
     };

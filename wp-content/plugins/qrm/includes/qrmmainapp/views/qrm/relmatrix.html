@@ -62,6 +62,16 @@
             <div class="pull-right">
                 <button type="button" class="btn btn-w-m btn-warning" ng-click="relMatrix.cancelChanges()">Cancel Changes</button>
             </div>
+            <div class="dropup pull-right" style="display:inline;margin-right:20px">
+                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
+                Reports<span class="caret"></span>
+            </a>
+                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li ng-repeat="r in qrmctrl.reports | filter:{showRelMatrix:true}">
+                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

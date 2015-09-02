@@ -58,21 +58,39 @@ function qrm_woocommerce_payment_complete($order_id) {
 	
 	$items = $order->get_items ();
 	
+	$orderStatus = 'completed';
 	foreach ( $items as $item ) {
-		if ($item ["item_meta"] ["Site Key"]) {
-			$response = wp_remote_post ( "http://localhost:8080/order?action=neworder", array (
+		
+		$_pf = new WC_Product_Factory();
+		$_product = $_pf->get_product(intval($item ["item_meta"] ["_product_id"][0]));
+		$sku = $_product->get_sku();
+
+		
+		if ($sku == "RPS001") {
+			$response = wp_remote_post ( "http://localhost:8080/order?action=new30dayorder", array (
 					'body' => array (
 							'orderID' => $order_id,
 							'orderEmail' => $order->billing_email,
 							'siteID' => $item ["item_meta"] ["Site ID"] [0],
-							'siteKey' => $item ["item_meta"] ["Site Key"] [0] 
+							'siteKey' => $item ["item_meta"] ["Site Key"] [0]
 					) 
 			) );
-			if ($response ["body"] == "ok") {
-				$order->update_status ( 'completed' );
+			
+			if(is_wp_error($response)){
+//				$order->update_status ( 'processing' );
+				$orderStatus = "processing";
+			} else {
+				if ($response ["body"] == "ok") {
+					//$order->update_status ( 'completed' );
+					// Leave order status un changed
+				} else {
+//					$order->update_status ( 'processing' );
+					$orderStatus = "processing";
+				}
 			}
 		}
 	}
+	$order->update_status ( $orderStatus );
 }
 add_action ( 'woocommerce_payment_complete', 'qrm_woocommerce_payment_complete' );
 function getSiteKeyString($length = 8) {
