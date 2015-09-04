@@ -43,7 +43,6 @@
                         <riskmat treated="true"></riskmat>
                     </div>
                 </div>
-
                 <div class="form-group pull-left" style="margin-left:15px;margin-top:5px">
                     <form method="get" class="form-horizontal">
                         <div>
@@ -101,7 +100,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="form-group" style="float:left;margin-left:15px;margin-top:5px">
                     <form method="get" class="form-horizontal">
                         <label class=" control-label">Exposure</label>
@@ -123,25 +121,19 @@
                         </div>
                     </form>
                 </div>
-                
                 <div class="pull-right hidden-xs hidden-sm hidden-md" style="padding:left:20px">
                     <div style="text-align:center">
                     <h1 style="font-size:20px;letter-spacing:0;margin-top:30px" class="logo-name">Quay Risk Manager</h1>
                     <h1 style="font-size:18px;letter-spacing:0;margin-top:5px" class="logo-name">{{siteName}}</h1>
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
             <div style="clear:both;padding-left:0px;padding-right:0px" class="col-lg-12">
                 <div style="width:100%; text-align:right">
                     <div class="dropdown" style="display:inline">
-                        <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
-                Action <span class="caret"></span>
-            </a>
-                        
-
+                        <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Action <span class="caret"></span></a>
                         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                             <li><a ng-click="exp.newPushDownRisk()" href="#">New 'Push Down' Risk</a></li>
                             <li class="divider"></li>
@@ -151,23 +143,6 @@
                                     <li ng-repeat="r in qrmctrl.reports | filter:{showRiskExplorer:true}">
                                         <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
                                     </li>
-<!--
-                                    <li><a tabindex="-1" href="#">Second level</a>
-                                    </li>
-                                    <li class="dropdown-submenu">
-                                        <a href="#">Even More..</a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">3rd level</a>
-                                            </li>
-                                            <li><a href="#">3rd level</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Second level</a>
-                                    </li>
-                                    <li><a href="#">Second level</a>
-                                    </li>
--->
                                 </ul>
                             </li>
                         </ul>
@@ -193,7 +168,6 @@
         </p>
     </div>
 </div>
-
 <div ng-show="savingrisk" id="target2" class="loading">
     <div class="loading-overlay">
         <p class="loading-spinner">

@@ -1,37 +1,80 @@
-<div class="container-fluid" style="height:100vh">
+<div class="container-fluid">
     <div>
-        <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" style="padding-left:5px;padding-right:5px">
+        <div class="col-md-12  col-lg-10 col-lg-offset-1" style="padding-left:0px;padding-right:0px">
             <div>
                 <div class="pull-left">
-                    <h3 style="display:inline;font-weight:normal">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
+                    <h3 style="display:inline;font-weight:normal;margin-top:5px">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
                 </div>
                 <div class="pull-right">
-                    <div class="btn-group" dropdown>
-                        <button type="button" class="btn btn-info">Action</button>
-                        <button type="button" style="margin-right:5px" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                            <span class="caret"></span>
-                            <span class="sr-only">Split button!</span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a>
-                            </li>
-                            <li><a href="#">Another action</a>
-                            </li>
-                            <li><a href="#">Something else here</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="rev.saveReview()">Save Changes</button>
-                    <button type="button" class="btn btn-w-m btn-warning" ng-click="rev.cancelReview()">Review Explorer</button>
+                    <button type="button" style="margin-right:5px;margin-top:5px" class="btn btn-w-m btn-primary" ng-click="rev.saveReview()">Save Changes</button>
+                    <button type="button" style="margin-top:5px" class="btn btn-w-m btn-warning" ng-click="rev.cancelReview()">Review Explorer</button>
                 </div>
             </div>
         </div>
-        <div class="col-md-10 col-md-offset-1 col-lg-8  col-lg-offset-2" style="clear:both">
+        <div class="col-md-12  col-lg-10 col-lg-offset-1" style="clear:both">
             <div class="row">
-                <div class="col-lg-12" style="margin-top:5px">
+                <div style="width:100%;margin-top:5px">
+                                        <div class="panel panel-review">
+                        <div class="panel-heading">Risks Under Review</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <form>
+                                    <div class="form-group" style="margin-bottom:0px">
+                                        <label class="col-sm-3 control-label" style="margin-top:12px;text-align:right">Risks</label>
+                                        <div class="col-sm-6">
+                                            <select ng-model="incident.riskID" ng-change="rev.addRisk()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks" class="form-control"></select>
+                                        </div>
+                                        <label class="col-sm-3 control-label" style="margin-top:12px;clear:both;text-align:right">All Risks from Project</label>
+                                        <div class="col-sm-6" style="margin-top:5px">
+                                            <ui-select ng-model="rev.projectID" on-select="rev.addProjectRisk()" theme="selectize" search-enabled=true >
+                                                <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
+                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="project.id as project in rev.sortedParents track by project.id">
+                                                    <div ng-style="rev.rowStyle(project)">
+                                                        <span ng-bind-html="project.title"></span>
+                                                    </div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div style="margin-top:10px">
+                                <div ng-show="rev.review.risks.length > 0" style="max-height:200px;overflow:auto;border-style:solid;border-width:1px;border-color:lightgray">
+                                    <table class="table table-striped" style="width:100%;max-height:200px">
+                                        <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
+                                            <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
+                                                <strong>{{risk|riskCodeFilter}}</strong>
+                                            </td>
+                                            <td style="padding-bottom:5px;padding-left:5px">
+                                                {{risk|riskTitleFilter}}
+                                                <div style="font-size:8pt;margin-top:0.5em">
+                                                    <div ng-bind-html="rev.getRiskComment(risk)"></div>
+                                                </div>
+                                            </td>
+                                            <td style="width:200px;padding-right:0px">
+                                                <button type="button" ng-click="rev.riskComment(risk)" class="btn btn-info btn-xs" style="margin-right:5px">Comment</button>
+                                                <button type="button" ng-click="rev.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
+                                            </td>
+
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div style="clear:both">
+                                <form ng-show="rev.review.risks.length > 0">
+                                    <div class="form-group" style="margin-top:10px">
+                                        <label class="col-sm-3 control-label" style="min-height:67px;margin-top:5px;padding-top:3px;padding-bottom:3px;background-color:lightgray;text-align:right">All Risk Comment</label>
+                                        <div class="col-sm-9" style="font-size:9pt;margin-top:5px;padding-top:3px;background-color:lightgray">
+                                            <textarea style="height:60px;width:400px" ng-model="rev.commonComment"></textarea>
+                                            <button type="button" ng-click="rev.addCommonRiskComment()" class="btn btn-info btn-xs" style="margin-right:5px;margin-left:10px;vertical-align:top">Comment All</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
                     <div class="panel panel-review">
                         <div class="panel-heading">Purpose
                             <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="rev.openDescriptionEditor()"></i>
@@ -94,76 +137,6 @@
                         <div class="panel-body">
                             <p ng-bind-html="rev.review.notes"></p>
                         </div>
-                    </div>
-                    <div class="panel panel-review">
-                        <div class="panel-heading">Risks Under Review</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <form>
-                                    <div class="form-group" style="margin-bottom:0px">
-                                        <label class="col-sm-3 control-label" style="margin-top:12px;text-align:right">Risks</label>
-
-                                        <div class="col-sm-9" style="margin-top:5px">
-                                            <ui-select ng-model="rev.riskID" on-select="rev.addRisk()" theme="select2" search-enabled=true style="width:400px">
-                                                <ui-select-match allow-clear=false placeholder="Select Review Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
-                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="risk.id as risk in main.risks track by risk.id">
-                                                    <div style="width:100px;display:inline-block;font-weight:bold">{{risk.riskProjectCode}}</div>
-                                                    <div style="display:inline">{{risk.title}}</div>
-                                                </ui-select-choices>
-                                            </ui-select>
-                                        </div>
-
-                                        <label class="col-sm-3 control-label" style="margin-top:12px;clear:both;text-align:right">All Risks from Project</label>
-
-                                        <div class="col-sm-9" style="margin-top:5px">
-                                            <ui-select ng-model="rev.projectID" on-select="rev.addProjectRisk()" theme="select2" search-enabled=true style="width:400px">
-                                                <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
-                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="project.id as project in rev.sortedParents track by project.id">
-                                                    <div ng-style="rev.rowStyle(project)">
-                                                        <span ng-bind-html="project.title"></span>
-                                                    </div>
-                                                </ui-select-choices>
-                                            </ui-select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <div style="margin-top:10px">
-                                <div ng-show="rev.review.risks.length > 0" style="max-height:200px;overflow:auto;border-style:solid;border-width:1px;border-color:lightgray">
-                                    <table class="table table-striped" style="width:100%;max-height:200px">
-                                        <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
-                                            <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
-                                                <strong>{{risk|riskCodeFilter}}</strong>
-                                            </td>
-                                            <td style="padding-bottom:5px;padding-left:5px">
-                                                {{risk|riskTitleFilter}}
-                                                <div style="font-size:8pt;margin-top:0.5em">
-                                                    <div ng-bind-html="rev.getRiskComment(risk)"></div>
-                                                </div>
-                                            </td>
-                                            <td style="width:200px;padding-right:0px">
-                                                <button type="button" ng-click="rev.riskComment(risk)" class="btn btn-info btn-xs" style="margin-right:5px">Comment</button>
-                                                <button type="button" ng-click="rev.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
-                                            </td>
-
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div style="clear:both">
-                                <form ng-show="rev.review.risks.length > 0">
-                                    <div class="form-group" style="margin-top:10px">
-                                        <label class="col-sm-3 control-label" style="min-height:67px;margin-top:5px;padding-top:3px;padding-bottom:3px;background-color:lightgray;text-align:right">All Risk Comment</label>
-                                        <div class="col-sm-9" style="font-size:9pt;margin-top:5px;padding-top:3px;background-color:lightgray">
-                                            <textarea style="height:60px;width:400px" ng-model="rev.commonComment"></textarea>
-                                            <button type="button" ng-click="rev.addCommonRiskComment()" class="btn btn-info btn-xs" style="margin-right:5px;margin-left:10px;vertical-align:top">Comment All</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
                     </div>
                     <div ng-show="rev.review.id > 0">
                         <div class="panel panel-review">
@@ -230,8 +203,8 @@
                             </div>
                     </div>
                 </div>
-            </div>            
-        </div>
+                </div>            
+            </div>
     </div>
 </div>
 

@@ -3039,7 +3039,7 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
         rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                width: "100",
+                width: "180",
                 cellClass: 'compact',
                 field: 'incidentCode',
                 headerCellClass: 'header-hidden',
@@ -3114,7 +3114,8 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
                     QRM.mainController.noIncidentsFound();
                 }
             }).finally(function () {
-
+                var winWidth = $(document).width() - 10;
+                $("#container").css("width", winWidth + "px");
             });
     }
 
@@ -3391,7 +3392,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
         rowTemplate: '<div ng-click="grid.appScope.editReview(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                width: "100",
+                width: "150",
                 cellClass: 'compact',
                 field: 'reviewCode',
                 headerCellClass: 'header-hidden',
@@ -3495,6 +3496,9 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                 }
             }).finally(function () {
                 review.loading = false;
+                var winWidth = $(document).width() - 10;
+                $("#container").css("width", winWidth + "px");
+
             });
     }
 

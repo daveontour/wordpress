@@ -735,6 +735,29 @@ function RemoteService($http) {
         });
     };
 
+        this.getReportIncidentJSON = function (incidents) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReportIncidentJSON",
+            },
+            data: JSON.stringify(incidents),
+            cache: false
+        });
+    };
+    
+            this.getReportReviewJSON = function (reviews) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReportReviewJSON",
+            },
+            data: JSON.stringify(reviews),
+            cache: false
+        });
+    };
 
     this.newPushDownRisk = function (pushdown) {
         return $http({

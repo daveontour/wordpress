@@ -2233,7 +2233,25 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
         this.loadGrid();
     }
 
+    $scope.getMyCtrlScope = function () {
+        return $scope;
+    }
 
+
+    $scope.riskReport = function (reportID) {
+       if ($scope.reportReqID < 0) return;
+        QRM.mainController.notify("Assembling Data for Report", 5000);
+        remoteService.getReportRiskJSON([], QRMDataService.project.id, false)
+            .then(function (response) {
+                QRM.mainController.notify("Sending Data for Processing", 5000);
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="action"]').val("execute_report");
+                $('input[name="reportID"]').val($scope.reportReqID);
+                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                $("#reportForm").submit();
+                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            })
+    }
     this.loadGrid = function () {
         QRM.mainController.titleBar = "Risk Ranking - " + QRMDataService.project.title;
         remoteService.getAllProjectRisks(QRMDataService.project.id, rank.childProjects)
@@ -3280,7 +3298,7 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
         rowTemplate: '<div ng-click="grid.appScope.editIncident(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                width: "100",
+                width: "150",
                 cellClass: 'compact',
                 field: 'incidentCode',
                 headerCellClass: 'header-hidden',
@@ -3343,6 +3361,10 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
     ]
     };
     this.init = function () {
+        
+        var winWidth = $(window).innerWidth() - 10;
+        $("#container").css("width", winWidth + "px");
+
         QRM.mainController.titleBar = "Incidents";
         QRM.mainController.lookingForIncidents();
         remoteService.getAllIncidents()
@@ -3382,6 +3404,24 @@ function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, 
     this.newIncident = function () {
         QRMDataService.incidentID = -1;
         $state.go('qrm.incident');
+    }
+    
+    $scope.getMyCtrlScope = function () {
+        return $scope;
+    }
+    $scope.incidentReport = function (reportID) {
+       if ($scope.reportReqID < 0) return;
+        QRM.mainController.notify("Assembling Data for Report", 5000);
+        remoteService.getReportIncidentJSON([])
+            .then(function (response) {
+                QRM.mainController.notify("Sending Data for Processing", 5000);
+                $('input[name="reportData"]').val(JSON.stringify(response.data));
+                $('input[name="action"]').val("execute_report");
+                $('input[name="reportID"]').val($scope.reportReqID);
+                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                $("#reportForm").submit();
+                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            })
     }
     this.init();
 }
@@ -3442,20 +3482,20 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
     };
 
     this.addRisk = function () {
+        debugger;
         if (typeof (inc.incident.risks) == "undefined") {
             inc.incident.risks = [];
         }
-        if (inc.riskID != null) {
-            inc.incident.risks.push(inc.riskID);
+        if (inc.risk.id != null) {
+            debugger;
+            inc.incident.risks.push(inc.risk.id);
             var unq = [];
             $.each(inc.incident.risks, function (i, el) {
                 if (($.inArray(el, unq) == -1) && (el != null)) unq.push(el);
             });
             inc.incident.risks = unq
-
-            inc.incident.risks.sort(SortByProjectCode);
         }
-        inc.riskID = null;
+        inc.risk = null;
     }
     this.removeRisk = function (riskID) {
         inc.incident.risks = jQuery.grep(inc.incident.risks, function (value) {
@@ -3650,7 +3690,7 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
         rowTemplate: '<div ng-click="grid.appScope.editReview(row.entity.id)" style="cursor:pointer" ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }"  ui-grid-cell></div>',
         columnDefs: [
             {
-                width: "100",
+                width: "150",
                 cellClass: 'compact',
                 field: 'reviewCode',
                 headerCellClass: 'header-hidden',
@@ -3741,6 +3781,9 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
     }
 
     this.init = function () {
+         var winWidth = $(window).innerWidth() - 10;
+         $("#container").css("width", winWidth + "px");
+
         QRM.mainController.titleBar = "Reviews";
         QRM.mainController.lookingForReviews();
         remoteService.getAllReviews()

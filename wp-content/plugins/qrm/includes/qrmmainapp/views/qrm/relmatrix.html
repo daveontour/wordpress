@@ -6,8 +6,7 @@
                     <div class="form-group">
                         <label class="control-label">Locate Risk:</label>
                         <div>
-                            <select ng-model="relMatrix.selectedRisk" ng-change="relMatrix.riskSelect()" ng-options="'Risk '+risk.id+' - '+risk.title for risk in relMatrix.risks" class="form-control"></select>
-
+                            <select ng-model="relMatrix.selectedRisk" ng-change="relMatrix.riskSelect()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in relMatrix.risks" class="form-control"></select>
                         </div>
                         <label class="control-label">Risk Owner:</label>
                         <div>
@@ -45,7 +44,6 @@
                     <div style='valign:top;'>
                         <br>
                         <strong> {{relMatrix.riskProjectCode}} -  {{relMatrix.title}} <br><br>Description:<br></strong> <small ng-bind-html="relMatrix.description"></small>
-
                     </div>
                 </div>
             </div>

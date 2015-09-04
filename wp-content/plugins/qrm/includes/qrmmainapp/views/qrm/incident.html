@@ -1,35 +1,15 @@
-<div class="container-fluid" style="100vh">
-    <div>
-        <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" style="padding-left:5px;padding-right:5px">
-            <div >
-                <div  class="pull-left">
-                    <h3 style="display:inline;font-weight:normal">{{incident.incident.incidentCode}} - {{incident.incident.title}}</h3>
-                </div>
+<div class="container-fluid">
+    <div class="row" style="padding-left:0px;padding-right:0px;clear:left">
+        <div class="col-md-12  col-lg-10 col-lg-offset-1" style="padding-left:5px;padding-right:5px">
+            <div>
+                <div class="pull-left"><h3 style="display:inline;font-weight:normal;margin-top:5px">{{incident.incident.incidentCode}} - {{incident.incident.title}}</h3></div>
                 <div class="pull-right">
-                        <div class="btn-group" dropdown>
-                            <button type="button" class="btn btn-info">Action</button>
-                            <button type="button" style="margin-right:5px" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                                <span class="caret"></span>
-                                <span class="sr-only">Split button!</span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Action</a>
-                                </li>
-                                <li><a href="#">Another action</a>
-                                </li>
-                                <li><a href="#">Something else here</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <button type="button" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="incident.saveIncident()">Save Changes</button>
-                        <button type="button" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Incident Explorer</button>
+                    <button type="button" style="margin-right:5px;margin-top:5px" class="btn btn-w-m btn-primary" ng-click="incident.saveIncident()">Save Changes</button>
+                    <button type="button" style="margin-top:5px" class="btn btn-w-m btn-warning" ng-click="incident.cancelIncident()">Incident Explorer</button>
                 </div>
             </div>
         </div>
-        <div  style="height: calc(100vh - 145px)" class="col-md-10 col-md-offset-1 col-lg-8  col-lg-offset-2" style="clear:both">
+        <div class="col-md-12  col-lg-10  col-lg-offset-1" style="clear:both">
             <div class="row">
                 <div class="col-lg-12" style="margin-top:5px">
                     <div class="panel panel-incident">
@@ -59,7 +39,7 @@
                                         <div class="controls">
                                             <label class="col-sm-3 control-label" style="margin-top:5px">Reported By</label>
                                             <div class="col-sm-9" style="margin-top:5px">
-                                                <select  style="max-width:300px" ng-model="incident.incident.reportedby" ng-options="(person | usernameFilter) for person in incident.siteUsers" class="form-control"></select>
+                                                <select style="max-width:300px" ng-model="incident.incident.reportedby" ng-options="(person | usernameFilter) for person in incident.siteUsers" class="form-control"></select>
 
                                             </div>
                                             <label class="col-sm-3 control-label">Incident Resolved</label>
@@ -70,9 +50,43 @@
                                             </div>
                                         </div>
 
-                                </form>
+                                        <label class="col-sm-3 control-label">Areas of Impact</label>
+                                        <div class="col-sm-9">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.time"> Time </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="checkbox-inline">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.environment"> Environment</label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="checkbox-inline">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.cost"> Cost </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label class="checkbox-inline" style="padding-left:0px">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.safety"> Huamn Safety </label>
+                                                    </td>
 
-                                </div>
+                                                    <td>
+                                                        <label class="checkbox-inline">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.spec"> Specification </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="checkbox-inline">
+                                                            <input icheck type="checkbox" ng-model="incident.incident.reputation"> Reputation </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -85,53 +99,18 @@
                             <p ng-bind-html="incident.incident.actions"></p>
                         </div>
                     </div>
-                    <div class="panel panel-incident">
-                        <div class="panel-heading">Risks Impacted</div>
-                        <div class="panel-body">
-                            <div style="text-align:right">
-                                <label class="col-sm-3 control-label" style="margin-top:12px">Risk Impacted</label>
-                            </div>
-                            <div class="col-sm-9" style="margin-top:5px">
-                                <ui-select ng-model="incident.riskID" on-select="incident.addRisk()" theme="select2" search-enabled=true style="width:400px">
-                                    <ui-select-match allow-clear=false placeholder="Select Impacted Risk...">{{($select.selected.title == null)?"Select Impacted Risk":$select.selected.riskProjectCode+" - "+$select.selected.title}}</ui-select-match>
-                                    <ui-select-choices style="color:rgb(103,106,108)" repeat="risk.id as risk in main.risks track by risk.id">
-                                        <div style="width:100px;display:inline-block;font-weight:bold">{{risk.riskProjectCode}}</div>
-                                        <div style="display:inline">{{risk.title}}</div>
-                                    </ui-select-choices>
-                                </ui-select>
-                            </div>
 
-                            <div class="col-sm-12" style="margin-top:10px">
-                                <table class="table table-striped" style="width:100%;">
-                                    <tr ng-repeat="risk in incident.incident.risks" style="margin-top:15px">
-                                        <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
-                                            <strong>{{risk|riskCodeFilter}}</strong>
-                                        </td>
-                                        <td style="padding-bottom:5px;padding-left:5px;width:100%">
-                                            {{risk|riskTitleFilter}}
-                                        </td>
-                                        <td>
-                                            <button type="button" ng-click="incident.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
-                                        </td>
-                                    </tr>
-                                    </tr>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
                     <div class="panel panel-incident">
                         <div class="panel-heading">Lesson Learnt
                             <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="incident.openLessonsEditor()"></i>
                             </div>
-
                         </div>
                         <div class="panel-body">
                             <p ng-bind-html="incident.incident.lessons"></p>
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">Assessment</label>
-                                    <div class="col-sm-10">
+                                    <label class="col-xs-4 col-sm-3 control-label">Assessment</label>
+                                    <div class="col-xs-8 col-sm-9">
                                         <table>
                                             <tr>
                                                 <td>
@@ -159,15 +138,42 @@
                                                     <label class="checkbox-inline" style="padding-left:0px">
                                                         <input icheck type="checkbox" ng-model="incident.incident.causes"> Causes Identified </label>
                                                 </td>
-                                                <td>
-
-                                                </td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
 
                             </form>
+                        </div>
+                    </div>
+                    <div class="panel panel-incident">
+                        <div class="panel-heading">Risks Impacted</div>
+                        <div class="panel-body">
+                            <div style="text-align:right">
+                                <label class="col-sm-3 control-label" style="margin-top:12px">Risk Impacted</label>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <select ng-model="incident.risk" ng-change="incident.addRisk()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks" class="form-control"></select>
+                            </div>
+
+                            <div class="col-sm-12" style="margin-top:10px">
+                                <table class="table table-striped" style="width:100%;">
+                                    <tr ng-repeat="risk in incident.incident.risks" style="margin-top:15px">
+                                        <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
+                                            <strong>{{risk|riskCodeFilter}}</strong>
+                                        </td>
+                                        <td style="padding-bottom:5px;padding-left:5px;width:100%">
+                                            {{risk|riskTitleFilter}}
+                                        </td>
+                                        <td>
+                                            <button type="button" ng-click="incident.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
+                                        </td>
+                                    </tr>
+                                    </tr>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
                 </div>

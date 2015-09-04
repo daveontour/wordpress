@@ -12,6 +12,16 @@
                 <button type="button" class="btn btn-w-m btn-primary" style="margin-right:5px" ng-click="rank.saveChanges()">Save Changes</button>
                 <button type="button" class="btn btn-w-m btn-warning" ng-click="rank.cancelChanges()">Cancel Changes</button>
             </div>
+                        <div class="dropup pull-right" style="display:inline;margin-right:10px">
+                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
+                Reports<span class="caret"></span>
+            </a>
+                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li ng-repeat="r in qrmctrl.reports | filter:{showRank:true}">
+                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

@@ -1,35 +1,26 @@
 <div id="review-wrapper" class="container-fluid" style="padding-left:5px;padding-right:5px">
-    <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+    <div class="col-md-12 col-lg-10 col-lg-offset-1">
     <div class="pull-left" style="padding-left:0px">
         <h2 style="margin-top:5px">Risk Reviews</h2>
     </div>
     <div class="pull-right" style="padding-right:0px">
         <div style="clear:both;padding-left:0px;padding-right:0px;margin-top:5px" >
-            <div style="text-align:right">
-                <div class="btn-group" dropdown>
-                    <button type="button" class="btn btn-info">Action</button>
-                    <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
-                        <span class="caret"></span>
-                        <span class="sr-only">Split button!</span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Action</a>
-                        </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a>
-                        </li>
-                    </ul>
-                </div>
-                <button style="margin-left:5px" class="btn btn-w-m btn-primary" ng-show="main.checkUserCap('new_review')" ng-click="reviewExpl.newReview()">New Review</button>
+        
+                <button style="margin-left:5px" class="btn btn-w-m btn-primary pull-right" ng-show="main.checkUserCap('new_review')" ng-click="reviewExpl.newReview()">New Review</button>
+                            <div class="dropdown pull-right" style="display:inline;margin-right:5px">
+                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
+                Reports<span class="caret"></span>
+            </a>
+                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li ng-repeat="r in qrmctrl.reports | filter:{showReview:true}">
+                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.title}} </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
     </div>
-    <div  class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+    <div  class="col-md-12 col-lg-10 col-lg-offset-1">
         <div style="clear:both" id="reviewGrid" ui-grid="reviewExpl.gridOptions" ui-grid-auto-resize ng-style="reviewExpl.getTableHeight()" class="explorerGrid" ui-grid-move-columns></div>
     </div>
 </div>
