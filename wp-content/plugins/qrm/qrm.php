@@ -222,54 +222,6 @@ final class QRM {
 		wp_send_json($export);
 	}
 	
-	static function getReportRiskJSON(){
-		$config = json_decode ( file_get_contents ( "php://input" ) );
-		
-		$ids = array();
-		array_push($ids, $config->projectID);
-		
-		if($config->childProjects){
-			$children = QRM::get_project_children($config->projectID);
-			foreach ($children as $child){
-				array_push($ids, $child->ID);
-			}
-		}
-		
-		//Pass the project array and the risk ID array
-		//commonJSON will apply the non null condition
-		$export = QRM::commonJSON($ids,$config->risks);
-		QRM::exportMetadata($export);
-		
-		//Remove risks not included in request
-		// Note - need to reindex after filter so a array is returned
-		
-// 		if (isset($config->projectID) && $config->projectID != null){
-// 		$export->risks = array_values(array_filter($export->risks, function ($risk) use ($ids) {
-// 			return in_array($risk->projectID,$ids);
-// 		}));
-// 		}
-
-		
-// 		if (isset($config->risks) && sizeof($config->risks) > 0 ){
-// 			$export->risks = array_values(array_filter($export->risks, function ($risk) use ($config) {
-// 				return in_array($risk->ID, $config->risks);
-// 			}));
-// 		}
-		wp_send_json($export);
-	}
-	
-	static function getReportIncidentJSON(){
-		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
-		$export = QRM::incidentJSON($incidentIDS);
-		QRM::exportMetadata($export);
-		wp_send_json($export);
-	}
-	static function getReportReviewJSON(){
-		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
-		$export = QRM::reviewJSON($incidentIDS);
-		QRM::exportMetadata($export);
-		wp_send_json($export);
-	}
 	static function downloadJSON(){
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -288,7 +240,7 @@ final class QRM {
 
 		exit ( 0 );
 	}
-	static function commonJSON($projectIDs = array(), $riskIDs = array()) {
+	static function commonJSON($projectIDs = array(), $riskIDs = array(), $basicsOnly = false) {
 
 		global $post;
 
@@ -347,16 +299,19 @@ final class QRM {
 		$risks = array ();
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
-			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+		
+		if (!$basicsOnly){
 			$risk->audit = json_decode ( get_post_meta ( $post->ID, "audit", true ) );
 			$risk->incidents = get_post_meta ( $post->ID, "incident" );
-			$risk->reviews = get_post_meta ( $post->ID, "review" );
-			$risk->projectID = get_post_meta($post->ID, "projectID",true);
-			$risk->rank = get_post_meta($post->ID, "rank",true);
-			$risk->ID = $post->ID;
+			$risk->reviews = get_post_meta ( $post->ID, "review" );				
 			$risk->comments = get_comments ( array (
 					'post_id' => $post->ID
 			) );
+		}
+			$risk->projectID = get_post_meta($post->ID, "projectID",true);
+			$risk->rank = get_post_meta($post->ID, "rank",true);
+			$risk->ID = $post->ID;
 			if ($risk->primcat == 0){
 				$risk->primcat = new stdObject();
 			}
@@ -380,34 +335,40 @@ final class QRM {
 					   'post_per_page' => -1
 		);
 		
-		$args ["post_type"] = 'review';
-		$the_query = new WP_Query ( $args );
-		$reviews = array ();
-		while ( $the_query->have_posts () ) :
+		if (!$basicsOnly){
+			$args ["post_type"] = 'review';
+			$the_query = new WP_Query ( $args );
+			$reviews = array ();
+			while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
 			array_push ( $reviews, $review );
-		endwhile
-		;
-
-		$args = array( 'post_type' => 'incident',
-					   'post_per_page' => -1
-		);
-		
-		$the_query = new WP_Query ( $args );
-		$incidents = array ();
-		while ( $the_query->have_posts () ) :
+			endwhile
+			;
+			
+			$args = array( 'post_type' => 'incident',
+					'post_per_page' => -1
+			);
+			
+			$the_query = new WP_Query ( $args );
+			$incidents = array ();
+			while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
 			array_push ( $incidents, $incident );
-		endwhile
-		;
+			endwhile
+			;			
+		}
+
 
 		$export = new stdObject ();
 		$export->projects = $projects;
 		$export->risks = $risks;
-		$export->incidents = $incidents;
-		$export->reviews = $reviews;
+		
+		if (!$basicsOnly){
+			$export->incidents = $incidents;
+			$export->reviews = $reviews;
+		}
 
 		$users = array();
 		$user_query = new WP_User_Query ( array ('fields' => "all"));
@@ -424,144 +385,6 @@ final class QRM {
 		return $export;
 	}
 	
-	static function incidentJSON($incidentIDs = array()) {
-	
-		global $post;
-			
-		$args = array( 'post_type' => 'incident',
-				'post_per_page' => -1
-		);
-		if (sizeof($incidentIDs) > 0){
-			$args['post__in'] = $incidentIDs;
-		}
-		
-		
-		$riskIDs = array();
-		
-		$the_query = new WP_Query ( $args );
-		$incidents = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-			$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );		
-			$riskIDs = array_merge($riskIDs, $incident->risks);
-			array_push ( $incidents, $incident );
-		endwhile
-		;
-	
-			
-			$args = array( 'post_type' => 'risk',
-					'post__in' => $riskIDs,
-					'posts_per_page' => -1
-			);
-
-	
-		$the_query = new WP_Query ( $args );
-		$risks = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-		$risk->incidents = get_post_meta ( $post->ID, "incident" );
-		$risk->projectID = get_post_meta($post->ID, "projectID",true);
-		$risk->ID = $post->ID;
-		if ($risk->primcat == 0){
-			$risk->primcat = new stdObject();
-		}
-		if ($risk->seccat == 0){
-			$risk->seccat = new stdObject();
-		}
-		array_push ( $risks, $risk );
-		endwhile
-		;
-	
-
-		$export = new stdObject ();
-		$export->risks = $risks;
-		$export->incidents = $incidents;
-		
-	
-		$users = array();
-		$user_query = new WP_User_Query ( array ('fields' => "all"));
-		foreach ($user_query->results as $user){
-			$u = new stdObject();
-			$u->id = $user->data->ID;
-			$u->display_name = $user->data->display_name;
-			$u->user_email = $user->data->user_email;
-			array_push($users, $u);
-		}
-	
-		$export->users = $users;
-	
-		return $export;
-	}
-	static function reviewJSON($incidentIDs = array()) {
-	
-		global $post;
-			
-		$args = array( 'post_type' => 'incident',
-				'post_per_page' => -1
-		);
-		if (sizeof($incidentIDs) > 0){
-			$args['post__in'] = $incidentIDs;
-		}
-	
-	
-		$riskIDs = array();
-	
-		$the_query = new WP_Query ( $args );
-		$incidents = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
-		$riskIDs = array_merge($riskIDs, $incident->risks);
-		array_push ( $incidents, $incident );
-		endwhile
-		;
-	
-			
-		$args = array( 'post_type' => 'risk',
-				'post__in' => $riskIDs,
-				'posts_per_page' => -1
-		);
-	
-	
-		$the_query = new WP_Query ( $args );
-		$risks = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-		$risk->incidents = get_post_meta ( $post->ID, "incident" );
-		$risk->projectID = get_post_meta($post->ID, "projectID",true);
-		$risk->ID = $post->ID;
-		if ($risk->primcat == 0){
-			$risk->primcat = new stdObject();
-		}
-		if ($risk->seccat == 0){
-			$risk->seccat = new stdObject();
-		}
-		array_push ( $risks, $risk );
-		endwhile
-		;
-	
-	
-		$export = new stdObject ();
-		$export->risks = $risks;
-		$export->incidents = $incidents;
-	
-	
-		$users = array();
-		$user_query = new WP_User_Query ( array ('fields' => "all"));
-		foreach ($user_query->results as $user){
-			$u = new stdObject();
-			$u->id = $user->data->ID;
-			$u->display_name = $user->data->display_name;
-			$u->user_email = $user->data->user_email;
-			array_push($users, $u);
-		}
-	
-		$export->users = $users;
-	
-		return $export;
-	}
 	
 	static function installSample() {
 		if (! QRM::qrmUser ())
@@ -1908,6 +1731,184 @@ final class QRM {
 	}
 }
 
+final class QRMReportData{
+	static function incidentJSON($incidentIDs = array()) {
+	
+		global $post;
+			
+		$args = array( 'post_type' => 'incident',
+				'post_per_page' => -1
+		);
+		if (sizeof($incidentIDs) > 0){
+			$args['post__in'] = $incidentIDs;
+		}
+	
+	
+		$riskIDs = array();
+	
+		$the_query = new WP_Query ( $args );
+		$incidents = array ();
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
+		$incident->comments = get_comments ( array ('post_id' => $post->ID) );
+		$riskIDs = array_merge($riskIDs, $incident->risks);
+		array_push ( $incidents, $incident );
+		endwhile
+		;
+	
+			
+		$args = array( 'post_type' => 'risk',
+				'post__in' => $riskIDs,
+				'posts_per_page' => -1
+		);
+	
+	
+		$the_query = new WP_Query ( $args );
+		$risks = array ();
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+		$risk->incidents = get_post_meta ( $post->ID, "incident" );
+		$risk->projectID = get_post_meta($post->ID, "projectID",true);
+		$risk->ID = $post->ID;
+		if ($risk->primcat == 0){
+			$risk->primcat = new stdObject();
+		}
+		if ($risk->seccat == 0){
+			$risk->seccat = new stdObject();
+		}
+		array_push ( $risks, $risk );
+		endwhile
+		;
+	
+	
+		$export = new stdObject ();
+		$export->risks = $risks;
+		$export->incidents = $incidents;
+	
+	
+		$users = array();
+		$user_query = new WP_User_Query ( array ('fields' => "all"));
+		foreach ($user_query->results as $user){
+			$u = new stdObject();
+			$u->id = $user->data->ID;
+			$u->display_name = $user->data->display_name;
+			$u->user_email = $user->data->user_email;
+			array_push($users, $u);
+		}
+	
+		$export->users = $users;
+	
+		return $export;
+	}
+	static function reviewJSON($incidentIDs = array()) {
+	
+		global $post;
+			
+		$args = array( 'post_type' => 'incident',
+				'post_per_page' => -1
+		);
+		if (sizeof($incidentIDs) > 0){
+			$args['post__in'] = $incidentIDs;
+		}
+	
+	
+		$riskIDs = array();
+	
+		$the_query = new WP_Query ( $args );
+		$incidents = array ();
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
+		$riskIDs = array_merge($riskIDs, $incident->risks);
+		array_push ( $incidents, $incident );
+		endwhile
+		;
+	
+			
+		$args = array( 'post_type' => 'risk',
+				'post__in' => $riskIDs,
+				'posts_per_page' => -1
+		);
+	
+	
+		$the_query = new WP_Query ( $args );
+		$risks = array ();
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+		$risk->incidents = get_post_meta ( $post->ID, "incident" );
+		$risk->projectID = get_post_meta($post->ID, "projectID",true);
+		$risk->ID = $post->ID;
+		if ($risk->primcat == 0){
+			$risk->primcat = new stdObject();
+		}
+		if ($risk->seccat == 0){
+			$risk->seccat = new stdObject();
+		}
+		array_push ( $risks, $risk );
+		endwhile
+		;
+	
+	
+		$export = new stdObject ();
+		$export->risks = $risks;
+		$export->incidents = $incidents;
+	
+	
+		$users = array();
+		$user_query = new WP_User_Query ( array ('fields' => "all"));
+		foreach ($user_query->results as $user){
+			$u = new stdObject();
+			$u->id = $user->data->ID;
+			$u->display_name = $user->data->display_name;
+			$u->user_email = $user->data->user_email;
+			array_push($users, $u);
+		}
+	
+		$export->users = $users;
+	
+		return $export;
+	}
+	
+	static function getReportRiskJSON(){
+		$config = json_decode ( file_get_contents ( "php://input" ) );
+	
+		$ids = array();
+		array_push($ids, $config->projectID);
+	
+		if($config->childProjects){
+			$children = QRM::get_project_children($config->projectID);
+			foreach ($children as $child){
+				array_push($ids, $child->ID);
+			}
+		}
+	
+		//Pass the project array and the risk ID array
+		//commonJSON will apply the non null condition
+		$export = QRM::commonJSON($ids,$config->risks, $config->basicsOnly);
+		QRM::exportMetadata($export);
+	
+
+		wp_send_json($export);
+	}
+	
+	static function getReportIncidentJSON(){
+		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
+		$export = QRMReportData::incidentJSON($incidentIDS);
+		QRM::exportMetadata($export);
+		wp_send_json($export);
+	}
+	static function getReportReviewJSON(){
+		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
+		$export = QRMReportData::reviewJSON($incidentIDS);
+		QRM::exportMetadata($export);
+		wp_send_json($export);
+	}
+	
+}
+
 final class QRM_AutoUpdate
 {
 	private $current_version;
@@ -2188,9 +2189,9 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_removeSample", array (QRM,"removeSample" ) );
 			add_action ( "wp_ajax_downloadJSON", array (QRM,"downloadJSON" ) );
 			add_action ( "wp_ajax_getJSON", array (QRM,"downloadJSON" ) );
-			add_action ( "wp_ajax_getReportRiskJSON", array(QRM, "getReportRiskJSON"));
-			add_action ( "wp_ajax_getReportIncidentJSON", array(QRM, "getReportIncidentJSON"));
-			add_action ( "wp_ajax_getReportReviewJSON", array(QRM, "getReportReviewJSON"));
+			add_action ( "wp_ajax_getReportRiskJSON", array(QRMReportData, "getReportRiskJSON"));
+			add_action ( "wp_ajax_getReportIncidentJSON", array(QRMReportData, "getReportIncidentJSON"));
+			add_action ( "wp_ajax_getReportReviewJSON", array(QRMReportData, "getReportReviewJSON"));
 			add_action ( "wp_ajax_getReportOptions", array(QRM, "getReportOptions"));
 			add_action ( "wp_ajax_saveReportOptions", array(QRM, "saveReportOptions"));
 			add_action ( "wp_ajax_getServerMeta", array(QRM, "getServerMeta"));				

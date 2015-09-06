@@ -152,6 +152,7 @@
         });
     </script>
     <form id="reportForm" method="post" style="display: none;" target="qrmIframe">
+	    <input type="hidden" name="reportEmail" />
 	    <input type="hidden" name="reportData" />
 	    <input type="hidden" name="reportID" />
 	    <input type="hidden" name="action" />

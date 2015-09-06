@@ -718,11 +718,12 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.getReportRiskJSON = function (risks, projectID, childProjects) {
+    this.getReportRiskJSON = function (risks, projectID, childProjects, basicsOnly) {
         var data = {
             risks: risks,
             projectID: projectID,
-            childProjects: childProjects
+            childProjects: childProjects,
+            basicsOnly:basicsOnly
         };
         return $http({
             method: 'POST',
