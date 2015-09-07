@@ -3544,12 +3544,10 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
     };
 
     this.addRisk = function () {
-        debugger;
         if (typeof (inc.incident.risks) == "undefined") {
             inc.incident.risks = [];
         }
         if (inc.risk.id != null) {
-            debugger;
             inc.incident.risks.push(inc.risk.id);
             var unq = [];
             $.each(inc.incident.risks, function (i, el) {
@@ -3896,7 +3894,6 @@ function ReviewExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $t
                 $('input[name="reportID"]').val($scope.reportReqID);
                 $('#reportForm').attr('action', response.data.reportServerURL+"/report");
                 $("#reportForm").submit();
- //               startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
             })
     }
 
@@ -3973,12 +3970,15 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
             "margin-left": e.$$treeLevel * 20 + "px"
         }
     }
+    
+
     this.addRisk = function () {
+    	debugger;
         if (typeof (rev.review.risks) == "undefined") {
             rev.review.risks = [];
         }
-        if (rev.riskID != null) {
-            rev.review.risks.push(rev.riskID);
+        if (rev.risk.id != null) {
+            rev.review.risks.push(rev.risk.id);
             var unq = [];
             $.each(rev.review.risks, function (i, el) {
                 if (($.inArray(el, unq) == -1) && (el != null)) unq.push(el);
@@ -3986,7 +3986,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
             rev.review.risks = unq
             rev.review.risks.sort(SortByProjectCode);
         }
-        rev.riskID = null;
+        rev.risk = null;
     }
     this.addProjectRisk = function () {
         if (typeof (rev.review.risks) == "undefined") {
@@ -4091,10 +4091,6 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         }).then(function (value) {
             remoteService.addGeneralComment($scope.data.comment, QRMDataService.reviewID)
                 .then(function (response) {
-                    if (response.data.error) {
-                        alert(response.data.msg);
-                        return;
-                    }
                     ngNotify.set("Comment Added to Review", "success");
                     rev.review.comments = response.data;
                 });
@@ -4129,7 +4125,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
                 riskComment[0].comment = riskComment[0].comment + "<p>" + rev.commonComment + "</p>";
             } else {
                 var newRiskComment = {
-                    "riskID": riskID,
+                    "riskID": risk.id,
                     "comment": "<p>" + rev.commonComment + "</p>"
                 }
                 rev.review.riskComments.push(newRiskComment);
@@ -4152,6 +4148,7 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
 
     }
     this.riskComment = function (riskID) {
+    	debugger;
         if (rev.review.riskComments == null) {
             rev.review.riskComments = [];
         }
@@ -4181,6 +4178,24 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
             this.rc.comment = oComment;
         });
     }
+    $scope.getMyCtrlScope = function () {
+        return $scope;
+    }
+    
+    $scope.reviewReport = function (reportID) {
+        if ($scope.reportReqID < 0) return;
+         QRM.mainController.notify("Assembling Data for Report", 5000);
+         remoteService.getReportReviewJSON([rev.review.id])
+             .then(function (response) {
+                 QRM.mainController.notify("Sending Data for Processing", 5000);
+                 $('input[name="reportData"]').val(JSON.stringify(response.data));
+                 $('input[name="action"]').val("execute_report");
+                 $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                 $('input[name="reportID"]').val($scope.reportReqID);
+                 $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                 $("#reportForm").submit();
+             })
+     }
 
     this.saveReview = function () {
 

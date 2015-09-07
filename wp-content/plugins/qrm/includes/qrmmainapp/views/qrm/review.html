@@ -6,9 +6,17 @@
                     <h3 style="display:inline;font-weight:normal;margin-top:5px">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
                 </div>
                 <div class="pull-right">
-                    <button type="button" style="margin-right:5px;margin-top:5px" class="btn btn-w-m btn-primary" ng-click="rev.saveReview()">Save Changes</button>
-                    <button type="button" style="margin-top:5px" class="btn btn-w-m btn-warning" ng-click="rev.cancelReview()">Review Explorer</button>
-                </div>
+                    <button type="button" style="margin-top:5px" class="btn btn-w-m btn-warning pull-right"  ng-click="rev.saveReview()">Save Changes</button>
+                    <button type="button" style="margin-right:5px;margin-top:5px" class="btn btn-w-m btn-primary pull-right" ng-click="rev.cancelReview()">Review Explorer</button>
+                    <div class="dropdown pull-right" style="display:inline;margin-right:5px;margin-top:5px">
+                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Reports<span class="caret"></span></a>
+                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                <li ng-repeat="r in qrmctrl.reports | filter:{showSingleReview:true}">
+                                    <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.title}} </a>
+                            </li>
+                            </ul>
+            
+                    </div>                </div>
             </div>
         </div>
         <div class="col-md-12  col-lg-10 col-lg-offset-1" style="clear:both">
@@ -76,7 +84,7 @@
                                     <div class="form-group" style="margin-bottom:0px">
                                         <label class="col-sm-3 control-label" style="margin-top:12px;text-align:right">Risks</label>
                                         <div class="col-sm-6">
-                                            <select ng-model="rev.riskID" ng-change="rev.addRisk()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks" class="form-control"></select>
+                                            <select ng-model="rev.risk" ng-change="rev.addRisk()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks" class="form-control"></select>
                                         </div>
                                         <label class="col-sm-3 control-label" style="margin-top:12px;clear:both;text-align:right">All Risks from Project</label>
                                         <div class="col-sm-6" style="margin-top:5px">

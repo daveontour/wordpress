@@ -1802,27 +1802,27 @@ final class QRMReportData{
 	
 		return $export;
 	}
-	static function reviewJSON($incidentIDs = array()) {
+	static function reviewJSON($reviewIDs = array()) {
 	
 		global $post;
 			
-		$args = array( 'post_type' => 'incident',
+		$args = array( 'post_type' => 'review',
 				'post_per_page' => -1
 		);
-		if (sizeof($incidentIDs) > 0){
-			$args['post__in'] = $incidentIDs;
+		if (sizeof($reviewIDs) > 0){
+			$args['post__in'] = $reviewIDs;
 		}
 	
 	
 		$riskIDs = array();
 	
 		$the_query = new WP_Query ( $args );
-		$incidents = array ();
+		$reviews = array ();
 		while ( $the_query->have_posts () ) :
 		$the_query->the_post ();
-		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
-		$riskIDs = array_merge($riskIDs, $incident->risks);
-		array_push ( $incidents, $incident );
+		$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
+		$riskIDs = array_merge($riskIDs, $review->risks);
+		array_push ( $reviews, $review );
 		endwhile
 		;
 	
@@ -1838,7 +1838,6 @@ final class QRMReportData{
 		while ( $the_query->have_posts () ) :
 		$the_query->the_post ();
 		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-		$risk->incidents = get_post_meta ( $post->ID, "incident" );
 		$risk->projectID = get_post_meta($post->ID, "projectID",true);
 		$risk->ID = $post->ID;
 		if ($risk->primcat == 0){
@@ -1854,7 +1853,7 @@ final class QRMReportData{
 	
 		$export = new stdObject ();
 		$export->risks = $risks;
-		$export->incidents = $incidents;
+		$export->reviews = $reviews;
 	
 	
 		$users = array();
