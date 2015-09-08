@@ -1154,7 +1154,9 @@ final class QRM {
 		global $post;
 		$args = array (
 				'post_type' => 'riskproject',
-				'posts_per_page' => - 1
+				'posts_per_page' => -1,
+				'orderby' => "ID",
+				'order' => 'ASC'
 		);
 		$the_query = new WP_Query ( $args );
 		$projects = array ();
@@ -1195,9 +1197,7 @@ final class QRM {
 		$the_query->the_post ();
 			
 		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-			
-		// echo var_dump($post);
-			
+					
 		$r = new stdObject ();
 		$r->description = $risk->description;
 		$r->title = $risk->title;
@@ -1532,7 +1532,7 @@ final class QRM {
 					'post_status' => 'publish',
 					'post_author' => 1
 			) );
-			$risk->id = $postID;
+			$risk->id = $postID;	
 				
 			update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( $current_user ), JSON_HEX_QUOT ) );
 		}
@@ -1574,7 +1574,8 @@ final class QRM {
 				"post_parent" => $postID,
 				"post_type" => "attachment"
 		) );
-		$risk->audit = json_decode ( get_post_meta ( $riskID, "audit", true ) );
+		$risk->audit = json_decode ( get_post_meta ( $postID, "audit", true ) );
+		
 		wp_send_json ( $risk );
 	}
 	static function saveProject() {
@@ -1592,6 +1593,11 @@ final class QRM {
 		
 		$postdata = file_get_contents ( "php://input" );
 		$project = json_decode ( $postdata );
+		
+		if ($project->parent_id != 0){
+			$parent_project = json_decode ( get_post_meta ( $project->parent_id, "projectdata", true ) );
+			$project->matrix = $parent_project->matrix;
+		}
 
 		$postID = null;
 
@@ -1669,7 +1675,7 @@ final class QRM {
 		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 		update_post_meta ( $postID, "maxImpact", $project->matrix->maxImpact );
-
+		
 		// Update number of risk
 		// Update the count for riskd for the impacted project
 		$args = array (
@@ -1683,9 +1689,63 @@ final class QRM {
 		update_post_meta ( $postID, "numberofrisks", $the_query->found_posts );
 
 		add_post_meta ( $postID, "riskIndex", 10, true );
+		
+		QRM::updateChildProjects($postID);
 
 		// Return all the projects
 		QRM::getProjects ();
+	}
+	/**
+	 * @param unknown $parentID
+	 */
+	static function updateChildProjects($parentID){
+
+		if ($parentID == null ){
+			return;
+		}
+		
+		$parent_project = json_decode ( get_post_meta ( $parentID, "projectdata", true ) );
+		
+		global $post;
+		$the_query = new WP_Query ( 'post_type=riskproject&post_parent='.$parentID );
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+				$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+				$project->matrix = $parent_project->matrix;
+				update_post_meta ( $post->ID, "maxProb", $project->matrix->maxProb );
+				update_post_meta ( $post->ID, "maxImpact", $project->matrix->maxImpact );
+				update_post_meta ( $project->id, "projectdata", json_encode ( $project ) );
+				QRM::updateChildProjects($project->id);
+		endwhile
+		;
+		
+	}
+	
+	static function reindexRiskCount(){
+		
+		
+		$my_query = new WP_Query( 'post_type=riskproject&post_status=publish&posts_per_page=-1' );
+		if ( $my_query->have_posts() ) {
+			while ( $my_query->have_posts() ) {
+				$my_query->the_post();
+				
+				$args = array (
+						'post_type' => 'risk',
+						'post_status' => 'publish',
+						'posts_per_page' => 5000,
+						'meta_query'  => array(
+								array(
+										'key'     => 'projectID',
+										'value'   => $my_query->post->ID,
+										'compare' => '='
+						
+								)
+						)
+				);
+				$the_query = new WP_Query ( $args );
+				update_post_meta ( $my_query->post->ID, "numberofrisks", $the_query->found_posts );
+			}
+		}
 	}
 	static function updateRiskProjectCodes($projectID, $projectCode) {
 		if (! QRM::qrmUser ())
@@ -2019,6 +2079,8 @@ final class QuayRiskManager {
 			add_action('init', array ($this,'qrm_scripts_styles' ));
 			add_action('init', array ($this,'qrm_init_user_cap' ));
 			
+			add_action('trashed_post', array ($this,'qrm_trashed_post' ));
+			
 			
 //			add_option("qrm_siteKey", "93182129");
 			add_option("qrm_siteName", "Quay Risk Manager Site");
@@ -2045,7 +2107,14 @@ final class QuayRiskManager {
 					'normal',
 					'high'
 			);
-		}		
+		}
+		
+		public function qrm_trashed_post($postID){
+			$post = get_post($postID);
+			if ($post->post_type == "risk"){
+				QRM::reindexRiskCount();
+			}
+		}
 		public function render_riskproject_meta_boxes( $post ) {
 		
 			wp_enqueue_style ('font-awesome' );
@@ -2196,6 +2265,7 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_getServerMeta", array(QRM, "getServerMeta"));				
 			add_action ( "wp_ajax_createDummyRiskEntry", array(QRM, "createDummyRiskEntry"));				
 			add_action ( "wp_ajax_createDummyRiskEntryMultiple", array(QRM, "createDummyRiskEntryMultiple"));				
+			add_action ( "wp_ajax_reindexRiskCount", array(QRM, "reindexRiskCount"));				
 		}
 		public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
 			// Prevent the deletion of any riskproject post that has children projects
@@ -2207,14 +2277,17 @@ final class QuayRiskManager {
 				if ($post->post_status == 'publish' && $post->post_type == 'riskproject') {
 					
 					// Prevent Deletion of parent with child projects
-					$query = "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type = %s AND post_parent = %s";
-					$num_posts = $wpdb->get_var ( $wpdb->prepare ( $query, $post->post_type, $post->ID ) );
-					if ($num_posts > 0)
+					$query = "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type = 'riskproject' AND post_parent = %s";
+					$num_posts = $wpdb->get_var ( $wpdb->prepare ( $query, $post->ID ) );
+					if ($num_posts > 0){
 						$allcaps [$caps [0]] = false;
+					} else {
+						$allcaps [$caps [0]] = true;;
+					}
 						
 						// Prevent deletion if there are still risks
-					$query = "SELECT COUNT(*) FROM wp_postmeta  JOIN wp_posts ON wp_postmeta.post_id = wp_posts.ID  AND wp_posts.post_type = 'risk' WHERE meta_key = 'projectID' AND meta_value = %s";
-					$num_posts = $wpdb->get_var ( $wpdb->prepare ( $query, $post->ID ) );
+ 					$query = "SELECT COUNT(*) FROM {$wpdb->postmeta}  JOIN {$wpdb->posts} ON {$wpdb->postmeta}.post_id = wp_posts.ID  AND {$wpdb->posts}.post_type = 'risk'  AND {$wpdb->posts}.post_status = 'publish' WHERE meta_key = 'projectID' AND meta_value = %s";
+						$num_posts = $wpdb->get_var ( $wpdb->prepare ( $query, $post->ID ) );
 					if ($num_posts > 0)
 						$allcaps [$caps [0]] = false;
 				}

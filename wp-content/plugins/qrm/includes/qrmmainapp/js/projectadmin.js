@@ -129,6 +129,10 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
             });
         }
     }
+    
+    $scope.parentIsNull = function(){
+    	return $scope.projMap.get($scope.proj.id).parent_id == 0;
+    }
 
     $scope.matrixChange = function () {
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);

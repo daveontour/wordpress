@@ -623,6 +623,7 @@ class QRMSample {
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
+		update_post_meta ( $postID, "audit", json_encode ( QRM::getAuditObject ( get_user_by ( "id", $risk->manager ) ), JSON_HEX_QUOT ) );
 		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
 		update_post_meta ( $postID, "manager", get_user_by ( "id", $risk->manager )->data->display_name );

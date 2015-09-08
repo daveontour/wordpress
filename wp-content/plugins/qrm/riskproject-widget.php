@@ -28,18 +28,20 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">Parent Project</th>
-		<td><ui-select ng-model="proj.parent_id" theme="select2"
-				search-enabled=false on-select="projectSelect($item, $model)"
-				style="width:350px"> <ui-select-match allow-clear=true
-				placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
-			<ui-select-choices
-				repeat="project.id as project in sortedParents track by project.id">
-			<div ng-style="rowStyle(project)">
-				<span ng-bind-html="project.title"></span>
-			</div>
-			</ui-select-choices> </ui-select></td>
+		<td><ui-select ng-model="proj.parent_id" theme="select2" search-enabled=false on-select="projectSelect($item, $model)"	style="width:350px">
+				 <ui-select-match allow-clear=true placeholder="Select parent project...">{{$select.selected.title}}</ui-select-match>
+			 	 <ui-select-choices repeat="project.id as project in sortedParents track by project.id">
+						<div ng-style="rowStyle(project)">
+							<span ng-bind-html="project.title"></span>
+						</div>
+				</ui-select-choices> 
+			</ui-select></td>
 	</tr>
-	<tr valign="top">
+	<tr valign="top" ng-show="!parentIsNull()">
+		<th scope="row">Tolerance Matrix</th>
+		<td>The Tolerance Matrix is inherited from the parent project</td>
+	</tr>
+	<tr valign="top" ng-show="parentIsNull()">
 		<th scope="row">Tolerance Matrix</th>
 		<td>
 			<div

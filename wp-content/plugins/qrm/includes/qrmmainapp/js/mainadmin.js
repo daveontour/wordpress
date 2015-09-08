@@ -9,8 +9,7 @@ function SampleController($scope, remoteService, ngNotify) {
             });
     }
     $scope.installSampleProjects = function () {
-    	debugger;
-    	alert("Installing Sample Data. (takes a while)");
+     	alert("Installing Sample Data. (takes a while)");
         remoteService.installSampleProjects()
             .then(function (response) {
             	alert(response.data.msg);
@@ -24,6 +23,12 @@ function SampleController($scope, remoteService, ngNotify) {
             });
     }
 
+    $scope.reindexRiskCount = function () {
+        remoteService.reindexRiskCount()
+            .then(function (response) {
+            	alert("Re Indexing Completed");
+            });
+    }
     $scope.removeAllData = function () {
     	var r = confirm("Press confirm you wish to remove all the data from Quay Risk Manager");
     	if (r == true) {
@@ -290,6 +295,17 @@ app.service('remoteService', function ($http, $modal) {
             url: ajaxurl,
             params: {
                 action: "installSampleProjects"
+            },
+            cache: false
+        });
+    };
+
+    this.reindexRiskCount = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "reindexRiskCount"
             },
             cache: false
         });

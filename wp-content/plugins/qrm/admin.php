@@ -108,6 +108,14 @@ wp_enqueue_script ( 'qrm-dropzone' );
 
 					</div>
 
+						<h4>Re-index QRM Data</h4>
+						<p>If the project count of risks appear to be inconsistent, the count can be reindexed. Projects which are recorded with non zero counts of risks cannot be delete. Re-index corrects the count of risks for each project.</p>
+							<div style="text-align: right; margin-top: 15px"
+						ng-controller="sampleCtrl">
+						<button type="button" style="margin-left: 10px"
+							class="btn btn-w-m btn-sm btn-danger" ng-click="reindexRiskCount()">Re-index Data</button>
+
+					</div>
 
 
 					<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
