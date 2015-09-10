@@ -7,20 +7,16 @@
                 </div>
                 <div style="padding-right:5px" class="hidden-xs hidden-sm col-md-6 col-lg-6">
                     <div style="float:right;clear:left">
-                        <div class="dropdown" style="display:inline">
-                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Action <span class="caret"></span> </a>
+                    <div class="dropdown" style="display:inline;margin-top:5px">
+                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Reports<span class="caret"></span></a>
                             <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                                <li class="dropdown-submenu">
-                                    <a tabindex="-1" href="#">Reports</a>
-                                    <ul class="dropdown-menu" style="left:100px">
-                                        <li ng-repeat="r in  qrmctrl.reports | filter:{showSingleRisk:true}">
-                                            <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                <li ng-repeat="r in qrmctrl.reports | filter:{showSingleRisk:true}">
+                                    <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()" href="#"> {{r.title}} </a>
+                            </li>
                             </ul>
-                        </div>
-                        <button type="button" ng-show="main.checkUserCap('save_risk')" style="margin-right:5px" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
+            
+                    </div> 
+                        <button type="button" ng-show="main.checkUserCap('save_risk')" class="btn btn-w-m btn-primary" ng-click="ctl.saveRisk()">Save Changes</button>
                         <button type="button" class="btn btn-w-m btn-warning" ng-click="ctl.cancelRisk()">Risk Explorer</button>
                         <button style="margin-left:5px" class="btn btn-w-m btn-primary hidden-xs" ng-show="ctl.showDummy()" ng-click="ctl.newDummyRisk()">New Dummy Risk</button>
                         

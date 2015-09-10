@@ -421,7 +421,7 @@ class QRMSample {
 		return (float) $sec + ((float) $usec * 100000);
 	}
 
-	static function createDummyRiskEntryMultiple($topParent = null) {
+	static function createDummyRiskEntryMultiple($topParent = null, $min, $max) {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
@@ -447,7 +447,7 @@ class QRMSample {
 			$the_query->the_post ();
 			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
 			$risk->projectID = $post->ID;
-			$idx = rand ( 10, 20 );
+			$idx = rand ( $min, $max );
 			for($i = 0; $i < $idx; $i ++) {
 				QRMSample::createDummyRiskEntryCommon ($risk, $project, $topParent );
 			}
@@ -644,15 +644,20 @@ class QRMSample {
 		
 		return $risk->riskProjectCode;
 	}
+	/**
+	 * @return string
+	 */
 	static function createSampleProjects(){
 	
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 	
-		$user_query = new WP_User_Query ( array ('fields' => 'all') );
+		$user_query = new WP_User_Query ( array ('fields' => 'all', ) );
 		$userSummary = array ();
 		foreach ( $user_query->results as $user ) {
-			array_push ( $userSummary, $user->ID );
+			if ($user->caps["risk_admin"] == true || $user->caps["risk_user"] == true){
+				array_push ( $userSummary, $user->ID );
+			}
 		}
 	
 		$cat = array();
@@ -700,8 +705,7 @@ class QRMSample {
 		QRMSample::singleProject("Manufacturing", "MAN", $userSummary, $p1->id);
 		QRMSample::singleProject("Customer Support", "CUS", $userSummary, $p1->id);
 		
-	
-		QRMSample::createDummyRiskEntryMultiple($p1);
+		QRMSample::createDummyRiskEntryMultiple($p1,5,10);
 			
 		return "Projects Installed";
 	}

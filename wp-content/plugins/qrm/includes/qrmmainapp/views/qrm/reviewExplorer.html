@@ -5,18 +5,15 @@
     </div>
     <div class="pull-right" style="padding-right:0px">
         <div style="clear:both;padding-left:0px;padding-right:0px;margin-top:5px" >
-        
-                <button style="margin-left:5px" class="btn btn-w-m btn-primary pull-right" ng-show="main.checkUserCap('new_review')" ng-click="reviewExpl.newReview()">New Review</button>
-                            <div class="dropdown pull-right" style="display:inline;margin-right:5px">
-                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">
-                Reports<span class="caret"></span>
-            </a>
-                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <li ng-repeat="r in qrmctrl.reports | filter:{showReview:true}">
-                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.title}} </a>
-                    </li>
-                </ul>
-            </div>
+                <button class="btn btn-w-m btn-primary pull-right" ng-show="main.checkUserCap('new_review')" ng-click="reviewExpl.newReview()">New Review</button>
+                <div class="dropdown pull-right" style="display:inline;margin-right:5px">
+	                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Reports<span class="caret"></span></a>
+	                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+	                    <li ng-repeat="r in qrmctrl.reports | filter:{showReview:true}">
+	                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.title}} </a>
+	                    </li>
+	                </ul>
+            	</div>
         </div>
     </div>
     </div>

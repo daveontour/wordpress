@@ -1,9 +1,9 @@
 <?php
 /*** 
- * Plugin Name: Quay Systems Risk Manager 
+ * Plugin Name: Quay Risk Manager 
  * Description: Quay Risk Manager 
- * Version: 2.8.0
- * Author: Dave Burton
+ * Version: 3.2
+ * Author: Quay Sysems Consulting
  * License: Commercial
  */
 
@@ -389,7 +389,7 @@ final class QRM {
 	static function installSample() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::installSample ()
 		) );
@@ -397,7 +397,7 @@ final class QRM {
 	static function installSampleProjects() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::createSampleProjects()
 		) );
@@ -405,7 +405,7 @@ final class QRM {
 	static function createDummyRiskEntry() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::createDummyRiskEntry ()
 		) );
@@ -413,7 +413,7 @@ final class QRM {
 	static function createDummyRiskEntryMultiple() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 		wp_send_json ( array (
 				"msg" => QRMSample::createDummyRiskEntryMultiple ()
 		) );
@@ -421,7 +421,7 @@ final class QRM {
 	static function removeSample() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
-		require plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 		$all = json_decode ( file_get_contents ( "php://input" ) );
 		wp_send_json ( array (
 				"msg" => QRMSample::removeSample ($all)
@@ -997,7 +997,7 @@ final class QRM {
 			require_once (ABSPATH . 'wp-admin/includes/file.php');
 		}
 
-		require_once plugin_dir_path ( __FILE__ ) . '/qrm-sample.php';
+		require_once plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
 
 		$uploadedfile = $_FILES ['file'];
 		$upload_overrides = array (
@@ -1083,10 +1083,10 @@ final class QRM {
 				$wpUser->remove_cap ( "risk_admin" );
 				$wpUser->remove_cap ( "risk_user" );
 
-				if (isset ( $u->caps->risk_admin ) && $u->caps->risk_admin == true) {
+				if (isset ( $u->caps->risk_admin ) && $u->caps["risk_admin"] == true) {
 					$wpUser->add_cap ( "risk_admin" );
 				}
-				if (isset ( $u->caps->risk_user ) && $u->caps->risk_user == true) {
+				if (isset ( $u->caps->risk_user ) && $u->caps["risk_user"] == true) {
 					$wpUser->add_cap ( "risk_user" );
 				}
 			}
@@ -2082,9 +2082,7 @@ final class QuayRiskManager {
 			add_action('trashed_post', array ($this,'qrm_trashed_post' ));
 			
 			
-//			add_option("qrm_siteKey", "93182129");
 			add_option("qrm_siteName", "Quay Risk Manager Site");
-//			add_option("qrm_siteID", "QRMSiteUnregistered");
 			add_option("qrm_reportServerURL", "http://report.quaysystems.com.au:8080");
 			
 			$this->activate_au();
@@ -2148,7 +2146,7 @@ final class QuayRiskManager {
 			echo "</script>";
 			echo "<style>.form-table th {text-align: right}</style>";
 			echo '<div ng-app="myApp" style="width: 100%; height: 100%" ng-controller="projectCtrl">';
-			include 'riskproject-widget.php';
+			include 'includes/riskproject-widget.php';
 			echo "</div>";
 
 			}
@@ -2324,7 +2322,7 @@ final class QuayRiskManager {
 			}
 		}
 		public function qrm_admin_menu_config() {
-			add_menu_page ( 'Quay Risk Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) . 'admin.php', '', 'dashicons-smiley', "20.9" );
+			add_menu_page ( 'Quay Risk Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-smiley', "20.9" );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'normal' );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'side' );
 		}
