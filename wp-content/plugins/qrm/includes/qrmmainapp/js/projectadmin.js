@@ -674,9 +674,9 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         $scope.sortedParents = [];
         $scope.projMap = new Map();
 
-        if (response.data.data.length != 0) {
-            $scope.projectsLinear = response.data.data;
-            $scope.sortedParents = parentSort(response.data.data);
+        if (response.data.length != 0) {
+            $scope.projectsLinear = response.data;
+            $scope.sortedParents = parentSort(response.data);
             $scope.projMap = new Map();
             $scope.projectsLinear.forEach(function (e) {
                 $scope.projMap.put(e.id, e);

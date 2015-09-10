@@ -1,10 +1,13 @@
 <?php
 /*** 
- * Plugin Name: Quay Risk Manager 
- * Description: Quay Risk Manager 
- * Version: 3.2
- * Author: Quay Sysems Consulting
- * License: Commercial
+ * Plugin Name: Quay Risk Manager
+ * Plugin URI: http://www.quaysystems.com.au 
+ * Description: Mangage your organisations risks. Quay Risk Manager enables you to identify, evaluate, mitigate and manage your risks. Watermarked report in PDF format are produced using a webservice. For non watermaked reports contact <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>   
+ * Version: 3.2.0
+ * Requires at least: 4.2.1
+ * Tested up to: 4.3
+ * Author: <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>
+ * License: GPLv2 or later
  */
 
 // Register Custom Post Type
@@ -12,6 +15,7 @@ if (! defined ( 'WPINC' )) {
 	die ();
 }
 
+define('QRM_VERSION', '3.2.0');
 defined ( 'ABSPATH' ) or die ();
 
 final class Project{
@@ -34,86 +38,6 @@ final class Project{
 	public $riskCategories;
 	public $inheritParentCategories;
 	public $children;
-}
-final class Risk {
-
-	public $startDate;
-	public $endDate;
-
-	public $riskProjectCode;
-	public $consequences;
-	public $causes;
-	public $description;
-	public $title;
-
-	public $riskOwner;    //metadata
-	public $riskManager;  //metadata
-	public $riskManager2;
-
-	public $probInt;     //metadata
-	public $impactInt;   //metadata
-	public $probDouble;
-	public $impactDouble;
-	public $probReal;
-	public $tolerance;   //metadata
-	public $costImpact;
-
-	public $probIntPost;     //metadata
-	public $impactIntPost;   //metadata
-	public $probDoublePost;
-	public $impactDoublePost;
-	public $probRealPost;
-	public $tolerancePost;  //metadata
-	public $costImpactPost;
-
-	public $calcContingencyCost;
-	public $estimatedContingencyCost;
-
-	public $calcRemediationCost;
-	public $estimatedRemediationCost;
-
-	public $primCategory;  //metadata
-	public $secCategory;   //metadata
-
-	public $bTreated = FALSE;
-
-	public $bTreatAvoidence = FALSE;
-	public $bTreatTransfer = FALSE;
-	public $bTreatMinimisation = FALSE;
-	public $bTreatAccept = FALSE;
-
-	public $bImpSafety = FALSE;
-	public $bImpCost = FALSE;
-	public $bImpTime = FALSE;
-	public $bImpSpec = FALSE;
-	public $bImpEnviron = FALSE;
-
-	public $mitigationPlanID;
-
-	public $comments;
-	public $attachments;
-	public $objectives;
-
-
-	public static function postSave($post_id) {
-		;
-	}
-
-}
-final class SmallRisk {
-	public $title;
-	public $id;
-	public $owner;
-	public $manager;
-	public $description;
-	public $currentTolerance;
-	public $currentProb;
-	public $currentImpact;
-	public $riskProjectCode;
-	public $rank;
-}
-class Data {
-	public $data;
 }
 class stdObject {
 	public function __construct(array $arguments = array()) {
@@ -199,12 +123,10 @@ final class QRM {
 		$guest->error = true;
 		return $guest;
 	}
-
 	static function getJSON(){
 		$export = QRM::commonJSON();
 		wp_send_json($export);
 	}
-	
 	static function exportMetadata(&$export){
 		global  $current_user;
 		$export->userEmail = $current_user->user_email;
@@ -221,7 +143,6 @@ final class QRM {
 		QRM::exportMetadata($export);
 		wp_send_json($export);
 	}
-	
 	static function downloadJSON(){
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -236,9 +157,7 @@ final class QRM {
 
 		$export = QRM::commonJSON();
 
-		echo json_encode ( $export );
-
-		exit ( 0 );
+		wp_send_json($export);
 	}
 	static function commonJSON($projectIDs = array(), $riskIDs = array(), $basicsOnly = false) {
 
@@ -384,8 +303,6 @@ final class QRM {
 
 		return $export;
 	}
-	
-	
 	static function installSample() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -908,10 +825,7 @@ final class QRM {
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all'
 		) );
-		$data = new Data ();
-		$data->data = $user_query->results;
-		echo json_encode ( $data, JSON_PRETTY_PRINT );
-		exit ();
+		wp_send_json ( $user_query->results );
 	}
 	static function uploadFile() {
 		if (! QRM::qrmUser ())
@@ -1083,10 +997,10 @@ final class QRM {
 				$wpUser->remove_cap ( "risk_admin" );
 				$wpUser->remove_cap ( "risk_user" );
 
-				if (isset ( $u->caps->risk_admin ) && $u->caps["risk_admin"] == true) {
+				if (isset ( $u->caps->risk_admin ) && $u->caps->risk_admin == true) {
 					$wpUser->add_cap ( "risk_admin" );
 				}
-				if (isset ( $u->caps->risk_user ) && $u->caps["risk_user"] == true) {
+				if (isset ( $u->caps->risk_user ) && $u->caps->risk_user == true) {
 					$wpUser->add_cap ( "risk_user" );
 				}
 			}
@@ -1115,11 +1029,11 @@ final class QRM {
 		$risk = json_decode ( get_post_meta ( $riskID, "riskdata", true ) );
 		
 		// Make sure the user is authorised to get the risk
-		$projectRiskManager = get_post_meta ( $risk->projectID, "projectRiskManager", true );
+		$projectRiskManagerID = get_post_meta ( $risk->projectID, "projectRiskManagerID", true );
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
-		if (! ($current_user->ID == $projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
+		
+		if (! ($current_user->ID == $projectRiskManagerID || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
 			wp_send_json ( array ("msg" => "You are not authorised to view this risk") );
-			exit ( 0 );
 		}
 
 		$risk->comments = get_comments ( array ('post_id' => $riskID) );
@@ -1168,18 +1082,14 @@ final class QRM {
 		endwhile
 		;
 
-		$data = new Data ();
-		$data->data = $projects;
-		wp_send_json ( $data );
+		wp_send_json ( $projects );
 	}
 	static function getProject() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		$projectID = json_decode ( file_get_contents ( "php://input" ) );
 		$project = json_decode ( get_post_meta ( $projectID, "projectdata", true ) );
-		$data = new Data ();
-		$data->data = $project;
-		wp_send_json ( $data );
+		wp_send_json ( $project );
 	}
 	static function getAllRisks() {
 		if (! QRM::qrmUser ())
@@ -1263,11 +1173,10 @@ final class QRM {
 		endwhile
 		;
 
-		$data = new Data ();
-		$data->data = $risks;
-		wp_send_json ( $data );
+// 		$data = new Data ();
+// 		$data->data = $risks;
+		wp_send_json ( $risks );
 	}
-	
 	static function get_project_children($parent_id){
 		$children = array();
 		$posts = get_posts( array( 'numberposts' => -1, 'post_status' => 'publish', 'post_type' => 'riskproject', 'post_parent' => $parent_id ));
@@ -1504,10 +1413,10 @@ final class QRM {
 			}
 				
 			// Make sure the user is authorised to save the risk
-			$projectRiskManager = get_post_meta ( $risk->projectID, "projectRiskManager", true );
+			$projectRiskManagerID = get_post_meta ( $risk->projectID, "projectRiskManagerID", true );
 			$owner = get_post_meta ( $risk->id, "owner", true );
 			$manager = get_post_meta ( $risk->id, "manager", true );
-			if (! ($current_user->ID == $projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) )) {
+			if (! ($current_user->ID == $projectRiskManagerID || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) )) {
 				wp_send_json ( array (
 						"msg" => "You are not authorised to make changes to this risk"
 				) );
@@ -1671,6 +1580,7 @@ final class QRM {
 
 		// Fill in all the other meta data
 		update_post_meta ( $postID, "projectRiskManager", get_user_by ( "id", $project->projectRiskManager )->display_name );
+		update_post_meta ( $postID, "projectRiskManagerID", $project->projectRiskManager);
 		update_post_meta ( $postID, "projectCode", $project->projectCode );
 		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
@@ -1695,9 +1605,6 @@ final class QRM {
 		// Return all the projects
 		QRM::getProjects ();
 	}
-	/**
-	 * @param unknown $parentID
-	 */
 	static function updateChildProjects($parentID){
 
 		if ($parentID == null ){
@@ -1720,7 +1627,6 @@ final class QRM {
 		;
 		
 	}
-	
 	static function reindexRiskCount(){
 		
 		
@@ -1790,7 +1696,6 @@ final class QRM {
 		return $auditObj;
 	}
 }
-
 final class QRMReportData{
 	static function incidentJSON($incidentIDs = array()) {
 	
@@ -1967,7 +1872,6 @@ final class QRMReportData{
 	}
 	
 }
-
 final class QRM_AutoUpdate
 {
 	private $current_version;
@@ -2081,20 +1985,36 @@ final class QuayRiskManager {
 			
 			add_action('trashed_post', array ($this,'qrm_trashed_post' ));
 			
+			add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+				
 			
 			add_option("qrm_siteName", "Quay Risk Manager Site");
 			add_option("qrm_reportServerURL", "http://report.quaysystems.com.au:8080");
-			
+			add_option("qrm_siteID", "Unregistered Site");
+			add_option("qrm_siteKey", "Unregistered Site");
+				
 			$this->activate_au();
 
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
 		}
 		public function activate_au() {
-			$plugin_current_version = '2.8.0';
+			$plugin_current_version = QRM_VERSION;
 			$plugin_remote_path = 'http://www.quaysystems.com.au/wp-admin/admin-ajax.php?action=getUpdateInfo';
 			$plugin_slug = plugin_basename( __FILE__ );
 			new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug);
+		}
+		public static function plugin_row_meta( $links, $file ) {
+			if ( strpos( $file, 'qrm.php' ) !== false ) {
+				$new_links = array(
+							'<a href="http://www.quaysystems.com.au/premiumsupport" target="_blank">Premium Support</a>',
+							'<a href="http://www.quaysystems.com.au/docs" target="_blank">Docs</a>'
+				);
+				
+				$links = array_merge( $links, $new_links );
+			}
+			
+			return $links;
 		}
 		public function riskproject_meta_boxes() {
 			add_meta_box(
@@ -2105,8 +2025,7 @@ final class QuayRiskManager {
 					'normal',
 					'high'
 			);
-		}
-		
+		}		
 		public function qrm_trashed_post($postID){
 			$post = get_post($postID);
 			if ($post->post_type == "risk"){
@@ -2193,7 +2112,7 @@ final class QuayRiskManager {
 					'post_parent' => 0,
 					'post_status' => 'publish',
 					'post_title' => 'Quay Risk Manager',
-					'post_name' => 'riskmanager', /* the slug */
+					'post_name' => 'riskmanager',
 					'page_template' => 'templates/qrm-type-template.php',
 					'post_type' => 'page' 
 			);
@@ -2566,8 +2485,6 @@ final class QuayRiskManager {
 			register_post_type( 'review', $args );
 		}
 }
-
-
 function QRMMaster() {
 	return QuayRiskManager::instance ();
 }

@@ -139,7 +139,7 @@ function UserController($scope, remoteService, ngNotify) {
     $scope.saveChanges = function (e) {
         remoteService.saveSiteUsers($scope.gridOptions.data)
             .then(function (response) {
-                $scope.gridOptions.data = response.data.data;
+                $scope.gridOptions.data = response.data;
                 alert("Site Risk Users Updated");
             });
     };
@@ -147,7 +147,7 @@ function UserController($scope, remoteService, ngNotify) {
     $scope.cancelChanges = function (e) {
         remoteService.getSiteUsers()
             .then(function (response) {
-                $scope.gridOptions.data = response.data.data;
+                $scope.gridOptions.data = response.data;
                 alert("Changed Cancelled");
             });
     };
@@ -197,7 +197,7 @@ function UserController($scope, remoteService, ngNotify) {
 
     remoteService.getSiteUsers()
         .then(function (response) {
-            QRM.siteUsers = response.data.data;
+            QRM.siteUsers = response.data;
             QRM.userCtrl.load();
         });
 

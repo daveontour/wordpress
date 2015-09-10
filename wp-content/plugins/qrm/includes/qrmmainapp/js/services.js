@@ -19,9 +19,9 @@ function DataService() {
         this.sortedParents = [];
         this.projMap = new Map();
 
-        if (response.data.data.length != 0) {
-            this.projectsLinear = response.data.data;
-            this.sortedParents = parentSort(response.data.data);
+        if (response.data.length != 0) {
+            this.projectsLinear = response.data;
+            this.sortedParents = parentSort(response.data);
             this.projMap = new Map();
             this.projectsLinear.forEach(function (e) {
                 ds.projMap.put(e.id, e);

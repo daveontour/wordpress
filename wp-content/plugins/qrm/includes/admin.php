@@ -91,9 +91,9 @@ wp_enqueue_script ( 'qrm-dropzone' );
 						ng-controller="sampleCtrl">
 						<button type="button" class="btn btn-w-m btn-sm btn-primary"
 							ng-click="installSampleProjects()">Install Sample Data</button>
-						<button type="button" style="margin-left: 10px"
+<!--						<button type="button" style="margin-left: 10px"
 							class="btn btn-w-m btn-sm btn-danger" ng-click="removeSample()">Remove
-							Sample Data</button>
+ 							Sample Data</button> -->
 					</div>
 
 					
@@ -113,7 +113,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 							<div style="text-align: right; margin-top: 15px"
 						ng-controller="sampleCtrl">
 						<button type="button" style="margin-left: 10px"
-							class="btn btn-w-m btn-sm btn-danger" ng-click="reindexRiskCount()">Re-index Data</button>
+							class="btn btn-w-m btn-sm btn-primary" ng-click="reindexRiskCount()">Re-index Data</button>
 
 					</div>
 

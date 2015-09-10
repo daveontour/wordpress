@@ -1,0 +1,1 @@
+EVERYTHING in this directory will be deleted if you uninstall bugerator. This contains the uploads related to the posts. Do not save anything else!

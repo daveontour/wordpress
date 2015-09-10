@@ -1970,7 +1970,7 @@ function initData(QRMDataService,remoteService,$q){
                 intro.sessionOK = false;
             } else {
                 intro.sessionOK = true;
-                QRMDataService.siteUsers = response.data.data;
+                QRMDataService.siteUsers = response.data;
             }
         });
 

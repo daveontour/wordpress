@@ -1,0 +1,392 @@
+/* Note: feel free to edit but if you take out the #seperator[] tags or change the
+heading names (ie. bugerator_css_all) then the program won't be able to parse this. */
+#seperator{}
+/* bugerator_css_all */
+div.bugerator_page {
+    background-color: transparent;
+    margin: 0px -50px;
+}
+div.bugerator_content {
+    background-color: #EEEEEE;
+    margin-top: -3px;
+    padding: 5px;
+}
+div.error {
+    font-weight: bold;
+    font-size: 1.5em;
+    background-color: red;
+    color: #FF9999;
+    text-align: center;
+}
+div.success {
+    font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
+}
+table.bugerator {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+tr.bugerator {
+
+}
+td.bugerator {
+    border: 1px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #000000;
+}
+/* Navigation tabs */
+div.bugerator_nav_tab_wrapper {
+    background-color: transparent;
+}
+bugerator_nav_tab_wrapper {
+    margin:0;
+    padding: 0px;
+    background: #EEEEEE;
+}
+a.bugerator_nav_tab {
+    width:160px;
+    display: inline;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 3px 10px 4px 10px;
+    background-color: #CCCCCC;
+}
+a.bugerator_nav_tab_active {
+    width:160px;
+    display: inline;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 3px 10px 4px 10px;
+    background-color: #EEEEEE;
+}
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap !important;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    width: 99%;
+}
+#seperator{}
+/* bugerator_css_option_page */
+div.css_edit {
+    width: 90%;
+    margin: auto;
+
+    padding: 2px;
+}
+div.issue_detail {
+    float: right;
+    width: 73%;
+    margin-right: 10px;
+    border: 1px solid;
+    border-top: 0px;
+    padding: 2px;
+}
+.option_css_form {
+    margin: auto;
+    width: 90%;
+}
+td.bugerator_option_colors {
+    text-align: right;
+    padding: 0px 10px 0px 10px;
+    font-weight: bold;
+}
+div.bugerator_nav_tab_wrapper {
+    margin-top: 10px;
+}
+table.bugerator_users {
+    
+}
+th.bugerator_users {
+    
+}
+tr.bugerator_users {
+    
+}
+td.bugerator_users {
+    vertical-align: top;
+    text-align: center;
+}
+#seperator{}
+/* bugerator_css_admin_view_projects */
+table.list_projects
+{
+    border-collapse: collapse;
+    background: #cccccc;
+}
+tr.list_projects
+{
+    border: 1px solid black;
+}
+td.list_projects
+{
+    border: 1px solid black;
+    width: 16.66%;
+    padding: 3px;
+}
+td.list_devs
+{
+    width: 50%;
+}
+td.text_right
+{
+    text-align: right;
+}
+td.header_right
+{
+    border-left: none;
+    padding: 3px;
+}
+td.header_left
+{
+    border-right: none;
+    padding: 3px;
+    font-weight: bold;    
+}
+td.left_cell {
+    text-align: right;
+    border-right: 1px dotted;
+    width: 20%;
+    font-size: .8em;
+}
+td.right_cell {
+    border-left: none;
+    width: 13.33%;
+    font-size: .8em;
+}
+td.list_devs {
+    font-size: .8em;
+}
+td.list_admins {
+    font-size: .8em;
+}
+#seperator{}
+/* bugerator_css_issue_list */
+span.issue_list {
+
+}
+table.bugerator_list {
+}
+tr.bugerator_list_header {
+
+}
+th.bugerator_list_header {
+    padding: 0px, 10px, 0px, 10px;
+}
+tr.bugerator_list {
+}
+td.bugerator_list {
+}
+a.bugerator_issue_link:link {
+    color: #000000;
+    text-decoration: underline;
+}
+a.bugerator_issue_link:visited {
+    color: #000000;
+    text-decoration: underline;
+}
+a.bugerator_issue_link:hover {
+    color: #0000FF;
+    text-decoration: underline;
+}
+a.bugerator_issue_link:active {
+    color: #0000FF;
+    text-decoration: underline;
+}
+tr.completed {
+    display: none;
+}
+#seperator{}
+/* bugerator_css_add_issue */
+div.add_project {
+}
+h2.add_project {
+}
+p.add_project {
+}
+table.add_project {
+}
+tr.add_title {
+}
+td.title_left {
+}
+td.title_right {
+}
+tr.add_project {
+    padding: 5px;
+}
+td.add_project_left {
+    vertical-align: top;
+}
+td.add_project_right {
+}
+#seperator{}
+/* bugerator_css_admin */
+div.bug_admin_wrapper {
+
+}
+div.bug_admin_nav_wrapper {
+
+}
+ul.bug_admin_nav_wrapper {
+    list-style-type:none;
+    margin:0;
+    padding: 0px;
+}
+li.bug_admin_tab {
+    display: inline;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 3px 10px 4px 10px;
+    background: #CCCCCC;
+}
+li.bug_admin_tab_active {
+    background: #DDDDDD;
+}
+table.form_table {
+}
+tr.form {
+}
+td.form_left {
+    padding: 6px;
+    text-align: right;
+}
+td.form_right {
+    padding: 2px;
+}
+div.admin_pages {
+    background-color: #DDDDDD;
+}
+#seperator{}
+/* bugerator_css_choose_project */
+div.choose_project {
+}
+h2.choose_project {
+}
+table.choose_project {
+    width: 90%;
+}
+tr.choose_project {
+}
+th.choose_project {
+
+}
+td.choose_project {
+    text-align: center;
+}
+a.choose_project {
+}
+#seperator{}
+/* bugerator_css_comment_display */
+h4.comment_display {
+    text-align: left;
+}
+td.bugerator_comment {
+}
+td.comment_left {
+    padding: 6px;
+    text-align: right;
+}
+#seperator{}
+/* bugerator_css_comment_form */
+div.comment_div {
+}
+table.bugerator_comment_add {
+}
+tr.bugerator_comment_add {
+}
+td.bugerator_comment_add {
+}
+td.form_left {
+    padding: 6px;
+    text-align: right;
+}
+td.form_right {
+    padding: 2px;
+}
+#seperator{}
+/* bugerator_css_issue_admin_edit */
+tr.hidden {
+    display: none;
+}
+#seperator{}
+/* bugerator_css_issue_detail */
+table.bugerator_issue.detail {
+}
+tr.bugerator_title {
+}
+td.bugerator_title {
+}
+tr.bugerator_status {
+}
+td.bugerator_status {
+    background: #CCCCCC;
+}
+tr.bugerator_user {
+}
+td.bugerator_user {
+    background: #CCCCCC;
+}
+tr.bugerator_description {
+}
+td.bugerator_description {
+    background: #CCCCCC;
+}
+#seperator{}
+/* bugerator_css_issue_edit */
+div.issue_links {
+}
+table.bugerator_issue_edit {
+}
+tr.bugerator_issue_edit {
+}
+td.bugerator_issue_edit {
+}
+td.form_left {
+    padding: 6px;
+    text-align: right;
+}
+td.form_right {
+    padding: 2px;
+}
+#seperator{}
+/* bugerator_css_comment_edit */
+td.form_left {
+    padding: 6px;
+    text-align: right;
+}
+td.form_right {
+    padding: 2px;
+}
+td.lineup_top {
+    valign: top;
+}
+div.comment_edit {
+}
+table.bugerator_comment_edit {
+}
+tr.bugerator_comment_edit {
+}
+td.bugerator_comment_edit {
+}
+td.lineup_top {
+    vertical-align: top;
+}
+#seperator{}
+/* bugerator_css_version_map */
+table.bugerator_map {
+}
+tr.bugerator_map {
+}
+th.bugerator_map {
+}
+td.bugerator_map {
+}
+a.bugerator_issue_link {
+}
+

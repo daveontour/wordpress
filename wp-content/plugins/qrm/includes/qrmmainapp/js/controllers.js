@@ -116,7 +116,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $timeout, $q, 
             } else {
                 intro.sessionOK = true;
                 if (response.data != "-3") {
-                    QRMDataService.siteUsers = response.data.data;
+                    QRMDataService.siteUsers = response.data;
                 }
             }
         });
@@ -491,7 +491,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
 
         var a = remoteService.getSiteUsers()
             .then(function (response) {
-                QRMDataService.siteUsers = response.data.data;
+                QRMDataService.siteUsers = response.data;
             });
 
         var b = remoteService.getCurrentUser()
@@ -850,15 +850,15 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                     return;
                 }
 
-                if (response.data.data.length == 0) {
+                if (response.data.length == 0) {
                     QRM.mainController.noRisksFound();
                 } else {
                     QRM.mainController.risksFound();
                 }
-                exp.rawRisks = response.data.data;
-                QRMDataService.projectRisks = response.data.data;
-                exp.gridOptions.data = response.data.data;
-                exp.gridOptionsSm.data = response.data.data;
+                exp.rawRisks = response.data;
+                QRMDataService.projectRisks = response.data;
+                exp.gridOptions.data = response.data;
+                exp.gridOptionsSm.data = response.data;
 
                 var maxImpact = Number(QRMDataService.project.matrix.maxImpact);
                 var maxProb = Number(QRMDataService.project.matrix.maxProb);
@@ -870,7 +870,7 @@ function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, n
                 }
 
 
-                response.data.data.forEach(function (el) {
+                response.data.forEach(function (el) {
                     var iP = Math.floor(Number(el.inherentProb));
                     var iI = Math.floor(Number(el.inherentImpact));
                     var tP = Math.floor(Number(el.treatedProb));
@@ -2026,7 +2026,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     this.getRisks = function () {
         remoteService.getAllProjectRisks(QRMDataService.project.id, cal.childProjects)
             .then(function (response) {
-                cal.risks = response.data.data;
+                cal.risks = response.data;
                 cal.layoutCalender(cal.risks);
             });
 
@@ -2308,7 +2308,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
         QRM.mainController.titleBar = "Risk Ranking - " + QRMDataService.project.title;
         remoteService.getAllProjectRisks(QRMDataService.project.id, rank.childProjects)
             .then(function (response) {
-                var risks = response.data.data;
+                var risks = response.data;
                 rank.dirty = false;
                 rank.risks = risks;
                 rank.layout = new SorterLayout(rank, $scope);
@@ -3288,7 +3288,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
         QRM.mainController.titleBar = "Tolerance Matrix - " + QRMDataService.project.title;
         remoteService.getAllProjectRisks(QRMDataService.project.id, relMatrixCtrl.childProjects)
             .then(function (response) {
-                var risks = response.data.data;
+                var risks = response.data;
                 risks.forEach(function (risk) {
                     risk.untreatedClean = true;
                     risk.treatedClean = true;

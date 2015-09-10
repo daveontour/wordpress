@@ -20,10 +20,9 @@ function getQRMUpdateInfo() {
 			wp_die ();
 			break;
 		case 'info' :
-			$obj->requires = '4.0';
+			$obj->requires = '4.2.1';
 			$obj->tested = '4.3';
-			$obj->downloaded = 12540;
-			$obj->last_updated = '2012-08-26';
+			$obj->last_updated = '2015-09-15';
 			$obj->sections = array (
 					'description' => 'The new version of the Auto-Update plugin',
 					'another_section' => 'This is another section',
@@ -44,6 +43,8 @@ add_action ( 'wp_enqueue_scripts', 'theme_enqueue_styles' );
 function theme_enqueue_styles() {
 	wp_enqueue_style ( 'parent-style', get_template_directory_uri () . '/style.css' );
 }
+
+
 add_action ( 'woocommerce_add_order_item_meta', 'qrm_save_item_order_key_itemmeta', 10, 3 );
 function qrm_save_item_order_key_itemmeta($item_id, $values, $cart_item_key) {
 	$item_sku = get_post_meta ( $values ['product_id'], '_sku', true );
