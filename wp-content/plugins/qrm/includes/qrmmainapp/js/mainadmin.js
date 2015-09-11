@@ -1,5 +1,5 @@
 function SampleController($scope, remoteService, ngNotify) {
-    
+
     var samp = this; 
     $scope.installSample = function () {
     	
@@ -9,37 +9,30 @@ function SampleController($scope, remoteService, ngNotify) {
             });
     }
     $scope.installSampleProjects = function () {
-     	alert("Installing Sample Data. (takes a while)");
+         ngNotify.set("Installing Sample Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
         remoteService.installSampleProjects()
             .then(function (response) {
-            	alert(response.data.msg);
-            });
-    }
-    $scope.removeSample = function () {
-    	alert("Removing Sample Data");
-         remoteService.removeSample(false)
-            .then(function (response) {
-            	alert(response.data.msg);
+               	ngNotify.dismiss();
+                ngNotify.set(response.data.msg, {type:"success", duration:1000, theme:"pure"});
             });
     }
 
     $scope.reindexRiskCount = function () {
+        ngNotify.set("Re Indexing Risk Counts", {type:"info", sticky:true, theme:"pure"});
         remoteService.reindexRiskCount()
             .then(function (response) {
-            	alert("Re Indexing Completed");
+               	ngNotify.dismiss();
+                ngNotify.set("Re Indexing Complete", {type:"success", duration:1000, theme:"pure"});
             });
     }
     $scope.removeAllData = function () {
     	var r = confirm("Press confirm you wish to remove all the data from Quay Risk Manager");
     	if (r == true) {
- //       	alert("Removing All Data");
-            ngNotify.config({
-                duration: 2000
-            });
-            ngNotify.set("Removing All QRM Data", "info");
+            ngNotify.set("Removing All Quay Risk Manager Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
             remoteService.removeSample(true)
             .then(function (response) {
-               	alert(response.data.msg);
+               	ngNotify.dismiss();
+                ngNotify.set("All Quay Risk Manager Data Removed", {type:"success", duration:1000, theme:"pure"});
             });
     	} 
     }
@@ -226,33 +219,13 @@ function dropzone() {
 
 var app = angular.module('myApp', [
 'ngNotify',
-'ngDialog',
+'ngSanitize',
 'ui.grid',
 'ui.grid.autoResize',
 'ui.bootstrap'
 ]);
 
 (function(){
-app.config(['ngDialogProvider', function (ngDialogProvider) {
-    ngDialogProvider.setDefaults({
-        className: 'ngdialog-theme-default',
-        plain: false,
-        showClose: false,
-        closeByDocument: false,
-        closeByEscape: false,
-        appendTo: false
-    });
-}]);
-
-//app.config(['ngDialogProvider', function (ngDialogProvider) {
-//    ngDialogProvider.setDefaults({
-//        className: 'ngdialog-theme-default',
-//        plain: false,
-//        showClose: false,
-//        closeByDocument: false,
-//        closeByEscape: false,
-//        appendTo: false
-//    });
 
 app.service('remoteService', ['$http', RemoteService]);
 app.filter('usernameFilter', function () {

@@ -43,7 +43,6 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 
             if (m.msg) {
                 QRM.mainController.notify(m.message, m.duration);
-                  console.log(m.message);
                  return;
             }
             if (m.timeout) {
@@ -51,8 +50,8 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
                return;
             }
             if (m.reportReady) {
-                console.log("Chat Report Ready");
-                QRM.mainController.notify("Report Ready.  Downloading Now.", 1000);
+                QRM.mainController.notify2("Report Ready . Downloading Now");
+
                 $('input[name="userEmail"]').val(QRMDataService.userEmail);
                 $('input[name="userLogin"]').val(QRMDataService.userLogin);
                 $('input[name="siteKey"]').val(QRMDataService.siteKey);
@@ -63,10 +62,8 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("Chat Fail");
-//            alert("Could connect to Report Server");
         },
         complete: function(jqXHR, textStatus){
-            console.log("Chat Reset");
             startChatChannel(pollURL, userEmail, siteKey, QRMDataService, false);
         }
           
@@ -272,11 +269,16 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
     QRM.mainController = this;
 
     this.notify = function (message, duration) {
-        ngNotify.config({
-            duration: duration
-        });
-        ngNotify.set(message, "info");
+       	ngNotify.dismiss();
+        ngNotify.set(message, {type:"info", sticky:true, theme:"pure"});
+
     };
+    
+    this.notify2 = function (message) {
+      	ngNotify.dismiss();
+        ngNotify.set(message, {type:"success", duration:1000, theme:"pure"});
+  };
+
 
 
     this.showStatusBoard = false;

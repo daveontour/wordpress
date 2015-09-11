@@ -2,7 +2,7 @@
 wp_enqueue_style ( 'bootstrap' );
 wp_enqueue_style ( 'animate' );
 wp_enqueue_style ( 'ui-grid' );
-wp_enqueue_style ( 'notify' );
+wp_enqueue_style ( 'ngNotify' );
 wp_enqueue_style ( 'style' );
 wp_enqueue_style ( 'qrm-angular' );
 wp_enqueue_style ( 'qrm-style' );
@@ -15,13 +15,12 @@ wp_enqueue_script ( 'qrm-angular' );
 wp_enqueue_script ( 'qrm-bootstraptpl' );
 wp_enqueue_script ( 'qrm-uigrid' );
 wp_enqueue_script ( 'qrm-common' );
-wp_enqueue_script ( 'qrm-ngDialog' );
 wp_enqueue_script ( 'qrm-ngNotify' );
 wp_enqueue_script ( 'qrm-mainadmin' );
+wp_enqueue_script('qrm-sanitize');
 wp_enqueue_script ( 'qrm-dropzone' );
 
 ?>
-
 
 <script type="text/javascript">
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
