@@ -707,7 +707,7 @@ class QRMSample {
 		
 		QRMSample::createDummyRiskEntryMultiple($p1,5,10);
 			
-		return "Projects Installed";
+		return "Sample Data Installed";
 	}
 	
 	static function singleProject($title, $id, $users, $parent = 0, $cat = null){

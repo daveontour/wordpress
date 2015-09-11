@@ -117,7 +117,11 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         if (valid.code > 0) {
             remoteService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
-                    ngNotify.set("Project Saved", "success");
+                    ngNotify.set("Project Saved", {
+                        sticky: true,
+                        theme:'pure',
+                        type:'success'
+                    });
                     $scope.handleGetProjects(response);
                     projCtrl.editProject($scope.projMap.get(projectID));
 

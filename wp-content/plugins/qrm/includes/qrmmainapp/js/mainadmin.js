@@ -17,7 +17,7 @@ function SampleController($scope, remoteService, ngNotify) {
     }
     $scope.removeSample = function () {
     	alert("Removing Sample Data");
-        remoteService.removeSample(false)
+         remoteService.removeSample(false)
             .then(function (response) {
             	alert(response.data.msg);
             });
@@ -32,7 +32,11 @@ function SampleController($scope, remoteService, ngNotify) {
     $scope.removeAllData = function () {
     	var r = confirm("Press confirm you wish to remove all the data from Quay Risk Manager");
     	if (r == true) {
-        	alert("Removing All Data");
+ //       	alert("Removing All Data");
+            ngNotify.config({
+                duration: 2000
+            });
+            ngNotify.set("Removing All QRM Data", "info");
             remoteService.removeSample(true)
             .then(function (response) {
                	alert(response.data.msg);
@@ -233,12 +237,23 @@ app.config(['ngDialogProvider', function (ngDialogProvider) {
     ngDialogProvider.setDefaults({
         className: 'ngdialog-theme-default',
         plain: false,
-        showClose: true,
-        closeByDocument: true,
-        closeByEscape: true,
+        showClose: false,
+        closeByDocument: false,
+        closeByEscape: false,
         appendTo: false
     });
 }]);
+
+//app.config(['ngDialogProvider', function (ngDialogProvider) {
+//    ngDialogProvider.setDefaults({
+//        className: 'ngdialog-theme-default',
+//        plain: false,
+//        showClose: false,
+//        closeByDocument: false,
+//        closeByEscape: false,
+//        appendTo: false
+//    });
+
 app.service('remoteService', ['$http', RemoteService]);
 app.filter('usernameFilter', function () {
     return function (input) {
