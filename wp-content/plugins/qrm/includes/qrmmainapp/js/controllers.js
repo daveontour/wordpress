@@ -50,7 +50,7 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
                return;
             }
             if (m.reportReady) {
-                QRM.mainController.notify2("Report Ready . Downloading Now");
+                QRM.mainController.notify2("Report Ready. Downloading Now");
 
                 $('input[name="userEmail"]').val(QRMDataService.userEmail);
                 $('input[name="userLogin"]').val(QRMDataService.userLogin);
@@ -532,7 +532,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
                         QRMDataService.reports = data;
                     })
                     .error(function (data) {
-                        alert("Error Retrieving Available Reports");
+                        //alert("Error Retrieving Available Reports");
                     })
                     .finally(function () {
                         if (login) {
@@ -543,8 +543,6 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
             });
 
     }
-
-    //    this.init();
 };
 
 function ExplorerCtrl($scope, QRMDataService, $state, $timeout, remoteService, ngDialog, $http,uiGridConstants) {
@@ -1171,7 +1169,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     vm.cancelAttachment()
-                    ngNotify.set("Attachment added to risk", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Attachment Added To Risk", {type:"success", duration:1000, theme:"pure"});
                     remoteService.getAttachments(vm.riskID)
                         .then(function (response) {
                             vm.risk.attachments = response.data;
@@ -1214,13 +1213,15 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
             scope: $scope,
         }).then(function (value) {
             if (vm.reviewType == -1) {
-                ngNotify.set("Please Enter Audit Type", "grimace");
+                ngNotify.dismiss();
+                ngNotify.set("Please Enter Audit Type", {type:"grimace", duration:1000, theme:"pure"});
                 return;
             }
             remoteService.registerAudit(vm.reviewType, vm.reviewComment, vm.risk.id)
                 .then(function (response) {
                     vm.risk.audit = response.data;
-                    ngNotify.set("Audit Registered", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Audit Registered", {type:"success", duration:1000, theme:"pure"});
                 }).finally(function () {
                     vm.reviewType = -1;
                     vm.reviewComment = "";
@@ -1387,7 +1388,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
         vm.risk.attachments = [];
         remoteService.createDummyRiskEntries(vm.risk)
             .then(function (response) {
-                 ngNotify.set("Risks Saved", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Risk Saved", {type:"success", duration:1000, theme:"pure"});
             })
             .finally(function () {
  
@@ -1414,7 +1416,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                 QRMDataService.riskID = vm.risk.riskID;
                 QRMDataService.risk = vm.risk;
                 vm.updateRisk();
-                ngNotify.set("Risk Saved", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Risk Saved", {type:"success", duration:1000, theme:"pure"});
             })
             .finally(function () {
                 $scope.savingrisk = false;
@@ -1675,7 +1678,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                         alert(response.data.msg);
                         return;
                     }
-                    ngNotify.set("Comment added to risk", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Comment Added To Risk", {type:"success", duration:1000, theme:"pure"});
                     vm.risk.comments = response.data;
                 });
         }, function (reason) {
@@ -1690,7 +1694,8 @@ function RiskCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout
                     alert(response.data.msg);
                     return;
                 }
-                ngNotify.set("Comment added to risk", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Coment Added To Risk", {type:"success", duration:1000, theme:"pure"});
                 vm.risk.comments = response.data;
             });
 
@@ -2101,7 +2106,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
 
 }
 
-function ReportArchiveController($scope, QRMDataService, $state, remoteService, ngNotify, $http, uiGridConstants) {
+function ReportArchiveController($scope, QRMDataService, $state, remoteService, $http, uiGridConstants) {
 
     QRM.mainController.titleBar = "QRM Report Archive";
     QRM.mainController.titleBarSM = "QRM Report Archive";
@@ -2278,7 +2283,8 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
                 alert(response.data.msg);
                 return;
             }
-            ngNotify.set("Rank Order Saved", "success");
+            ngNotify.dismiss();
+            ngNotify.set("Rank Order Saved", {type:"success", duration:1000, theme:"pure"});
         })
     }
 
@@ -2350,7 +2356,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
     }
 }
 
-function AnalysisController($scope, QRMDataService, $state, remoteService, ngNotify) {
+function AnalysisController($scope, QRMDataService, $state, remoteService) {
 
     QRM.mainController.titleBar = "QRM Analysis Tools" + QRMDataService.project.title;
     QRM.mainController.titleBarSM = "QRM Analysis Tools";
@@ -2762,7 +2768,8 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
         });
 
         if (relMatChanges.length < 1) {
-            ngNotify.set('There are no changes to save', "grimace");
+            ngNotify.dismiss();
+            ngNotify.set("There Were No Changes To Save", {type:"grimace", duration:1000, theme:"pure"});
             return;
         }
 
@@ -2782,7 +2789,8 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
                     item.dirty = false;
                 });
 
-                ngNotify.set('Changes to Probability/Impact have been saved', "success");
+                ngNotify.dismiss();
+                ngNotify.set("Changes to Probability/Impact Have Been Saved", {type:"success", duration:1000, theme:"pure"});
             });
 
     }
@@ -3329,7 +3337,7 @@ function RelMatrixController($scope, QRMDataService, $state, remoteService, ngNo
     this.getRisksAndPlace();
 }
 
-function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngNotify, ngDialog) {
+function IncidentExplCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeout, remoteService, ngDialog) {
 
     QRM.mainController.titleBarSM = "QRM Incident Explorer";
     QRM.mainController.titleBarSM = "QRM Incident Explorer";
@@ -3531,7 +3539,8 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     inc.cancelAttachment()
-                    ngNotify.set("Attachment Added to Incident", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Attachment Added To Incident", {type:"success", duration:1000, theme:"pure"});
                     remoteService.getAttachments(inc.incident.id)
                         .then(function (response) {
                             inc.incident.attachments = response.data;
@@ -3654,7 +3663,8 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
                         alert(response.data.msg);
                         return;
                     }
-                    ngNotify.set("Comment Added to Incident", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Comment Added To Incident", {type:"success", duration:1000, theme:"pure"});
                     inc.incident.comments = response.data;
                 });
         }, function (reason) {
@@ -3669,7 +3679,8 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
                     alert(response.data.msg);
                     return;
                 }
-                ngNotify.set("Comment Added to Incident", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Comment Added To Incident", {type:"success", duration:1000, theme:"pure"});
                 inc.incident.comments = response.data;
                 $scope.data.comment = "";
             });
@@ -3689,7 +3700,8 @@ function IncidentCtrl($scope, $modal, QRMDataService, $state, $stateParams, $tim
                     return;
                 }
                 $scope.savingincident = false;
-                ngNotify.set("Incident Saved", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Incident Saved", {type:"success", duration:1000, theme:"pure"});
                 inc.incident = response.data;
                 inc.updateIncident();
             });
@@ -3952,7 +3964,8 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     rev.cancelAttachment()
-                    ngNotify.set("Attachment Added to Review", "success");
+                 ngNotify.dismiss();
+                ngNotify.set("Attachment Added To Review", {type:"success", duration:1000, theme:"pure"});
                     remoteService.getAttachments(rev.review.id)
                         .then(function (response) {
                             rev.review.attachments = response.data;
@@ -4093,7 +4106,8 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
         }).then(function (value) {
             remoteService.addGeneralComment($scope.data.comment, QRMDataService.reviewID)
                 .then(function (response) {
-                    ngNotify.set("Comment Added to Review", "success");
+                    ngNotify.dismiss();
+                    ngNotify.set("Comment Added TO Review", {type:"success", duration:1000, theme:"pure"});
                     rev.review.comments = response.data;
                 });
         }, function (reason) {
@@ -4108,7 +4122,8 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
                     alert(response.data.msg);
                     return;
                 }
-                ngNotify.set("Comment Added to Review", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Comment Added To Review", {type:"success", duration:1000, theme:"pure"});
                 rev.review.comments = response.data;
                 $scope.data.comment = "";
             });
@@ -4213,7 +4228,8 @@ function ReviewCtrl($scope, $modal, QRMDataService, $state, $stateParams, $timeo
                     return;
                 }
                 $scope.savingreview = false;
-                ngNotify.set("Review Saved", "success");
+                ngNotify.dismiss();
+                ngNotify.set("Review Saved", {type:"success", duration:1000, theme:"pure"});
                 rev.review = response.data;
                 rev.updateReview();
             });
@@ -4324,10 +4340,10 @@ var app = angular.module('qrm');
     app.controller('RiskCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
     app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
     app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
-    app.controller('ReportArchiveController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', '$http', 'uiGridConstants', ReportArchiveController]);
-    app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', AnalysisController]);
+    app.controller('ReportArchiveController', ['$scope', 'QRMDataService', '$state', 'RemoteService', '$http', 'uiGridConstants', ReportArchiveController]);
+    app.controller('AnalysisController', ['$scope', 'QRMDataService', '$state', 'RemoteService', AnalysisController]);
     app.controller('RelMatrixController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RelMatrixController]);
-    app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentExplCtrl]);
+    app.controller('IncidentExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngDialog', IncidentExplCtrl]);
     app.controller('IncidentCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
     app.controller('ReviewExplCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewExplCtrl]);
     app.controller('ReviewCtrl', ['$scope', '$modal', 'QRMDataService', '$state', '$stateParams', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
