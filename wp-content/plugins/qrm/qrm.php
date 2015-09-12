@@ -1973,7 +1973,10 @@ final class QuayRiskManager {
 
 			add_action('manage_riskproject_posts_custom_column', array ($this,'qrm_riskproject_table_content'), 10, 2 );
 			add_action('manage_risk_posts_custom_column', array ($this,'qrm_risk_table_content'), 10, 2 );
+			
 			add_action('admin_menu', array ($this,'qrm_admin_menu_config' ) );
+			add_action( 'admin_init', array( $this, 'redirect_about_page' ), 1 );
+			
 			add_action('add_meta_boxes', array( $this, 'riskproject_meta_boxes' ) );
 				
 			add_filter('upload_mimes', array ($this,'add_custom_mime_types' ));
@@ -1988,6 +1991,7 @@ final class QuayRiskManager {
 			add_action('trashed_post', array ($this,'qrm_trashed_post' ));
 			
 			add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this,'qrm_add_plugin_action_links') );
 				
 			
 			add_option("qrm_siteName", "Quay Risk Manager Site");
@@ -2016,6 +2020,12 @@ final class QuayRiskManager {
 			}
 			
 			return $links;
+		}
+		public function qrm_add_plugin_action_links($links) {
+			//Add 'Settings' to plugin entry
+			return array_merge ( array (
+					'settings' => '<a href="' .admin_url( 'plugins.php?page=qrm/includes/admin.php') .'">Settings</a>' 
+			), $links );
 		}
 		public function riskproject_meta_boxes() {
 			add_meta_box(
@@ -2089,19 +2099,12 @@ final class QuayRiskManager {
 			$role->add_cap( 'edit_private_pages' );
 			$role->add_cap( 'edit_published_posts' );
 			$role->add_cap( 'edit_published_pages' );
-			$role->add_cap('publish_pages');
-			$role->add_cap('publish_posts');
 			$role->add_cap( 'delete_pages' );
 			$role->add_cap( 'delete_posts' );
 			$role->add_cap( 'delete_others_posts' );
 			$role->add_cap( 'delete_others_pages' );
-			$role->add_cap( 'delete_private_posts' );
-			$role->add_cap( 'delete_private_pages' );
 			$role->add_cap( 'delete_published_posts' );
 			$role->add_cap( 'delete_published_pages' );
-			$role->add_cap( 'manage_options' );
-			$role->add_cap( 'manage_links' );
-			$role->add_cap( 'manage_categories' );
 				
 			$role = get_role("administrator");
 			$role->add_cap( 'risk_admin' );
@@ -2122,6 +2125,9 @@ final class QuayRiskManager {
 			
 			$this->register_types();
 			flush_rewrite_rules();
+			
+			set_transient( 'qrm_about_page_activated', 1, 30 );
+				
 		}
 	    public function get_custom_post_type_template($single_template) {
 
@@ -2244,9 +2250,25 @@ final class QuayRiskManager {
 			}
 		}
 		public function qrm_admin_menu_config() {
-			add_menu_page ( 'Quay Risk Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-admin-generic', "35" );
+			add_menu_page ( 'Quay Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-admin-generic', "35" );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'normal' );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'side' );
+		}
+		public function redirect_about_page() {
+			
+			//Redirect to QRM Setting Page when first activated
+			
+			// only do this if the user can activate plugins
+			if ( ! current_user_can( 'manage_options' ) )
+				return;
+		
+			// don't do anything if the transient isn't set
+			if ( ! get_transient( 'qrm_about_page_activated' ) )
+				return;
+		
+			delete_transient( 'qrm_about_page_activated' );
+			wp_safe_redirect( admin_url( 'plugins.php?page=qrm/includes/admin.php') );
+			exit;
 		}
 		public function add_custom_mime_types($mimes) {
 			return array_merge ( $mimes, array (

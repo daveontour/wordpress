@@ -26,183 +26,154 @@ wp_enqueue_script ( 'qrm-dropzone' );
 		var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
 </script>
 <div ng-app="myApp" style="width: 100%; height: 100%">
-	<div>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-sm-12 col-md-12 col-lg-12">
-					<h2 style="font-weight: 600">Quay Risk Manager</h2>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12 col-md-8 col-lg-8">
+				<h2 style="font-weight: 600">Quay Risk Manager</h2>
+				<h3>Welcome to Quay Risk Manager</h3>
+				<p>Quay Risk Manager (QRM) helps you to manage your portfolio of risk</p>
+				<p>Visit Quay Systems at <a href="http://www.quaysystemm.com.au">www.quaysystemm.com.au</a> for tutorials, documentation and support forums on the use and managment 
+				of Quay Risk Manager. You will also find links on the site to other products and services offered by Quay Systems</p>
+				
+				<h4>Getting Started:</h4>
+				<div style="padding-left: 20px">
+					<p>Users access to the QRM is limited to the users configured in
+						the user access table. Select the user who will have access to the
+						Quay Risk Manager</p>
+					<p>
+						Risks are arranged into "Risk Projects" which can be arranged into
+						a heirarcical order. Use the "Risk Project" item in the Dashboard
+						menu to add a new risk project or select &nbsp; <a
+							href="<?php echo admin_url( 'post-new.php?post_type=riskproject') ?>">Add
+							New Project</a>
+					</p>
+					Quay Risk Manager is accessed by either:
+
+					<ol style="margin-top: 10px; padding-left: 15px">
+						<li>Selecting "View" from the list of Projects, Risks, Incident or
+							Reviews</li>
+						<li>Via the "Quay Risk Manager" page</li>
+					</ol>
+					<p>Risk, Reviews and Incidents can only be added via the QRM system</p>
+				</div>
+				<div ng-controller="userCtrl">
+					<h4 style="margin-top: 20px">User Access Table</h4>
+					<div style="width: 100%" id="userGrid" ui-grid="gridOptions"
+						ui-grid-auto-resize ng-style="getTableHeight()" class="userGrid"></div>
+					<p>Assign the WordPress role "Risk Administrator" to users you want to allow to create projects and administer risks, incident and reviews</p>
+					<div style="text-align: right; margin-top: 15px">
+						<button type="button" class="btn btn-w-m btn-sm btn-primary"
+							ng-click="saveChanges()">Save Changes</button>
+						<button type="button" style="margin-left: 10px"
+							class="btn btn-w-m btn-sm btn-warning" ng-click="cancelChanges()">Cancel</button>
+					</div>
+					
 				</div>
 
-				<div class="col-sm-12 col-md-6 col-lg-6">
-					<p>Welcome to Quay Risk Manager</p>
-					<h4>Getting Started:</h4>
-					<div style="padding-left: 20px">
+				<h4>Sample Data</h4>
+				<p>Once users have been enabled to use the system, sample data can
+					be installed</p>
+				<div style="text-align: right; margin-top: 15px"
+					ng-controller="sampleCtrl">
+					<button type="button" class="btn btn-w-m btn-sm btn-primary"
+						ng-click="installSampleProjects()">Install Sample Data</button>
+				</div>
 
-						<p>Users access to the QRM is limited to the users configured in
-							the user access table. Select the user who will have access to
-							the Quay Risk Manager</p>
-						<p>Risks are arranged into "Risk Projects" which can be arranged
-							into a heirarcical order. Use the "Risk Project" item in the
-							Dashboard menu to add a new risk project</p>
-						Quay Risk Manager is accessed by either:
 
-						<ol style="margin-top: 10px; padding-left: 15px">
-							<li>Selecting "View" from the list of Projects, Risks, Incident
-								or Reviews</li>
-							<li>Via the "Quay Risk Manager" page</li>
-						</ol>
+				<h4>Clear QRM Data</h4>
+				<p>All the Quay Risk Manager Data can be removed from the site
+					(Caution!)</p>
+				<div style="text-align: right; margin-top: 15px"
+					ng-controller="sampleCtrl">
+					<button type="button" style="margin-left: 10px"
+						class="btn btn-w-m btn-sm btn-danger" ng-click="removeAllData()">Remove
+						All QRM Data</button>
+				</div>
 
-						<div>
-							<h4>Support</h4>
-							<div style="padding-left: 20px">
-								<p>Email: support@quaysystems.com.au</p>
-							</div>
-						</div>
-						<div>
-							<h4>Notes</h4>
-							<div style="padding-left: 20px">
-								<p>Risk Projects are added and edited via the Dashboard</p>
-								<p>Risk, Reviews and Incidents can only be added via the QRM
-									system</p>
-								<p>Projects can only be deleted if they have no child projects
-									and no risks assigned to them</p>
-							</div>
-						</div>
-					</div>
-					<div ng-controller="userCtrl">
-						<h4 style="margin-top: 20px">Quay Risk Manager User Access Table</h4>
-						<div style="width: 100%" id="userGrid" ui-grid="gridOptions"
-							ui-grid-auto-resize ng-style="getTableHeight()" class="userGrid"></div>
-						<div style="text-align: right; margin-top: 15px">
-							<button type="button" class="btn btn-w-m btn-sm btn-primary"
-								ng-click="saveChanges()">Save Changes</button>
-							<button type="button" style="margin-left: 10px"
-								class="btn btn-w-m btn-sm btn-warning"
-								ng-click="cancelChanges()">Cancel</button>
-						</div>
-					</div>
+<!-- 				<h4>Re-index QRM Data</h4> -->
+<!-- 				<p>If the project count of risks appear to be inconsistent, the -->
+<!-- 					count can be reindexed. Projects which are recorded with non zero -->
+<!-- 					counts of risks cannot be delete. Re-index corrects the count of -->
+<!-- 					risks for each project.</p> -->
+<!--				<div style="text-align: right; margin-top: 15px" ng-controller="sampleCtrl">-->
+<!--					<button type="button" style="margin-left: 10px"	class="btn btn-w-m btn-sm btn-primary"	ng-click="reindexRiskCount()">Re-index Data</button> -->
+<!-- 				</div> -->
 
-					<h4>Sample Data</h4>
-					<p>Once users have been enabled to use the system, sample data can
-						be installed or removed</p>
-
-					<div style="text-align: right; margin-top: 15px"
-						ng-controller="sampleCtrl">
+				<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
+					<div style="float: left; width: 250px; text-align: -webkit-center">
+						<h4>Data Export</h4>
 						<button type="button" class="btn btn-w-m btn-sm btn-primary"
-							ng-click="installSampleProjects()">Install Sample Data</button>
-<!--						<button type="button" style="margin-left: 10px"
-							class="btn btn-w-m btn-sm btn-danger" ng-click="removeSample()">Remove
- 							Sample Data</button> -->
+							ng-click="samp.downloadJSON()">Export Data</button>
+						<p style="margin-top: 10px">The data from QRM will be dowloaded in
+							a single file in a form suitable for importation to another QRM
+							instance</p>
 					</div>
 
-					
-						<h4>Clear QRM Data</h4>
-						<p>All the Quay Risk Manager Data can be removed from the site
-							(Caution!)</p>
-							<div style="text-align: right; margin-top: 15px"
-						ng-controller="sampleCtrl">
-						<button type="button" style="margin-left: 10px"
-							class="btn btn-w-m btn-sm btn-danger" ng-click="removeAllData()">Remove
-							All QRM Data</button>
-
-					</div>
-
-						<h4>Re-index QRM Data</h4>
-						<p>If the project count of risks appear to be inconsistent, the count can be reindexed. Projects which are recorded with non zero counts of risks cannot be delete. Re-index corrects the count of risks for each project.</p>
-							<div style="text-align: right; margin-top: 15px"
-						ng-controller="sampleCtrl">
-						<button type="button" style="margin-left: 10px"
-							class="btn btn-w-m btn-sm btn-primary" ng-click="reindexRiskCount()">Re-index Data</button>
-
-					</div>
-
-
-					<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
-						<div>
-							<div>
-								<div
-									style="float: left; width: 250px; text-align: -webkit-center">
-									<h4>Data Export</h4>
-									<button type="button" class="btn btn-w-m btn-sm btn-primary"
-										ng-click="samp.downloadJSON()">Export Data</button>
-									<p style="margin-top: 10px">The data from QRM will be dowloaded
-										in a single file in a form suitable for importation to another
-										QRM instance</p>
-								</div>
-
-								<div
-									style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
-									<h4>Data Import</h4>
-									<div dropzone="dropzoneConfig" class="dropzone dz-clickable"
-										style="width: 300px; padding: 15px 15px; margin: 2px">
-										<div class="dz-message">
-											Drop import file here or click to select.<br />Files must
-											have been exported from another instance of QRM
-										</div>
-									</div>
-									<div>
-										<div style="text-align: -webkit-right">
-											<button type="button" style="margin-top: 5px"
-												class="btn btn-w-m btn-sm btn-primary"
-												ng-click="samp.uploadImport()"
-												ng-disabled="samp.disableAttachmentButon">Upload & Import</button>
-											<button type="button"
-												style="margin-top: 5px; margin-left: 10px"
-												class="btn btn-w-m btn-sm btn-warning"
-												ng-click="samp.cancelUpload()"
-												ng-disabled="samp.disableAttachmentButon">Cancel</button>
-
-										</div>
-									</div>
-								</div>
+					<div
+						style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
+						<h4>Data Import</h4>
+						<div dropzone="dropzoneConfig" class="dropzone dz-clickable"
+							style="width: 300px; padding: 15px 15px; margin: 2px">
+							<div class="dz-message">
+								Drop import file here or click to select.<br />Files must have
+								been exported from another instance of QRM
 							</div>
 						</div>
+						<div style="text-align: -webkit-right">
+							<button type="button" style="margin-top: 5px"
+								class="btn btn-w-m btn-sm btn-primary"
+								ng-click="samp.uploadImport()"
+								ng-disabled="samp.disableAttachmentButon">Upload & Import</button>
+							<button type="button" style="margin-top: 5px; margin-left: 10px"
+								class="btn btn-w-m btn-sm btn-warning"
+								ng-click="samp.cancelUpload()"
+								ng-disabled="samp.disableAttachmentButon">Cancel</button>
+						</div>
 					</div>
-					<div style="margin-top: 20px" ng-controller="repCtrl as rep">
-						<div style="float: left; clear: both">
-							<div>
-								<h4>Report Generation</h4>
-								<p>
-									Quay Risk Manager uses a remote web service to generate reports
-									in PDF Format<br /> You can produce reports without registering
-									for this service, but they will include a watermark<br />
-									Contact Quay Systems at <a href="http://www.quaysystems.com.au">http://www.quaysystems.com.au</a>
-									to register for the service without water marks
-								</p>
-								<table style="width: 600px; border-collapse: collapse">
-									<tr valign="top">
-										<th
-											style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Report
-											Server URL</th>
-										<td><input ng-model="url" style="width: 100%" required></td>
-									</tr>
-									<tr valign="top">
-										<th
-											style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-											Name</th>
-										<td><input ng-model="siteName" style="width: 100%" required></td>
-									</tr>
-									<tr valign="top">
-										<th
-											style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-											ID</th>
-										<td><input ng-model="siteID" style="width: 100%"></td>
-									</tr>
-									<tr valign="top">
-										<th
-											style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-											Key</th>
-										<td><input ng-model="siteKey" style="width: 100%"></td>
-									</tr>
-									<tr>
-										<th></th>
-										<td align="right" style="padding-top: 0.75em;"><button
-												type="button" class="btn btn-w-m btn-sm btn-primary"
-												ng-click="saveChanges()">Save Changes</button></td>
-								
-								</table>
-
-							</div>
+				</div>
+				<div style="margin-top: 20px" ng-controller="repCtrl as rep">
+					<div style="float: left; clear: both">
+						<div>
+							<h4>Report Generation</h4>
+							<p>
+								Quay Risk Manager uses a remote web service to generate reports
+								in PDF Format<br /> You can produce reports without registering
+								for this service, but they will include a watermark<br />
+								Contact Quay Systems at <a href="http://www.quaysystems.com.au">http://www.quaysystems.com.au</a>
+								to register for the service without water marks
+							</p>
+							<table style="width: 600px; border-collapse: collapse">
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Report
+										Server URL</th>
+									<td><input ng-model="url" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										Name</th>
+									<td><input ng-model="siteName" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										ID</th>
+									<td><input ng-model="siteID" style="width: 100%"></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										Key</th>
+									<td><input ng-model="siteKey" style="width: 100%"></td>
+								</tr>
+								<tr>
+									<th></th>
+									<td align="right" style="padding-top: 0.75em;"><button
+											type="button" class="btn btn-w-m btn-sm btn-primary"
+											ng-click="saveChanges()">Save Changes</button></td>
+							
+							</table>
 						</div>
 					</div>
 				</div>

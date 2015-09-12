@@ -167,18 +167,18 @@ function UserController($scope, remoteService, ngNotify) {
                 type: 'text',
                 enableHiding: false
                 },
+//            {
+//                name: 'Administrator',
+//                width: 120,
+//                field: 'allcaps.risk_admin',
+//                cellTemplate: '<input style="height:15px" type="checkbox" ng-model="row.entity.caps.risk_admin"  ng-click="grid.appScope.changeUser(row.entity)">',
+//                cellClass: 'cellCentered',
+//                type: 'text',
+//                enableHiding: false
+//                },
             {
-                name: 'Administrator',
-                width: 120,
-                field: 'allcaps.risk_admin',
-                cellTemplate: '<input style="height:15px" type="checkbox" ng-model="row.entity.caps.risk_admin"  ng-click="grid.appScope.changeUser(row.entity)">',
-                cellClass: 'cellCentered',
-                type: 'text',
-                enableHiding: false
-                },
-            {
-                name: 'User',
-                width: 80,
+                name: 'Risk User',
+                width: 130,
                 field: 'caps.risk_user',
                 cellTemplate: '<input style="height:15px" type="checkbox" ng-model="row.entity.caps.risk_user"  ng-click="grid.appScope.changeUser(row.entity)">',
                 cellClass: 'cellCentered',
