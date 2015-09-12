@@ -168,9 +168,11 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
             QRMDataService.userDisplayName = response.data.userDisplayName;
             
             //Start the message service with the report server
-             setTimeout(function () {
-                  startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
-             }, 5000);
+            if (response.data != "0" && response.data != "-1") {
+            	setTimeout(function () {
+            		startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            	}, 5000);
+            }
         });
 
     //postType is a global variable, set by PHP when the page get's created on the server
@@ -268,7 +270,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
     }
 };
 
-function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
+function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 
 
 	QRM.mainController = this;
@@ -516,7 +518,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
                 QRMDataService.risks = QRM.mainController.risks;
             });
 
-        remoteService.getServerMeta()
+        var e = remoteService.getServerMeta()
             .then(function (response) {
                 QRMDataService.reportServerURL = response.data.reportServerURL;
                 QRMDataService.siteKey = response.data.siteKey;
@@ -540,12 +542,22 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http) {
 //                        ngNotify.set("Error Retrieving Available Reports", {type:"grimace", duration:1000, theme:"pure"});
                     })
                     .finally(function () {
-                        if (login) {
-                            $state.go("qrm.explorer");
-                            postType = "firstproject";
-                        }
-                    });
+//                        if (login) {
+//                            postType = "firstproject";
+//                            $state.go("qrm.explorer");  
+//                            
+//                        }
+                   });
             });
+        
+        $q.all([ a, b, c, e]).then(function () {
+            if (login) {
+                postType = "firstproject";
+                $state.go("qrm.explorer");  
+                
+            }
+        });
+
     }
 };
 
@@ -4309,7 +4321,7 @@ var app = angular.module('qrm');
 	app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$q', '$http', IntroCtrl]);
 	app.controller('QRMCtrl', ['QRMDataService', QRMCtrl]);
 	app.controller('NonQRMCtrl', [NonQRMCtrl]);
-	app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', '$http', MainCtrl]);
+	app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', '$http', '$q',MainCtrl]);
 	app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngDialog', "$timeout","$http","uiGridConstants", ExplorerCtrl]);
 	app.controller('RiskCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
 	app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
