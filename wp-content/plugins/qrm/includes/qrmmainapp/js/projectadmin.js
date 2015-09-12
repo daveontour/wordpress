@@ -18,10 +18,7 @@ function checkValid(proj, scope) {
         rtn.msg = "Project Risk Manager Not Set";
         return rtn;
     }
-
-
     return rtn;
-
 }
 
 function isCircular(proj, scope) {
@@ -117,20 +114,13 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         if (valid.code > 0) {
             remoteService.saveProject(JSON.stringify($scope.proj))
                 .then(function (response) {
-                    ngNotify.set("Project Saved", {
-                        sticky: true,
-                        theme:'pure',
-                        type:'success'
-                    });
+                    ngNotify.set("Project Saved", {sticky: true, theme:'pure', type:'success'});
                     $scope.handleGetProjects(response);
                     projCtrl.editProject($scope.projMap.get(projectID));
 
                 });
         } else {
-            ngNotify.set("Project Not Saved<br/><br/><i>" + valid.msg + "</i>", {
-                html: true,
-                type: "error"
-            });
+            ngNotify.set("Project Not Saved<br/><br/><i>" + valid.msg + "</i>", { html: true,type: "error"});
         }
     }
     
@@ -643,11 +633,6 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
         remoteService.getSiteUsersCap()
             .then(function (response) {
-                response.data.forEach(function (e) {
-                    e.pOwner = ($.inArray(e.ID, $scope.proj.ownersID) > -1);
-                    e.pManager = ($.inArray(e.ID, $scope.proj.managersID) > -1);
-                    e.pUser = ($.inArray(e.ID, $scope.proj.usersID) > -1);
-                })
                 $scope.ref.riskProjectManagers = response.data;
                 $scope.gridOwnerOptions.data = response.data;
                 $scope.gridManagerOptions.data = response.data;

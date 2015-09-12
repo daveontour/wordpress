@@ -1,24 +1,25 @@
-
-    <div class="middle-box text-center loginscreen  animated fadeInDown">
-	<h1 style="font-size:135px" class="logo-name">QRM</h1>
-        <div>
-            <h3>Welcome to Quay Risk Manager</h3>
-            <p>    </p>
-            <p>Login in. To see it in action.</p>
-            <form class="m-t">
-                <div class="form-group">
-                    <input type="text" class="form-control" ng-model="login.username" placeholder="Username" required="">
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" ng-model="login.pass" placeholder="Password" required="">
-                </div>
-                <button ng-click="login.login()" class="btn block full-width m-b" style="background-color:#0d77b6;color:white">Login</button>
-                <p ng-show="login.showError" class="text-muted text-center"><small style="color:red">Username or password invalid</small></p>
-
-                <a href="#" ng-click="login.lostPassword()"><small>Forgot password?</small></a>
-
-            </form>
-            <p class="m-t"> <small>Quay Systems Consulting &copy; 2004-2015</small> </p>
-        </div>
-    </div>
+<div class="middle-box text-center loginscreen  animated fadeInDown">
+	<h1 style="font-size: 135px" class="logo-name">QRM</h1>
+	<div>
+		<h3>Welcome to Quay Risk Manager</h3>
+		<p></p>
+		<p>Login in. To see it in action.</p>
+		<form class="m-t">
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model="login.username" placeholder="Username" required="">
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" ng-model="login.pass" placeholder="Password" required="">
+			</div>
+			<button ng-click="login.login()" class="btn block full-width m-b" style="background-color: #0d77b6; color: white">Login</button>
+			<p ng-show="login.showError" class="text-muted text-center">
+				<small style="color: red">Username or password invalid</small>
+			</p>
+			<a href="#" ng-click="login.lostPassword()"><small>Forgot password?</small></a>
+		</form>
+		<p class="m-t">
+			<small>Quay Systems Consulting &copy; 2004-2015</small>
+		</p>
+	</div>
+</div>
 

@@ -742,11 +742,13 @@ final class QRM {
 			$u->display_name = $user->data->display_name;
 			$u->user_email = $user->data->user_email;
 			$u->ID = $user->ID;
+
 			$u->bAdmin = $user->has_cap ( "risk_admin" );
-				
 			$u->bUser = $user->has_cap ( "risk_user" );
 				
-			array_push ( $userSummary, $u );
+			if ($u->bAdmin || $u->bUser){
+				array_push ( $userSummary, $u );
+			}
 		}
 
 		wp_send_json ( $userSummary );
