@@ -1,0 +1,76 @@
+=== Quay Risk Manager ===
+Contributors: David Burton,
+Tags: risk
+Requires at least: 3.6
+Tested up to: 4.3
+Stable tag: 3.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Manage your organisations\'s portfolio of risks. 
+
+== Description ==
+Long description of this great plugin. No characters limit, and you can use markdown.
+
+For backwards compatibility, if this section is missing, the full length of the short description will be used, and
+markdown parsed.
+
+Ordered list:
+
+1. Some feature
+1. Another feature
+1. Something else about the plugin
+
+Unordered list:
+
+* something
+* something else
+* third thing
+
+Link to [WordPress](http://wordpress.org/ \"Your favorite software\") and one to [Markdown\'s Syntax Documentation][markdown syntax].
+
+Titles are optional, naturally.
+
+Asterisks for *emphasis*.
+
+Double it up  for **strong**.
+
+== Installation ==
+1. Upload \"qrm.zip\" via WordPres's Plugins->Add New menu.
+2. Activate the plugin through the \"Plugins\" menu in WordPress.
+3. Go to the QRM Setting page either by selecting "Settings" on the Quay Risk Manager entry of the plugins list or "QRM Settings" Menu.
+4. Before you can create your first risk project, select the users who can have access to Quay Risk Manager.
+5. Select "Install Sample Data" in the "QRM Settings" page or create your first Risk Project via the menu Risk Projects->Add Risk Project.
+6. Choose how you want to give users access to Quay Risk Manager by configuring the "Quay Risk Manager" page into one of your site's menus.
+7. QRM Risk Admistrators can access QRM via "View" on any of the QRM post types.   
+
+== Frequently Asked Questions ==
+= Selecting the \"Quay Risk Manager\" page just shows the page in the default format =
+ Select the page and choose \"Edit\". Make sure the template \"Quay Risk Manager Main Page\" is selected
+
+= There is a \"Add Project\" menu option, but no \"Add Risk\" option =
+ Risk can only be created from within Quay Risk Manager itself. Select a project to view or select the Quay Risk Manager page to enter QRM.
+
+= How can I delete a risk, risk project, incident or review? =
+ These items can only be deleted by QRM Risk Administrator by selecting the items for deletion in the risk items listing from the WordPress admin menu.
+
+= How do I make a user a QRM Risk Administrator? =
+ From the WordPress Users menu, select the user and give them the role "Risk Administrator"
+
+= How do I navigate around Quay Risk Manager? =
+ Select the menu icon (three bars) in the top left of QRM to display the navigation menu
+ 
+= How are reports generated? =
+ Reports are generated in PDF format by packaging the relevant data and sending the data to the Quay Systems Report Server via a web service where it is stored only long enough to generate the selected report and then deleted.
+ 
+= Can I use a different report server? =
+You can install your own QRM Report Generator on your own network. Contct Quay Systems to discuss how.  
+
+== Screenshots ==
+1. The main Risk Explorer. Use this screen to navigate the risk projects and and select the risk to view/edit
+2. The Risk Editor for viewing or editing risks
+3. The Tolerance Matrix showing the relative probability/impact for all the risks of the selected project
+
+== Changelog ==
+= 3.2 =
+* Ported to WordPress plugin platform - Intial WordPress Release

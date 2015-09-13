@@ -47,14 +47,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 							href="<?php echo admin_url( 'post-new.php?post_type=riskproject') ?>">Add
 							New Project</a>
 					</p>
-					Quay Risk Manager is accessed by either:
-
-					<ol style="margin-top: 10px; padding-left: 15px">
-						<li>Selecting "View" from the list of Projects, Risks, Incident or
-							Reviews</li>
-						<li>Via the "Quay Risk Manager" page</li>
-					</ol>
-					<p>Risk, Reviews and Incidents can only be added via the QRM system</p>
+					<p>Quay Risk Manager is accessed by via the "Quay Risk Manager" page</p>
 				</div>
 				<div ng-controller="userCtrl">
 					<h4 style="margin-top: 20px">User Access Table</h4>

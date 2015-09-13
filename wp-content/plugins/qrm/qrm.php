@@ -2250,7 +2250,7 @@ final class QuayRiskManager {
 			}
 		}
 		public function qrm_admin_menu_config() {
-			add_menu_page ( 'Quay Risk Manager', 'QRM Risk Manager', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-admin-generic', "35" );
+			add_menu_page ( 'QRM Setting', 'QRM Settings', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-admin-generic', "50" );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'normal' );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'side' );
 		}
