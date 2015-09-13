@@ -1,18 +1,17 @@
 function SampleController($scope, remoteService, ngNotify) {
 
+	Dropzone.autoDiscover = false;
     var samp = this; 
     $scope.installSample = function () {
-    	
         remoteService.installSample()
             .then(function (response) {
-                alert(response.data.msg);
+                ngNotify.set(response.data.msg, {type:"success", duration:1000, theme:"pure"});
             });
     }
     $scope.installSampleProjects = function () {
-         ngNotify.set("Installing Sample Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
+        ngNotify.set("Installing Sample Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
         remoteService.installSampleProjects()
             .then(function (response) {
-               	ngNotify.dismiss();
                 ngNotify.set(response.data.msg, {type:"success", duration:1000, theme:"pure"});
             });
     }
@@ -21,7 +20,6 @@ function SampleController($scope, remoteService, ngNotify) {
         ngNotify.set("Re Indexing Risk Counts", {type:"info", sticky:true, theme:"pure"});
         remoteService.reindexRiskCount()
             .then(function (response) {
-               	ngNotify.dismiss();
                 ngNotify.set("Re Indexing Complete", {type:"success", duration:1000, theme:"pure"});
             });
     }
@@ -31,7 +29,6 @@ function SampleController($scope, remoteService, ngNotify) {
             ngNotify.set("Removing All Quay Risk Manager Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
             remoteService.removeSample(true)
             .then(function (response) {
-               	ngNotify.dismiss();
                 ngNotify.set("All Quay Risk Manager Data Removed", {type:"success", duration:1000, theme:"pure"});
             });
     	} 
@@ -52,6 +49,7 @@ function SampleController($scope, remoteService, ngNotify) {
     this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadImport = function () {
+        ngNotify.set("File Is Being Uploaded and Imported. Please Standby", {type:"info", sticky:true, theme:"pure"});
         samp.dropzone.processFile(samp.dzfile);
     }
     this.cancelUpload = function () {
@@ -62,14 +60,14 @@ function SampleController($scope, remoteService, ngNotify) {
         samp.dzfile = null;
         $scope.$apply();
     }
-    $scope.dropzoneConfig = {
+    $scope.dropzoneConfigAdmin = {
         options: { // passed into the Dropzone constructor
             url: ajaxurl + "?action=uploadImport",
             previewTemplate: document.querySelector('#preview-template').innerHTML,
             parallelUploads: 1,
             thumbnailHeight: 100,
             thumbnailWidth: 100,
-            maxFilesize: 3,
+            maxFilesize: 6,
             filesizeBase: 1000,
             autoProcessQueue: false,
             thumbnail: function (file, dataUrl) {
@@ -93,7 +91,12 @@ function SampleController($scope, remoteService, ngNotify) {
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     samp.cancelUpload();
-                    alert("File Imported");
+                    ngNotify.set("File Imported", {type:"success", duration:1000, theme:"pure"});
+                });
+                this.on('error', function (file, message, xhr) {
+                    file.previewElement.classList.add('dz-complete');
+                    samp.cancelUpload();
+                    ngNotify.set(message, {type:"error", duration:1000, theme:"pure"});
                 });
             },
         },

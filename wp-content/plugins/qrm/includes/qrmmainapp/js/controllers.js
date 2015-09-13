@@ -1155,7 +1155,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
             parallelUploads: 1,
             thumbnailHeight: 120,
             thumbnailWidth: 120,
-            maxFilesize: 3,
+            maxFilesize: 10,
             filesizeBase: 1000,
             autoProcessQueue: false,
             thumbnail: function (file, dataUrl) {
@@ -1179,14 +1179,18 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     vm.cancelAttachment()
-                    ngNotify.dismiss();
                     ngNotify.set("Attachment Added To Risk", {type:"success", duration:1000, theme:"pure"});
                     remoteService.getAttachments(vm.riskID)
                         .then(function (response) {
                             vm.risk.attachments = response.data;
                         });
                 });
-            },
+                this.on('error', function (file, message, xhr) {
+                    file.previewElement.classList.add('dz-complete');
+                    vm.cancelAttachment()
+                    ngNotify.set(message, {type:"error", duration:1000, theme:"pure"});
+                });
+           },
             sending: function (file, xhr, formData) {
                 formData.append("postID", QRMDataService.riskID);
                 formData.append("description", vm.uploadAttachmentDescription);
@@ -1204,6 +1208,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
     this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadAttachment = function () {
+        ngNotify.set("File Is Being Uploaded and Imported. Please Standby", {type:"info", sticky:true, theme:"pure"});
         vm.dropzone.processFile(vm.dzfile);
     }
     this.cancelAttachment = function () {
@@ -3511,7 +3516,7 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
             parallelUploads: 1,
             thumbnailHeight: 120,
             thumbnailWidth: 120,
-            maxFilesize: 3,
+            maxFilesize: 10,
             filesizeBase: 1000,
             autoProcessQueue: false,
             thumbnail: function (file, dataUrl) {
@@ -3535,13 +3540,18 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
                 this.on('complete', function (file) {
                     file.previewElement.classList.add('dz-complete');
                     inc.cancelAttachment()
-                    ngNotify.dismiss();
                     ngNotify.set("Attachment Added To Incident", {type:"success", duration:1000, theme:"pure"});
                     remoteService.getAttachments(inc.incident.id)
                         .then(function (response) {
                             inc.incident.attachments = response.data;
                         });
                 });
+                this.on('error', function (file, message, xhr) {
+                    file.previewElement.classList.add('dz-complete');
+                    inc.cancelAttachment()
+                    ngNotify.set(message, {type:"error", duration:1000, theme:"pure"});
+                });
+
             },
             sending: function (file, xhr, formData) {
                 formData.append("postID", QRMDataService.incidentID);
@@ -3580,6 +3590,7 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
     this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadAttachment = function () {
+        ngNotify.set("File Is Being Uploaded and Imported. Please Standby", {type:"info", sticky:true, theme:"pure"});
         inc.dropzone.processFile(inc.dzfile);
     }
     this.cancelAttachment = function () {
@@ -3936,7 +3947,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
             parallelUploads: 1,
             thumbnailHeight: 120,
             thumbnailWidth: 120,
-            maxFilesize: 3,
+            maxFilesize: 10,
             filesizeBase: 1000,
             autoProcessQueue: false,
             thumbnail: function (file, dataUrl) {
@@ -3954,19 +3965,24 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
                 }
             },
             init: function () {
-                this.on("addedfile", function (file) {
-                    rev.reviewAttachmentReady(this, file);
-                });
-                this.on('complete', function (file) {
-                    file.previewElement.classList.add('dz-complete');
-                    rev.cancelAttachment()
-                 ngNotify.dismiss();
-                ngNotify.set("Attachment Added To Review", {type:"success", duration:1000, theme:"pure"});
-                    remoteService.getAttachments(rev.review.id)
-                        .then(function (response) {
-                            rev.review.attachments = response.data;
-                        });
-                });
+            	this.on("addedfile", function (file) {
+            		rev.reviewAttachmentReady(this, file);
+            	});
+            	this.on('complete', function (file) {
+            		file.previewElement.classList.add('dz-complete');
+            		rev.cancelAttachment()
+             		ngNotify.set("Attachment Added To Review", {type:"success", duration:1000, theme:"pure"});
+            		remoteService.getAttachments(rev.review.id)
+            		.then(function (response) {
+            			rev.review.attachments = response.data;
+            		});
+            	});
+            	this.on('error', function (file, message, xhr) {
+            		file.previewElement.classList.add('dz-complete');
+            		rev.cancelAttachment()
+            		ngNotify.set(message, {type:"error", duration:1000, theme:"pure"});
+            	});
+
             },
             sending: function (file, xhr, formData) {
                 formData.append("postID", QRMDataService.reviewID);
@@ -4039,6 +4055,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
     this.disableAttachmentButon = true;
     this.dropzone = "";
     this.uploadAttachment = function () {
+        ngNotify.set("File Is Being Uploaded and Imported. Please Standby", {type:"info", sticky:true, theme:"pure"});
         rev.dropzone.processFile(rev.dzfile);
     }
     this.cancelAttachment = function () {
@@ -4250,7 +4267,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
 
 }
 
-function LoginCtrl($scope, $state, QRMDataService, $timeout, remoteService) {
+function LoginCtrl( $state, remoteService) {
 
     var login = this;
     this.showError = false;
@@ -4333,7 +4350,7 @@ var app = angular.module('qrm');
 	app.controller('IncidentCtrl', ['$scope', 'QRMDataService', '$state',  'RemoteService', 'ngNotify', 'ngDialog', IncidentCtrl]);
 	app.controller('ReviewExplCtrl', ['$scope',  'QRMDataService', '$state',   'RemoteService', ReviewExplCtrl]);
 	app.controller('ReviewCtrl', ['$scope', 'QRMDataService', '$state',  'RemoteService', 'ngNotify', 'ngDialog', ReviewCtrl]);
-	app.controller('LoginCtrl', ['$scope', '$state', 'QRMDataService', '$timeout', 'RemoteService', LoginCtrl]);
+	app.controller('LoginCtrl', [ '$state', 'RemoteService', LoginCtrl]);
 
 	app.service('RemoteService', ['$http', RemoteService]);
 	app.service('QRMDataService', DataService);

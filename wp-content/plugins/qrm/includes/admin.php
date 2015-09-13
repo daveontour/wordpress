@@ -33,7 +33,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 				<h3>Welcome to Quay Risk Manager</h3>
 				<p>Quay Risk Manager (QRM) helps you to manage your portfolio of risk</p>
 				<p>Visit Quay Systems at <a href="http://www.quaysystemm.com.au">www.quaysystemm.com.au</a> for tutorials, documentation and support forums on the use and managment 
-				of Quay Risk Manager. You will also find links on the site to other products and services offered by Quay Systems</p>
+				of Quay Risk Manager. You will also find links on the site to other products and services offered by Quay Systems, including templates for risk projects utilising industry frameworks</p>
 				
 				<h4>Getting Started:</h4>
 				<div style="padding-left: 20px">
@@ -112,7 +112,7 @@ wp_enqueue_script ( 'qrm-dropzone' );
 					<div
 						style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
 						<h4>Data Import</h4>
-						<div dropzone="dropzoneConfig" class="dropzone dz-clickable"
+						<div dropzone="dropzoneConfigAdmin" class="dropzone dz-clickable"
 							style="width: 300px; padding: 15px 15px; margin: 2px">
 							<div class="dz-message">
 								Drop import file here or click to select.<br />Files must have
