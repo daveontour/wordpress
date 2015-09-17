@@ -135,8 +135,8 @@ final class QRM {
 		$export->siteName = get_option("qrm_siteName");
 		$export->siteKey = get_option("qrm_siteKey");		
 		$export->siteID = get_option("qrm_siteID");
-		$export->reportServerURL = get_option("qrm_reportServerURL");;
-		
+		$export->reportServerURL = get_option("qrm_reportServerURL");
+		$export->sessionToken = wp_get_session_token ();
 	}
 	static function getServerMeta(){
 		$export = new stdObject();
@@ -1868,7 +1868,8 @@ final class QRMReportData{
 							'reportData' => json_encode ( $export ),
 							'action' => "execute_report",
 							'reportEmail' => $export->userEmail,
-							'reportID' => $config->reportID 
+							'reportID' => $config->reportID,
+							'sessionToken' => $export->sessionToken 
 					) 
 			) );
 			if (is_wp_error ( $response )) {
@@ -1888,7 +1889,8 @@ final class QRMReportData{
 							'reportData' => json_encode ( $export ),
 							'action' => "execute_report",
 							'reportEmail' => $export->userEmail,
-							'reportID' => $config->reportID 
+							'reportID' => $config->reportID,
+							'sessionToken' => $export->sessionToken
 					) ;
 			$response = wp_remote_post ( $export->reportServerURL . "/report", array (
 					'method' => 'POST',
@@ -1912,7 +1914,8 @@ final class QRMReportData{
 				'reportData' => json_encode ( $export ),
 				'action' => "execute_report",
 				'reportEmail' => $export->userEmail,
-				'reportID' => $config->reportID
+				'reportID' => $config->reportID,
+				'sessionToken' => $export->sessionToken
 		) ;
 			$response = wp_remote_post ( $export->reportServerURL . "/report", array (
 					'method' => 'POST',
@@ -2040,7 +2043,8 @@ final class QuayRiskManager {
 			add_action('init', array ($this,'qrm_init_options' ));
 			add_action('init', array ($this,'qrm_scripts_styles' ));
 			add_action('init', array ($this,'qrm_init_user_cap' ));
-			
+			add_action('init', array ($this,'qrm_start_session' ));
+				
 			add_action('trashed_post', array ($this,'qrm_trashed_post' ));
 			
 			add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
@@ -2056,6 +2060,11 @@ final class QuayRiskManager {
 
 				
 			register_activation_hook ( __FILE__,  array ($this,'qrmplugin_activate' ));
+		}
+		public function qrm_start_session(){
+			if(!session_id()) {
+				session_start();
+			}
 		}
 		public function activate_au() {
 			$plugin_current_version = QRM_VERSION;

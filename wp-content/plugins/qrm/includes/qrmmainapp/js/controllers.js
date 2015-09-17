@@ -37,7 +37,7 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 	if (failedConnectCount < 30){
 		console.log("Initiate Chat");
 		ajaxChatRequest = $.ajax({
-			url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey + "&reset=" + reset,
+			url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey + "&reset=" + reset+"&sessionToken="+QRMDataService.sessionToken,
 			type: "GET",
 			timeout: 47000,
 			dataType: "jsonp",
@@ -166,6 +166,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
             QRMDataService.userEmail = response.data.userEmail;
             QRMDataService.userLogin = response.data.userLogin;
             QRMDataService.userDisplayName = response.data.userDisplayName;
+            QRMDataService.sessionToken = response.data.sessionToken;
             
             //Start the message service with the report server
             if (response.data != "0" && response.data != "-1") {
@@ -527,6 +528,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 QRMDataService.userEmail = response.data.userEmail;
                 QRMDataService.userLogin = response.data.userLogin;
                 QRMDataService.userDisplayName = response.data.userDisplayName;
+                QRMDataService.sessionToken = response.data.sessionToken;
             
                        //Start the message service with the report server
              setTimeout(function () {

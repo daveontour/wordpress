@@ -741,7 +741,7 @@ function RemoteService($http) {
         
         	var data = {
         			incidents:incidents,
-        			reportID, reportID
+        			reportID: reportID
         	}
         	
         return $http({
@@ -758,7 +758,7 @@ function RemoteService($http) {
     this.getReportReviewJSON = function (reviews, reportID) {
     	var data = {
     			reviews:reviews,
-    			reportID, reportID
+    			reportID: reportID
     	}
         return $http({
             method: 'POST',
