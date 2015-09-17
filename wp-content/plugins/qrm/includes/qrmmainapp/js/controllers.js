@@ -1045,15 +1045,19 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
     }
     
     this.stress = function(){
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, true, true)
+        remoteService.getReportRiskJSON([], QRMDataService.project.id, true, true, 2)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val(2);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val(2);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             });
             setTimeout(QRM.expController.stress, 4000);
     }
@@ -1062,16 +1066,19 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
     $scope.riskReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, exp.childProjects, false)
+        remoteService.getReportRiskJSON([], QRMDataService.project.id, exp.childProjects, false,$scope.reportReqID)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
-//                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val($scope.reportReqID);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
     this.cellStyle = function (prob, impact, tol) {
@@ -1855,15 +1862,19 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
 
     $scope.riskReport = function (reportID) {
         if ($scope.reportReqID < 0) return;
-        remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false, false)
+        remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false, false,$scope.reportReqID)
             .then(function (response) {
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
- //               startChatChannel(QRMDataService.reportServerURL +"/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService);
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val($scope.reportReqID);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             });
     }
     
@@ -2104,7 +2115,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
 
 }
 
-function ReportArchiveController($scope, QRMDataService, remoteService, ngNotify, $http, uiGridConstants) {
+function ReportArchiveController($scope, QRMDataService, remoteService, ngNotify, $http, $state, uiGridConstants) {
 
     QRM.mainController.titleBar = "QRM Report Archive";
     QRM.mainController.titleBarSM = "QRM Report Archive";
@@ -2228,6 +2239,7 @@ function ReportArchiveController($scope, QRMDataService, remoteService, ngNotify
                 if (data.error) {
                     ngNotify.dismiss();
                     ngNotify.set(data.error, {type:"grimace", sticky:true, position:"top",theme:"pure"});
+                    $state.go('qrm.explorer');
                 } else {
                     repController.gridOptions.data = data;
                     repController.gridOptionsSM.data = data;
@@ -2301,16 +2313,20 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
     $scope.riskReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true)
+        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
             .then(function (response) {
                 QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
- //               startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val($scope.reportReqID);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
     this.loadGrid = function () {
@@ -3318,16 +3334,19 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
     $scope.riskReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true)
+        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
- //               startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val($scope.reportReqID);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
     
@@ -3484,16 +3503,19 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
     $scope.incidentReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportIncidentJSON([])
+        remoteService.getReportIncidentJSON([],$scope.reportReqID)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
-//                startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+             	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val(2);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
     this.init();
@@ -3741,16 +3763,19 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
     $scope.incidentReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportIncidentJSON([inc.incident.id])
+        remoteService.getReportIncidentJSON([inc.incident.id],$scope.reportReqID)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
-  //              startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val(2);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
 
@@ -3906,15 +3931,19 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
     $scope.reviewReport = function (reportID) {
        if ($scope.reportReqID < 0) return;
         QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportReviewJSON([])
+        remoteService.getReportReviewJSON([],$scope.reportReqID)
             .then(function (response) {
-                QRM.mainController.notify("Sending Data for Processing", 5000);
-                $('input[name="reportData"]').val(JSON.stringify(response.data));
-                $('input[name="action"]').val("execute_report");
-                $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                $('input[name="reportID"]').val($scope.reportReqID);
-                $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                $("#reportForm").submit();
+            	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val(2);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
             })
     }
 
@@ -4000,8 +4029,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
     
 
     this.addRisk = function () {
-    	debugger;
-        if (typeof (rev.review.risks) == "undefined") {
+         if (typeof (rev.review.risks) == "undefined") {
             rev.review.risks = [];
         }
         if (rev.risk.id != null) {
@@ -4178,7 +4206,6 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
 
     }
     this.riskComment = function (riskID) {
-    	debugger;
         if (rev.review.riskComments == null) {
             rev.review.riskComments = [];
         }
@@ -4215,15 +4242,19 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
     $scope.reviewReport = function (reportID) {
         if ($scope.reportReqID < 0) return;
          QRM.mainController.notify("Assembling Data for Report", 5000);
-         remoteService.getReportReviewJSON([rev.review.id])
+         remoteService.getReportReviewJSON([rev.review.id],$scope.reportReqID)
              .then(function (response) {
-                 QRM.mainController.notify("Sending Data for Processing", 5000);
-                 $('input[name="reportData"]').val(JSON.stringify(response.data));
-                 $('input[name="action"]').val("execute_report");
-                 $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                 $('input[name="reportID"]').val($scope.reportReqID);
-                 $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                 $("#reportForm").submit();
+             	if (response.data == "0"){
+            		QRM.mainController.notify("Data sent to server", 5000);
+            	} else {
+                  QRM.mainController.notify("Sending Data for Processing", 5000);
+                  $('input[name="reportData"]').val(JSON.stringify(response.data));
+                  $('input[name="action"]').val("execute_report");
+                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  $('input[name="reportID"]').val(2);
+                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  $("#reportForm").submit();            		
+            	}
              })
      }
 
@@ -4343,7 +4374,7 @@ var app = angular.module('qrm');
 	app.controller('RiskCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);
 	app.controller('CalenderController', ['$scope', 'QRMDataService', '$state', 'RemoteService', CalenderController]);
 	app.controller('RankController', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngNotify', RankController]);
-	app.controller('ReportArchiveController', ['$scope', 'QRMDataService', 'RemoteService','ngNotify', '$http', 'uiGridConstants', ReportArchiveController]);
+	app.controller('ReportArchiveController', ['$scope', 'QRMDataService', 'RemoteService','ngNotify', '$http','$state', 'uiGridConstants', ReportArchiveController]);
 	app.controller('AnalysisController', ['$scope', 'QRMDataService', 'RemoteService', AnalysisController]);
 	app.controller('RelMatrixController', ['$scope', 'QRMDataService', 'RemoteService', 'ngNotify', RelMatrixController]);
 	app.controller('IncidentExplCtrl', ['$scope','QRMDataService', '$state',  'RemoteService', IncidentExplCtrl]);

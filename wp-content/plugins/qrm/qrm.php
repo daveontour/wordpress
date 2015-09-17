@@ -1719,39 +1719,41 @@ final class QRMReportData{
 		$the_query->the_post ();
 		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
 		$incident->comments = get_comments ( array ('post_id' => $post->ID) );
-		$riskIDs = array_merge($riskIDs, $incident->risks);
+		if ($incident->risks != null )$riskIDs = array_merge($riskIDs, $incident->risks);
 		array_push ( $incidents, $incident );
 		endwhile
 		;
 	
-			
-		$args = array( 'post_type' => 'risk',
-				'post__in' => $riskIDs,
-				'posts_per_page' => -1
-		);
-	
-	
-		$the_query = new WP_Query ( $args );
+		
 		$risks = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-		$risk->incidents = get_post_meta ( $post->ID, "incident" );
-		$risk->projectID = get_post_meta($post->ID, "projectID",true);
-		$risk->ID = $post->ID;
-		if ($risk->primcat == 0){
-			$risk->primcat = new stdObject();
+		if (sizeof ( $riskIDs ) > 0) {
+			$args = array (
+					'post_type' => 'risk',
+					'post__in' => $riskIDs,
+					'posts_per_page' => - 1 
+			);
+			
+			$the_query = new WP_Query ( $args );
+			while ( $the_query->have_posts () ) :
+				$the_query->the_post ();
+				$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+				// $risk->incidents = get_post_meta ( $post->ID, "incident" );
+				$risk->projectID = get_post_meta ( $post->ID, "projectID", true );
+				$risk->ID = $post->ID;
+				if ($risk->primcat == 0) {
+					$risk->primcat = new stdObject ();
+				}
+				if ($risk->seccat == 0) {
+					$risk->seccat = new stdObject ();
+				}
+				array_push ( $risks, $risk );
+			endwhile
+			;
 		}
-		if ($risk->seccat == 0){
-			$risk->seccat = new stdObject();
-		}
-		array_push ( $risks, $risk );
-		endwhile
-		;
-	
 	
 		$export = new stdObject ();
 		$export->risks = $risks;
+		
 		$export->incidents = $incidents;
 	
 	
@@ -1788,7 +1790,7 @@ final class QRMReportData{
 		while ( $the_query->have_posts () ) :
 		$the_query->the_post ();
 		$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
-		$riskIDs = array_merge($riskIDs, $review->risks);
+		if ($review->risks != null )$riskIDs = array_merge($riskIDs, $review->risks);
 		array_push ( $reviews, $review );
 		endwhile
 		;
@@ -1799,24 +1801,25 @@ final class QRMReportData{
 				'posts_per_page' => -1
 		);
 	
-	
-		$the_query = new WP_Query ( $args );
 		$risks = array ();
-		while ( $the_query->have_posts () ) :
-		$the_query->the_post ();
-		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
-		$risk->projectID = get_post_meta($post->ID, "projectID",true);
-		$risk->ID = $post->ID;
-		if ($risk->primcat == 0){
-			$risk->primcat = new stdObject();
+		
+		if (sizeof ( $riskIDs ) > 0) {
+			$the_query = new WP_Query ( $args );
+			while ( $the_query->have_posts () ) :
+				$the_query->the_post ();
+				$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+				$risk->projectID = get_post_meta ( $post->ID, "projectID", true );
+				$risk->ID = $post->ID;
+				if ($risk->primcat == 0) {
+					$risk->primcat = new stdObject ();
+				}
+				if ($risk->seccat == 0) {
+					$risk->seccat = new stdObject ();
+				}
+				array_push ( $risks, $risk );
+			endwhile
+			;
 		}
-		if ($risk->seccat == 0){
-			$risk->seccat = new stdObject();
-		}
-		array_push ( $risks, $risk );
-		endwhile
-		;
-	
 	
 		$export = new stdObject ();
 		$export->risks = $risks;
@@ -1855,24 +1858,74 @@ final class QRMReportData{
 		//commonJSON will apply the non null condition
 		$export = QRM::commonJSON($ids,$config->risks, $config->basicsOnly);
 		QRM::exportMetadata($export);
-	
-
-		wp_send_json($export);
+			
+		if ($config->reportID != null) {
+			
+			$response = wp_remote_post ( $export->reportServerURL . "/report", array (
+					'method' => 'POST',
+					'timeout' => 60,
+					'body' => array (
+							'reportData' => json_encode ( $export ),
+							'action' => "execute_report",
+							'reportEmail' => $export->userEmail,
+							'reportID' => $config->reportID 
+					) 
+			) );
+			if (is_wp_error ( $response )) {
+				wp_send_json ( $export );
+			} 
+		} else {
+			wp_send_json ( $export );
+		}
 	}
 	
 	static function getReportIncidentJSON(){
-		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
-		$export = QRMReportData::incidentJSON($incidentIDS);
+		$config = json_decode ( file_get_contents ( "php://input" ) );
+		$export = QRMReportData::incidentJSON($config->incidents);
 		QRM::exportMetadata($export);
-		wp_send_json($export);
+		if ($config->reportID != null) {
+			$body = array (
+							'reportData' => json_encode ( $export ),
+							'action' => "execute_report",
+							'reportEmail' => $export->userEmail,
+							'reportID' => $config->reportID 
+					) ;
+			$response = wp_remote_post ( $export->reportServerURL . "/report", array (
+					'method' => 'POST',
+					'timeout' => 60,
+					'body' => $body
+			) );
+			if (is_wp_error ( $response )) {
+				wp_send_json ( $export );
+			} 
+		} else {
+			wp_send_json ( $export );
+ 		}
 	}
 	static function getReportReviewJSON(){
-		$incidentIDS = json_decode ( file_get_contents ( "php://input" ) );
-		$export = QRMReportData::reviewJSON($incidentIDS);
+		$config = json_decode ( file_get_contents ( "php://input" ) );
+		
+		$export = QRMReportData::reviewJSON($config->reviews);
 		QRM::exportMetadata($export);
-		wp_send_json($export);
+	if ($config->reportID != null) {
+		$body = array (
+				'reportData' => json_encode ( $export ),
+				'action' => "execute_report",
+				'reportEmail' => $export->userEmail,
+				'reportID' => $config->reportID
+		) ;
+			$response = wp_remote_post ( $export->reportServerURL . "/report", array (
+					'method' => 'POST',
+					'timeout' => 60,
+					'body' => $body
+			) );
+			if (is_wp_error ( $response )) {
+				wp_send_json ( $export );
+			} 
+		} else {
+			wp_send_json ( $export );
+		}
 	}
-	
 }
 final class QRM_AutoUpdate
 {
@@ -2024,7 +2077,7 @@ final class QuayRiskManager {
 		public function qrm_add_plugin_action_links($links) {
 			//Add 'Settings' to plugin entry
 			return array_merge ( array (
-					'settings' => '<a href="' .admin_url( 'plugins.php?page=qrm/includes/admin.php') .'">Settings</a>' 
+					'settings' => '<a href="' .admin_url( 'options-general.php?page=qrmadmin') .'">Settings</a>' 
 			), $links );
 		}
 		public function riskproject_meta_boxes() {
@@ -2111,25 +2164,32 @@ final class QuayRiskManager {
 				
 		}
 		public function qrmplugin_activate() {
-			// Create the page to access the application
-			$postdata = array (
-					'post_parent' => 0,
-					'post_status' => 'publish',
-					'post_title' => 'Quay Risk Manager',
-					'post_name' => 'riskmanager',
-					'page_template' => 'templates/qrm-type-template.php',
-					'post_type' => 'page' 
-			);
-			$pageID = wp_insert_post ( $postdata );
-			update_post_meta ( $pageID, '_wp_page_template', 'templates/qrm-type-template.php' );
 			
-			$this->register_types();
-			flush_rewrite_rules();
+			$pages = get_pages(array(
+					'meta_key' => '_wp_page_template',
+					'meta_value' => 'templates/qrm-type-template.php'
+			));
 			
-			set_transient( 'qrm_about_page_activated', 1, 30 );
-				
+			if (sizeof($pages) == 0) {
+				// Create the page to access the application
+				$postdata = array (
+						'post_parent' => 0,
+						'post_status' => 'publish',
+						'post_title' => 'Quay Risk Manager',
+						'post_name' => 'riskmanager',
+						'page_template' => 'templates/qrm-type-template.php',
+						'post_type' => 'page' 
+				);
+				$pageID = wp_insert_post ( $postdata );
+				update_post_meta ( $pageID, '_wp_page_template', 'templates/qrm-type-template.php' );
+			}
+			
+			$this->register_types ();
+			flush_rewrite_rules ();
+			
+			set_transient ( 'qrm_about_page_activated', 1, 30 );
 		}
-	    public function get_custom_post_type_template($single_template) {
+		    public function get_custom_post_type_template($single_template) {
 
 	    	global $post;
 		
@@ -2250,7 +2310,7 @@ final class QuayRiskManager {
 			}
 		}
 		public function qrm_admin_menu_config() {
-			add_menu_page ( 'QRM Setting', 'QRM Settings', 'manage_options', plugin_dir_path ( __FILE__ ) . 'includes/admin.php', '', 'dashicons-admin-generic', "50" );
+			add_submenu_page ( 'options-general.php', 'Quay Risk Manager','Quay Risk Manager', 'manage_options', 'qrmadmin',array($this, qrmadminpage) );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'normal' );
 			remove_meta_box ( 'pageparentdiv', 'riskproject', 'side' );
 		}
@@ -2267,7 +2327,7 @@ final class QuayRiskManager {
 				return;
 		
 			delete_transient( 'qrm_about_page_activated' );
-			wp_safe_redirect( admin_url( 'plugins.php?page=qrm/includes/admin.php') );
+			wp_safe_redirect( admin_url( 'options-general.php?page=qrmadmin') );
 			exit;
 		}
 		public function add_custom_mime_types($mimes) {
@@ -2490,6 +2550,275 @@ final class QuayRiskManager {
 		
 			$args = apply_filters( 'review_post_type_args', $args );
 			register_post_type( 'review', $args );
+		}
+		
+		public function qrmadminpage(){
+			
+			wp_enqueue_style ( 'bootstrap' );
+			wp_enqueue_style ( 'animate' );
+			wp_enqueue_style ( 'ui-grid' );
+			wp_enqueue_style ( 'ngNotify' );
+			wp_enqueue_style ( 'style' );
+			wp_enqueue_style ( 'qrm-angular' );
+			wp_enqueue_style ( 'qrm-style' );
+			wp_enqueue_style ( 'dropzone' );
+			
+			wp_enqueue_script ( 'qrm-jquery' );
+			wp_enqueue_script ( 'qrm-jqueryui' );
+			wp_enqueue_script ( 'qrm-bootstrap' );
+			wp_enqueue_script ( 'qrm-angular' );
+			wp_enqueue_script ( 'qrm-bootstraptpl' );
+			wp_enqueue_script ( 'qrm-uigrid' );
+			wp_enqueue_script ( 'qrm-common' );
+			wp_enqueue_script ( 'qrm-ngNotify' );
+			wp_enqueue_script ( 'qrm-mainadmin' );
+			wp_enqueue_script('qrm-sanitize');
+			wp_enqueue_script ( 'qrm-dropzone' );
+			
+			?>
+
+<script type="text/javascript">
+					var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+			</script>
+<div ng-app="myApp" style="width: 100%; height: 100%">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12 col-md-8 col-lg-8">
+				<h2 style="font-weight: 600">Quay Risk Manager</h2>
+				<h3>Welcome to Quay Risk Manager</h3>
+				<p>Quay Risk Manager (QRM) helps you to manage your portfolio of
+					risk</p>
+				<p>
+					Visit Quay Systems at <a href="http://www.quaysystemm.com.au">www.quaysystemm.com.au</a>
+					for tutorials, documentation and support forums on the use and
+					managment of Quay Risk Manager. You will also find links on the
+					site to other products and services offered by Quay Systems,
+					including templates for risk projects utilising industry frameworks
+				</p>
+
+				<h4>Getting Started:</h4>
+				<div style="padding-left: 20px">
+					<p>Users access to the QRM is limited to the users configured in
+						the user access table. Select the user who will have access to the
+						Quay Risk Manager</p>
+					<p>
+						Risks are arranged into "Risk Projects" which can be arranged into
+						a heirarcical order. Use the "Risk Project" item in the Dashboard
+						menu to add a new risk project or select &nbsp; <a
+							href="<?php echo admin_url( 'post-new.php?post_type=riskproject') ?>">Add
+							New Project</a>
+					</p>
+					<p>Quay Risk Manager is accessed by via the "Quay Risk Manager"
+						page</p>
+				</div>
+				<div ng-controller="userCtrl">
+					<h4 style="margin-top: 20px">User Access Table</h4>
+					<div style="width: 100%" id="userGrid" ui-grid="gridOptions"
+						ui-grid-auto-resize ng-style="getTableHeight()" class="userGrid"></div>
+					<p>Assign the WordPress role "Risk Administrator" to users you want
+						to allow to create projects and administer risks, incident and
+						reviews</p>
+					<div style="text-align: right; margin-top: 15px">
+						<button type="button" class="btn btn-w-m btn-sm btn-primary"
+							ng-click="saveChanges()">Save Changes</button>
+						<button type="button" style="margin-left: 10px"
+							class="btn btn-w-m btn-sm btn-warning" ng-click="cancelChanges()">Cancel</button>
+					</div>
+
+				</div>
+
+				<h4>Sample Data</h4>
+				<p>Once users have been enabled to use the system, sample data can
+					be installed</p>
+				<div style="margin-top: 15px" ng-controller="sampleCtrl">
+					<table>
+						<tr>
+							<td colspan=2 style="padding-bottom: 5px">Sample Risks per
+								Project:</td>
+						</tr>
+						<tr>
+							<td>Minimum</td>
+							<td><input style="width: 80px; margin-left: 15px"
+								class="form-control" type="number" name="input" ng-model="min"
+								min="5" max="10"></td>
+						</tr>
+						<tr>
+							<td>Maximum</td>
+							<td><input style="width: 80px; margin-left: 15px"
+								class="form-control" type="number" name="input" ng-model="max"
+								min="10" max="20"></td>
+							<td style="padding-left: 30px"><button type="button"
+									class="btn btn-w-m btn-sm btn-primary"
+									ng-click="installSampleProjects()">Install Sample Data</button></td>
+						</tr>
+					</table>
+
+				</div>
+
+
+				<h4 style="margin-top: 15px">Clear QRM Data</h4>
+				<p>All the Quay Risk Manager Data can be removed from the site
+					(Caution!)</p>
+				<div style="text-align: right; margin-top: 15px"
+					ng-controller="sampleCtrl">
+					<button type="button" style="margin-left: 10px"
+						class="btn btn-w-m btn-sm btn-danger" ng-click="removeAllData()">Remove
+						All QRM Data</button>
+				</div>
+
+				<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
+					<div style="float: left; width: 250px; text-align: -webkit-center">
+						<h4>Data Export</h4>
+						<button type="button" class="btn btn-w-m btn-sm btn-primary"
+							ng-click="samp.downloadJSON()">Export Data</button>
+						<p style="margin-top: 10px">The data from QRM will be dowloaded in
+							a single file in a form suitable for importation to another QRM
+							instance</p>
+					</div>
+
+					<div
+						style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
+						<h4>Data Import</h4>
+						<div dropzone="dropzoneConfigAdmin" class="dropzone dz-clickable"
+							style="width: 300px; padding: 15px 15px; margin: 2px">
+							<div class="dz-message">
+								Drop import file here or click to select.<br />Files must have
+								been exported from another instance of QRM
+							</div>
+						</div>
+						<div style="text-align: -webkit-right">
+							<button type="button" style="margin-top: 5px"
+								class="btn btn-w-m btn-sm btn-primary"
+								ng-click="samp.uploadImport()"
+								ng-disabled="samp.disableAttachmentButon">Upload & Import</button>
+							<button type="button" style="margin-top: 5px; margin-left: 10px"
+								class="btn btn-w-m btn-sm btn-warning"
+								ng-click="samp.cancelUpload()"
+								ng-disabled="samp.disableAttachmentButon">Cancel</button>
+						</div>
+					</div>
+				</div>
+				<div style="margin-top: 20px" ng-controller="repCtrl as rep">
+					<div style="float: left; clear: both">
+						<div>
+							<h4>Report Generation</h4>
+							<p>
+								Quay Risk Manager uses a remote web service to generate reports
+								in PDF Format<br /> You can produce reports without registering
+								for this service, but they will include a watermark<br />
+								Contact Quay Systems at <a href="http://www.quaysystems.com.au">http://www.quaysystems.com.au</a>
+								to register for the service without water marks
+							</p>
+							<table style="width: 600px; border-collapse: collapse">
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Report
+										Server URL</th>
+									<td><input ng-model="url" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										Name</th>
+									<td><input ng-model="siteName" style="width: 100%" required></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										ID</th>
+									<td><input ng-model="siteID" style="width: 100%"></td>
+								</tr>
+								<tr valign="top">
+									<th
+										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
+										Key</th>
+									<td><input ng-model="siteKey" style="width: 100%"></td>
+								</tr>
+								<tr>
+									<th></th>
+									<td align="right" style="padding-top: 0.75em;"><button
+											type="button" class="btn btn-w-m btn-sm btn-primary"
+											ng-click="saveChanges()">Save Changes</button></td>
+							
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- This is the template used by Dropzone, won't be displayed -->
+<div id="preview-template" style="display: none;">
+
+	<div class="dz-preview dz-file-preview" style="margin: 0px">
+		<div class="dz-image">
+			<img data-dz-thumbnail />
+		</div>
+
+		<div class="dz-details">
+			<div class="dz-size">
+				<span data-dz-size></span>
+			</div>
+			<div class="dz-filename">
+				<span data-dz-name></span>
+			</div>
+		</div>
+		<div class="dz-progress">
+			<span class="dz-upload" data-dz-uploadprogress></span>
+		</div>
+		<div class="dz-error-message">
+			<span data-dz-errormessage></span>
+		</div>
+		<div class="dz-success-mark">
+
+			<svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+			                <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
+			                <title>Check</title>
+			                <desc>Created with Sketch.</desc>
+			                <defs></defs>
+			                <g id="Page-1" stroke="none" stroke-width="1"
+					fill="none" fill-rule="evenodd" sketch:type="MSPage">
+			                    <path
+					d="M23.5,31.8431458 L17.5852419,25.9283877 C16.0248253,24.3679711 13.4910294,24.366835 11.9289322,25.9289322 C10.3700136,27.4878508 10.3665912,30.0234455 11.9283877,31.5852419 L20.4147581,40.0716123 C20.5133999,40.1702541 20.6159315,40.2626649 20.7218615,40.3488435 C22.2835669,41.8725651 24.794234,41.8626202 26.3461564,40.3106978 L43.3106978,23.3461564 C44.8771021,21.7797521 44.8758057,19.2483887 43.3137085,17.6862915 C41.7547899,16.1273729 39.2176035,16.1255422 37.6538436,17.6893022 L23.5,31.8431458 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z"
+					id="Oval-2" stroke-opacity="0.198794158" stroke="#747474"
+					fill-opacity="0.816519475" fill="#FFFFFF"
+					sketch:type="MSShapeGroup"></path>
+			                </g>
+			            </svg>
+
+		</div>
+		<div class="dz-error-mark">
+
+			<svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+			                <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
+			                <title>error</title>
+			                <desc>Created with Sketch.</desc>
+			                <defs></defs>
+			                <g id="Page-1" stroke="none" stroke-width="1"
+					fill="none" fill-rule="evenodd" sketch:type="MSPage">
+			                    <g id="Check-+-Oval-2" sketch:type="MSLayerGroup"
+					stroke="#747474" stroke-opacity="0.198794158" fill="#FFFFFF"
+					fill-opacity="0.816519475">
+			                        <path
+					d="M32.6568542,29 L38.3106978,23.3461564 C39.8771021,21.7797521 39.8758057,19.2483887 38.3137085,17.6862915 C36.7547899,16.1273729 34.2176035,16.1255422 32.6538436,17.6893022 L27,23.3431458 L21.3461564,17.6893022 C19.7823965,16.1255422 17.2452101,16.1273729 15.6862915,17.6862915 C14.1241943,19.2483887 14.1228979,21.7797521 15.6893022,23.3461564 L21.3431458,29 L15.6893022,34.6538436 C14.1228979,36.2202479 14.1241943,38.7516113 15.6862915,40.3137085 C17.2452101,41.8726271 19.7823965,41.8744578 21.3461564,40.3106978 L27,34.6568542 L32.6538436,40.3106978 C34.2176035,41.8744578 36.7547899,41.8726271 38.3137085,40.3137085 C39.8758057,38.7516113 39.8771021,36.2202479 38.3106978,34.6538436 L32.6568542,29 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z"
+					id="Oval-2" sketch:type="MSShapeGroup"></path>
+			                    </g>
+			                </g>
+			            </svg>
+
+		</div>
+	</div>
+</div>
+<?php 
 		}
 }
 function QRMMaster() {

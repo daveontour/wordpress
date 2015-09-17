@@ -718,12 +718,13 @@ function RemoteService($http) {
             cache: false
         });
     };
-    this.getReportRiskJSON = function (risks, projectID, childProjects, basicsOnly) {
+    this.getReportRiskJSON = function (risks, projectID, childProjects, basicsOnly, reportID) {
         var data = {
             risks: risks,
             projectID: projectID,
             childProjects: childProjects,
-            basicsOnly:basicsOnly
+            basicsOnly:basicsOnly,
+            reportID:reportID
         };
         return $http({
             method: 'POST',
@@ -736,26 +737,36 @@ function RemoteService($http) {
         });
     };
 
-        this.getReportIncidentJSON = function (incidents) {
+        this.getReportIncidentJSON = function (incidents, reportID) {
+        
+        	var data = {
+        			incidents:incidents,
+        			reportID, reportID
+        	}
+        	
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
                 action: "getReportIncidentJSON",
             },
-            data: JSON.stringify(incidents),
+            data: JSON.stringify(data),
             cache: false
         });
     };
     
-            this.getReportReviewJSON = function (reviews) {
+    this.getReportReviewJSON = function (reviews, reportID) {
+    	var data = {
+    			reviews:reviews,
+    			reportID, reportID
+    	}
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
                 action: "getReportReviewJSON",
             },
-            data: JSON.stringify(reviews),
+            data: JSON.stringify(data),
             cache: false
         });
     };

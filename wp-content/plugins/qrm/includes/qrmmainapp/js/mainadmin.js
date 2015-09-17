@@ -1,4 +1,7 @@
 function SampleController($scope, remoteService, ngNotify) {
+	
+	$scope.min = 10;
+	$scope.max = 20;
 
 	Dropzone.autoDiscover = false;
     var samp = this; 
@@ -10,7 +13,7 @@ function SampleController($scope, remoteService, ngNotify) {
     }
     $scope.installSampleProjects = function () {
         ngNotify.set("Installing Sample Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
-        remoteService.installSampleProjects()
+        remoteService.installSampleProjects([$scope.min, $scope.max])
             .then(function (response) {
                 ngNotify.set(response.data.msg, {type:"success", duration:1000, theme:"pure"});
             });
@@ -280,10 +283,11 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
-    this.installSampleProjects = function () {
+    this.installSampleProjects = function (minmax) {
         return $http({
             method: 'POST',
             url: ajaxurl,
+            data: minmax,
             params: {
                 action: "installSampleProjects"
             },

@@ -651,6 +651,9 @@ class QRMSample {
 	
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
+		
+		
+		$minmax = json_decode ( file_get_contents ( "php://input" ) );
 	
 		$user_query = new WP_User_Query ( array ('fields' => 'all', ) );
 		$userSummary = array ();
@@ -705,7 +708,7 @@ class QRMSample {
 		QRMSample::singleProject("Manufacturing", "MAN", $userSummary, $p1->id);
 		QRMSample::singleProject("Customer Support", "CUS", $userSummary, $p1->id);
 		
-		QRMSample::createDummyRiskEntryMultiple($p1,5,10);
+		QRMSample::createDummyRiskEntryMultiple($p1,$minmax[0],$minmax[1]);
 			
 		return "Sample Data Installed";
 	}
