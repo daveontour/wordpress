@@ -26,7 +26,7 @@ function isCircular(proj, scope) {
 
     while (pID != 0) {
 
-        var search = $.grep(scope.projectsLinear, function (value) {
+        var search = jQuery.grep(scope.projectsLinear, function (value) {
             return value.id == pID;
         });
 
@@ -152,10 +152,10 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         }
 
         if (!e.pOwner) {
-            $scope.proj.ownersID = $.grep($scope.proj.ownersID, function (value) {
+            $scope.proj.ownersID = jQuery.grep($scope.proj.ownersID, function (value) {
                 return value != e.ID;
             })
-        } else if ($.inArray(e.ID, $scope.proj.ownersID) < 0) {
+        } else if (jQuery.inArray(e.ID, $scope.proj.ownersID) < 0) {
             $scope.proj.ownersID.push(e.ID);
         }
 
@@ -167,10 +167,10 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         }
 
         if (!e.pManager) {
-            $scope.proj.managersID = $.grep($scope.proj.managersID, function (value) {
+            $scope.proj.managersID = jQuery.grep($scope.proj.managersID, function (value) {
                 return value != e.ID;
             })
-        } else if ($.inArray(e.ID, $scope.proj.managersID) < 0) {
+        } else if (jQuery.inArray(e.ID, $scope.proj.managersID) < 0) {
             $scope.proj.managersID.push(e.ID);
         }
 
@@ -182,10 +182,10 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         }
 
         if (!e.pUser) {
-            $scope.proj.usersID = $.grep($scope.proj.usersID, function (value) {
+            $scope.proj.usersID = jQuery.grep($scope.proj.usersID, function (value) {
                 return value != e.ID;
             })
-        } else if ($.inArray(e.ID, $scope.proj.usersID) < 0) {
+        } else if (jQuery.inArray(e.ID, $scope.proj.usersID) < 0) {
             $scope.proj.usersID.push(e.ID);
         }
 
@@ -211,7 +211,7 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
 
         $scope.proj.categories.push(cat);
         $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
-        $scope.gridSecCatOptions.data = $.grep($scope.catData, function (cat) {
+        $scope.gridSecCatOptions.data = jQuery.grep($scope.catData, function (cat) {
             return cat.parentID == $scope.primCatID;
         });
         $scope.gridPrimCatOptions.data = $scope.catData;
@@ -260,7 +260,7 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
             } else {
                 $scope.catData = getFamilyCats($scope.projMap, $scope.proj.id);
                 $scope.gridPrimCatOptions.data = $scope.catData;
-                $scope.gridSecCatOptions.data = $.grep($scope.catData, function (cat) {
+                $scope.gridSecCatOptions.data = jQuery.grep($scope.catData, function (cat) {
                     return cat.parentID == $scope.primCatID;
                 });
             }
@@ -269,7 +269,7 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
     }
     $scope.changePrimCategory = function (id) {
         $scope.primCatID = id;
-        $scope.gridSecCatOptions.data = $.grep($scope.catData, function (cat) {
+        $scope.gridSecCatOptions.data = jQuery.grep($scope.catData, function (cat) {
             return cat.parentID == id;
         });
     };
@@ -634,9 +634,27 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         remoteService.getSiteUsersCap()
             .then(function (response) {
                 $scope.ref.riskProjectManagers = response.data;
-                $scope.gridOwnerOptions.data = response.data;
-                $scope.gridManagerOptions.data = response.data;
-                $scope.gridUserOptions.data = response.data;
+
+                var users = response.data;
+                
+                for (var i = 0; i< users.length; i++){
+                
+                	var user = users[i];
+                	
+                	if (jQuery.inArray(user.ID, $scope.proj.ownersID) > -1){
+                		user.pOwner = true;
+                	}
+                	if (jQuery.inArray(user.ID, $scope.proj.managersID) > -1){
+                		user.pManager = true;
+                	}
+                	if (jQuery.inArray(user.ID, $scope.proj.usersID) > -1){
+                		user.pUser = true;
+                	}
+                }
+                
+                $scope.gridOwnerOptions.data = users;
+                $scope.gridManagerOptions.data = users;
+                $scope.gridUserOptions.data = users;
 
             });
 

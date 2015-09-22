@@ -57,8 +57,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             },
             onEnter: function () {
                 closeMenu();
-                winWidth = $(document).width() - 10;
-                $("#container").css("width", winWidth + "px");
+                winWidth = jQuery(document).width() - 10;
+                jQuery("#container").css("width", winWidth + "px");
             }
         })
         .state('qrm.risk', {

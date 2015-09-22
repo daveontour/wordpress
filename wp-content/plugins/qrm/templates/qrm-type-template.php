@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html ng-app="qrm">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,106 +13,24 @@
 		var postID = <?php echo $post->ID ?>;
 		var lostPasswordURL = '<?php echo wp_lostpassword_url(); ?>';
 		var siteURL = '<?php echo site_url(); ?>';
-		var postType = '<?php if ($type){
-							echo $type;
-		} else {
-			echo "firstproject";
-		}
-							
-	?>';
-
+		var postType = '<?php if ($type){echo $type;} else {echo "firstproject";}?>';
 		<?php if(isset($projectID))echo 'var projectID = '.$projectID.';' ?>
 	</script>
-
-    <!-- Font awesome -->
-    <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/font-awesome/css/font-awesome.css" ?>">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/bootstrap.min.css" ?>">
-
-    <!-- All the QRM -->
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/dropzone/dropzone.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/angular-notify/angular-notify.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/iCheck/custom.css" ?>'>
-
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngDialog/ngDialog.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/select/select.css" ?>'>
-
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/select2.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/selectize.default.css" ?>'>
-
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/textAngular/textAngular.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/daterangepicker-bs3.css" ?>'>
-    
-    <!-- Main Inspinia CSS files -->
-    <link rel="stylesheet" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/animate.css" ?>">
-    <link rel="stylesheet" id="loadBefore" href="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/style.css" ?>">
-
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_angular.css" ?>'>
-    <link rel="stylesheet" href='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/css/qrm_styles.css" ?>'>
-</head>
-
-<body ng-controller="MainCtrl as main" class="cbp-spmenu-push" style="height:calc(100vh - 61px)">
-
-	<div ui-view></div>
 	
-    <!-- jQuery and Bootstrap -->
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/bootstrap.min.js" ?>"></script>
-   
-    <!-- Main Angular scripts-->
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular.min.js" ?>"></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/angular/angular-animate.min.js" ?>'></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/ui-router/angular-ui-router.min.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-idle/angular-idle.js" ?>"></script>
+<?php wp_print_styles(["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12","q13","q14","q15","q16","q17","q18","q19","q20"]); ?>
+</head>
+<body ng-controller="MainCtrl as main" class="cbp-spmenu-push" style="height:calc(100vh - 61px)">
+	<div ui-view></div>
 
-    <!-- QRM Customisations -->
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ui-grid/ui-grid-unstable.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/iCheck/icheck.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/angular-notify/angular-notify.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/dropzone/dropzone.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/moment.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular-rangy.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/textAngular/textAngular-sanitize.min.js" ?>'></script>
+	<?php wp_print_scripts(["s1","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20", "s21","s22","s23","s24","s25","s26","s27","s28","s29","s30",'s31' ]) ?>
 
-    <!--  Watch out for dependency order -->
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/d3/d3.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/nv/nv.d3.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/qrm-common.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/services.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/select/select.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js" ?>'></script>
-    <script src='<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/plugins/loading-bar/loading-bar.min.js" ?>'></script>
-    
-    <!-- Anglar App Script -->
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/app.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/config.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/directives.js" ?>"></script>
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/controllers.js" ?>"></script>
-  
-    <script src="<?php echo plugin_dir_url (__FILE__)."../includes/qrmmainapp/js/daterangepicker.js" ?>"></script>
-    
     <script>
-        // Space in the global name space, so I can easily find thinngs
-        function QRM() {
-
+       function QRM() {       	
             this.matrixController = null;
             this.expController = null;
             this.rankController = null;
             this.calenderController = null;
             this.mainController = null;
-
             this.resizer = function () {
 
                 try {
@@ -132,22 +49,20 @@
                     //
                 }
             }
-            $(window).resize(this.resizer);
+            jQuery(window).resize(this.resizer);
         }
 
         var qrm = new QRM();
-    </script>
-    <!-- Experimental -->
-    <script>
-        $(function () {
-            $(window).bind("load resize", function () {
+
+        jQuery(function () {
+        	jQuery(window).bind("load resize", function () {
                 closeMenu();
-                winWidth = $(window).width() - 10;
-                $("#container").css("width", winWidth + "px");
+                winWidth = jQuery(window).width() - 10;
+                jQuery("#container").css("width", winWidth + "px");
             })
         });
-        $("#container").css("width", $(window).width() + "px");
-        $("#menu-toggle").click(function (e) {
+        jQuery("#container").css("width", jQuery(window).width() + "px");
+        jQuery("#menu-toggle").click(function (e) {
 			toggleMenu();
         });
     </script>
@@ -167,4 +82,3 @@
     <iframe name="qrmIframe" style="display: none"></iframe>
 </body>
 </html>
-

@@ -20,25 +20,25 @@ function replaceAll(find, replace, str) {
     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
-function getExplorerRisks() {
-    var risks = new Array();
-    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
-        risks.push(item.data);
-    });
-    return risks;
-}
-
-function getExplorerRiskIDs() {
-    var risks = new Array();
-    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
-        risks.push(item.data.riskID);
-    });
-    return risks;
-}
-
-function checkExplorerSelection() {
-    return ($$('qrmID-RiskTable').getSelectionModel().getSelection().length > 0);
-}
+//function getExplorerRisks() {
+//    var risks = new Array();
+//    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
+//        risks.push(item.data);
+//    });
+//    return risks;
+//}
+//
+//function getExplorerRiskIDs() {
+//    var risks = new Array();
+//    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
+//        risks.push(item.data.riskID);
+//    });
+//    return risks;
+//}
+//
+//function checkExplorerSelection() {
+//    return ($$('qrmID-RiskTable').getSelectionModel().getSelection().length > 0);
+//}
 
 function exportSVG(id) {
 
@@ -461,7 +461,7 @@ function setConfigMatrix(tolString, maxImpact, maxProb, svgDivID, matrixChangeCB
         .attr("height", gridSizeY)
         .on("click", function (d) {
 
-            var e = $(this);
+            var e = jQuery(this);
             if (hasClassSVG(e, "tolc5", "tolc1")) {
                 matrixChangeCB();
                 return;
@@ -939,7 +939,7 @@ function minimiseSideBar(state) {
             function () {
                 jQuery('#side-menu').fadeIn(500);
             }, 100);
-    } else if ($('body').hasClass('fixed-sidebar')) {
+    } else if (jQuery('body').hasClass('fixed-sidebar')) {
         jQuery('#side-menu').hide();
         setTimeout(
             function () {
@@ -1768,7 +1768,7 @@ function parentSort(projArr) {
         e.$$treeLevel = -100;
     });
 
-    var sortedArray = $.grep(projArr, function (value) {
+    var sortedArray = jQuery.grep(projArr, function (value) {
         return value.parent_id <= 0;
     })
 
@@ -1776,7 +1776,7 @@ function parentSort(projArr) {
         e.$$treeLevel = 0;
     });
 
-    projArr = $.grep(projArr, function (value) {
+    projArr = jQuery.grep(projArr, function (value) {
         return value.$$treeLevel < 0
     });
 
@@ -1799,7 +1799,7 @@ function parentSort(projArr) {
             }
             if (found) break;
         }
-        projArr = $.grep(projArr, function (value) {
+        projArr = jQuery.grep(projArr, function (value) {
             return value.$$treeLevel < 0
         });
     }
@@ -1814,9 +1814,9 @@ function objectiveSort(objArr) {
         e.$$treeLevel = -100;
     });
 
-    var sortedArray = $.grep(objArr, function (value) {
+    var sortedArray = jQuery.grep(objArr, function (value) {
         // Find if the parent objective is in the array, if not, return as a top level
-        var tmp = $.grep(objArr, function (p) {
+        var tmp = jQuery.grep(objArr, function (p) {
             return p.id == value.parentID;
         })
         return tmp.length == 0;
@@ -1826,7 +1826,7 @@ function objectiveSort(objArr) {
         e.$$treeLevel = 0;
     });
 
-    objArr = $.grep(objArr, function (value) {
+    objArr = jQuery.grep(objArr, function (value) {
         return value.$$treeLevel < 0
     });
 
@@ -1849,7 +1849,7 @@ function objectiveSort(objArr) {
             }
             if (found) break;
         }
-        objArr = $.grep(objArr, function (value) {
+        objArr = jQuery.grep(objArr, function (value) {
             return value.$$treeLevel < 0
         });
     }
@@ -1916,10 +1916,10 @@ function getFamilyCats(projMap, projectID) {
 
 function closeMenu(){
     
-     $("#header_container").removeClass("sideMenuOpen");
-     $("#footer_container").removeClass("sideMenuOpen");
-     $("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
-     $("body").removeClass('cbp-spmenu-push-toright');
+     jQuery("#header_container").removeClass("sideMenuOpen");
+     jQuery("#footer_container").removeClass("sideMenuOpen");
+     jQuery("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
+     jQuery("body").removeClass('cbp-spmenu-push-toright');
     
     QRM.mainController.sideOpen = false;
     
@@ -1928,35 +1928,35 @@ function closeMenu(){
 }
 function openMenu(){
     
-     $("#header_container").addClass("sideMenuOpen");
-     $("#footer_container").addClass("sideMenuOpen");
-     $("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
-     $("body").addClass('cbp-spmenu-push-toright');
+     jQuery("#header_container").addClass("sideMenuOpen");
+     jQuery("#footer_container").addClass("sideMenuOpen");
+     jQuery("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
+     jQuery("body").addClass('cbp-spmenu-push-toright');
     
     
-     $("#qrm-title").addClass("hidden-qrm");
-     $("#welcome-name").addClass("hidden-qrm");
-     $("#qrm-titleSM").removeClass("hidden-qrm");
+     jQuery("#qrm-title").addClass("hidden-qrm");
+     jQuery("#welcome-name").addClass("hidden-qrm");
+     jQuery("#qrm-titleSM").removeClass("hidden-qrm");
     
     
 }
 function toggleMenu(){
     
-     $("#header_container").toggleClass("sideMenuOpen");
-     $("#footer_container").toggleClass("sideMenuOpen");
-     $("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
-     $("body").toggleClass('cbp-spmenu-push-toright');
+     jQuery("#header_container").toggleClass("sideMenuOpen");
+     jQuery("#footer_container").toggleClass("sideMenuOpen");
+     jQuery("#cbp-spmenu-s1").toggleClass("cbp-spmenu-open");
+     jQuery("body").toggleClass('cbp-spmenu-push-toright');
     
-    if ($("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")){
-        $("#qrm-title").removeClass("hidden-qrm");
-        $("#qrm-subtitle").removeClass("hidden-qrm");
-        $("#welcome-name").removeClass("hidden-qrm");
-        $("#qrm-titleSM").addClass("hidden-qrm");
+    if (jQuery("#cbp-spmenu-s1").hasClass("cbp-spmenu-open")){
+        jQuery("#qrm-title").removeClass("hidden-qrm");
+        jQuery("#qrm-subtitle").removeClass("hidden-qrm");
+        jQuery("#welcome-name").removeClass("hidden-qrm");
+        jQuery("#qrm-titleSM").addClass("hidden-qrm");
     } else {
-        $("#qrm-subtitle").addClass("hidden-qrm");
-        $("#qrm-title").addClass("hidden-qrm");
-        $("#welcome-name").addClass("hidden-qrm");
-        $("#qrm-titleSM").removeClass("hidden-qrm");
+        jQuery("#qrm-subtitle").addClass("hidden-qrm");
+        jQuery("#qrm-title").addClass("hidden-qrm");
+        jQuery("#welcome-name").addClass("hidden-qrm");
+        jQuery("#qrm-titleSM").removeClass("hidden-qrm");
     }
     
 }

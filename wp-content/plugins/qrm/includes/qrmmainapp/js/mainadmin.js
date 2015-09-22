@@ -237,7 +237,7 @@ app.service('remoteService', ['$http', RemoteService]);
 app.filter('usernameFilter', function () {
     return function (input) {
         if (typeof (input) == 'undefined') return;
-        return $.grep(QRM.siteUsers, function (e) {
+        return jQuery.grep(QRM.siteUsers, function (e) {
             return e.ID == input
         })[0].data.display_name;
     }

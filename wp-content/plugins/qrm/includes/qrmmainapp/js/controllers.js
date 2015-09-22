@@ -8,10 +8,10 @@ function SortByProjectCode(a, b) {
         aName = a.riskProjectCode.toLowerCase();
         bName = b.riskProjectCode.toLowerCase();
     } else {
-        aName = $.grep(QRM.mainController.risks, function (e) {
+        aName = jQuery.grep(QRM.mainController.risks, function (e) {
             return e.id == a;
         })[0].riskProjectCode;
-        bName = $.grep(QRM.mainController.risks, function (e) {
+        bName = jQuery.grep(QRM.mainController.risks, function (e) {
             return e.id == b;
         })[0].riskProjectCode;
     }
@@ -36,7 +36,7 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 
 	if (failedConnectCount < 30){
 		console.log("Initiate Chat");
-		ajaxChatRequest = $.ajax({
+		ajaxChatRequest = jQuery.ajax({
 			url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey + "&reset=" + reset+"&sessionToken="+QRMDataService.sessionToken,
 			type: "GET",
 			timeout: 47000,
@@ -1049,7 +1049,7 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
     this.stress = function(){
         remoteService.getReportRiskJSON([], QRMDataService.project.id, true, true, 2)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -1070,7 +1070,7 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
         QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportRiskJSON([], QRMDataService.project.id, exp.childProjects, false,$scope.reportReqID)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -1866,7 +1866,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
         if ($scope.reportReqID < 0) return;
         remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false, false,$scope.reportReqID)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -2318,7 +2318,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
         remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
             .then(function (response) {
                 QRM.mainController.notify("Sending Data for Processing", 5000);
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -3338,7 +3338,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
         QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -3507,7 +3507,7 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
         QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportIncidentJSON([],$scope.reportReqID)
             .then(function (response) {
-             	if (response.data == "0"){
+             	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -3591,8 +3591,8 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
         if (inc.risk.id != null) {
             inc.incident.risks.push(inc.risk.id);
             var unq = [];
-            $.each(inc.incident.risks, function (i, el) {
-                if (($.inArray(el, unq) == -1) && (el != null)) unq.push(el);
+            jQuery.each(inc.incident.risks, function (i, el) {
+                if ((jQuery.inArray(el, unq) == -1) && (el != null)) unq.push(el);
             });
             inc.incident.risks = unq
         }
@@ -3767,7 +3767,7 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
         QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportIncidentJSON([inc.incident.id],$scope.reportReqID)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -3935,7 +3935,7 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
         QRM.mainController.notify("Assembling Data for Report", 5000);
         remoteService.getReportReviewJSON([],$scope.reportReqID)
             .then(function (response) {
-            	if (response.data == "0"){
+            	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -4037,8 +4037,8 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
         if (rev.risk.id != null) {
             rev.review.risks.push(rev.risk.id);
             var unq = [];
-            $.each(rev.review.risks, function (i, el) {
-                if (($.inArray(el, unq) == -1) && (el != null)) unq.push(el);
+            jQuery.each(rev.review.risks, function (i, el) {
+                if ((jQuery.inArray(el, unq) == -1) && (el != null)) unq.push(el);
             });
             rev.review.risks = unq
             rev.review.risks.sort(SortByProjectCode);
@@ -4057,8 +4057,8 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
             })
 
             var unq = [];
-            $.each(rev.review.risks, function (i, el) {
-                if ($.inArray(el, unq) === -1) unq.push(el);
+            jQuery.each(rev.review.risks, function (i, el) {
+                if (jQuery.inArray(el, unq) === -1) unq.push(el);
             });
             rev.review.risks = unq
             rev.review.risks.sort(SortByProjectCode);
@@ -4178,7 +4178,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
         }
 
         rev.review.risks.forEach(function (riskID) {
-            var riskComment = $.grep(rev.review.riskComments, function (e) {
+            var riskComment = jQuery.grep(rev.review.riskComments, function (e) {
                 return e.riskID == riskID
             });
             if (riskComment.length > 0) {
@@ -4196,7 +4196,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
     this.getRiskComment = function (riskID) {
 
         if (rev.review.riskComments == null) return;
-        var riskComment = $.grep(rev.review.riskComments, function (e) {
+        var riskComment = jQuery.grep(rev.review.riskComments, function (e) {
             return e.riskID == riskID
         });
 
@@ -4212,7 +4212,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
             rev.review.riskComments = [];
         }
 
-        var riskComment = $.grep(rev.review.riskComments, function (e) {
+        var riskComment = jQuery.grep(rev.review.riskComments, function (e) {
             return e.riskID == riskID
         });
         if (riskComment.length > 0) {
@@ -4246,7 +4246,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
          QRM.mainController.notify("Assembling Data for Report", 5000);
          remoteService.getReportReviewJSON([rev.review.id],$scope.reportReqID)
              .then(function (response) {
-             	if (response.data == "0"){
+             	if (response.data == "OK"){
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
@@ -4414,7 +4414,7 @@ var app = angular.module('qrm');
 			if (input < 0) return "Not Assigned"
 			if (typeof (input) == 'undefined') return;
 
-			var user = $.grep(QRMDataService.siteUsers, function (e) {
+			var user = jQuery.grep(QRMDataService.siteUsers, function (e) {
 				return e.ID == input
 			})
 
@@ -4429,7 +4429,7 @@ var app = angular.module('qrm');
 		return function (input) {
 
 			if (typeof (input) == "object") return input.riskProjectCode + " - " + input.title;
-			var risk = $.grep(QRMDataService.risks, function (e) {
+			var risk = jQuery.grep(QRMDataService.risks, function (e) {
 				return e.id == input
 			})
 			return risk[0].riskProjectCode + " - " + risk[0].title;
@@ -4439,7 +4439,7 @@ var app = angular.module('qrm');
 		return function (input) {
 			if (typeof (input) == "object") return input.riskProjectCode;
 
-			var risk = $.grep(QRMDataService.risks, function (e) {
+			var risk = jQuery.grep(QRMDataService.risks, function (e) {
 				return e.id == input
 			})
 			return risk[0].riskProjectCode;
@@ -4449,7 +4449,7 @@ var app = angular.module('qrm');
 		return function (input) {
 
 			if (typeof (input) == "object") return input.title;
-			var risk = $.grep(QRMDataService.risks, function (e) {
+			var risk = jQuery.grep(QRMDataService.risks, function (e) {
 				return e.id == input
 			})
 			return risk[0].title

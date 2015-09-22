@@ -3,7 +3,7 @@ Contributors: David Burton,
 Tags: risk
 Requires at least: 3.8
 Tested up to: 4.3
-Stable tag: 3.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,19 +12,13 @@ Manage your organisations\'s portfolio of risks.
 == Description ==
 Quay Risk Manager allows you to have complete visibility and control of your organisation's risk portfolio.
 
-QRM gives you the tools to make informed decisions in relation to your risk portfoliio and to support your risk governence processes
-
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-markdown parsed.
-
-Ordered list:
+QRM gives you the tools to make informed decisions in relation to your risk portfolio and to support your risk governance processes
 
 1. *Identify* Quay Risk Manager provided a common repository for your organisation's risks. The repository allows risks to be organised hierarchically based on any structure you decide. A library of templates repositories and a library of common risks are available from Quay Systems which can be imported into your repository.
 2. *Analyse* QRM provides a number of tools to help you analyse individual risk and the entire portfolio of risks.
 3. *Manage* QRM assigns risks to Risk Owners and Risk Managers and provide milestone audit points along the lifcycle of a risk. Incident or risk occurence can be recorded and analysedas well as scheduling audits and reviews of sets of risks. 
 4. *Collaborate* QRM integrate into your WordPress site. Site administrators can select which WordPress users can access Quay Risk Manager via your site's menu structure
 5. *Report* QRM produces reports in PDF using a web service. Quay Systems can customise reports to your specific needs. 
-
 
 
 == Installation ==
@@ -64,5 +58,5 @@ You can install your own QRM Report Generator on your own network. Contct Quay S
 3. The Tolerance Matrix showing the relative probability/impact for all the risks of the selected project
 
 == Changelog ==
-= 3.2 =
-* Ported to WordPress plugin platform - Intial WordPress Release
+= 1.3 =
+* Intial public release

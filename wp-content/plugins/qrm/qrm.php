@@ -3,7 +3,7 @@
  * Plugin Name: Quay Risk Manager
  * Plugin URI: http://www.quaysystems.com.au 
  * Description: Mangage your organisations risks. Quay Risk Manager enables you to identify, evaluate, mitigate and manage your risks. Watermarked report in PDF format are produced using a webservice. For non watermaked reports contact <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>   
- * Version: 3.2.0
+ * Version: 1.3.0
  * Requires at least: 4.2.1
  * Tested up to: 4.3
  * Author: <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>
@@ -15,7 +15,7 @@ if (! defined ( 'WPINC' )) {
 	die ();
 }
 
-define('QRM_VERSION', '3.2.0');
+define('QRM_VERSION', '1.3.0');
 defined ( 'ABSPATH' ) or die ();
 
 final class Project{
@@ -1874,7 +1874,10 @@ final class QRMReportData{
 			) );
 			if (is_wp_error ( $response )) {
 				wp_send_json ( $export );
-			} 
+			} else {
+				echo "OK";
+				wp_die();
+			}
 		} else {
 			wp_send_json ( $export );
 		}
@@ -1899,6 +1902,9 @@ final class QRMReportData{
 			) );
 			if (is_wp_error ( $response )) {
 				wp_send_json ( $export );
+			} else {
+				echo "OK";
+				wp_die();
 			} 
 		} else {
 			wp_send_json ( $export );
@@ -1924,7 +1930,10 @@ final class QRMReportData{
 			) );
 			if (is_wp_error ( $response )) {
 				wp_send_json ( $export );
-			} 
+			} else {
+				echo "OK";
+				wp_die();
+			}
 		} else {
 			wp_send_json ( $export );
 		}
@@ -2367,6 +2376,64 @@ final class QuayRiskManager {
 			wp_register_style ( 'ngDialogTheme', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css" );
 			wp_register_style ( 'ngNotify', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css" );
 			wp_register_style ( 'nv', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/css/plugins/nv/nv.d3.min.css" );
+			
+			// qrm-type-template styles
+			
+			wp_register_style ( 'q1', plugin_dir_url (__FILE__)."includes/qrmmainapp/font-awesome/css/font-awesome.css");
+			wp_register_style ( 'q2', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/bootstrap.min.css");
+			wp_register_style ( 'q3', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/dropzone/dropzone.css");
+			wp_register_style ( 'q4', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/ui-grid/ui-grid-unstable.css");
+			wp_register_style ( 'q5', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/angular-notify/angular-notify.min.css");
+			wp_register_style ( 'q6', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/iCheck/custom.css");
+			wp_register_style ( 'q7', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/ngNotify/ng-notify.min.css");
+			wp_register_style ( 'q8', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/ngDialog/ngDialog.min.css");
+			wp_register_style ( 'q9', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/ngDialog/ngDialog-theme-default.min.css");
+			wp_register_style ( 'q10', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/select/select.css");
+			wp_register_style ( 'q11', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/select2.css");
+			wp_register_style ( 'q12', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/selectize.default.css");
+			wp_register_style ( 'q13', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/textAngular/textAngular.css");
+			wp_register_style ( 'q14', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/loading-bar/loading-bar.min.css");
+			wp_register_style ( 'q15', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/plugins/nv/nv.d3.min.css");
+			wp_register_style ( 'q16', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/daterangepicker-bs3.css");
+			wp_register_style ( 'q17', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/animate.css");
+			wp_register_style ( 'q18', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/style.css");
+			wp_register_style ( 'q19', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/qrm_angular.css");
+			wp_register_style ( 'q20', plugin_dir_url (__FILE__)."includes/qrmmainapp/css/qrm_styles.css");
+			
+			// qrm-type-template scripts
+			
+			wp_register_script ( 's1', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js");
+			wp_register_script ( 's2', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js");
+			wp_register_script ( 's3', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/bootstrap/bootstrap.min.js");
+			wp_register_script ( 's4', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/angular/angular.min.js");
+			wp_register_script ( 's5', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/angular/angular-animate.min.js");
+			wp_register_script ( 's6', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/oclazyload/dist/ocLazyLoad.min.js");
+			wp_register_script ( 's7', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/ui-router/angular-ui-router.min.js");
+			wp_register_script ( 's8', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js");
+			wp_register_script ( 's9', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/angular-idle/angular-idle.js");
+			wp_register_script ( 's10', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/ui-grid/ui-grid-unstable.js");
+			wp_register_script ( 's11', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/iCheck/icheck.min.js");
+			wp_register_script ( 's12', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/angular-notify/angular-notify.min.js");
+			wp_register_script ( 's13', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/dropzone/dropzone.js");
+			wp_register_script ( 's14', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/moment.js");
+			wp_register_script ( 's15', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js");
+			wp_register_script ( 's16', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/textAngular/textAngular.min.js");
+			wp_register_script ( 's17', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/textAngular/textAngular-rangy.min.js");
+			wp_register_script ( 's18', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/textAngular/textAngular-sanitize.min.js");
+			wp_register_script ( 's19', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/d3/d3.min.js");
+			wp_register_script ( 's20', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/nv/nv.d3.js");
+			wp_register_script ( 's21', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/qrm-common.js");
+			wp_register_script ( 's22', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/services.js");
+			wp_register_script ( 's23', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js");
+			wp_register_script ( 's24', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/select/select.min.js");
+			wp_register_script ( 's25', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js");
+			wp_register_script ( 's26', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/loading-bar/loading-bar.min.js");
+			wp_register_script ( 's27', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/app.js");
+			wp_register_script ( 's28', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/config.js");
+			wp_register_script ( 's29', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/directives.js");
+			wp_register_script ( 's30', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/daterangepicker.js");
+			wp_register_script ( 's31', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.js");
+				
 		
 			wp_register_script ( 'qrm-jquery', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js', array (), "", true );
 			wp_register_script ( 'qrm-jqueryui', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js', array (), "", true );
@@ -2413,6 +2480,26 @@ final class QuayRiskManager {
 			wp_register_script ( 'qrm-ngDialog', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" );
 			wp_register_script ( 'qrm-ngNotify', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" );
 			wp_register_script ( 'qrm-nv', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/nv/nv.d3.min.js" );
+			
+			wp_register_script("qrm", plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/qrm.js", array (
+					'jquery',
+					'qrm-jqueryui',
+					'qrm-bootstrap',
+					'qrm-angular',
+					'qrm-lazyload',
+					'qrm-router',
+					'qrm-bootstraptpl',
+					'qrm-uigrid',
+					'qrm-icheck',
+					'qrm-notify',
+					'qrm-dropzone',
+					'qrm-moment',
+					'qrm-ngDialog',
+					'qrm-ngNotify',
+					'qrm-nv',
+					'qrm-sanitize',
+					'qrm-select'
+			), "", true );
 		}
 		public function register_types() {		
 			/*
