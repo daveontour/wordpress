@@ -36,14 +36,14 @@
             </div>
         </div>
         <script>
-            $(function () {
-                $(window).bind("load resize", function () {
+            jQuery(function () {
+                jQuery(window).bind("load resize", function () {
                     closeMenu();
-                    winWidth = $(window).width() - 10;
-                    $("#container").css("width", winWidth + "px");
+                    winWidth = jQuery(window).width() - 10;
+                    jQuery("#container").css("width", winWidth + "px");
                 })
             });
-            $("#container").css("width", $(window).width() + "px");
+            jQuery("#container").css("width", jQuery(window).width() + "px");
         </script>
     </div>
 </div>

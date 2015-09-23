@@ -60,3 +60,5 @@ You can install your own QRM Report Generator on your own network. Contct Quay S
 == Changelog ==
 = 1.3 =
 * Intial public release
+= 1.3.1 =
+* Changes to make use of WordPress version of jQuery

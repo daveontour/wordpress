@@ -3,7 +3,7 @@
  * Plugin Name: Quay Risk Manager
  * Plugin URI: http://www.quaysystems.com.au 
  * Description: Mangage your organisations risks. Quay Risk Manager enables you to identify, evaluate, mitigate and manage your risks. Watermarked report in PDF format are produced using a webservice. For non watermaked reports contact <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>   
- * Version: 1.3.0
+ * Version: 1.3.1
  * Requires at least: 4.2.1
  * Tested up to: 4.3
  * Author: <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>
@@ -2127,8 +2127,6 @@ final class QuayRiskManager {
 			wp_enqueue_style ('ngDialogTheme');
 			wp_enqueue_style ('ngNotify');
 		
-			wp_enqueue_script('qrm-jquery');
-			wp_enqueue_script('qrm-jqueryui');
 			wp_enqueue_script('qrm-boostrap');
 			wp_enqueue_script('qrm-angular');
 			wp_enqueue_script('qrm-projadmin');
@@ -2402,8 +2400,6 @@ final class QuayRiskManager {
 			
 			// qrm-type-template scripts
 			
-			wp_register_script ( 's1', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js");
-			wp_register_script ( 's2', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js");
 			wp_register_script ( 's3', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/bootstrap/bootstrap.min.js");
 			wp_register_script ( 's4', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/angular/angular.min.js");
 			wp_register_script ( 's5', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/angular/angular-animate.min.js");
@@ -2435,24 +2431,16 @@ final class QuayRiskManager {
 			wp_register_script ( 's31', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.js");
 				
 		
-			wp_register_script ( 'qrm-jquery', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/jquery/jquery-2.1.1.min.js', array (), "", true );
-			wp_register_script ( 'qrm-jqueryui', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/jquery-ui/jquery-ui.js', array (), "", true );
 			wp_register_script ( 'qrm-bootstrap', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/bootstrap/bootstrap.min.js', array (), "", true );
-			wp_register_script ( 'qrm-metis', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/metisMenu/jquery.metisMenu.js', array (), "", true );
-			wp_register_script ( 'qrm-slimscroll', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/slimscroll/jquery.slimscroll.min.js', array (), "", true );
-			wp_register_script ( 'qrm-pace', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/pace/pace.min.js', array (), "", true );
-			wp_register_script ( 'qrm-inspinia', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/inspinia.js', array (
-					'qrm-jquery'
-			), "", true );
 			wp_register_script ( 'qrm-angular', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/angular/angular.min.js', array (), "", true );
 			wp_register_script ( 'qrm-projadmin', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/projectadmin.js', array (
-					'qrm-jquery',
+					'jquery',
 					'qrm-angular',
 					'qrm-common',
 					'qrm-services'
 			), "", true );
 			wp_register_script ( 'qrm-mainadmin', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/mainadmin.js', array (
-					'qrm-jquery',
+					'jquery',
 					'qrm-angular',
 					'qrm-common',
 					'qrm-services'
@@ -2480,26 +2468,6 @@ final class QuayRiskManager {
 			wp_register_script ( 'qrm-ngDialog', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/ngDialog/ngDialog.min.js" );
 			wp_register_script ( 'qrm-ngNotify', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/ngNotify/ng-notify.min.js" );
 			wp_register_script ( 'qrm-nv', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/nv/nv.d3.min.js" );
-			
-			wp_register_script("qrm", plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/qrm.js", array (
-					'jquery',
-					'qrm-jqueryui',
-					'qrm-bootstrap',
-					'qrm-angular',
-					'qrm-lazyload',
-					'qrm-router',
-					'qrm-bootstraptpl',
-					'qrm-uigrid',
-					'qrm-icheck',
-					'qrm-notify',
-					'qrm-dropzone',
-					'qrm-moment',
-					'qrm-ngDialog',
-					'qrm-ngNotify',
-					'qrm-nv',
-					'qrm-sanitize',
-					'qrm-select'
-			), "", true );
 		}
 		public function register_types() {		
 			/*
@@ -2659,8 +2627,7 @@ final class QuayRiskManager {
 			wp_enqueue_style ( 'qrm-style' );
 			wp_enqueue_style ( 'dropzone' );
 			
-			wp_enqueue_script ( 'qrm-jquery' );
-			wp_enqueue_script ( 'qrm-jqueryui' );
+			wp_enqueue_script ( 'jquery' );
 			wp_enqueue_script ( 'qrm-bootstrap' );
 			wp_enqueue_script ( 'qrm-angular' );
 			wp_enqueue_script ( 'qrm-bootstraptpl' );

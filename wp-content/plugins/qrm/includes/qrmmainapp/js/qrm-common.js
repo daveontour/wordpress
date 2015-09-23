@@ -20,26 +20,6 @@ function replaceAll(find, replace, str) {
     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
-//function getExplorerRisks() {
-//    var risks = new Array();
-//    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
-//        risks.push(item.data);
-//    });
-//    return risks;
-//}
-//
-//function getExplorerRiskIDs() {
-//    var risks = new Array();
-//    Ext.Array.each($$('qrmID-RiskTable').getSelectionModel().getSelection(), function (item) {
-//        risks.push(item.data.riskID);
-//    });
-//    return risks;
-//}
-//
-//function checkExplorerSelection() {
-//    return ($$('qrmID-RiskTable').getSelectionModel().getSelection().length > 0);
-//}
-
 function exportSVG(id) {
 
     var form = Ext.getBody().createChild({
@@ -737,11 +717,7 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
                         treated: true
                     });
 
-                    //                  var prob = ((d.treatedProb-1)/maxProb)*100;
-                    //                   $$('qrm-RiskEditorProbProbTreatedID').setValue(prob.toFixed(2)+"%");
-                    //                   $$('qrm-RiskEditorProbImpactTreatedID').setValue(Math.floor(d.treatedImpact));
-
-                    return "translate(" + [d.x1, d.y1] + ")";
+                     return "translate(" + [d.x1, d.y1] + ")";
 
                 } else {
 
@@ -770,10 +746,7 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
                         treated: false
                     });
                     var prob = ((d.inherentProb - 1) / maxProb) * 100;
-                    //                   $$('qrm-RiskEditorProbProbUnTreatedID').setValue(prob.toFixed(2)+"%");
-                    //                   $$('qrm-RiskEditorProbImpactUnTreatedID').setValue(Math.floor(d.inherentImpact));
-                    //                    dragCallback();
-
+ 
                     return "translate(" + [d.x, d.y] + ")";
                 }
             });
@@ -794,20 +767,14 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
                     prob: d.treatedProb.toFixed(2),
                     treated: true
                 });
-                //               $$('qrm-RiskEditorProbProbTreatedID').setValue(prob.toFixed(2)+"%");
-                //                alert("Treated: "+prob+"  "+d.treatedImpact);
-
             } else {
                 d.inherentImpact = 1 + (d.x / gridSizeX);
                 d.inherentProb = (maxProb + 1) - (d.y / gridSizeX);
-                //               var prob = ((d.untreatedProb-1)/maxProb)*100;
                 dragEndCallback({
                     impact: d.inherentImpact.toFixed(2),
                     prob: d.inherentProb.toFixed(2),
                     treated: false
                 });
-                //                $$('qrm-RiskEditorProbProbUnTreatedID').setValue(prob.toFixed(2)+"%");
-                //                 alert("UnTreated: "+prob+"  "+d.untreatedImpact);
             }
 
         });
@@ -1923,8 +1890,6 @@ function closeMenu(){
     
     QRM.mainController.sideOpen = false;
     
-//     $("#qrm-title").removeClass("hidden-qrm");
-//     $("#qrm-subtitle").removeClass("hidden-qrm");
 }
 function openMenu(){
     

@@ -132,7 +132,7 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
         setConfigMatrix($scope.proj.matrix.tolString, $scope.proj.matrix.maxImpact, $scope.proj.matrix.maxProb, "#svgDIV", $scope.matrixChangeCB);
     }
     $scope.matrixChangeCB = function () {
-        $("#svgDIV rect").each(function () {
+        jQuery("#svgDIV rect").each(function () {
             var html = this.outerHTML;
             var i = html.indexOf("qrmID=");
             var ip = html.substring(i + 7, i + 9);

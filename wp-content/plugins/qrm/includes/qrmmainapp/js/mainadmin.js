@@ -37,7 +37,7 @@ function SampleController($scope, remoteService, ngNotify) {
     	} 
     }
     this.downloadJSON = function () {
-        $("body").append("<iframe src='" + ajaxurl + "?action=downloadJSON' style='display: none;' ></iframe>");
+        jQuery("body").append("<iframe src='" + ajaxurl + "?action=downloadJSON' style='display: none;' ></iframe>");
     }
 
     

@@ -56,12 +56,12 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 				if (m.reportReady) {
 					QRM.mainController.notify2("Report Ready. Downloading Now");
 
-					$('input[name="userEmail"]').val(QRMDataService.userEmail);
-					$('input[name="userLogin"]').val(QRMDataService.userLogin);
-					$('input[name="siteKey"]').val(QRMDataService.siteKey);
-					$('input[name="id"]').val(m.reportID);
-					$('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
-					$("#getReportForm").submit();
+					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
+					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
+					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
+					jQuery('input[name="id"]').val(m.reportID);
+					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
+					jQuery("#getReportForm").submit();
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -476,20 +476,20 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 
     this.toggleMenu = function () {
 
-        var open = $("#header_container").hasClass("sideMenuOpen");
+        var open = jQuery("#header_container").hasClass("sideMenuOpen");
 
         //Currently Open, so want to close side menu
         if (open) {
-            $("#header_container").removeClass("sideMenuOpen");
-            $("#footer_container").removeClass("sideMenuOpen");
-            $("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
-            $("body").toggleClass('cbp-spmenu-push-toright');
+        	jQuery("#header_container").removeClass("sideMenuOpen");
+        	jQuery("#footer_container").removeClass("sideMenuOpen");
+        	jQuery("#cbp-spmenu-s1").removeClass("cbp-spmenu-open");
+        	jQuery("body").toggleClass('cbp-spmenu-push-toright');
         } else {
             // Open the side menu
-            $("#header_container").addClass("sideMenuOpen");
-            $("#footer_container").addClass("sideMenuOpen");
-            $("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
-            $("body").toggleClass('cbp-spmenu-push-toright');
+        	jQuery("#header_container").addClass("sideMenuOpen");
+        	jQuery("#footer_container").addClass("sideMenuOpen");
+        	jQuery("#cbp-spmenu-s1").addClass("cbp-spmenu-open");
+        	jQuery("body").toggleClass('cbp-spmenu-push-toright');
         }
         QRM.mainController.sideOpen = !open;
     }
@@ -896,8 +896,8 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
 
                 exp.filterRisks();
 
-                var winWidth = $(document).width() - 10;
-                $("#container").css("width", winWidth + "px");
+                var winWidth = jQuery(document).width() - 10;
+                jQuery("#container").css("width", winWidth + "px");
             });
 
     }
@@ -1053,12 +1053,12 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val(2);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val(2);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             });
             setTimeout(QRM.expController.stress, 4000);
@@ -1074,12 +1074,12 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val($scope.reportReqID);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
@@ -1133,8 +1133,8 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
     }
 
     // Initial filling of the grid
-    winWidth = $(window).innerWidth() - 10;
-    $("#container").css("width", winWidth + "px");
+    winWidth = jQuery(window).innerWidth() - 10;
+    jQuery("#container").css("width", winWidth + "px");
     this.init();
 
 }
@@ -1591,7 +1591,8 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 format: 'MMMM D, YYYY',
                 separator: " - ",
                 showDropdowns: true,
-                drops: "down"
+                drops: "down",
+                opens:"left"
             },
             function (start, end, label) {
                 try {
@@ -1870,12 +1871,12 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val($scope.reportReqID);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             });
     }
@@ -1900,8 +1901,8 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 $scope.$apply()
             });
             QRMDataService.passRisk = false;
-            winWidth = $(window).innerWidth() - 10;
-            $("#container").css("width", winWidth + "px");
+            winWidth = jQuery(window).innerWidth() - 10;
+            jQuery("#container").css("width", winWidth + "px");
             return;
         }
 
@@ -1928,8 +1929,8 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 this.getRisk();
             }
         }
-        winWidth = $(window).innerWidth() - 10;
-        $("#container").css("width", winWidth + "px");
+        winWidth = jQuery(window).innerWidth() - 10;
+        jQuery("#container").css("width", winWidth + "px");
     }
 
     if (QRMDataService.siteUsers != null) {
@@ -1964,10 +1965,10 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     };
 
     this.showFilters = function () {
-        $("#calenderFilter").slideDown("slow");
+        jQuery("#calenderFilter").slideDown("slow");
     }
     this.closeFilters = function () {
-        $("#calenderFilter").slideUp("slow");
+        jQuery("#calenderFilter").slideUp("slow");
     }
 
     this.owner = "";
@@ -2033,7 +2034,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         });
         cal.layoutCalender(ownerPass);
 
-        $("#calenderFilter").slideUp("slow");
+        jQuery("#calenderFilter").slideUp("slow");
 
 
     }
@@ -2082,7 +2083,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
         d3.select("#svgcalID").selectAll("svg").remove();
 
         var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
-        gantt(tasks, "#svgcalID", $('#svgcalID').width(), $('#svgcalID').height());
+        gantt(tasks, "#svgcalID", jQuery('#svgcalID').width(), jQuery('#svgcalID').height());
 
     }
 
@@ -2091,7 +2092,7 @@ function CalenderController($scope, QRMDataService, $state, remoteService) {
     this.resize = function () {
         d3.select("#svgcalID").selectAll("svg").remove();
         var gantt = d3.gantt(cal).taskTypes(taskNames).tickFormat("%b %Y");
-        gantt(tasks, "#svgcalID", $('#svgcalID').width(), $('#svgcalID').height());
+        gantt(tasks, "#svgcalID", jQuery('#svgcalID').width(), jQuery('#svgcalID').height());
     }
 
     this.toolTip = function (d) {
@@ -2322,12 +2323,12 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val($scope.reportReqID);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
@@ -2341,13 +2342,13 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
                 rank.layout = new SorterLayout(rank, $scope);
 
                 var html = "<div style='valign:top'><br><hr><br/>Rearrange the rank order of the risks by dragging and droping the risks. <br/><br/>The risks are initially arranged in rank order from top to bottom, left to right<br/><br/></strong><hr></div>";
-                //    $('#qrm-rankDetail').html(html);
+                //    jQuery('#qrm-rankDetail').html(html);
 
                 myLayout = rank.layout;
-                myLayout.setHeight($('#subRankSVGDiv').height());
-                myLayout.setWidth($('#subRankSVGDiv').width());
+                myLayout.setHeight(jQuery('#subRankSVGDiv').height());
+                myLayout.setWidth(jQuery('#subRankSVGDiv').width());
                 myLayout.setItemHeight(35);
-                myLayout.setItemWidth($('#subRankSVGDiv').width() / 2);
+                myLayout.setItemWidth(jQuery('#subRankSVGDiv').width() / 2);
                 myLayout.scale(1, 1);
                 myLayout.setItems(rank.risks);
                 myLayout.setSVGDiv("subRankSVGDiv");
@@ -2359,16 +2360,16 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
 
     }
 
-    var winWidth = $(window).innerWidth() - 10;
-    $("#container").css("width", winWidth + "px");
+    var winWidth = jQuery(window).innerWidth() - 10;
+    jQuery("#container").css("width", winWidth + "px");
 
     this.loadGrid();
 
     this.resize = function () {
-        myLayout.setHeight($('#subRankSVGDiv').height());
-        myLayout.setWidth($('#subRankSVGDiv').width());
+        myLayout.setHeight(jQuery('#subRankSVGDiv').height());
+        myLayout.setWidth(jQuery('#subRankSVGDiv').width());
         myLayout.setItemHeight(35);
-        myLayout.setItemWidth($('#subRankSVGDiv').width() / 2);
+        myLayout.setItemWidth(jQuery('#subRankSVGDiv').width() / 2);
         myLayout.scale(1, 1);
         myLayout.setSVGDiv("subRankSVGDiv");
         myLayout.layoutTable();
@@ -2651,7 +2652,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
 
     this.stateSelectorChanged = function () {
 
-        $("#matrixFilter").slideUp("slow");
+        jQuery("#matrixFilter").slideUp("slow");
 
         //Clear present position so the layout can take care of non overlapping
         relMatrixCtrl.risks.forEach(function (risk) {
@@ -2734,10 +2735,10 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
 
     }
     this.showFilters = function () {
-        $("#matrixFilter").slideDown("slow");
+        jQuery("#matrixFilter").slideDown("slow");
     }
     this.closeFilters = function () {
-        $("#matrixFilter").slideUp("slow");
+        jQuery("#matrixFilter").slideUp("slow");
     }
     this.cancelChanges = function () {
         this.matrixDirty = false;
@@ -2828,7 +2829,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
                 filteredRisks.push(risk);
             }
         });
-        $("#matrixFilter").slideUp("slow");
+        jQuery("#matrixFilter").slideUp("slow");
         this.svgMatrix(filteredRisks);
     }
     this.managerSelect = function () {
@@ -2845,12 +2846,12 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
             }
         });
 
-        $("#matrixFilter").slideUp("slow");
+        jQuery("#matrixFilter").slideUp("slow");
         this.svgMatrix(filteredRisks);
 
     }
     this.riskSelect = function () {
-        $("#matrixFilter").slideUp("slow");
+        jQuery("#matrixFilter").slideUp("slow");
 
         relMatrixCtrl.owner = "";
         relMatrixCtrl.manager = "";
@@ -2953,8 +2954,8 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
         var tolString = QRMDataService.project.matrix.tolString;
         var maxImpact = QRMDataService.project.matrix.maxImpact;
         var maxProb = QRMDataService.project.matrix.maxProb;
-        var divWidth = $('#relMatrixSVGDiv').width();
-        var divHeight = $('#relMatrixSVGDiv').height();
+        var divWidth = jQuery('#relMatrixSVGDiv').width();
+        var divHeight = jQuery('#relMatrixSVGDiv').height();
         var margin = {
             top: 45,
             right: 27,
@@ -3342,18 +3343,18 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val($scope.reportReqID);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
     
-    var winWidth = $(window).innerWidth() - 10;
-    $("#container").css("width", winWidth + "px");
+    var winWidth = jQuery(window).innerWidth() - 10;
+    jQuery("#container").css("width", winWidth + "px");
 
     
     this.getRisksAndPlace();
@@ -3455,8 +3456,8 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
     };
     this.init = function () {
         
-        var winWidth = $(window).innerWidth() - 10;
-        $("#container").css("width", winWidth + "px");
+        var winWidth = jQuery(window).innerWidth() - 10;
+        jQuery("#container").css("width", winWidth + "px");
 
         QRM.mainController.titleBar = "Incidents";
         QRM.mainController.lookingForIncidents();
@@ -3511,12 +3512,12 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val(2);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val(2);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
@@ -3771,12 +3772,12 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val(2);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val(2);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
@@ -3908,8 +3909,8 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
     }
 
     this.init = function () {
-         var winWidth = $(window).innerWidth() - 10;
-         $("#container").css("width", winWidth + "px");
+         var winWidth = jQuery(window).innerWidth() - 10;
+         jQuery("#container").css("width", winWidth + "px");
 
         QRM.mainController.titleBar = "Reviews";
         QRM.mainController.lookingForReviews();
@@ -3939,12 +3940,12 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val(2);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val(2);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
             })
     }
@@ -4250,12 +4251,12 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
             		QRM.mainController.notify("Data sent to server", 5000);
             	} else {
                   QRM.mainController.notify("Sending Data for Processing", 5000);
-                  $('input[name="reportData"]').val(JSON.stringify(response.data));
-                  $('input[name="action"]').val("execute_report");
-                  $('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  $('input[name="reportID"]').val(2);
-                  $('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  $("#reportForm").submit();            		
+                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+                  jQuery('input[name="action"]').val("execute_report");
+                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+                  jQuery('input[name="reportID"]').val(2);
+                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+                  jQuery("#reportForm").submit();            		
             	}
              })
      }
