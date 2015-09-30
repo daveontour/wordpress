@@ -1,0 +1,5 @@
+.settings/*
+.settings
+.buildpath
+.project
+includes/qrmmainapp/js/controllers.js

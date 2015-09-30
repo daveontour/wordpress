@@ -1,0 +1,29 @@
+<project basedir="." default="pluginfle" >
+	<property environment="env" />
+	<property file="build.properties" />
+
+	<target name="clean">
+		<delete file="C:/wamp/www/wordpress/wp-content/plugins/qrm/includes/qrmmainapp/js/controllers.min.js"/>
+		<delete file="C:/wamp/www/wordpress/wp-content/plugins/qrm/includes/qrmmainapp/js/qrm.min.js"/>
+		<delete file="C:/wamp/www/wordpress/wp-content/plugins/qrm/includes/qrmmainapp/js/services.min.js"/>
+		<delete file="C:/wamp/www/wordpress/wp-content/plugins/qrm/includes/qrmmainapp/js/directives.min.js"/>
+		<delete file="C:/Users/Dave/Desktop/qrm.zip"/>
+	</target>
+	<target name="uglify" depends="clean">
+		  <exec executable="cmd">
+		    <arg value="/c"/>
+		    <arg value="builduglify.bat"/>
+		    <arg value="-p"/>
+		  </exec>
+	</target>
+	
+	<target name="pluginfle" depends="uglify">
+		<delete file="C:/Users/Dave/Desktop/qrm.zip"/>
+		 <zip destfile="C:/Users/Dave/Desktop/qrm.zip"
+		       basedir="C:/wamp/www/wordpress/wp-content/plugins/qrm"
+		 	   excludesfile="buildzipexclude"
+		 	   update="true"
+		  />
+	</target>
+	
+</project>

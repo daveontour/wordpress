@@ -2429,6 +2429,7 @@ final class QuayRiskManager {
 			wp_register_script ( 's29', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/directives.js");
 			wp_register_script ( 's30', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/daterangepicker.js");
 			wp_register_script ( 's31', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.min.js");
+			wp_register_script ( 's32', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/qrm.min.js");
 				
 		
 			wp_register_script ( 'qrm-bootstrap', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/bootstrap/bootstrap.min.js', array (), "", true );
@@ -2456,7 +2457,7 @@ final class QuayRiskManager {
 			wp_register_script ( 'qrm-app', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/app.js', array (), "", true );
 			wp_register_script ( 'qrm-config', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/config.js', array (), "", true );
 			wp_register_script ( 'qrm-directives', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/directives.js', array (), "", true );
-			wp_register_script ( 'qrm-controllers', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/controllers.min.js', array (), "", true );
+			wp_register_script ( 'qrm-controllers', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/controllers.js', array (), "", true );
 			wp_register_script ( 'qrm-services', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/services.js', array (), "", true );
 			wp_register_script ( 'qrm-d3', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/d3/d3.min.js', array (), "", true );
 			wp_register_script ( 'qrm-common', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/qrm-common.js', array (

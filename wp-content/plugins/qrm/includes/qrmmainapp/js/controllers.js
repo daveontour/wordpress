@@ -269,8 +269,6 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
 };
 
 function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
-
-
 	QRM.mainController = this;
 
 	this.notify = function (message, duration) {
@@ -4330,7 +4328,7 @@ function LoginCtrl( $state, remoteService) {
         remoteService.login(login.username, login.pass)
             .then(function (response) {
                 var result = response.data;
-                if (result.loggedin == true) {
+                if (result.loggedin) {
                     if (!result.qrmuser) {
                         $state.go("nonQRM");
                     } else {

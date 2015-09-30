@@ -153,8 +153,8 @@ function Map() {
 
 function calcProb(risk, preMit) {
 
-    var startMom = moment(risk.start);
-    var endMom = moment(risk.end);
+//    var startMom = moment(risk.start);
+//    var endMom = moment(risk.end);
     var days = (new Date(risk.end).getTime() - new Date(risk.start).getTime()) / (1000 * 60 * 60 * 24);
     var alpha = 0;
     var T = 0;
@@ -745,7 +745,7 @@ function setRiskEditorMatrix(risk, matrixConfig, matrixDIVID, matrixDisplayConfi
                         prob: d.inherentProb,
                         treated: false
                     });
-                    var prob = ((d.inherentProb - 1) / maxProb) * 100;
+      //              var prob = ((d.inherentProb - 1) / maxProb) * 100;
  
                     return "translate(" + [d.x, d.y] + ")";
                 }
@@ -1348,7 +1348,7 @@ function SorterLayout(rankCtl, $scope) {
 
     this.sortItems = function () {
         this.items.sort(function (a, b) {
-            var v = 0;
+  //          var v = 0;
             if (a.rank && b.rank) {
                 return Number(a.rank) - Number(b.rank);
             } else {
@@ -1862,7 +1862,7 @@ function getLinearObjectives(projMap, projectID) {
 
 function getFamilyCats(projMap, projectID) {
 
-    var parents = getProjectParents(projMap, projectID);
+  //  var parents = getProjectParents(projMap, projectID);
 
     var cat = new Array();
     var proj = projMap.get(projectID);
