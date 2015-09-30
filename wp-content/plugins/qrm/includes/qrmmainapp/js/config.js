@@ -1,14 +1,8 @@
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdleProvider, KeepaliveProvider) {
+function config($stateProvider, IdleProvider) {
 
     // Configure Idle settings
     IdleProvider.idle(5); // in seconds
     IdleProvider.timeout(120); // in seconds
-
-    //    $urlRouterProvider.otherwise("/intro");
-
-    $ocLazyLoadProvider.config({
-        debug: false
-    });
 
     $stateProvider
         .state('qrm', {
@@ -57,7 +51,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             },
             onEnter: function () {
                 closeMenu();
-                winWidth = jQuery(document).width() - 10;
+                var winWidth = jQuery(document).width() - 10;
                 jQuery("#container").css("width", winWidth + "px");
             }
         })
@@ -224,12 +218,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             }
         });
 }
-angular
-    .module('qrm')
-    .config(config)
+
+angular.module('qrm').config(['$stateProvider', 'IdleProvider', config])
     .run(function ($rootScope, $state) {
         $rootScope.$state = $state;
-
         // This tells the app where to go in the first instance
         $state.go("intro");
     });

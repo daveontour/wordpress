@@ -81,12 +81,9 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 }
 
 function QRMCtrl( QRMDataService) {
-    //Leave the reports in a spot where everyone can find them
     this.reports = QRMDataService.reports;
 }
-function NonQRMCtrl() {
 
-}
 function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
 
     // This is the entry for the app
@@ -181,7 +178,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
     if (postType == "risk" || postType == "review") {
 
         //Add additional data fetch
-        d = remoteService.getProjects()
+      var  d = remoteService.getProjects()
             .then(function (response) {
                 if (response.data == "0" || response.data == "-1") {
                     intro.sessionOK = false;
@@ -194,16 +191,16 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
             });
 
         $q.all([z, a, b, c, d, e]).then(function () {
-            intro.switch();
+            intro.switcher();
         });
 
     } else {
         $q.all([z, a, b, c, e]).then(function () {
-            intro.switch();
+            intro.switcher();
         });
     };
 
-    this.switch = function () {
+    this.switcher = function () {
 
     if (!intro.sessionOK) {
             $state.go("login");
@@ -285,6 +282,11 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 	this.notify2 = function (message) {
 		ngNotify.dismiss();
 		ngNotify.set(message, {type:"success", duration:1000, theme:"pure"});
+	};
+	this.notify3 = function (message, duration) {
+		ngNotify.dismiss();
+		ngNotify.set(message, {type:"info", duration:duration, theme:"pure"});
+
 	};
 
 	this.notifyNoReportServer = function (message) {
@@ -405,8 +407,6 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 if (risk.manager == userID) return true;
                 if (QRMDataService.project.projectRiskManager == userID) return true;
                 return false;
-                break;
-
             case "view_risk_grid":
 
                 if (risk.owner == userID) return true;
@@ -417,15 +417,10 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 if (p.usersID.indexOf(userID) > -1) return true;
 
                 return false;
-                break;
-
             case "delete_risk_grid":
                 if (risk.owner == userID) return true;
                 if (QRMDataService.project.projectRiskManager == userID) return true;
                 return false;
-                break;
-
-
             case "new_risk":
 
                 if (typeof (p) == 'undefined') return false;
@@ -439,8 +434,6 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 if (p.managersID.indexOf(userID) > -1) return true;
 
                 return false;
-                break;
-
             case "save_risk":
                 if (QRMDataService.riskID < 0) return true;
                 if (typeof (QRMDataService.risk) == 'undefined') return false;
@@ -448,14 +441,11 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 if (QRMDataService.risk.manager == userID) return true;
                 if (QRMDataService.project.projectRiskManager == userID) return true;
                 return false;
-                break;
             case "new_incident":
                 return true;
-                break;
             case "new_review":
                 return true;
-                break;
-            default:
+             default:
                 return false;
         }
     }
@@ -593,7 +583,7 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
 
     QRMDataService.riskID = 0;
     var exp = this;
-    exp.childProjects = false;
+    this.childProjects = false;
     if (QRMDataService.project.id > 0) {
         this.project = QRMDataService.project;
     }
@@ -776,6 +766,31 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
         $state.go('qrm.risk');
     }
     
+    this.checkForReports = function(){
+        var url = QRMDataService.reportServerURL + "/getCompletedReports?callback=JSON_CALLBACK&&sessionToken="+QRMDataService.sessionToken;
+        $http.jsonp(url)
+            .success(function (data) {
+                if (data.length == 0) {
+                	QRM.mainController.notify3("All Completed Reports Have Been Downloaded", 2000);
+                } else {
+					QRM.mainController.notify2("Downloading Completed Report");
+                    for (var i = 0; i<data.length; i++){
+                    	var id = data[i];
+    					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
+    					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
+    					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
+    					jQuery('input[name="id"]').val(id);
+    					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
+    					jQuery("#getReportForm").submit();
+                    }
+                }
+            })
+            .error(function (data) {
+                ngNotify.dismiss();
+                ngNotify.set("Error Retrieving Available Reports", {type:"grimace", duration:1000, theme:"pure"});
+            });
+    }
+    
     this.newPushDownRisk = function () {
 
         this.pushDown = QRMDataService.getTemplateRisk();
@@ -835,7 +850,7 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
         postType = null;
         QRMDataService.riskID = riskID;
         $scope.loading = true;
-        remoteService.getRisk(QRMDataService.riskID, $scope)
+        remoteService.getRisk(QRMDataService.riskID)
             .then(function (response) {
                 if (response.data.msg) {
                     $scope.loading = false;
@@ -1882,11 +1897,13 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
     }
     
     this.showDummy = function(){
-        if (QRMDataService.siteID == "bephra" && QRMDataService.siteKey=="0112358132134"){
-            return true;
-        } else {
-            return false;
-        }
+    	
+    	return false;
+//        if (QRMDataService.siteID == "bephra" && QRMDataService.siteKey=="0112358132134"){
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
     this.init = function () {
 
@@ -2293,7 +2310,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
 
     this.saveChanges = function () {
         myLayout.normaliseRanks();
-        var rankOrder = myLayout.orderedIDs;
+//        var rankOrder = myLayout.orderedIDs;
         remoteService.saveRankOrder(myLayout.items).then(function (response) {
             if (response.data.error) {
                 alert(response.data.msg);
@@ -2341,7 +2358,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
                 rank.risks = risks;
                 rank.layout = new SorterLayout(rank, $scope);
 
-                var html = "<div style='valign:top'><br><hr><br/>Rearrange the rank order of the risks by dragging and droping the risks. <br/><br/>The risks are initially arranged in rank order from top to bottom, left to right<br/><br/></strong><hr></div>";
+               // var html = "<div style='valign:top'><br><hr><br/>Rearrange the rank order of the risks by dragging and droping the risks. <br/><br/>The risks are initially arranged in rank order from top to bottom, left to right<br/><br/></strong><hr></div>";
                 //    jQuery('#qrm-rankDetail').html(html);
 
                 myLayout = rank.layout;
@@ -4344,7 +4361,6 @@ var app = angular.module('qrm');
 			requireBase: false,
 			enabled: true
 		});
-
 	}]);
 	app.config(['ngDialogProvider', function (ngDialogProvider) {
 		ngDialogProvider.setDefaults({
@@ -4359,7 +4375,7 @@ var app = angular.module('qrm');
 	app.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
 		cfpLoadingBarProvider.includeSpinner = false;
 	}]);
-	app.config(function ($provide) {
+	app.config(['$provide',function ($provide) {
 		$provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) { // $delegate is the taOptions we are decorating
 			taOptions.toolbar = [
 			                     ['h1', 'h2', 'p'],
@@ -4368,10 +4384,10 @@ var app = angular.module('qrm');
 			                     ];
 			return taOptions;
 		}]);
-	});
+	}]);
 	app.controller('IntroCtrl', ['$scope', 'QRMDataService', 'RemoteService', '$state', '$q', '$http', IntroCtrl]);
 	app.controller('QRMCtrl', ['QRMDataService', QRMCtrl]);
-	app.controller('NonQRMCtrl', [NonQRMCtrl]);
+	app.controller('NonQRMCtrl', function () {});
 	app.controller('MainCtrl', ['QRMDataService', 'RemoteService', '$state', 'ngNotify', '$http', '$q',MainCtrl]);
 	app.controller('ExplorerCtrl', ['$scope', 'QRMDataService', '$state', 'RemoteService', 'ngDialog', "$timeout","$http","uiGridConstants", ExplorerCtrl]);
 	app.controller('RiskCtrl', ['$scope', 'QRMDataService', '$state', '$timeout', 'RemoteService', 'ngNotify', 'ngDialog', '$q', RiskCtrl]);

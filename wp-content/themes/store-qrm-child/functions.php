@@ -114,3 +114,25 @@ function getSiteIDString($length = 8) {
 	
 	return $string;
 }
+add_shortcode( 'qrmslider', 'slider_func' );
+function slider_func(){
+	
+	$count_x = $count = get_theme_mod('store_main_slider_count');
+	$s='<div id="slider-bg" data-stellar-background-ratio="0.5"><div class="container"><div class="slider-container theme-default"><div class="swiper-wrapper">';
+
+	for($i = 1; $i <= $count; $i ++) :		
+		$url = esc_url ( get_theme_mod ( 'store_slide_url' . $i ) );
+		$img = esc_url ( get_theme_mod ( 'store_slide_img' . $i ) );
+		$title = esc_html ( get_theme_mod ( 'store_slide_title' . $i ) );
+		$desc = esc_html ( get_theme_mod ( 'store_slide_desc' . $i ) );		
+		
+		$s = $s.'<div class="swiper-slide"><a href="'.$url.'"> <img src="'.$img.'"	data-thumb="'.$img.'" title="'.$title." - ".$desc.'" /></a>';
+		$s = $s.'<div class="slidecaption">';
+		if ($title){ 
+			$s = $s.'<div class="slide-title">'.$title.'</div><div class="slide-desc"><span>'.$desc.'</span></div>';
+		} 
+			$s = $s.'</div></div>';
+	 endfor; 
+			$s = $s.'</div><div class="swiper-pagination swiper-pagination-white"></div><div class="swiper-button-next slidernext swiper-button-white"></div><div class="swiper-button-prev sliderprev swiper-button-white"></div></div></div></div>';
+	return $s;
+}

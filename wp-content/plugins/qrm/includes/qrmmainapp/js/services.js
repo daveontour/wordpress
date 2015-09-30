@@ -419,7 +419,7 @@ function DataService() {
 
 function RemoteService($http) {
 
-    this.getRisk = function (riskID, $scope) {
+    this.getRisk = function (riskID) {
         return $http({
             method: 'POST',
             url: ajaxurl,
@@ -707,7 +707,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-
     this.getJSON = function () {
         return $http({
             method: 'POST',
@@ -736,9 +735,8 @@ function RemoteService($http) {
             cache: false
         });
     };
-
-        this.getReportIncidentJSON = function (incidents, reportID) {
-        
+    this.getReportIncidentJSON = function (incidents, reportID) {
+      
         	var data = {
         			incidents:incidents,
         			reportID: reportID
@@ -754,7 +752,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-    
     this.getReportReviewJSON = function (reviews, reportID) {
     	var data = {
     			reviews:reviews,
@@ -770,7 +767,6 @@ function RemoteService($http) {
             cache: false
         });
     };
-
     this.newPushDownRisk = function (pushdown) {
         return $http({
             method: 'POST',

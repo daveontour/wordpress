@@ -112,10 +112,9 @@ function textAngularFocus($parse, $timeout, textAngularManager) {
   }
 
 
-angular
-    .module('qrm')
-    .directive('pageTitle', pageTitle)
+angular.module('qrm')
+    .directive('pageTitle', ['$rootScope', '$timeout',pageTitle])
     .directive('riskmat', ['QRMDataService',riskmat])
-    .directive('icheck', icheck)
+    .directive('icheck', ['$timeout',icheck])
     .directive('dropzone', dropzone)
     .directive('textAngular', ['$parse', '$timeout', 'textAngularManager', textAngularFocus])

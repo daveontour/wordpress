@@ -8,7 +8,7 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-	<div class="entry-content">
+	<div class="entry-content" style="margin:1.0em">
 		<?php the_content(); ?>
 		<?php
 			wp_link_pages( array(
