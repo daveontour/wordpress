@@ -3,7 +3,7 @@
  * Plugin Name: Quay Risk Manager
  * Plugin URI: http://www.quaysystems.com.au 
  * Description: Mangage your organisations risks. Quay Risk Manager enables you to identify, evaluate, mitigate and manage your risks. Watermarked report in PDF format are produced using a webservice. For non watermaked reports contact <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>   
- * Version: 1.3.2
+ * Version: 1.3.3
  * Requires at least: 4.2.1
  * Tested up to: 4.3
  * Author: <a href="http://www.quaysystems.com.au">Quay Systems Consulting</a>
@@ -15,7 +15,7 @@ if (! defined ( 'WPINC' )) {
 	die ();
 }
 
-define('QRM_VERSION', '1.3.0');
+define('QRM_VERSION', '1.3.3');
 defined ( 'ABSPATH' ) or die ();
 
 final class Project{
@@ -2428,7 +2428,8 @@ final class QuayRiskManager {
 			wp_register_script ( 's28', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/config.js");
 			wp_register_script ( 's29', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/directives.js");
 			wp_register_script ( 's30', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/daterangepicker.js");
-			wp_register_script ( 's31', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.min.js");
+			wp_register_script ( 's31', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.js");
+			wp_register_script ( 's31m', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/controllers.min.js");
 			wp_register_script ( 's32', plugin_dir_url ( __FILE__ ) ."/includes/qrmmainapp/js/qrm.min.js");
 				
 		

@@ -1,4 +1,8 @@
 <?php
+// Flag for the QRM plugin to display guest login or not.
+
+$GLOBAL["showGuestLogin"] = 'true';
+
 add_action ( "wp_ajax_getUpdateInfo", "getQRMUpdateInfo" );
 add_action ( "wp_ajax_nopriv_getUpdateInfo", "getQRMUpdateInfo" );
 function getQRMUpdateInfo() {

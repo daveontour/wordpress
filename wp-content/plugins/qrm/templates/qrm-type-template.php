@@ -13,6 +13,7 @@
 		var postID = <?php echo $post->ID ?>;
 		var lostPasswordURL = '<?php echo wp_lostpassword_url(); ?>';
 		var siteURL = '<?php echo site_url(); ?>';
+		var showGuestLogin = <?php if($GLOBAL["showGuestLogin"]){ echo $GLOBAL["showGuestLogin"]; } else {echo 'false';} ?>;
 		var postType = '<?php if ($type){echo $type;} else {echo "firstproject";}?>';
 		<?php if(isset($projectID))echo 'var projectID = '.$projectID.';' ?>
 	</script>
@@ -23,13 +24,11 @@
 	<div ui-view></div>
 
 	<?php wp_print_scripts(["jquery","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20", 
-			//"s21",
-			//"s22",
-			"s23","s24","s25","s26",
-			//"s27","s28","s29",
-			"s30",
-	       //'s31'
-			's32']) ?>
+ 			"s23","s24","s25","s26","s30",
+// 			"s21","s22","s27","s28","s29",'s31'
+			's32'
+			
+	]) ?>
 
     <script>
        function QRM() {       	
