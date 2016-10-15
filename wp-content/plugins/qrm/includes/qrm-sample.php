@@ -1,4 +1,7 @@
 <?php
+
+require_once (plugin_dir_path ( __FILE__ ) . '../qrm-db.php');
+
 class QRMSample {
 	static $effectiveness = array (
 			"Ad Hoc",
@@ -642,6 +645,8 @@ class QRMSample {
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		
+		WPQRM_Model_Risk::replace($risk);
+		
 		return $risk->riskProjectCode;
 	}
 	/**
@@ -728,7 +733,7 @@ class QRMSample {
 			$p->categories = $cat;
 		}
 		$p = QRMSample::saveSampleProject($p);
-		
+		WPQRM_Model_Project::replace($p);	
 		return $p;
 	}
 	static function saveSampleProject($project){

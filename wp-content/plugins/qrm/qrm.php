@@ -18,53 +18,9 @@ if (! defined ( 'WPINC' )) {
 define('QRM_VERSION', '1.3.3');
 defined ( 'ABSPATH' ) or die ();
 
-abstract class WPQRM_Model {
-    static $primary_key = 'id';
-    private static function _table() {
-        global $wpdb;
-        $tablename = strtolower( get_called_class() );
-        $tablename = str_replace( 'wpqrm_model_', 'wpqrm_', $tablename );
-        return $wpdb->prefix . $tablename;
-    }
-    private static function _fetch_sql( $value ) {
-        global $wpdb;
-        $sql = sprintf( 'SELECT * FROM %s WHERE %s = %%s', self::_table(), static::$primary_key );
-        return $wpdb->prepare( $sql, $value );
-    }
-    static function get( $value ) {
-        global $wpdb;
-        return $wpdb->get_row( self::_fetch_sql( $value ) );
-    }
-    static function insert( $data ) {
-        global $wpdb;
-        $wpdb->insert( self::_table(), $data );
-    }
-    static function update( $data, $where ) {
-        global $wpdb;
-        $wpdb->update( self::_table(), $data, $where );
-    }
-    static function delete( $value ) {
-        global $wpdb;
-        $sql = sprintf( 'DELETE FROM %s WHERE %s = %%s', self::_table(), static::$primary_key );
-        return $wpdb->query( $wpdb->prepare( $sql, $value ) );
-    }
-    static function insert_id() {
-        global $wpdb;
-        return $wpdb->insert_id;
-    }
-    static function time_to_date( $time ) {
-        return gmdate( 'Y-m-d H:i:s', $time );
-    }
-    static function now() {
-        return self::time_to_date( time() );
-    }
-    static function date_to_time( $date ) {
-        return strtotime( $date . ' GMT' );
-    }
-}
-class WPQRM_Model_Risk extends WPQRM_Model {
-    static $primary_key = 'order_id';
-}
+require_once (plugin_dir_path ( __FILE__ ) . '/qrm-db.php');
+
+
 final class Project{
 	public $id;
 	public $title;
@@ -183,6 +139,7 @@ final class QRM {
 		$export->siteKey = get_option("qrm_siteKey");		
 		$export->siteID = get_option("qrm_siteID");
 		$export->reportServerURL = get_option("qrm_reportServerURL");
+		$export->displayUser = get_option("qrm_displayUser");
 		$export->sessionToken = wp_get_session_token ();
 	}
 	static function getServerMeta(){
@@ -472,6 +429,14 @@ final class QRM {
 		
 		wp_send_json ( $options );
 		
+	}	
+	static function getDisplayUser(){
+		
+		$options = new stdObject ();
+		
+		$options->displayUser = get_option("qrm_displayUser");	
+		wp_send_json ( $options );
+		
 	}
 	static function saveReportOptions(){
 		$options = json_decode ( file_get_contents ( "php://input" ) );
@@ -481,6 +446,10 @@ final class QRM {
 		update_option("qrm_siteID", $options->siteID);
 		update_option("qrm_reportServerURL", $options->url);
 		
+	}
+	static function saveDisplayUser(){
+		$options = json_decode ( file_get_contents ( "php://input" ) );
+		update_option("qrm_displayUser", $options->displayUser);	
 	}
 	static function saveIncident() {
 		if (! QRM::qrmUser ())
@@ -561,6 +530,8 @@ final class QRM {
 				"post_parent" => $postID,
 				"post_type" => "attachment"
 		) );
+		
+		WPQRM_Model_Incident::replace($incident);
 
 		wp_send_json ( $incident );
 	}
@@ -768,6 +739,8 @@ final class QRM {
 				"post_parent" => $postID,
 				"post_type" => "attachment"
 		) );
+		
+		WPQRM_Model_Review::replace($review);
 
 		wp_send_json ( $review );
 	}
@@ -865,6 +838,8 @@ final class QRM {
 		}
 
 		update_post_meta ( $riskID, "audit", json_encode ( $auditObj ) );
+		
+		WPQRM_Model_Audit::replace($auditObj);
 
 		wp_send_json ( json_decode ( get_post_meta ( $riskID, "audit", true ) ) );
 	}
@@ -874,6 +849,11 @@ final class QRM {
 		$user_query = new WP_User_Query ( array (
 				'fields' => 'all'
 		) );
+		foreach ( $user_query->results as $result){
+			$result->data->nickname = get_user_meta( $result->data->ID, "nickname" )[0];
+			$result->data->first_name = get_user_meta( $result->data->ID, "first_name" )[0];
+			$result->data->last_name = get_user_meta( $result->data->ID, "last_name" )[0];
+		}
 		wp_send_json ( $user_query->results );
 	}
 	static function uploadFile() {
@@ -1026,6 +1006,9 @@ final class QRM {
 			}
 				
 			update_post_meta ( $risk->riskID, "riskdata", json_encode ( $r ) );
+			
+			WPQRM_Model_Risk::replace($r);
+			
 		}
 		exit ();
 	}
@@ -1106,8 +1089,11 @@ final class QRM {
 		
 		$risks = json_decode ( file_get_contents ( "php://input" ) );
 
+		global $wpdb;
 		foreach ( $risks as $risk ) {
 			update_post_meta ( $risk->id, "rank", $risk->rank );
+			$sql = sprintf( 'UPDATE %s SET rank = %%s WHERE id = %%s', $wpdb->prefix . 'qrm_risk');
+			$wpdb->query( $wpdb->prepare( $sql, $risk->rank, $risk->id ));	
 		}
 		exit ();
 	}
@@ -1409,6 +1395,9 @@ final class QRM {
 
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
+		
+		//Include in reporting tables
+		WPQRM_Model_Risk::replace($risk);
 
 		return $risk->id;
 	}
@@ -1425,7 +1414,8 @@ final class QRM {
 
 		$postdata = file_get_contents ( "php://input" );
 		$risk = json_decode ( $postdata );
-
+		
+	
 		// Stuff which is held elsewhere
 		unset ( $risk->audit );
 		unset ( $risk->incidents );
@@ -1534,6 +1524,8 @@ final class QRM {
 		) );
 		$risk->audit = json_decode ( get_post_meta ( $postID, "audit", true ) );
 		
+		// Save the risk to the regularised table
+		WPQRM_Model_Risk::replace($risk);
 		wp_send_json ( $risk );
 	}
 	static function saveProject() {
@@ -1651,7 +1643,7 @@ final class QRM {
 		
 		QRM::updateChildProjects($postID);
 
-		// Return all the projects
+		WPQRM_Model_Project::replace($project);
 		QRM::getProjects ();
 	}
 	static function updateChildProjects($parentID){
@@ -1711,6 +1703,7 @@ final class QRM {
 				'meta_value' => $projectID,
 				'post_type' => 'risk'
 		);
+		global $wpdb;
 		foreach ( get_posts ( $args ) as $post ) {
 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
 			$risk->riskProjectCode = $projectCode . $post->ID;
@@ -1723,6 +1716,9 @@ final class QRM {
 				
 			update_post_meta ( $post->ID, "riskdata", json_encode ( $risk ) );
 			update_post_meta ( $post->ID, "riskProjectCode", $risk->riskProjectCode );
+			#Update the tables used for reporting
+			$sql = sprintf( 'UPDATE %s SET riskProjectCode = %%s WHERE id = %%s', $wpdb->prefix . 'qrm_risk');
+			$wpdb->query( $wpdb->prepare( $sql, $risk->riskProjectCode, $post->ID ));
 		}
 	}
 	static function getAuditObject($current_user) {
@@ -2110,6 +2106,7 @@ final class QuayRiskManager {
 			add_option("qrm_reportServerURL", "http://report.quaysystems.com.au:8080");
 			add_option("qrm_siteID", "Unregistered Site");
 			add_option("qrm_siteKey", "Unregistered Site");
+			add_option("qrm_displayUser", "userlogin");
 				
 			$this->activate_au();
 
@@ -2250,8 +2247,277 @@ final class QuayRiskManager {
 			flush_rewrite_rules ();
 			
 			set_transient ( 'qrm_about_page_activated', 1, 30 );
+			
+			global $wpdb;
+			$charset_collate = $wpdb->get_charset_collate();
+			$table_name = $wpdb->prefix . 'qrm_risk';
+			
+			
+			$sql = "CREATE TABLE $table_name (
+			 id INT(11) NOT NULL,
+			 cause TEXT,
+			 consequence TEXT,
+			 currentImpact DOUBLE,
+			 currentProb DOUBLE,
+			 currentTolerance INT(11),
+			 description TEXT,
+			 end VARCHAR(255),
+			 estContingency DOUBLE,
+			 impCost TINYINT NOT NULL DEFAULT 0,
+			 impEnviron TINYINT NOT NULL DEFAULT 0,
+			 impRep TINYINT NOT NULL DEFAULT 0,
+			 impSafety TINYINT NOT NULL DEFAULT 0,
+			 impSpec TINYINT NOT NULL DEFAULT 0,
+			 impTime TINYINT NOT NULL DEFAULT 0,
+			 inherentAbsProb DOUBLE,
+			 inherentImpact DOUBLE,
+			 inherentProb DOUBLE,
+			 inherentTolerance INT(11),
+			 likeAlpha DOUBLE,
+			 likePostAlpha DOUBLE,
+			 likePostT DOUBLE,
+			 likePostType DOUBLE,
+			 likeT DOUBLE,
+			 likeType DOUBLE,
+			 manager INT(11),
+			 matImage LONGBLOB,
+			 owner INT(11),
+			 rank INT(11) NOT NULL DEFAULT 0,
+			 postLikeImage LONGBLOB,
+			 preLikeImage LONGBLOB,
+			 primcatID INT(11),
+			 projectID INT(11), 
+			 riskProjectCode VARCHAR(255) DEFAULT NULL,
+			 seccatID INT(11),
+			 start VARCHAR(255) DEFAULT NULL,
+			 summaryRisk TINYINT NOT NULL DEFAULT 0,
+			 title TEXT,
+			 treatAvoid TINYINT NOT NULL DEFAULT 0,
+			 treatMinimise TINYINT NOT NULL DEFAULT 0,
+			 treatRetention TINYINT NOT NULL DEFAULT 0,
+			 treatTransfer TINYINT NOT NULL DEFAULT 0,
+			 treated TINYINT NOT NULL DEFAULT 0, 
+			 treatedAbsProb DOUBLE,
+			 treatedImpact DOUBLE, 
+			 treatedProb DOUBLE, 
+			 treatedTolerance INT(11), 
+			 useCalContingency TINYINT NOT NULL DEFAULT 0, 
+			 useCalProb TINYINT NOT NULL DEFAULT 0,
+			 auditIdentDate VARCHAR(255) DEFAULT NULL,
+			 auditIdentComment TEXT DEFAULT NULL,
+			 auditIdentPersonID INT(11) DEFAULT NULL,
+			 auditIdentRevDate VARCHAR(255) DEFAULT NULL,
+			 auditIdentRevComment TEXT DEFAULT NULL,
+			 auditIdentRevPersonID INT(11) DEFAULT NULL,
+			 auditIdentAppDate VARCHAR(255) DEFAULT NULL,
+			 auditIdentAppComment TEXT DEFAULT NULL,
+			 auditIdentAppPersonID INT(11) DEFAULT NULL,
+			 auditEvalDate VARCHAR(255) DEFAULT NULL,
+			 auditEvalComment TEXT DEFAULT NULL,
+			 auditEvalPersonID INT(11) DEFAULT NULL,
+			 auditEvalRevDate VARCHAR(255) DEFAULT NULL,
+			 auditEvalRevComment TEXT DEFAULT NULL,
+			 auditEvalRevPersonID INT(11) DEFAULT NULL,
+			 auditEvalAppDate VARCHAR(255) DEFAULT NULL,
+			 auditEvalAppComment TEXT DEFAULT NULL,
+			 auditEvalAppPersonID INT(11) DEFAULT NULL,
+			 auditMitDate VARCHAR(255) DEFAULT NULL,
+			 auditMitComment TEXT DEFAULT NULL,
+			 auditMitPersonID INT(11) DEFAULT NULL,
+			 auditMitRevDate VARCHAR(255) DEFAULT NULL,
+			 auditMitRevComment TEXT DEFAULT NULL,
+			 auditMitRevPersonID INT(11) DEFAULT NULL,
+			 auditMitAppDate VARCHAR(255) DEFAULT NULL,
+			 auditMitAppComment TEXT DEFAULT NULL,
+			 auditMitAppPersonID INT(11) DEFAULT NULL,
+			 mitPlanSummary TEXT DEFAULT NULL,
+			 mitPlanSummaryUpdate TEXT DEFAULT NULL,
+			 respPlanSummary TEXT DEFAULT NULL,
+			 respPlanSummaryUpdate TEXT DEFAULT NULL,		 
+			 PRIMARY KEY (id) ) $charset_collate;";
+			
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_controls';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			riskID bigint(20) DEFAULT NULL,
+			description TEXT,
+			effectiveness TEXT,
+			contribution TEXT,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_mitplan';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			riskID bigint(20) DEFAULT NULL,
+			description TEXT,
+			cost DOUBLE DEFAULT NULL,
+			complete DOUBLE DEFAULT NULL,
+			due VARCHAR(255) DEFAULT NULL,
+			person INT(11),
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_respplan';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			riskID bigint(20) DEFAULT NULL,
+			description TEXT,
+			cost DOUBLE,
+			person INT(11),
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_project';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			title TEXT,
+			description TEXT,
+			projectCode VARCHAR(8),
+			useAdvancedConsequences TINYINT NOT NULL DEFAULT 0,
+			inheritParentCategories TINYINT NOT NULL DEFAULT 0,
+			inheritParentObjectives TINYINT NOT NULL DEFAULT 0,
+			parent_id INT(11),
+			projectRiskManager INT(11),
+			tolString TEXT DEFAULT NULL,
+			maxImpact INT(11) DEFAULT NULL,
+			maxProb INT(11) DEFAULT NULL,
+			probVal1 INT(11) DEFAULT NULL,
+			probVal2 INT(11) DEFAULT NULL,
+			probVal3 INT(11) DEFAULT NULL,
+			probVal4 INT(11) DEFAULT NULL,
+			probVal5 INT(11) DEFAULT NULL,
+			probVal6 INT(11) DEFAULT NULL,
+			probVal7 INT(11) DEFAULT NULL,
+			probVal8 INT(11) DEFAULT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_projectowners';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			projectID INT(11) NOT NULL,
+			ownerID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+				
+			$table_name = $wpdb->prefix . 'qrm_projectmanagers';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			projectID INT(11) NOT NULL,
+			managerID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_projectusers';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			projectID INT(11) NOT NULL,
+			userID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_objective';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			projectID INT(11) NOT NULL,
+			parentID INT(11) DEFAULT NULL,
+			title TEXT,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+	
+			
+			$table_name = $wpdb->prefix . 'qrm_incident';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			incidentDate VARCHAR(255) DEFAULT NULL,			
+			title TEXT,
+			description TEXT,
+			lessons TEXT,
+			actions TEXT,
+			incidentCode VARCHAR(40),
+			causes TINYINT NOT NULL DEFAULT 0,
+			consequences TINYINT NOT NULL DEFAULT 0,
+			controls TINYINT NOT NULL DEFAULT 0,
+			cost TINYINT NOT NULL DEFAULT 0,
+			environment TINYINT NOT NULL DEFAULT 0,
+			reputation TINYINT NOT NULL DEFAULT 0,
+			safety TINYINT NOT NULL DEFAULT 0,
+			reputation TINYINT NOT NULL DEFAULT 0,
+			spec TINYINT NOT NULL DEFAULT 0,
+			evaluated TINYINT NOT NULL DEFAULT 0,
+			resolved TINYINT NOT NULL DEFAULT 0,
+			time TINYINT NOT NULL DEFAULT 0,
+			identified TINYINT NOT NULL DEFAULT 0,
+			reportedby INT(11),
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_incidentrisks';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			incidentID INT(11) NOT NULL,
+			riskID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+				
+			
+			$table_name = $wpdb->prefix . 'qrm_category';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			projectID INT(11) NOT NULL,
+			parentID INT(11) DEFAULT NULL,
+			primCat TINYINT NOT NULL DEFAULT 0,
+			title TEXT,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_review';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			title TEXT,
+			description TEXT,
+			schedDate VARCHAR(255) DEFAULT NULL,	
+			actualDate VARCHAR(255) DEFAULT NULL,
+			reviewCode VARCHAR(255) DEFAULT NULL,
+			responsible INT(11),
+			notes TEXT,
+			complete TINYINT NOT NULL DEFAULT 0,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_reviewrisks';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			reviewID INT(11) NOT NULL,
+			riskID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+				
+			$table_name = $wpdb->prefix . 'qrm_reviewriskcomments';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			reviewID INT(11) NOT NULL,
+			riskID INT(11) NOT NULL,
+			comment TEXT,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_reviewcomments';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			reviewID INT(11) NOT NULL,
+			commentID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+				
+				
+							
 		}
-		    public function get_custom_post_type_template($single_template) {
+		public function get_custom_post_type_template($single_template) {
 
 	    	global $post;
 		
@@ -2313,7 +2579,11 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_getServerMeta", array(QRM, "getServerMeta"));				
 			add_action ( "wp_ajax_createDummyRiskEntry", array(QRM, "createDummyRiskEntry"));				
 			add_action ( "wp_ajax_createDummyRiskEntryMultiple", array(QRM, "createDummyRiskEntryMultiple"));				
-			add_action ( "wp_ajax_reindexRiskCount", array(QRM, "reindexRiskCount"));				
+			add_action ( "wp_ajax_reindexRiskCount", array(QRM, "reindexRiskCount"));	
+			add_action ( "wp_ajax_saveDisplayUser", array(QRM, "saveDisplayUser"));
+			add_action ( "wp_ajax_getDisplayUser", array(QRM, "getDisplayUser"));
+				
+			
 		}
 		public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
 			// Prevent the deletion of any riskproject post that has children projects
@@ -2507,9 +2777,7 @@ final class QuayRiskManager {
 			wp_register_script ( 'qrm-controllers', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/controllers.js', array (), "", true );
 			wp_register_script ( 'qrm-services', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/services.js', array (), "", true );
 			wp_register_script ( 'qrm-d3', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/d3/d3.min.js', array (), "", true );
-			wp_register_script ( 'qrm-common', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/qrm-common.js', array (
-					'qrm-d3'
-			), "", true );
+			wp_register_script ( 'qrm-common', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/qrm-common.js', array ('qrm-d3'), "", true );
 			wp_register_script ( 'treecontrol', plugin_dir_url ( __FILE__ ) . "includes/qrmmainapp/js/plugins/tree-control/angular-tree-control.js" );
 			wp_register_script ( 'qrm-select', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/select/select.min.js', array (), "", true );
 			wp_register_script ( 'qrm-sanitize', plugin_dir_url ( __FILE__ ) . 'includes/qrmmainapp/js/plugins/sanitize/angular-sanitize.min.js', array (), "", true );
@@ -2722,6 +2990,7 @@ final class QuayRiskManager {
 					<p>Quay Risk Manager is accessed by via the "Quay Risk Manager"
 						page</p>
 				</div>
+
 				<div ng-controller="userCtrl">
 					<h4 style="margin-top: 20px">User Access Table</h4>
 					<div style="width: 100%" id="userGrid" ui-grid="gridOptions"
@@ -2737,6 +3006,52 @@ final class QuayRiskManager {
 					</div>
 
 				</div>
+				
+				<table class="qrm-settings">
+				<tr><td class="qrm-settings">
+				
+
+				<div style="margin-top: 15px" >
+								<div style="text-align: right; margin-top: 15px" ng-controller="userNameCtrl">
+					                    <div class="form-group" style="text-align: left;">
+                        <label class="control-label">Select the field of the user name to display: </label>
+                        <div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="userdisplayname"  ng-model="status.val"> Display Name </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="userlogin"  ng-model="status.val"> User Login </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="usernicename" ng-model="status.val"> User Nice Name </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="useremail"  ng-model="status.val"> User Email </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="usernickname"  ng-model="status.val"> Nickname </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="userfirstname"  ng-model="status.val"> Fisrt Name </label>
+                            </div>
+                           <div class="checkbox">
+                                <label>
+                                    <input icheck type="radio" name="status" value="userlastname" ng-model="status.val"> Last Name </label>
+                            </div>
+                         </div>
+                    </div>
+					<button type="button" style="margin-left: 10px"
+						class="btn btn-w-m btn-sm btn-primary" ng-click="setUserName()">Save</button>
+				</div>
+				</div>
+				</td></tr>
+				<tr><td class="qrm-settings">
 
 				<h4>Sample Data</h4>
 				<p>Once users have been enabled to use the system, sample data can
@@ -2765,7 +3080,8 @@ final class QuayRiskManager {
 					</table>
 
 				</div>
-
+</td></tr>
+<tr><td class="qrm-settings">
 
 				<h4 style="margin-top: 15px">Clear QRM Data</h4>
 				<p>All the Quay Risk Manager Data can be removed from the site
@@ -2776,7 +3092,8 @@ final class QuayRiskManager {
 						class="btn btn-w-m btn-sm btn-danger" ng-click="removeAllData()">Remove
 						All QRM Data</button>
 				</div>
-
+</td></tr>
+<tr><td class="qrm-settings">
 				<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
 					<div style="float: left; width: 250px; text-align: -webkit-center">
 						<h4>Data Export</h4>
@@ -2809,6 +3126,8 @@ final class QuayRiskManager {
 						</div>
 					</div>
 				</div>
+				</td></tr>
+<tr><td class="qrm-settings">
 				<div style="margin-top: 20px" ng-controller="repCtrl as rep">
 					<div style="float: left; clear: both">
 						<div>
@@ -2855,6 +3174,8 @@ final class QuayRiskManager {
 						</div>
 					</div>
 				</div>
+				</td></tr>
+				</table>
 			</div>
 		</div>
 	</div>

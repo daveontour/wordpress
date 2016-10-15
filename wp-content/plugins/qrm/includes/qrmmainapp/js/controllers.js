@@ -159,6 +159,8 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
             QRMDataService.userLogin = response.data.userLogin;
             QRMDataService.userDisplayName = response.data.userDisplayName;
             QRMDataService.sessionToken = response.data.sessionToken;
+            QRMDataService.displayUser = response.data.displayUser;
+
             
             //Start the message service with the report server
             if (response.data != "0" && response.data != "-1") {
@@ -551,8 +553,10 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 QRMDataService.siteID = response.data.siteID;
                 QRMDataService.userEmail = response.data.userEmail;
                 QRMDataService.userLogin = response.data.userLogin;
-                QRMDataService.userDisplayName = response.data.userDisplayName;
+                QRMDataService.displayUser = response.data.displayUser;
                 QRMDataService.sessionToken = response.data.sessionToken;
+                QRMDataService.displayUser = response.data.displayUser;
+                
             
                        //Start the message service with the report server
              setTimeout(function () {
@@ -4483,8 +4487,39 @@ var app = angular.module('qrm');
 			if (typeof (user) == "undefined") return "Unknown";
 			if (user.length == 0) return "Not Found";
 			if (user.length > 1) return "Unknown (too many)";
+			
+			var display = "";
+			if (QRMDataService.displayUser == "userdisplayname"){
+				display = user[0].data.user_login;
+			}			
+			if (QRMDataService.displayUser == "userlogin"){
+				display = user[0].data.user_login;
+			}			
+			if (QRMDataService.displayUsery == "usernicename"){
+				display = user[0].data.user_nicename;
+			}			
+			if (QRMDataService.displayUser == "useremail"){
+				display = user[0].data.user_email;
+			}			
+			if (QRMDataService.displayUser == "usernickname"){
+				display = user[0].data.nickname;
+			}			
+			if (QRMDataService.displayUser == "userfirstname"){
+				display = user[0].data.first_name;
+			}			
+			if (QRMDataService.displayUser == "userlastname"){
+				display = user[0].data.last_name;
+			}
+			
+			if (display == "" && user[0].data.display_name !="") { display = user[0].data.display_name }
+			if (display == "" && user[0].data.user_login !="") { display = user[0].data.user_login }
+			if (display == "" && user[0].data.user_nicename !="") { display = user[0].data.user_nicename }
+			if (display == "" && user[0].data.user_email !="") { display = user[0].data.user_email }
+			if (display == "" && user[0].data.nickname !="") { display = user[0].data.nickname }
+			if (display == "" && user[0].data.first_name !="") { display = user[0].data.first_name }
+			if (display == "" && user[0].data.last_name !="") { display = user[0].data.last_name }
 
-			return user[0].data.display_name;
+			return display;
 		}
 	}]);
 	app.filter('compoundRiskFilter', ['QRMDataService', function (QRMDataService) {

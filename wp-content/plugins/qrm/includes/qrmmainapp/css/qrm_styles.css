@@ -877,6 +877,16 @@ td.wrap-text div {
     vertical-align: top;
 }
 
+table.qrm-settings {
+	margin-top:15px;
+	border-spacing: 10px;
+    border-collapse: separate;
+}
+td.qrm-settings {
+	border: 1px solid black;
+	padding: 15px;
+}
+
 td.wrap-text {
     vertical-align: top;
 }

@@ -105,6 +105,32 @@ function SampleController($scope, remoteService, ngNotify) {
         },
     };
 }
+function UserNameController($scope, remoteService) {
+	
+	var userNameCtrl = this;
+
+	$scope.setUserName = function(e){
+    	var options = new Object();
+    	
+        options.displayUser = $scope.status.val;
+    	
+        remoteService.saveDisplayUser(options)
+            .then(function (response) {
+            	alert ("Changes Saved");
+            });
+
+	}
+
+	$scope.status = { val: "userlogin" };
+	
+    remoteService.getDisplayUser()
+    .then(function (response) {          
+        $scope.status.val = response.data.displayUser;
+        QRM.displayUser = response.data.displayUser;
+    });
+   
+    
+}
 function ReportController($scope, remoteService) {
 
     $scope.saveChanges = function (e) {
@@ -233,14 +259,61 @@ var app = angular.module('myApp', [
 
 (function(){
 
-app.service('remoteService', ['$http', RemoteService]);
+//app.service('remoteService', ['$http', RemoteService]);
 app.filter('usernameFilter', function () {
-    return function (input) {
-        if (typeof (input) == 'undefined') return;
-        return jQuery.grep(QRM.siteUsers, function (e) {
-            return e.ID == input
-        })[0].data.display_name;
-    }
+//    return function (input) {
+//        if (typeof (input) == 'undefined') return;
+//        return jQuery.grep(QRM.siteUsers, function (e) {
+//            return e.ID == input
+//        })[0].data.display_name;
+//    }
+    
+	return function (input) {
+		if (typeof (input) == "object") input = input.ID;
+		if (input < 0) return "Not Assigned"
+		if (typeof (input) == 'undefined') return;
+
+		var user = jQuery.grep(QRM.siteUsers, function (e) {
+			return e.ID == input
+		})
+
+		if (typeof (user) == "undefined") return "Unknown";
+		if (user.length == 0) return "Not Found";
+		if (user.length > 1) return "Unknown (too many)";
+		
+		var display = "";
+		if (QRM.displayUser == "userdisplayname"){
+			display = user[0].data.user_login;
+		}			
+		if (QRM.displayUser == "userlogin"){
+			display = user[0].data.user_login;
+		}			
+		if (QRM.displayUsery == "usernicename"){
+			display = user[0].data.user_nicename;
+		}			
+		if (QRM.displayUser == "useremail"){
+			display = user[0].data.user_email;
+		}			
+		if (QRM.displayUser == "usernickname"){
+			display = user[0].data.nickname;
+		}			
+		if (QRM.displayUser == "userfirstname"){
+			display = user[0].data.first_name;
+		}			
+		if (QRM.displayUser == "userlastname"){
+			display = user[0].data.last_name;
+		}
+		
+		if (display == "" && user[0].data.display_name !="") { display = user[0].data.display_name }
+		if (display == "" && user[0].data.user_login !="") { display = user[0].data.user_login }
+		if (display == "" && user[0].data.user_nicename !="") { display = user[0].data.user_nicename }
+		if (display == "" && user[0].data.user_email !="") { display = user[0].data.user_email }
+		if (display == "" && user[0].data.nickname !="") { display = user[0].data.nickname }
+		if (display == "" && user[0].data.first_name !="") { display = user[0].data.first_name }
+		if (display == "" && user[0].data.last_name !="") { display = user[0].data.last_name }
+
+		return display;
+	}
 });
 app.service('remoteService', function ($http, $modal) {
     this.getSiteUsersCap = function () {
@@ -339,7 +412,17 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
-    
+    this.saveDisplayUser = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "saveDisplayUser"
+            },
+            data: data,
+            cache: false
+        });
+    };    
     this.getReportOptions = function () {
         return $http({
             method: 'POST',
@@ -350,9 +433,20 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
+    this.getDisplayUser = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getDisplayUser"
+            },
+            cache: false
+        });
+    };
 });
-app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);
+app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);	
 app.controller('sampleCtrl', ['$scope', 'remoteService', 'ngNotify', SampleController]);
 app.controller('repCtrl', ['$scope', 'remoteService', ReportController]);
+app.controller('userNameCtrl', ['$scope', 'remoteService', UserNameController]);
 app.directive('dropzone', dropzone);  
 })();
