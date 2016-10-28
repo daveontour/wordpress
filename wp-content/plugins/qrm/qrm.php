@@ -2280,15 +2280,19 @@ final class QuayRiskManager {
 			 likeT DOUBLE,
 			 likeType DOUBLE,
 			 manager INT(11),
+			 managerName VARCHAR(255),
 			 matImage LONGBLOB,
 			 owner INT(11),
+			 ownerName VARCHAR(255),
 			 rank INT(11) NOT NULL DEFAULT 0,
 			 postLikeImage LONGBLOB,
 			 preLikeImage LONGBLOB,
 			 primcatID INT(11),
+			 primCatName VARCHAR(255),
 			 projectID INT(11), 
 			 riskProjectCode VARCHAR(255) DEFAULT NULL,
 			 seccatID INT(11),
+			 secCatName VARCHAR(255),
 			 start VARCHAR(255) DEFAULT NULL,
 			 summaryRisk TINYINT NOT NULL DEFAULT 0,
 			 title TEXT,
@@ -2514,6 +2518,23 @@ final class QuayRiskManager {
 			PRIMARY KEY  (id) ) $charset_collate;";
 			dbDelta( $sql );
 				
+			
+			$table_name = $wpdb->prefix . 'qrm_reports';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			reportID VARCHAR(40) NOT NULL,
+			menuName VARCHAR(20) NOT NULL,
+			urlText TEXT NOT NULL,
+			showRiskExplorer TINYINT NOT NULL DEFAULT 0,
+			showSingleIncident TINYINT NOT NULL DEFAULT 0,
+			showIncident TINYINT NOT NULL DEFAULT 0,
+			showRank TINYINT NOT NULL DEFAULT 0,
+			showRelMatrix TINYINT NOT NULL DEFAULT 0,
+			showSingleReview TINYINT NOT NULL DEFAULT 0,
+			showReview TINYINT NOT NULL DEFAULT 0,
+			showSingleRisk TINYINT NOT NULL DEFAULT 0,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
 				
 							
 		}
@@ -3006,175 +3027,272 @@ final class QuayRiskManager {
 					</div>
 
 				</div>
-				
+
 				<table class="qrm-settings">
-				<tr><td class="qrm-settings">
-				
+					<tr>
+						<td class="qrm-settings">
 
-				<div style="margin-top: 15px" >
-								<div style="text-align: right; margin-top: 15px" ng-controller="userNameCtrl">
-					                    <div class="form-group" style="text-align: left;">
-                        <label class="control-label">Select the field of the user name to display: </label>
-                        <div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="userdisplayname"  ng-model="status.val"> Display Name </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="userlogin"  ng-model="status.val"> User Login </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="usernicename" ng-model="status.val"> User Nice Name </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="useremail"  ng-model="status.val"> User Email </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="usernickname"  ng-model="status.val"> Nickname </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="userfirstname"  ng-model="status.val"> Fisrt Name </label>
-                            </div>
-                           <div class="checkbox">
-                                <label>
-                                    <input icheck type="radio" name="status" value="userlastname" ng-model="status.val"> Last Name </label>
-                            </div>
-                         </div>
-                    </div>
-					<button type="button" style="margin-left: 10px"
-						class="btn btn-w-m btn-sm btn-primary" ng-click="setUserName()">Save</button>
-				</div>
-				</div>
-				</td></tr>
-				<tr><td class="qrm-settings">
 
-				<h4>Sample Data</h4>
-				<p>Once users have been enabled to use the system, sample data can
-					be installed</p>
-				<div style="margin-top: 15px" ng-controller="sampleCtrl">
-					<table>
-						<tr>
-							<td colspan=2 style="padding-bottom: 5px">Sample Risks per
-								Project:</td>
-						</tr>
-						<tr>
-							<td>Minimum</td>
-							<td><input style="width: 80px; margin-left: 15px"
-								class="form-control" type="number" name="input" ng-model="min"
-								min="5" max="10"></td>
-						</tr>
-						<tr>
-							<td>Maximum</td>
-							<td><input style="width: 80px; margin-left: 15px"
-								class="form-control" type="number" name="input" ng-model="max"
-								min="10" max="20"></td>
-							<td style="padding-left: 30px"><button type="button"
-									class="btn btn-w-m btn-sm btn-primary"
-									ng-click="installSampleProjects()">Install Sample Data</button></td>
-						</tr>
-					</table>
-
-				</div>
-</td></tr>
-<tr><td class="qrm-settings">
-
-				<h4 style="margin-top: 15px">Clear QRM Data</h4>
-				<p>All the Quay Risk Manager Data can be removed from the site
-					(Caution!)</p>
-				<div style="text-align: right; margin-top: 15px"
-					ng-controller="sampleCtrl">
-					<button type="button" style="margin-left: 10px"
-						class="btn btn-w-m btn-sm btn-danger" ng-click="removeAllData()">Remove
-						All QRM Data</button>
-				</div>
-</td></tr>
-<tr><td class="qrm-settings">
-				<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
-					<div style="float: left; width: 250px; text-align: -webkit-center">
-						<h4>Data Export</h4>
-						<button type="button" class="btn btn-w-m btn-sm btn-primary"
-							ng-click="samp.downloadJSON()">Export Data</button>
-						<p style="margin-top: 10px">The data from QRM will be dowloaded in
-							a single file in a form suitable for importation to another QRM
-							instance</p>
-					</div>
-
-					<div
-						style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
-						<h4>Data Import</h4>
-						<div dropzone="dropzoneConfigAdmin" class="dropzone dz-clickable"
-							style="width: 300px; padding: 15px 15px; margin: 2px">
-							<div class="dz-message">
-								Drop import file here or click to select.<br />Files must have
-								been exported from another instance of QRM
+							<div style="margin-top: 15px">
+								<div style="text-align: right; margin-top: 15px"
+									ng-controller="userNameCtrl">
+									<div class="form-group" style="text-align: left;">
+										<label class="control-label">Select the field of the user name
+											to display: </label>
+										<div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="userdisplayname" ng-model="status.val"> Display Name
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="userlogin" ng-model="status.val"> User Login
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="usernicename" ng-model="status.val"> User Nice Name
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="useremail" ng-model="status.val"> User Email
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="usernickname" ng-model="status.val"> Nickname
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="userfirstname" ng-model="status.val"> Fisrt Name
+												</label>
+											</div>
+											<div class="checkbox">
+												<label> <input icheck type="radio" name="status"
+													value="userlastname" ng-model="status.val"> Last Name
+												</label>
+											</div>
+										</div>
+									</div>
+									<button type="button" style="margin-left: 10px"
+										class="btn btn-w-m btn-sm btn-primary"
+										ng-click="setUserName()">Save</button>
+								</div>
 							</div>
-						</div>
-						<div style="text-align: -webkit-right">
-							<button type="button" style="margin-top: 5px"
-								class="btn btn-w-m btn-sm btn-primary"
-								ng-click="samp.uploadImport()"
-								ng-disabled="samp.disableAttachmentButon">Upload & Import</button>
-							<button type="button" style="margin-top: 5px; margin-left: 10px"
-								class="btn btn-w-m btn-sm btn-warning"
-								ng-click="samp.cancelUpload()"
-								ng-disabled="samp.disableAttachmentButon">Cancel</button>
-						</div>
-					</div>
-				</div>
-				</td></tr>
-<tr><td class="qrm-settings">
-				<div style="margin-top: 20px" ng-controller="repCtrl as rep">
-					<div style="float: left; clear: both">
-						<div>
-							<h4>Report Generation</h4>
-							<p>
-								Quay Risk Manager uses a remote web service to generate reports
-								in PDF Format<br /> You can produce reports without registering
-								for this service, but they will include a watermark<br />
-								Contact Quay Systems at <a href="http://www.quaysystems.com.au">http://www.quaysystems.com.au</a>
-								to register for the service without water marks
-							</p>
-							<table style="width: 600px; border-collapse: collapse">
-								<tr valign="top">
-									<th
-										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Report
-										Server URL</th>
-									<td><input ng-model="url" style="width: 100%" required></td>
-								</tr>
-								<tr valign="top">
-									<th
-										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-										Name</th>
-									<td><input ng-model="siteName" style="width: 100%" required></td>
-								</tr>
-								<tr valign="top">
-									<th
-										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-										ID</th>
-									<td><input ng-model="siteID" style="width: 100%"></td>
-								</tr>
-								<tr valign="top">
-									<th
-										style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Site
-										Key</th>
-									<td><input ng-model="siteKey" style="width: 100%"></td>
-								</tr>
-								<tr>
-									<th></th>
-									<td align="right" style="padding-top: 0.75em;"><button
-											type="button" class="btn btn-w-m btn-sm btn-primary"
-											ng-click="saveChanges()">Save Changes</button></td>
-							
-							</table>
-						</div>
-					</div>
-				</div>
-				</td></tr>
+						</td>
+					</tr>
+					<tr>
+						<td class="qrm-settings">
+
+							<h4>Sample Data</h4>
+							<p>Once users have been enabled to use the system, sample data
+								can be installed</p>
+							<div style="margin-top: 15px" ng-controller="sampleCtrl">
+								<table>
+									<tr>
+										<td colspan=2 style="padding-bottom: 5px">Sample Risks per
+											Project:</td>
+									</tr>
+									<tr>
+										<td>Minimum</td>
+										<td><input style="width: 80px; margin-left: 15px"
+											class="form-control" type="number" name="input"
+											ng-model="min" min="5" max="10"></td>
+									</tr>
+									<tr>
+										<td>Maximum</td>
+										<td><input style="width: 80px; margin-left: 15px"
+											class="form-control" type="number" name="input"
+											ng-model="max" min="10" max="20"></td>
+										<td style="padding-left: 30px"><button type="button"
+												class="btn btn-w-m btn-sm btn-primary"
+												ng-click="installSampleProjects()">Install Sample Data</button></td>
+									</tr>
+								</table>
+
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="qrm-settings">
+
+							<h4 style="margin-top: 15px">Clear QRM Data</h4>
+							<p>All the Quay Risk Manager Data can be removed from the site
+								(Caution!)</p>
+							<div style="text-align: right; margin-top: 15px"
+								ng-controller="sampleCtrl">
+								<button type="button" style="margin-left: 10px"
+									class="btn btn-w-m btn-sm btn-danger"
+									ng-click="removeAllData()">Remove All QRM Data</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="qrm-settings">
+							<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
+								<div
+									style="float: left; width: 250px; text-align: -webkit-center">
+									<h4>Data Export</h4>
+									<button type="button" class="btn btn-w-m btn-sm btn-primary"
+										ng-click="samp.downloadJSON()">Export Data</button>
+									<p style="margin-top: 10px">The data from QRM will be dowloaded
+										in a single file in a form suitable for importation to another
+										QRM instance</p>
+								</div>
+
+								<div
+									style="width: 300px; float: right; margin-left: 10px; text-align: -webkit-center">
+									<h4>Data Import</h4>
+									<div dropzone="dropzoneConfigAdmin"
+										class="dropzone dz-clickable"
+										style="width: 300px; padding: 15px 15px; margin: 2px">
+										<div class="dz-message">
+											Drop import file here or click to select.<br />Files must
+											have been exported from another instance of QRM
+										</div>
+									</div>
+									<div style="text-align: -webkit-right">
+										<button type="button" style="margin-top: 5px"
+											class="btn btn-w-m btn-sm btn-primary"
+											ng-click="samp.uploadImport()"
+											ng-disabled="samp.disableAttachmentButon">Upload & Import</button>
+										<button type="button"
+											style="margin-top: 5px; margin-left: 10px"
+											class="btn btn-w-m btn-sm btn-warning"
+											ng-click="samp.cancelUpload()"
+											ng-disabled="samp.disableAttachmentButon">Cancel</button>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="qrm-settings">
+							<div style="margin-top: 20px" ng-controller="reportCtrl">
+								<div style="float: left; clear: both;width:100%">
+																			<h4>Report Generation</h4>
+										<p>
+											Quay Risk Manager uses a remote web service to generate
+											reports
+										</p>
+										<table style="width: 650px; border-collapse: collapse">
+											<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Report
+													Server URL</th>
+												<td><input ng-model="url" style="width: 100%" required></td>
+											</tr>
+											<tr>
+											<th></th>
+												<td align="right" style="padding-top: 0.75em;"><button
+														type="button" class="btn btn-w-m btn-sm btn-primary"
+														ng-click="saveChanges()">Save Changes</button></td></tr>
+											</table>
+											<h4>Reports</h4>
+											
+									<div>
+										<select ng-model="selectedReport" ng-options="report.menuName+' - '+report.description for report in reports"
+											class="form-control"></select>
+									</div>
+									<form method="get" class="form-vertical"></form>
+
+									<table style = "width:100%;margin-top:10px">
+																				<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Menu Name</th>
+												<td colspan=3><input ng-model="selectedReport.menuName" style="width: 100%" required></td>
+											</tr>
+											<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Description</th>
+												<td colspan=3><input ng-model="selectedReport.description" style="width: 100%" required></td>
+											</tr>
+											<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">URL Parameters</th>
+												<td colspan=3><input ng-model="selectedReport.urlParams" style="width: 100%"></td>
+											</tr>
+											<th	style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Show in Pages: </th>
+												</tr>
+										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showRiskExplorer" style="margin-left: -20px">
+													Risk Explorer
+											</label></td>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showIncident" style="margin-left: -20px">
+													Incident Explorer
+											</label></td>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showReview" style="margin-left: -20px">
+													Review Explorer
+											</label></td>
+										</tr>
+										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showSingleRisk" style="margin-left: -20px">
+													Risk
+											</label></td>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showSingleIncident" style="margin-left: -20px">
+													Incident
+											</label></td>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showSingleReview" style="margin-left: -20px">
+													Review
+											</label></td>
+										</tr>
+										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showCalendar" style="margin-left: -20px">
+													Exposure Calendar
+											</label></td>
+										</tr>
+										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showRelMatrix" style="margin-left: -20px">
+													Relative Matrix
+											</label></td>
+										</tr>										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showMetrics" style="margin-left: -20px">
+													Metrics
+											</label></td>
+										</tr>
+										<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showRank" style="margin-left: -20px">
+													Relative Ranking
+											</label></td>
+										</tr>
+																				<tr>
+											<td><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.showSystem" style="margin-left: -20px">
+													System
+											</label></td>
+										</tr>
+										</table>
+										<table style="float: right">	
+										<tr>
+													<td align="right">
+													      <button type="button" style="margin-left: 10px"
+															class="btn btn-w-m btn-sm btn-primary"
+															ng-click="clear()">Clear</button></td>
+													<td align="right"><button type="button" style="margin-left: 10px"
+															class="btn btn-w-m btn-sm btn-primary"
+															ng-click="saveChanges()">Save</button></td>
+													<td><button type="button" style="margin-left: 10px"
+															class="btn btn-w-m btn-sm btn-danger"
+															ng-click="removeAllData()">Delete</button></td>
+												</tr>									
+																				</table>
+								</div>
+							</div>
+						</td>
+					</tr>
 				</table>
 			</div>
 		</div>

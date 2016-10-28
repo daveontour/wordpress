@@ -121,18 +121,27 @@ function UserNameController($scope, remoteService) {
 
 	}
 
-	$scope.status = { val: "userlogin" };
+	$scope.status = { val: "notdefined" };
 	
-    remoteService.getDisplayUser()
-    .then(function (response) {          
+    remoteService.getDisplayUser().then(function (response) {          
         $scope.status.val = response.data.displayUser;
         QRM.displayUser = response.data.displayUser;
-    });
-   
-    
+    }); 
 }
 function ReportController($scope, remoteService) {
-
+	
+	$scope.reports = [{menuName:"Detail Risk 1", description:"A detaile d description of the report"},
+	                        {menuName:"Detail Risk 2", description:"A detaile d description of the report",riskExplorer:true, incidentExplorer:true},
+	                        {menuName:"Detail Risk 3", description:"A detaile d description of the report"},
+	                        {menuName:"Detail Risk 4", description:"A detaile d description of the report"},
+	                        {menuName:"Detail Risk 5", description:"A detaile d description of the report"},
+	                        ]
+	$scope.selectedReport = $scope.reports[0];
+	
+	$scope.clear = function(){
+		$scope.selectedReport = {};
+	}
+	
     $scope.saveChanges = function (e) {
     	
     	var options = new Object();
@@ -155,7 +164,33 @@ function ReportController($scope, remoteService) {
             $scope.siteID = response.data.siteID;
             $scope.siteKey = response.data.siteKey;
         });
+
 }
+//function ReportController($scope, remoteService) {
+//
+//    $scope.saveChanges = function (e) {
+//    	
+//    	var options = new Object();
+//    	
+//        options.url = $scope.url = $scope.url;
+//        options.siteName = $scope.siteName;
+//        options.siteID = $scope.siteID;
+//        options.siteKey = $scope.siteKey;
+//    	
+//        remoteService.saveReportOptions(options)
+//            .then(function (response) {
+//                alert("Changes Saved");
+//            });
+//    };
+//    
+//    remoteService.getReportOptions()
+//        .then(function (response) {          
+//            $scope.url = response.data.url;
+//            $scope.siteName = response.data.siteName;
+//            $scope.siteID = response.data.siteID;
+//            $scope.siteKey = response.data.siteKey;
+//        });
+//}
 
 function UserController($scope, remoteService, ngNotify) {
 
@@ -446,7 +481,8 @@ app.service('remoteService', function ($http, $modal) {
 });
 app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);	
 app.controller('sampleCtrl', ['$scope', 'remoteService', 'ngNotify', SampleController]);
-app.controller('repCtrl', ['$scope', 'remoteService', ReportController]);
+//app.controller('repCtrl', ['$scope', 'remoteService', ReportController]);
+app.controller('reportCtrl', ['$scope', 'remoteService', ReportController]);
 app.controller('userNameCtrl', ['$scope', 'remoteService', UserNameController]);
 app.directive('dropzone', dropzone);  
 })();

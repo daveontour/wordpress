@@ -213,13 +213,16 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		if ($data->treatTransfer != 1) $data->treatTransfer = 0;
 		if ($data->treated != 1) $data->treated = 0;
 
-		if ($data->tuseCalContingency != 1) $data->useCalContingency = 0;
+		if ($data->useCalContingency != 1) $data->useCalContingency = 0;
 		if ($data->useCalProb != 1) $data->useCalProb = 0;
 
-		if ($data->primcatID != 1) $data->primcatID = 0;
-		if ($data->seccatID != 1) $data->seccatID = 0;
+		if ($data->primcatID < 1) $data->primcatID = 0;
+		if ($data->seccatID < 1) $data->seccatID = 0;
 		if ($data->summaryRisk != 1) $data->summaryRisk = 0;
 		
+		$data->primCatName = WPQRM_Model_Category::get($data->primcatID)->title;
+		$data->secCatName = WPQRM_Model_Category::get($data->seccatID)->title;
+
 		$data->mitPlanSummary = $data->mitigation->mitPlanSummary;
 		$data->mitPlanSummaryUpdate = $data->mitigation->mitPlanSummaryUpdate;
 		
@@ -261,6 +264,45 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		$data->auditMitAppDate = $data->auditMitApp->auditDate;
 		$data->auditMitAppComment = $data->auditMitApp->auditComment;
 		$data->auditMitAppPersonID = $data->auditMitApp->auditPerson;
+		
+		// Get the preferred user display
+		
+		$p = get_option("qrm_displayUser");
+		
+		$man = WP_User::get_data_by("id", $data->manager);
+		$own = WP_User::get_data_by("id", $data->owner);
+	
+				
+		switch ($p){
+			case 'userdisplayname':
+				$data->managerName = $man->display_name;
+				$data->ownerName = $own->display_name;
+				break;
+			case 'userlogin':
+				$data->managerName = $man->user_login;
+				$data->ownerName = $own->user_login;
+				break;
+			case 'usernicename':
+				$data->managerName = $man->user_nicename;
+				$data->ownerName = $own->user_nicename;
+				break;
+			case 'useremail':
+				$data->managerName = $man->user_email;
+				$data->ownerName = $own->user_email;
+				break;
+			case 'usernickname':
+				$data->managerName = get_user_meta($data_manager, "nickname", true);
+				$data->ownerName = get_user_meta($data_owner, "nickname", true);
+				break;
+			case 'userfirstname':
+				$data->managerName = get_user_meta($data_manager, "first_name", true);
+				$data->ownerName = get_user_meta($data_owner, "$first_name", true);
+				break;
+			case 'userlastname':
+				$data->managerName = get_user_meta($data_manager, "last_name", true);
+				$data->ownerName = get_user_meta($data_owner, "last_name", true);
+				break;
+		}
 		
 		unset($data->x);
 		unset($data->x1);
