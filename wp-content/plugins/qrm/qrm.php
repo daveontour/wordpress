@@ -140,6 +140,7 @@ final class QRM {
 		$export->siteID = get_option("qrm_siteID");
 		$export->reportServerURL = get_option("qrm_reportServerURL");
 		$export->displayUser = get_option("qrm_displayUser");
+		$export->reports = QRM::getReportsObject();
 		$export->sessionToken = wp_get_session_token ();
 	}
 	static function getServerMeta(){
@@ -1154,6 +1155,95 @@ final class QRM {
 		endwhile
 		;
 		wp_send_json ( $risks );
+	}
+	static function getReports(){
+		wp_send_json ( QRM::getReportsObject());
+	}
+	
+	static function getReportsObject() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+		global $post;
+		$args = array (
+				'post_type' => 'report',
+				'posts_per_page' => - 1
+		);
+
+		$the_query = new WP_Query ( $args );
+		$reports = array ();
+
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+			
+		$report = json_decode ( get_post_meta ( $post->ID, "reportdata", true ) );
+								
+		array_push ( $reports, $report );
+		endwhile
+		;
+		return $reports;
+	}
+	static function updateReport() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+	
+	
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+	
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+	
+		$postdata = file_get_contents ( "php://input" );
+		$report = json_decode ( $postdata );
+		
+		$postID = null;
+	
+		if (! empty ( $report->id )) {
+			wp_update_post ( array (
+					'ID' => $report->id,
+					'post_content' => $report->description,
+					'post_title' => $report->menuName,
+					'post_status' => 'publish',
+					'post_type' => 'report'
+			) );
+			$postID = $report->id;
+
+		} else {
+			// Create a new one and record the ID
+			$postID = wp_insert_post ( array (
+					'post_content' => $report->description,
+					'post_title' => $report->menuName,
+					'post_status' => 'publish',
+					'post_type' => 'report',
+					'post_author' => $user_ID
+			) );
+			$report->id = $postID;
+		}
+	
+		update_post_meta ( $postID, "reportdata", json_encode ( $report , JSON_HEX_QUOT) );
+		QRM::getReports();
+	}
+	static function deleteReport() {
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+	
+	
+		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
+		get_currentuserinfo ();
+	
+		if ($user_login == "guest"){
+			wp_send_json(QRM::getGuestObject());
+			return;
+		}
+	
+		$postdata = file_get_contents ( "php://input" );
+		$report = json_decode ( $postdata );
+		if (! empty ( $report->id )) {
+			wp_delete_post ( $report->id, true );
+		} 
+		QRM::getReports();
 	}
 	static function getAllProjectRisks() {
 		if (! QRM::qrmUser ())
@@ -2603,6 +2693,9 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_reindexRiskCount", array(QRM, "reindexRiskCount"));	
 			add_action ( "wp_ajax_saveDisplayUser", array(QRM, "saveDisplayUser"));
 			add_action ( "wp_ajax_getDisplayUser", array(QRM, "getDisplayUser"));
+			add_action ( "wp_ajax_getReports", array(QRM, "getReports"));
+			add_action ( "wp_ajax_updateReport", array(QRM, "updateReport"));
+			add_action ( "wp_ajax_deleteReport", array(QRM, "deleteReport"));
 				
 			
 		}
@@ -3283,10 +3376,10 @@ final class QuayRiskManager {
 															ng-click="clear()">Clear</button></td>
 													<td align="right"><button type="button" style="margin-left: 10px"
 															class="btn btn-w-m btn-sm btn-primary"
-															ng-click="saveChanges()">Save</button></td>
+															ng-click="saveReportChanges()">Save</button></td>
 													<td><button type="button" style="margin-left: 10px"
 															class="btn btn-w-m btn-sm btn-danger"
-															ng-click="removeAllData()">Delete</button></td>
+															ng-click="deleteReport()">Delete</button></td>
 												</tr>									
 																				</table>
 								</div>

@@ -105,7 +105,7 @@ function SampleController($scope, remoteService, ngNotify) {
         },
     };
 }
-function UserNameController($scope, remoteService) {
+function UserNameController($scope, remoteService, ngNotify) {
 	
 	var userNameCtrl = this;
 
@@ -116,7 +116,8 @@ function UserNameController($scope, remoteService) {
     	
         remoteService.saveDisplayUser(options)
             .then(function (response) {
-            	alert ("Changes Saved");
+            	ngNotify.set("Changes Saved", {type:"success", duration:1000, theme:"pure"});
+
             });
 
 	}
@@ -128,15 +129,7 @@ function UserNameController($scope, remoteService) {
         QRM.displayUser = response.data.displayUser;
     }); 
 }
-function ReportController($scope, remoteService) {
-	
-	$scope.reports = [{menuName:"Detail Risk 1", description:"A detaile d description of the report"},
-	                        {menuName:"Detail Risk 2", description:"A detaile d description of the report",riskExplorer:true, incidentExplorer:true},
-	                        {menuName:"Detail Risk 3", description:"A detaile d description of the report"},
-	                        {menuName:"Detail Risk 4", description:"A detaile d description of the report"},
-	                        {menuName:"Detail Risk 5", description:"A detaile d description of the report"},
-	                        ]
-	$scope.selectedReport = $scope.reports[0];
+function ReportController($scope, remoteService, ngNotify) {
 	
 	$scope.clear = function(){
 		$scope.selectedReport = {};
@@ -153,9 +146,34 @@ function ReportController($scope, remoteService) {
     	
         remoteService.saveReportOptions(options)
             .then(function (response) {
-                alert("Changes Saved");
+               	ngNotify.set("Changes Saved", {type:"success", duration:1000, theme:"pure"});
             });
     };
+    
+
+    $scope.saveReportChanges = function(){
+    	var r = confirm("Press confirm you wish save changes to the selected report");
+    	if (r == true) {
+
+    	remoteService.updateReport($scope.selectedReport)
+        .then(function (response) {
+        	$scope.reports = response.data;
+        	$scope.selectedReport = {};
+        	ngNotify.set("Changes Saved", {type:"success", duration:1000, theme:"pure"});
+        });
+    	}
+    }
+    $scope.deleteReport = function(){
+    	var r = confirm("Press confirm you wish to delete the selected report");
+    	if (r == true) {
+            remoteService.deleteReport($scope.selectedReport)
+        	.then(function (response) {
+        		$scope.reports = response.data;
+        		$scope.selectedReport = {};
+        		ngNotify.set("Report Deleted", {type:"success", duration:1000, theme:"pure"});
+       });
+     }
+    }
     
     remoteService.getReportOptions()
         .then(function (response) {          
@@ -164,33 +182,12 @@ function ReportController($scope, remoteService) {
             $scope.siteID = response.data.siteID;
             $scope.siteKey = response.data.siteKey;
         });
+    remoteService.getReports().then(function (response) {          
+        $scope.reports = response.data;
+        $scope.selectedReport = $scope.reports[0];
+    });
 
 }
-//function ReportController($scope, remoteService) {
-//
-//    $scope.saveChanges = function (e) {
-//    	
-//    	var options = new Object();
-//    	
-//        options.url = $scope.url = $scope.url;
-//        options.siteName = $scope.siteName;
-//        options.siteID = $scope.siteID;
-//        options.siteKey = $scope.siteKey;
-//    	
-//        remoteService.saveReportOptions(options)
-//            .then(function (response) {
-//                alert("Changes Saved");
-//            });
-//    };
-//    
-//    remoteService.getReportOptions()
-//        .then(function (response) {          
-//            $scope.url = response.data.url;
-//            $scope.siteName = response.data.siteName;
-//            $scope.siteID = response.data.siteID;
-//            $scope.siteKey = response.data.siteKey;
-//        });
-//}
 
 function UserController($scope, remoteService, ngNotify) {
 
@@ -204,7 +201,7 @@ function UserController($scope, remoteService, ngNotify) {
         remoteService.saveSiteUsers($scope.gridOptions.data)
             .then(function (response) {
                 $scope.gridOptions.data = response.data;
-                alert("Site Risk Users Updated");
+            	ngNotify.set("Site Risk Users Updated", {type:"success", duration:1000, theme:"pure"});
             });
     };
 
@@ -212,7 +209,7 @@ function UserController($scope, remoteService, ngNotify) {
         remoteService.getSiteUsers()
             .then(function (response) {
                 $scope.gridOptions.data = response.data;
-                alert("Changed Cancelled");
+            	ngNotify.set("Changes Cancelled", {type:"success", duration:1000, theme:"pure"});
             });
     };
     $scope.gridOptions = {
@@ -468,6 +465,38 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
+    this.updateReport = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "updateReport"
+            },
+            data:data,
+            cache: false
+        });
+    };
+    this.deleteReport = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "deleteReport"
+            },
+            data:data,
+            cache: false
+        });
+    };
+    this.getReports = function () {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "getReports"
+            },
+            cache: false
+        });
+    };
     this.getDisplayUser = function () {
         return $http({
             method: 'POST',
@@ -481,8 +510,7 @@ app.service('remoteService', function ($http, $modal) {
 });
 app.controller('userCtrl', ['$scope', 'remoteService', 'ngNotify', UserController]);	
 app.controller('sampleCtrl', ['$scope', 'remoteService', 'ngNotify', SampleController]);
-//app.controller('repCtrl', ['$scope', 'remoteService', ReportController]);
-app.controller('reportCtrl', ['$scope', 'remoteService', ReportController]);
-app.controller('userNameCtrl', ['$scope', 'remoteService', UserNameController]);
+app.controller('reportCtrl', ['$scope', 'remoteService', 'ngNotify', ReportController]);
+app.controller('userNameCtrl', ['$scope', 'remoteService', 'ngNotify', UserNameController]);
 app.directive('dropzone', dropzone);  
 })();

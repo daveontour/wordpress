@@ -22,6 +22,8 @@ function SortByProjectCode(a, b) {
 var failedConnectCount = 0;
 
 function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
+	
+	return;
 
 	try {  
 		if ( ajaxChatRequest !=null){
@@ -163,11 +165,11 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
 
             
             //Start the message service with the report server
-            if (response.data != "0" && response.data != "-1") {
-            	setTimeout(function () {
-            		startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
-            	}, 5000);
-            }
+//            if (response.data != "0" && response.data != "-1") {
+//            	setTimeout(function () {
+//            		startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+//            	}, 5000);
+//            }
         });
 
     //postType is a global variable, set by PHP when the page get's created on the server
@@ -559,15 +561,15 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 
             
                        //Start the message service with the report server
-             setTimeout(function () {
-                  startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
-             }, 5000);
-
-                $http.jsonp(QRMDataService.reportServerURL + "/availableReports&callback=JSON_CALLBACK")
-                    .then(function (data) {
-                        QRMDataService.reports = data;
-                    })
-            });
+//             setTimeout(function () {
+//                  startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
+//             }, 5000);
+//
+//                $http.jsonp(QRMDataService.reportServerURL + "/availableReports&callback=JSON_CALLBACK")
+//                    .then(function (data) {
+//                        QRMDataService.reports = data;
+//                    })
+//            });
         
         $q.all([ a, b, c, e]).then(function () {
             if (login) {
