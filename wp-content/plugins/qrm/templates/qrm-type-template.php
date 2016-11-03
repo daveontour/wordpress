@@ -72,11 +72,30 @@
 			toggleMenu();
         });
     </script>
-    <form id="reportForm" method="post" style="display: none;" target="qrmIframe">
-	    <input type="hidden" name="reportEmail" />
-	    <input type="hidden" name="reportData" />
-	    <input type="hidden" name="reportID" />
-	    <input type="hidden" name="action" />
+    <form id="reportForm" method="post" style="display: none;" target="_blank">
+	    <input type="hidden" name="riskID" />
+	    <input type="hidden" name="projectID" />
+	    <input type="hidden" name="userID" />
+	    <input type="hidden" name="incidentID" />
+	    <input type="hidden" name="reviewID" />
+	    <input type="hidden" name="prob" />
+	    <input type="hidden" name="impact" />
+	    <input type="hidden" name="manager" />
+	    <input type="hidden" name="owner" />
+	    <input type="hidden" name="subprojects" />
+	    <input type="hidden" name="status" />
+	    <input type="hidden" name="treated" />
+	    <input type="hidden" name="untreated" />
+	    <input type="hidden" name="inactive" />
+	    <input type="hidden" name="inactive" />
+	    <input type="hidden" name="active" />
+	    <input type="hidden" name="pending" />
+	    <input type="hidden" name="extreme" />
+	    <input type="hidden" name="high" />
+	    <input type="hidden" name="significant" />
+	    <input type="hidden" name="moderate" />
+	    <input type="hidden" name="low" />
+	    
     </form>
     <form id="getReportForm" method="post" style="display: none;" target="qrmIframe">
 	    <input type="hidden" name="userEmail" />

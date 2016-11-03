@@ -25,60 +25,60 @@ function startChatChannel(pollURL, userEmail, siteKey, QRMDataService, reset) {
 	
 	return;
 
-	try {  
-		if ( ajaxChatRequest !=null){
-			if (ajaxChatRequest.readyState == 1){
-				console.log ("Chat already open - do nothing");
-				return;
-			}
-		} 
-	} catch (e) {
-		console.log(e.message);
-	}
-
-	if (failedConnectCount < 30){
-		console.log("Initiate Chat");
-		ajaxChatRequest = jQuery.ajax({
-			url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey + "&reset=" + reset+"&sessionToken="+QRMDataService.sessionToken,
-			type: "GET",
-			timeout: 47000,
-			dataType: "jsonp",
-			success: function (m) {
-				failedConnectCount = 0;
-				ajaxChatRequest = null;
-
-				if (m.msg) {
-					QRM.mainController.notify(m.message, m.duration);
-					return;
-				}
-				if (m.timeout) {
-					console.log("Chat Timeout");
-					return;
-				}
-				if (m.reportReady) {
-					QRM.mainController.notify2("Report Ready. Downloading Now");
-
-					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
-					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
-					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
-					jQuery('input[name="id"]').val(m.reportID);
-					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
-					jQuery("#getReportForm").submit();
-				}
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				failedConnectCount++;
-				console.log("Chat Fail");
-			},
-			complete: function(jqXHR, textStatus){
-				startChatChannel(pollURL, userEmail, siteKey, QRMDataService, false);
-			}
-
-		});
-	} else {
-		QRM.mainController.notifyNoReportServer();
-		failedConnectCount = 0;
-	}
+//	try {  
+//		if ( ajaxChatRequest !=null){
+//			if (ajaxChatRequest.readyState == 1){
+//				console.log ("Chat already open - do nothing");
+//				return;
+//			}
+//		} 
+//	} catch (e) {
+//		console.log(e.message);
+//	}
+//
+//	if (failedConnectCount < 30){
+//		console.log("Initiate Chat");
+//		ajaxChatRequest = jQuery.ajax({
+//			url: pollURL + "?nocache=" + Math.random() + "&userEmail=" + userEmail + "&siteKey=" + siteKey + "&reset=" + reset+"&sessionToken="+QRMDataService.sessionToken,
+//			type: "GET",
+//			timeout: 47000,
+//			dataType: "jsonp",
+//			success: function (m) {
+//				failedConnectCount = 0;
+//				ajaxChatRequest = null;
+//
+//				if (m.msg) {
+//					QRM.mainController.notify(m.message, m.duration);
+//					return;
+//				}
+//				if (m.timeout) {
+//					console.log("Chat Timeout");
+//					return;
+//				}
+//				if (m.reportReady) {
+//					QRM.mainController.notify2("Report Ready. Downloading Now");
+//
+//					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
+//					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
+//					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
+//					jQuery('input[name="id"]').val(m.reportID);
+//					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
+//					jQuery("#getReportForm").submit();
+//				}
+//			},
+//			error: function (jqXHR, textStatus, errorThrown) {
+//				failedConnectCount++;
+//				console.log("Chat Fail");
+//			},
+//			complete: function(jqXHR, textStatus){
+//				startChatChannel(pollURL, userEmail, siteKey, QRMDataService, false);
+//			}
+//
+//		});
+//	} else {
+//		QRM.mainController.notifyNoReportServer();
+//		failedConnectCount = 0;
+//	}
 
 }
 
@@ -162,6 +162,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
             QRMDataService.userDisplayName = response.data.userDisplayName;
             QRMDataService.sessionToken = response.data.sessionToken;
             QRMDataService.displayUser = response.data.displayUser;
+            QRMDataService.reports = response.data.reports;
 
             
             //Start the message service with the report server
@@ -211,9 +212,9 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
     		return;
     	}
 
-        $http.jsonp(QRMDataService.reportServerURL + "/availableReports?callback=JSON_CALLBACK")
-            .then(function (data) {
-                QRMDataService.reports = data;
+//        $http.jsonp(QRMDataService.reportServerURL + "/availableReports?callback=JSON_CALLBACK")
+//            .then(function (data) {
+//                QRMDataService.reports = data;
                 switch (postType) {
                 case 'risk':
                     QRMDataService.selectProject(projectID);
@@ -257,53 +258,53 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
                     $state.go("qrm.explorer");
                     break;
             }
-            },function (data) {
-                //Dummy Report Entry
-                QRMDataService.reports = [{id:-1,"title":"Report Server Not Available","showRiskExplorer":true,"showSingleRisk":true,"showRank":true,"showCalender":true,"showReview":true,"showRelMatrix":true,"showSingleReview":true,"showIncident":true,"showSingleIncident":true,"showDashboard":true}];
-                switch (postType) {
-                case 'risk':
-                    QRMDataService.selectProject(projectID);
-                    QRMDataService.riskID = postID;
-                    $scope.introloading = false;
-                    $state.go("qrm.risk");
-                    break;
-                case 'riskproject':
-                    $scope.introloading = false;
-                    $state.go("qrm.explorer");
-                    break;
-                case 'review':
-                    remoteService.getReview(postID)
-                        .then(function (response) {
-                            QRMDataService.review = response.data;
-                            if (QRMDataService.review.risks != null) {
-                                QRMDataService.review.risks.sort(SortByProjectCode);
-                            }
-                            QRMDataService.reviewID = QRMDataService.review.id;
-                            QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
-                            QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
-                            $scope.introloading = false;
-                            $state.go("qrm.review");
-                        });
-                    break;
-                case 'incident':
-                    remoteService.getIncident(postID)
-                        .then(function (response) {
-                            QRMDataService.incident = response.data;
-                            if (QRMDataService.incident.risks != null) {
-                                QRMDataService.incident.risks.sort(SortByProjectCode);
-                            }
-                            QRMDataService.incidentID = QRMDataService.incident.id;
-                            QRMDataService.incident.date = new Date(QRMDataService.incident.date);
-                            $scope.introloading = false;
-                            $state.go("qrm.incident");
-                        });
-                    break;
-                default:
-                    $scope.introloading = false;
-                    $state.go("qrm.explorer");
-                    break;
-            }
-            });
+//            },function (data) {
+//                //Dummy Report Entry
+//                QRMDataService.reports = [{id:-1,"title":"Report Server Not Available","showRiskExplorer":true,"showSingleRisk":true,"showRank":true,"showCalender":true,"showReview":true,"showRelMatrix":true,"showSingleReview":true,"showIncident":true,"showSingleIncident":true,"showDashboard":true}];
+//                switch (postType) {
+//                case 'risk':
+//                    QRMDataService.selectProject(projectID);
+//                    QRMDataService.riskID = postID;
+//                    $scope.introloading = false;
+//                    $state.go("qrm.risk");
+//                    break;
+//                case 'riskproject':
+//                    $scope.introloading = false;
+//                    $state.go("qrm.explorer");
+//                    break;
+//                case 'review':
+//                    remoteService.getReview(postID)
+//                        .then(function (response) {
+//                            QRMDataService.review = response.data;
+//                            if (QRMDataService.review.risks != null) {
+//                                QRMDataService.review.risks.sort(SortByProjectCode);
+//                            }
+//                            QRMDataService.reviewID = QRMDataService.review.id;
+//                            QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
+//                            QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+//                            $scope.introloading = false;
+//                            $state.go("qrm.review");
+//                        });
+//                    break;
+//                case 'incident':
+//                    remoteService.getIncident(postID)
+//                        .then(function (response) {
+//                            QRMDataService.incident = response.data;
+//                            if (QRMDataService.incident.risks != null) {
+//                                QRMDataService.incident.risks.sort(SortByProjectCode);
+//                            }
+//                            QRMDataService.incidentID = QRMDataService.incident.id;
+//                            QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+//                            $scope.introloading = false;
+//                            $state.go("qrm.incident");
+//                        });
+//                    break;
+//                default:
+//                    $scope.introloading = false;
+//                    $state.go("qrm.explorer");
+//                    break;
+//            }
+//            });
     };
 }
 
@@ -349,6 +350,49 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 		ngNotify.dismiss();
 		ngNotify.set("Unable To Connect To The Report Server", {type:"warn", sticky:true, theme:"pure"});
 	}
+	
+    this.executeReport = function (repID) {
+    	
+        var report = jQuery.grep(QRMDataService.reports, function (value) {
+            if (value.id == repID) return true;
+            return false;
+        })[0];
+
+        var url = QRMDataService.reportServerURL+report.urlParams;
+        if (report.showSingleRisk){
+        	url = url+"&riskID="+QRMDataService.riskID;
+        }
+        url = url+"&projectID="+QRMDataService.project.id;
+        url = url+"&userID="+QRMDataService.currentUser.ID;
+        if (report.showIncident){
+        	url = url+"&incidentID="+QRMDataService.incidentID;
+        }
+        if (report.showReview){
+        	url = url+"&reviewID="+QRMDataService.reviewID;
+        }
+        if (report.showRiskExplorer){
+        	url = url+"&prob="+QRM.expController.filterOptions.matrixImpact
+        	url = url+"&impact="+QRM.expController.filterOptions.matrixImpact
+        	url = url+"&manager="+QRM.expController.filterOptions.manager;
+        	url = url+"&owner="+QRM.expController.filterOptions.owner
+        	url = url+"&subprojects="+QRM.expController.childProjects;
+        	url = url+"&treated="+QRM.expController.filterOptions.treated;
+        	url = url+"&untreated="+QRM.expController.filterOptions.untreated;
+        	url = url+"&inactive="+QRM.expController.filterOptions.expInactive;
+        	url = url+"&active="+QRM.expController.filterOptions.expActive;
+        	url = url+"&pending="+QRM.expController.filterOptions.expPending;
+        	url = url+"&extreme="+QRM.expController.filterOptions.tolEx;
+        	url = url+"&high="+QRM.expController.filterOptions.tolHigh;
+        	url = url+"&significant="+QRM.expController.filterOptions.tolSig;
+        	url = url+"&moderate="+QRM.expController.filterOptions.tolModerate;
+        	url = url+"&low="+QRM.expController.filterOptions.tolLow;
+        }
+
+		    url = encodeURI(url);
+		    
+		    window.open(url, "_blank");
+    }
+
 	
 
     this.go = function (state) {
@@ -564,12 +608,12 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 //             setTimeout(function () {
 //                  startChatChannel(QRMDataService.reportServerURL + "/reportMsg", QRMDataService.userEmail, QRMDataService.siteKey, QRMDataService, true);
 //             }, 5000);
-//
+
 //                $http.jsonp(QRMDataService.reportServerURL + "/availableReports&callback=JSON_CALLBACK")
 //                    .then(function (data) {
 //                        QRMDataService.reports = data;
 //                    })
-//            });
+            });
         
         $q.all([ a, b, c, e]).then(function () {
             if (login) {
@@ -1128,24 +1172,10 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
     }
 
 
-    $scope.riskReport = function (reportID) {
-       if ($scope.reportReqID < 0) return;
-        QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, exp.childProjects, false,$scope.reportReqID)
-            .then(function (response) {
-            	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val($scope.reportReqID);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            })
+    $scope.riskReport = function (repID) {
+    	QRM.mainController.executeReport($scope.reportReqID);
     }
+
     this.cellStyle = function (prob, impact, tol) {
 
         var vh = 100 / (QRMDataService.project.matrix.maxProb)
@@ -1921,21 +1951,24 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
     }
 //
     $scope.riskReport = function (reportID) {
-        if ($scope.reportReqID < 0) return;
-        remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false, false,$scope.reportReqID)
-            .then(function (response) {
-            	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val($scope.reportReqID);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            });
+    	
+    	QRM.mainController.executeReport($scope.reportReqID);
+
+//        if ($scope.reportReqID < 0) return;
+//        remoteService.getReportRiskJSON([vm.riskID], vm.risk.projectID, false, false,$scope.reportReqID)
+//            .then(function (response) {
+//            	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//            });
     }
     
     this.showDummy = function(){
@@ -3561,22 +3594,24 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
         return $scope;
     }
     $scope.incidentReport = function (reportID) {
-       if ($scope.reportReqID < 0) return;
-        QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportIncidentJSON([],$scope.reportReqID)
-            .then(function (response) {
-             	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val(2);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            })
+    	QRM.mainController.executeReport($scope.reportReqID);
+
+//       if ($scope.reportReqID < 0) return;
+//        QRM.mainController.notify("Assembling Data for Report", 5000);
+//        remoteService.getReportIncidentJSON([],$scope.reportReqID)
+//            .then(function (response) {
+//             	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val(2);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//            })
     }
     this.init();
 }
@@ -3821,22 +3856,24 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
         return $scope;
     }
     $scope.incidentReport = function (reportID) {
-       if ($scope.reportReqID < 0) return;
-        QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportIncidentJSON([inc.incident.id],$scope.reportReqID)
-            .then(function (response) {
-            	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val(2);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            })
+    	QRM.mainController.executeReport($scope.reportReqID);
+
+//       if ($scope.reportReqID < 0) return;
+//        QRM.mainController.notify("Assembling Data for Report", 5000);
+//        remoteService.getReportIncidentJSON([inc.incident.id],$scope.reportReqID)
+//            .then(function (response) {
+//            	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val(2);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//            })
     }
 
     this.updateIncident();
@@ -3988,22 +4025,24 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
         return $scope;
     }
     $scope.reviewReport = function (reportID) {
-       if ($scope.reportReqID < 0) return;
-        QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportReviewJSON([],$scope.reportReqID)
-            .then(function (response) {
-            	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val(2);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            })
+    	QRM.mainController.executeReport($scope.reportReqID);
+//
+//       if ($scope.reportReqID < 0) return;
+//        QRM.mainController.notify("Assembling Data for Report", 5000);
+//        remoteService.getReportReviewJSON([],$scope.reportReqID)
+//            .then(function (response) {
+//            	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val(2);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//            })
     }
 
     this.init();
@@ -4299,22 +4338,24 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
     }
     
     $scope.reviewReport = function (reportID) {
-        if ($scope.reportReqID < 0) return;
-         QRM.mainController.notify("Assembling Data for Report", 5000);
-         remoteService.getReportReviewJSON([rev.review.id],$scope.reportReqID)
-             .then(function (response) {
-             	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val(2);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-             })
+    	QRM.mainController.executeReport($scope.reportReqID);
+//
+//        if ($scope.reportReqID < 0) return;
+//         QRM.mainController.notify("Assembling Data for Report", 5000);
+//         remoteService.getReportReviewJSON([rev.review.id],$scope.reportReqID)
+//             .then(function (response) {
+//             	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val(2);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//             })
      }
 
     this.saveReview = function () {

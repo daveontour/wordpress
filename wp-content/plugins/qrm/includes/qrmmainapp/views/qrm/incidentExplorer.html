@@ -12,7 +12,7 @@
             </a>
                 <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li ng-repeat="r in qrmctrl.reports | filter:{showIncident:true}">
-                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().incidentReport()" href="#"> {{r.title}} </a>
+                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().incidentReport()" href="#"> {{r.menuName}} </a>
                     </li>
                 </ul>
             

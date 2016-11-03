@@ -135,13 +135,11 @@
 						</a>
 						<ul class="dropdown-menu multi-level" role="menu"
 							aria-labelledby="dropdownMenu">
-							<li><a ng-click="exp.checkForReports()" href="#">Check for Completed Reports</a></li>
-							<li class="divider"></li>
 							<li
 								ng-repeat="r in qrmctrl.reports | filter:{showRiskExplorer:true}">
 								<a
 								ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().riskReport()"
-								href="#"> {{r.title}} </a>
+								href="#"> {{r.menuName}} </a>
 							</li>
 						</ul>
 					</div>

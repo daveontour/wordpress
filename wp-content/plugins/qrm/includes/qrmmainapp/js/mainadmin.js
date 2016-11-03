@@ -119,7 +119,6 @@ function UserNameController($scope, remoteService, ngNotify) {
             	ngNotify.set("Changes Saved", {type:"success", duration:1000, theme:"pure"});
 
             });
-
 	}
 
 	$scope.status = { val: "notdefined" };

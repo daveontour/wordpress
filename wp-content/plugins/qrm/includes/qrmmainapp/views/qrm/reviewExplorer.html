@@ -10,7 +10,7 @@
 	                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Reports<span class="caret"></span></a>
 	                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
 	                    <li ng-repeat="r in qrmctrl.reports | filter:{showReview:true}">
-	                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.title}} </a>
+	                        <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.menuName}} </a>
 	                    </li>
 	                </ul>
             	</div>
