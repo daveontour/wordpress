@@ -108,20 +108,6 @@ function config($stateProvider, IdleProvider) {
                 closeMenu();
             }
         })
-            .state('qrm.reportarchive', {
-            controller: 'ReportArchiveController',
-            controllerAs: 'rep',
-            templateUrl: function (params) {
-                if (jQuery(window).width() < 768) {
-                    return pluginurl + "views/qrm/m.report.html"
-                } else {
-                    return pluginurl + "views/qrm/report.html"
-                }
-            },
-            onEnter: function () {
-                closeMenu();
-            }
-        })
         .state('qrm.matrix', {
             controller: 'RelMatrixController',
             controllerAs: 'relMatrix',

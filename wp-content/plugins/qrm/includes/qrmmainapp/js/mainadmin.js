@@ -18,6 +18,14 @@ function SampleController($scope, remoteService, ngNotify) {
                 ngNotify.set(response.data.msg, {type:"success", duration:1000, theme:"pure"});
             });
     }
+    
+    $scope.initReportData = function () {
+        ngNotify.set("Initialising Reporting Tables. Please Standby", {type:"info", sticky:true, theme:"pure"});
+        remoteService.initReportData()
+            .then(function (response) {
+                ngNotify.set(response.data.msg, {type:"success", duration:1500, theme:"pure"});
+            });
+    }
 
     $scope.reindexRiskCount = function () {
         ngNotify.set("Re Indexing Risk Counts", {type:"info", sticky:true, theme:"pure"});
@@ -394,6 +402,17 @@ app.service('remoteService', function ($http, $modal) {
             data: minmax,
             params: {
                 action: "installSampleProjects"
+            },
+            cache: false
+        });
+    };
+    
+    this.initReportData = function (minmax) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "initReportData"
             },
             cache: false
         });

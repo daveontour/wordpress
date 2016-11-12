@@ -265,6 +265,14 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		$data->auditMitAppComment = $data->auditMitApp->auditComment;
 		$data->auditMitAppPersonID = $data->auditMitApp->auditPerson;
 		
+		//Get the project
+		
+		$project = WPQRM_Model_Project::get( $data->projectID);
+		
+		$data->tolString = $project->tolString;
+		$data->maxProb = $project->maxProb;
+		$data->maxImpact = $project->maxImpact;
+		
 		// Get the preferred user display
 		
 		$p = get_option("qrm_displayUser");

@@ -132,6 +132,9 @@ final class QRM {
 	}
 	static function exportMetadata(&$export){
 		global  $current_user;
+		global $wpdb;
+		 
+		$export->dbprefix = $wpdb->prefix;
 		$export->userEmail = $current_user->user_email;
 		$export->userLogin = $current_user->user_login;
 		$export->userDisplayName = $current_user->display_name;
@@ -1618,6 +1621,75 @@ final class QRM {
 		WPQRM_Model_Risk::replace($risk);
 		wp_send_json ( $risk );
 	}
+	static function initReportData(){
+		if (! QRM::qrmUser ())
+			wp_die ( - 3 );
+		global $post;
+		
+		$args = array (
+				'post_type' => 'riskproject',
+				'posts_per_page' => -1,
+				'orderby' => "ID",
+				'order' => 'ASC'
+		);
+		$the_query = new WP_Query ( $args );
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+		$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
+		WPQRM_Model_Project::replace($project);
+		endwhile
+		;
+		
+		$args = array (
+				'post_type' => 'risk',
+				'posts_per_page' => - 1
+		);
+		
+		$the_query = new WP_Query ( $args );
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+			
+		$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+			
+		WPQRM_Model_Risk::replace($risk);
+		endwhile
+		;
+		
+		$args = array (
+				'post_type' => 'incident',
+				'posts_per_page' => - 1
+		);
+		
+		$the_query = new WP_Query ( $args );
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+			
+		$incident = json_decode ( get_post_meta ( $post->ID, "incidentdata", true ) );
+			
+		WPQRM_Model_Incident::replace($incident);
+		endwhile
+		;
+		
+		$args = array (
+				'post_type' => 'incident',
+				'posts_per_page' => - 1
+		);
+		
+		$the_query = new WP_Query ( $args );
+		while ( $the_query->have_posts () ) :
+		$the_query->the_post ();
+			
+		$review = json_decode ( get_post_meta ( $post->ID, "reviewdata", true ) );
+			
+		WPQRM_Model_Review::replace($review);
+		endwhile
+		;
+		
+		wp_send_json ( array (
+				"msg" => "Initialising Reporting Tables Completed"
+		) );
+	}
+	
 	static function saveProject() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -2372,6 +2444,9 @@ final class QuayRiskManager {
 			 manager INT(11),
 			 managerName VARCHAR(255),
 			 matImage LONGBLOB,
+			 tolString VARCHAR(255),
+			 maxProb INT (11),
+			 maxImpact INT (11),
 			 owner INT(11),
 			 ownerName VARCHAR(255),
 			 rank INT(11) NOT NULL DEFAULT 0,
@@ -2696,6 +2771,7 @@ final class QuayRiskManager {
 			add_action ( "wp_ajax_getReports", array(QRM, "getReports"));
 			add_action ( "wp_ajax_updateReport", array(QRM, "updateReport"));
 			add_action ( "wp_ajax_deleteReport", array(QRM, "deleteReport"));
+			add_action ( "wp_ajax_initReportData", array(QRM, "initReportData"));
 				
 			
 		}
@@ -3223,6 +3299,19 @@ final class QuayRiskManager {
 							</div>
 						</td>
 					</tr>
+										<tr>
+						<td class="qrm-settings">
+
+							<h4 style="margin-top: 15px">Initialise Report Data</h4>
+							<p>If you have upgraded from a previous release of QRM, you need to initialise the data in the report tables. This only needs to be done once, but will not harm the system if repeated</p>
+							<div style="text-align: right; margin-top: 15px"
+								ng-controller="sampleCtrl">
+								<button type="button" style="margin-left: 10px"
+									class="btn btn-w-m btn-sm btn-primary"
+									ng-click="initReportData()">Initialise Report Data</button>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td class="qrm-settings">
 							<div style="margin-top: 20px" ng-controller="sampleCtrl as samp">
@@ -3367,8 +3456,18 @@ final class QuayRiskManager {
 													System
 											</label></td>
 										</tr>
+
+											<th	style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Special Actions: </th>
+												</tr>
+										<tr>
+											<td colspan=3><label class="checkbox-inline" style="padding-left: 20px">
+													<input icheck type="checkbox" ng-model="selectedReport.updateRiskMatrix" style="margin-left: -20px">
+													Update individual risk tolerance matrices
+											</label></td>
+										</tr>
+
 										</table>
-										<table style="float: right">	
+										<table style="float: right;margin-top:10px">	
 										<tr>
 													<td align="right">
 													      <button type="button" style="margin-left: 10px"
