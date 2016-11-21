@@ -126,18 +126,13 @@ class QRMSample {
 		
 		foreach ( $import->projects as $project ) {
 			
-			if ($sample)
+			if ($sample) {
 				$project->title = $project->title . "**";
+			}
 			$project->riskProjectManager = $current_user->ID;
-			$project->ownersID = array (
-					$current_user->ID 
-			);
-			$project->mangersID = array (
-					$current_user->ID 
-			);
-			$project->usersID = array (
-					$current_user->ID 
-			);
+			$project->ownersID = array ($current_user->ID );
+			$project->mangersID = array ($current_user->ID);
+			$project->usersID = array ($current_user->ID);
 			
 			$postID = wp_insert_post ( array (
 					'post_content' => $project->description,
@@ -189,7 +184,7 @@ class QRMSample {
 			update_post_meta ( $postID, "projectTitle", $project->title );
 			update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 			update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
-			update_post_meta ( $postID, "sampleqrmdata", $sample );
+			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
 		}
 		
 		foreach ( $projIDMap as $oldValue => $newValue ) {
@@ -253,7 +248,7 @@ class QRMSample {
 			
 			// // The Bulk of the data is held in the post's meta data
 			update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
-			update_post_meta ( $postID, "sampleqrmdata", $sample );
+			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			update_post_meta ( $postID, "audit", json_encode ( $risk->audit ) );
 			update_post_meta ( $postID, "projectID", $risk->projectID );
 			update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
@@ -302,7 +297,7 @@ class QRMSample {
 			$reviewIDMap [$review->id] = $postID;
 			$review->id = $postID;
 			$review->reviewCode = "REVIEW-" . $review->id;
-			update_post_meta ( $postID, "sampleqrmdata", $sample );
+			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			
 			wp_update_post ( array (
 					'ID' => $review->id,
@@ -356,7 +351,7 @@ class QRMSample {
 			$incidentIDMap [$incident->id] = $postID;
 			$incident->id = $postID;
 			$incident->incidentCode = "INCIDENT-" . $incident->id;
-			update_post_meta ( $postID, "sampleqrmdata", $sample );
+			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			
 			wp_update_post ( array (
 					'ID' => $incident->id,
@@ -389,34 +384,71 @@ class QRMSample {
 		}
 		return true;
 	}
-	static function removeSample($all = false) {
+	static function removeSample($sampleOnly) {
+		
 		$args = array (
 				'posts_per_page' => - 1,
 				'post_type' => 'riskproject' 
 		);
 		
-		if (! $all) {
+		
+		if ($sampleOnly) {
 			$args ['meta_key'] = "sampleqrmdata";
-			$args ['meta_value'] = true;
-		}
+			$args ['meta_value'] = "sample";
+		} 
+		
+// 		$args ['post_type'] = "risk";
+// 		var_dump($sampleOnly);
+// 		var_dump($args);
+// 		foreach (get_posts ( $args ) as $post){
+// 			var_dump(get_post_meta ( $post->ID, "sampleqrmdata", true ));
+// 			var_dump($post->ID);
+// 		}
+		
+// 		return;
 		
 		$args ['post_type'] = "risk";
 		foreach ( get_posts ( $args ) as $post ) {
-			wp_delete_post ( $post->ID, true );
+			if((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
 		}
 		
 		$args ['post_type'] = "review";
 		foreach ( get_posts ( $args ) as $post ) {
-			wp_delete_post ( $post->ID, true );
+			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample"&& $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
 		}
 		$args ['post_type'] = "incident";
 		foreach ( get_posts ( $args ) as $post ) {
-			wp_delete_post ( $post->ID, true );
+			if((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
 		}
 		$args ['post_type'] = "riskproject";
 		foreach ( get_posts ( $args ) as $post ) {
-			wp_delete_post ( $post->ID, true );
+			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
 		}
+		$args ['post_type'] = "reports";
+		foreach ( get_posts ( $args ) as $post ) {
+			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
+		}		
+		global $wpdb;
+		
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_risk');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_controls');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_mitplan');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_respplan');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_project');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectowners');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectmanagers');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectusers');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_objective');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_incident');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_incidentrisks');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_category');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_review');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewrisks');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewriskcomments');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewcomments');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reports');
+		
+		QRM::initReportDataInternal();
 		return ($all)?"All Quay Risk Manager Data Removed":"Sample Quay Risk Manager Data Removed";
 	}
 	static function make_seed(){
@@ -424,7 +456,7 @@ class QRMSample {
 		return (float) $sec + ((float) $usec * 100000);
 	}
 
-	static function createDummyRiskEntryMultiple($topParent = null, $min, $max) {
+	static function createDummyRiskEntryMultiple($topParent = null, $min, $max, $sample = false) {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
@@ -452,7 +484,7 @@ class QRMSample {
 			$risk->projectID = $post->ID;
 			$idx = rand ( $min, $max );
 			for($i = 0; $i < $idx; $i ++) {
-				QRMSample::createDummyRiskEntryCommon ($risk, $project, $topParent );
+				QRMSample::createDummyRiskEntryCommon ($risk, $project, $topParent, $sample );
 			}
 		endwhile
 		;
@@ -476,7 +508,7 @@ class QRMSample {
 		return QRMSample::createDummyRiskEntryCommon($risk, $project);
 	
 	}
-	static function createDummyRiskEntryCommon($risk, $project, $topParent = null) {
+	static function createDummyRiskEntryCommon($risk, $project, $topParent = null, $sample = false) {
 		srand(QRMSample::make_seed());
 		$lorem = new LoremIpsumGenerator ();
 		$now = mktime ();
@@ -495,7 +527,7 @@ class QRMSample {
 		if ($risk->manager == null){
 			$risk->manager = $project->projectRiskManager;
 		}
-		$risk->title = $lorem->getContent ( rand ( 6, 15 ), "plain", false );
+		$risk->title = "**".$lorem->getContent ( rand ( 6, 15 ), "plain", false );
 		$risk->description = $lorem->getContent ( rand ( 150, 300 ), "html", false );
 		$risk->cause = $lorem->getContent ( rand ( 50, 300 ), "html", false );
 		$risk->consequence = $lorem->getContent ( rand ( 50, 300 ), "html", false );
@@ -633,6 +665,8 @@ class QRMSample {
 		update_post_meta ( $postID, "ownerID", $risk->owner );
 		update_post_meta ( $postID, "managerID", $risk->manager );
 		update_post_meta ( $postID, "project", $project->post_title );
+		if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+		
 		
 		// Update the count for riskd for the impacted project
 		$args = array (
@@ -696,29 +730,29 @@ class QRMSample {
 		array_push($cat, json_decode('{"title": "Viability", "id": -25, "primCat": false, "parentID": -21, "projectID": -1}'));
 	
 		
-		$p1 = QRMSample::singleProject("Quay Systems", "QS", $userSummary, 0, $cat);		
- 		QRMSample::singleProject("Board of Directors", "BOD", $userSummary, $p1->id);
-		QRMSample::singleProject("Executive", "EXECE", $userSummary, $p1->id);
-		$it = QRMSample::singleProject("Information Technology", "IT", $userSummary, $p1->id);
-		QRMSample::singleProject("Information Technology Security", "ITSEC", $userSummary, $it->id);
-		$itops = QRMSample::singleProject("Information Technology Operations", "ITOPS", $userSummary, $it->id);
-		QRMSample::singleProject("Information Technology End User", "ITEUC", $userSummary, $itops->id);
-		QRMSample::singleProject("Information Technology Data Center", "ITDC", $userSummary, $itops->id);
-		QRMSample::singleProject("Information Technology Network", "ITNW", $userSummary, $itops->id);
+		$p1 = QRMSample::singleProject("*Quay Systems", "QS", $userSummary, 0, $cat, true);		
+ 		QRMSample::singleProject("*Board of Directors", "BOD", $userSummary, $p1->id, null, true);	
+		QRMSample::singleProject("*Executive", "EXECE", $userSummary, $p1->id, null, true);
+		$it = QRMSample::singleProject("*Information Technology", "IT", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Information Technology Security", "ITSEC", $userSummary, $it->id, null, true);
+		$itops = QRMSample::singleProject("*Information Technology Operations", "ITOPS", $userSummary, $it->id, null, true);
+		QRMSample::singleProject("*Information Technology End User", "ITEUC", $userSummary, $itops->id, null, true);
+		QRMSample::singleProject("*Information Technology Data Center", "ITDC", $userSummary, $itops->id, null, true);
+		QRMSample::singleProject("*Information Technology Network", "ITNW", $userSummary, $itops->id, null, true);
 		
-		QRMSample::singleProject("Sales", "SALE", $userSummary, $p1->id);
-		QRMSample::singleProject("Marketing", "MARK", $userSummary, $p1->id);
-		QRMSample::singleProject("Business Services", "BIZ", $userSummary, $p1->id);
-		QRMSample::singleProject("Human Resources", "HR", $userSummary, $p1->id);
-		QRMSample::singleProject("Manufacturing", "MAN", $userSummary, $p1->id);
-		QRMSample::singleProject("Customer Support", "CUS", $userSummary, $p1->id);
+		QRMSample::singleProject("*Sales", "SALE", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Marketing", "MARK", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Business Services", "BIZ", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Human Resources", "HR", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Manufacturing", "MAN", $userSummary, $p1->id, null, true);
+		QRMSample::singleProject("*Customer Support", "CUS", $userSummary, $p1->id, null, true);
 		
-		QRMSample::createDummyRiskEntryMultiple($p1,$minmax[0],$minmax[1]);
+		QRMSample::createDummyRiskEntryMultiple($p1,$minmax[0],$minmax[1], true);
 			
 		return "Sample Data Installed";
 	}
 	
-	static function singleProject($title, $id, $users, $parent = 0, $cat = null){
+	static function singleProject($title, $id, $users, $parent = 0, $cat = null, $sample = false){
 	
 		global $user_identity, $user_email, $user_ID, $current_user;
 		
@@ -732,11 +766,11 @@ class QRMSample {
 		if ($cat != null){
 			$p->categories = $cat;
 		}
-		$p = QRMSample::saveSampleProject($p);
+		$p = QRMSample::saveSampleProject($p, $sample);
 		WPQRM_Model_Project::replace($p);	
 		return $p;
 	}
-	static function saveSampleProject($project){
+	static function saveSampleProject($project, $sample = false){
 	
 		$postID = wp_insert_post ( array (
 				'post_content' => $project->description,
@@ -791,7 +825,8 @@ class QRMSample {
 		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 		update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
-	
+		if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+		
 		// Update number of risk
 		// Update the count for riskd for the impacted project
 		$args = array (

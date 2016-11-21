@@ -38,9 +38,20 @@ function SampleController($scope, remoteService, ngNotify) {
     	var r = confirm("Press confirm you wish to remove all the data from Quay Risk Manager");
     	if (r == true) {
             ngNotify.set("Removing All Quay Risk Manager Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
-            remoteService.removeSample(true)
+            remoteService.removeSample(false)
             .then(function (response) {
                 ngNotify.set("All Quay Risk Manager Data Removed", {type:"success", duration:1000, theme:"pure"});
+            });
+    	} 
+    }
+    
+    $scope.removeAllSampleData = function () {
+    	var r = confirm("Press confirm you wish to remove all the sample data from Quay Risk Manager");
+    	if (r == true) {
+            ngNotify.set("Removing All Quay Risk Manager Sample Data. Please Standby", {type:"info", sticky:true, theme:"pure"});
+            remoteService.removeSample(true)
+            .then(function (response) {
+                ngNotify.set("All Quay Risk Manager Sample Data Removed", {type:"success", duration:1000, theme:"pure"});
             });
     	} 
     }
@@ -428,14 +439,16 @@ app.service('remoteService', function ($http, $modal) {
             cache: false
         });
     };
-    this.removeSample = function (all) {
+    this.removeSample = function (sampleOnly) {
         return $http({
             method: 'POST',
             url: ajaxurl,
             params: {
                 action: "removeSample"
             },
-            data:all,
+            data:{
+            	sampleOnly:sampleOnly
+            },
             cache: false
         });
     };

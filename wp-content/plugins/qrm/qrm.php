@@ -347,9 +347,12 @@ final class QRM {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		require plugin_dir_path ( __FILE__ ) . '/includes/qrm-sample.php';
-		$all = json_decode ( file_get_contents ( "php://input" ) );
+		
+		$a = json_decode (file_get_contents ( "php://input" ));
+		$sampleOnly = $a->sampleOnly;
+		
 		wp_send_json ( array (
-				"msg" => QRMSample::removeSample ($all)
+				"msg" => QRMSample::removeSample ($sampleOnly)
 		) );
 	}
 	static function login() {
@@ -1622,6 +1625,12 @@ final class QRM {
 		wp_send_json ( $risk );
 	}
 	static function initReportData(){
+		QRM::initReportDataInternal();
+		wp_send_json ( array (
+				"msg" => "Initialising Reporting Tables Completed"
+		) );
+	}
+	static function initReportDataInternal(){
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		global $post;
@@ -1685,9 +1694,7 @@ final class QRM {
 		endwhile
 		;
 		
-		wp_send_json ( array (
-				"msg" => "Initialising Reporting Tables Completed"
-		) );
+		return;
 	}
 	
 	static function saveProject() {
@@ -3289,13 +3296,16 @@ final class QuayRiskManager {
 						<td class="qrm-settings">
 
 							<h4 style="margin-top: 15px">Clear QRM Data</h4>
-							<p>All the Quay Risk Manager Data can be removed from the site
+							<p>All the Quay Risk Manager Data or Sample Data you may have installed can be removed from the site
 								(Caution!)</p>
 							<div style="text-align: right; margin-top: 15px"
 								ng-controller="sampleCtrl">
 								<button type="button" style="margin-left: 10px"
 									class="btn btn-w-m btn-sm btn-danger"
 									ng-click="removeAllData()">Remove All QRM Data</button>
+							    <button type="button" style="margin-left: 10px"
+									class="btn btn-w-m btn-sm btn-danger"
+									ng-click="removeAllSampleData()">Remove All Sample QRM Data</button>
 							</div>
 						</td>
 					</tr>
