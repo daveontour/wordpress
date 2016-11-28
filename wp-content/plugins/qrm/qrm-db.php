@@ -128,6 +128,16 @@ class WPQRM_Model_Review extends WPQRM_Model{
 		parent::replace($review);
 	}
 }
+
+class WPQRM_Model_RiskObjectives extends WPQRM_Model{
+
+	static function deleteRiskObjectives($reviewID){
+		global $wpdb;
+		$sql = sprintf( 'DELETE FROM %s WHERE riskID = %%s', $wpdb->prefix . 'qrm_riskobjectives', static::$primary_key );
+		return $wpdb->query( $wpdb->prepare( $sql, $riskID ) );
+	}
+}
+
 class WPQRM_Model_ReviewComments extends WPQRM_Model{
 
 	static function deleteReviewComments($reviewID){
@@ -157,6 +167,7 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 	
 	static function _fix($data){
 		
+				
 		try {
 		
 		$data->primcatID = $data->primcat->id;
@@ -182,6 +193,16 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		
 		$data->response->respPlanSummary = str_replace( "</p>", "<br/><br/>", $data->response->respPlanSummary );
 		$data->response->respPlanSummaryUpdate = str_replace( "</p>", "<br/><br/>", $data->response->respPlanSummaryUpdate );
+		
+		WPQRM_Model_RiskObjectives::deleteRiskObjectives($data->id);
+		foreach ($data->objectives as $key => $value){
+			if ($value){
+				$o = new stdObject();
+				$o->riskID = $data->id;
+				$o->objectiveID = $key;	
+				WPQRM_Model_RiskObjectives::replace($o);
+			}
+		}
 		
 		WPQRM_Model_Controls::deleteRiskControls($data->id);
 		foreach ($data->controls as $control){
@@ -272,6 +293,10 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		$data->tolString = $project->tolString;
 		$data->maxProb = $project->maxProb;
 		$data->maxImpact = $project->maxImpact;
+		
+// 		$str =  getMatImageString (200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact);
+// 		var_dump($str);
+		$data->matImage  = getMatImageString (200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact);
 		
 		// Get the preferred user display
 		
@@ -415,6 +440,41 @@ class WPQRM_Model_IncidentRisks extends WPQRM_Model{
 		parent::replace($data);
 	}
 }
+
+class WPQRM_Model_ProjectProject extends WPQRM_Model{
+	
+	//Maintains the table of all the risk projects and all their descendants
+	static function updateRelationships(){
+		global $wpdb;
+		// Clear existing relationships
+		$wpdb->query( 'DELETE FROM '. $wpdb->prefix . 'qrm_projectproject');
+		
+		$args = array (
+				'post_type' => 'riskproject',
+				'posts_per_page' => -1,
+				'post_status' =>'publish'
+		);
+
+		foreach (get_posts($args) as $p){
+			// Put the project as a parent of itself 
+			$data = new stdObject();
+			$data->parentID = $p->ID;
+			$data->projectID = $p->ID;
+			parent::replace($data);
+			foreach(QRM::get_project_children($p->ID) as $c){
+				$data = new stdObject();
+				$data->parentID = $p->ID;
+				$data->projectID = $c->ID;
+				parent::replace($data);
+			}
+		}
+	}
+
+	static function replace($data){
+		parent::replace($data);
+	}
+} 
+
 class WPQRM_Model_Incident extends WPQRM_Model{
 	static function _fix($data){
 
@@ -491,5 +551,97 @@ class WPQRM_Model_Project extends WPQRM_Model{
 	static function replace($data){
 		global $wpdb;
 		parent::replace(self::_fix($data));
+		WPQRM_Model_ProjectProject::updateRelationships();
 	}
+}
+
+function mat ($w, $h, $tolString, $maxProb, $maxImpact, $uProb = null, $uImpact = null, $tProb = null, $tImpact = null) {
+
+	$cw = $w / $maxImpact;
+	$ch = $h / $maxProb;
+	$im = imagecreatetruecolor($w, $h);
+	$black = imagecolorallocate($im, 0,0,0);
+	$white = imagecolorallocate($im, 255,255,255);
+	$blue = imagecolorallocate($im, 0, 0, 255);
+	$red = imagecolorallocate($im, 255, 0, 0);
+	$green = imagecolorallocate($im, 0, 255,  0);
+	$yellow = imagecolorallocate($im, 255, 255,  0);
+	$orange = imagecolorallocate($im, 255, 165,  0);
+
+	$x = 0;
+	// Draw the cells
+	for ($i = 0; $i < $maxProb; $i++){
+		for ($j = 0; $j < $maxImpact; $j++){
+			switch(substr($tolString,$x,1)){
+				case "1":
+					imagefilledrectangle($im, $j*$cw, $i*$ch, ($j+1)*$cw, ($i+1)*$ch, $blue);
+					break;
+				case "2":
+					imagefilledrectangle($im, $j*$cw, $i*$ch, ($j+1)*$cw, ($i+1)*$ch, $green);
+					break;
+				case "3":
+					imagefilledrectangle($im, $j*$cw, $i*$ch, ($j+1)*$cw, ($i+1)*$ch, $yellow);
+					break;
+				case "4":
+					imagefilledrectangle($im, $j*$cw, $i*$ch, ($j+1)*$cw, ($i+1)*$ch, $orange);
+					break;
+				case "5":
+					imagefilledrectangle($im, $j*$cw, $i*$ch, ($j+1)*$cw, ($i+1)*$ch, $red);
+					break;
+			}
+			$x = $x+1;
+		}
+	}
+
+	// Draw vertical lines
+	for ($j = 0; $j < $maxImpact; $j++){
+		imageline($im, $j*$cw, 0, $j*$cw, $h, $black);
+	}
+	// Draw horizontal lines
+	for ($j = 0; $j < $maxProb; $j++){
+		imageline($im, 0, $j*$ch, $w, $j*$ch, $black);
+	}
+	// Draw border lines
+	imageline($im, 0,$h-1,$w,$h-1, $black);
+	imageline($im, $w-1,0,$w-1,$h, $black);
+
+	if ($uProb != null) {
+		imagesetthickness ( $im , 3 );
+		$p = (floor($uProb)-1)*$ch;
+		$i = (floor($uImpact)-1)*$cw;
+		imagefilledellipse($im, $i+$cw/2, $p+$ch/2, $cw-6, $ch-6, $white);
+		imageellipse($im, $i+$cw/2, $p+$ch/2, $cw-8, $ch-8, $red);
+		imageline($im, $i+$cw*0.25,$p+$ch/4,$i+$cw*0.75,$p+$ch*0.75, $red);
+		imageline($im, $i+$cw*0.25,$p+$ch*0.75,$i+$cw*0.75,$p+$ch*0.25, $red);
+
+		$p = (floor($tProb)-1)*$ch;
+		$i = (floor($tImpact)-1)*$cw;
+		imagefilledellipse($im, $i+$cw/2, $p+$ch/2, $cw-6, $ch-6, $white);
+		imageellipse($im, $i+$cw/2, $p+$ch/2, $cw-8, $ch-8, $blue);
+		imageline($im, $i+$cw*0.25,$p+$ch/4,$i+$cw*0.75,$p+$ch*0.75, $blue);
+		imageline($im, $i+$cw*0.25,$p+$ch*0.75,$i+$cw*0.75,$p+$ch*0.25, $blue);
+	}
+
+	// Put it in the correct orientation
+	imageflip($im, IMG_FLIP_VERTICAL);
+
+	return $im;
+}
+
+function getMatImageString ($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact) {
+	$mat = mat($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact);
+	ob_start();
+	imagepng($mat);
+	imagedestroy($mat);
+	$stringdata = ob_get_contents(); // read from buffer
+	ob_end_clean(); // delete buffer
+	return $stringdata;
+}
+
+function outputMatImage ($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact) {
+	$mat = mat($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact);
+
+	header('Content-Type: image/png');
+	imagepng($mat);
+	imagedestroy($mat);
 }

@@ -2580,6 +2580,14 @@ final class QuayRiskManager {
 			PRIMARY KEY  (id) ) $charset_collate;";
 			dbDelta( $sql );
 				
+			$table_name = $wpdb->prefix . 'qrm_projectproject';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			parentID INT(11) NOT NULL,
+			projectID INT(11) NOT NULL,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
 			$table_name = $wpdb->prefix . 'qrm_projectmanagers';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -2622,7 +2630,6 @@ final class QuayRiskManager {
 			environment TINYINT NOT NULL DEFAULT 0,
 			reputation TINYINT NOT NULL DEFAULT 0,
 			safety TINYINT NOT NULL DEFAULT 0,
-			reputation TINYINT NOT NULL DEFAULT 0,
 			spec TINYINT NOT NULL DEFAULT 0,
 			evaluated TINYINT NOT NULL DEFAULT 0,
 			resolved TINYINT NOT NULL DEFAULT 0,
@@ -2679,6 +2686,14 @@ final class QuayRiskManager {
 			reviewID INT(11) NOT NULL,
 			riskID INT(11) NOT NULL,
 			comment TEXT,
+			PRIMARY KEY  (id) ) $charset_collate;";
+			dbDelta( $sql );
+			
+			$table_name = $wpdb->prefix . 'qrm_riskobjectives';
+			$sql = "CREATE TABLE $table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			objectiveID INT(11) NOT NULL,
+			riskID INT(11) NOT NULL,
 			PRIMARY KEY  (id) ) $charset_collate;";
 			dbDelta( $sql );
 			
