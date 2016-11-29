@@ -244,24 +244,20 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
         })[0];
 
         var url = QRMDataService.reportServerURL+report.urlParams+"&dbprefix="+QRMDataService.dbPrefix;
-        
-        if (report.showSingleRisk == true){
-        	url = url+"&riskID="+QRMDataService.riskID;
-        	url = url+"&updateRiskMatrix="+report.updateRiskMatrix
-        }
         url = url+"&projectID="+QRMDataService.project.id;
         url = url+"&userID="+QRMDataService.currentUser.ID;
         
+        if (report.showSingleRisk == true){
+        	url = url+"&riskID="+QRMDataService.riskID;
+        }
+        
         if (report.showIncident == true){
-        	url = url+"&updateRiskMatrix="+report.updateRiskMatrix
         	url = url+"&incidentID="+QRMDataService.incidentID;
         }
         if (report.showReview == true){
-        	url = url+"&updateRiskMatrix="+report.updateRiskMatrix
         	url = url+"&reviewID="+QRMDataService.reviewID;
         }
         if (report.showRiskExplorer == true){
-        	url = url+"&updateRiskMatrix="+report.updateRiskMatrix
         	url = url+"&prob="+QRM.expController.filterOptions.matrixImpact
         	url = url+"&impact="+QRM.expController.filterOptions.matrixImpact
         	url = url+"&manager="+QRM.expController.filterOptions.manager;
@@ -724,30 +720,30 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
         $state.go('qrm.risk');
     }
     
-    this.checkForReports = function(){
-        var url = QRMDataService.reportServerURL + "/getCompletedReports?callback=JSON_CALLBACK&&sessionToken="+QRMDataService.sessionToken;
-        $http.jsonp(url)
-            .success(function (data) {
-                if (data.length == 0) {
-                	QRM.mainController.notify3("All Completed Reports Have Been Downloaded", 2000);
-                } else {
-					QRM.mainController.notify2("Downloading Completed Report");
-                    for (var i = 0; i<data.length; i++){
-                    	var id = data[i];
-    					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
-    					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
-    					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
-    					jQuery('input[name="id"]').val(id);
-    					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
-    					jQuery("#getReportForm").submit();
-                    }
-                }
-            })
-            .error(function (data) {
-                ngNotify.dismiss();
-                ngNotify.set("Error Retrieving Available Reports", {type:"grimace", duration:1000, theme:"pure"});
-            });
-    }
+//    this.checkForReports = function(){
+//        var url = QRMDataService.reportServerURL + "/getCompletedReports?callback=JSON_CALLBACK&&sessionToken="+QRMDataService.sessionToken;
+//        $http.jsonp(url)
+//            .success(function (data) {
+//                if (data.length == 0) {
+//                	QRM.mainController.notify3("All Completed Reports Have Been Downloaded", 2000);
+//                } else {
+//					QRM.mainController.notify2("Downloading Completed Report");
+//                    for (var i = 0; i<data.length; i++){
+//                    	var id = data[i];
+//    					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
+//    					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
+//    					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
+//    					jQuery('input[name="id"]').val(id);
+//    					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
+//    					jQuery("#getReportForm").submit();
+//                    }
+//                }
+//            })
+//            .error(function (data) {
+//                ngNotify.dismiss();
+//                ngNotify.set("Error Retrieving Available Reports", {type:"grimace", duration:1000, theme:"pure"});
+//            });
+//    }
     
     this.newPushDownRisk = function () {
 

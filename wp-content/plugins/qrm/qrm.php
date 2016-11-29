@@ -3482,15 +3482,6 @@ final class QuayRiskManager {
 											</label></td>
 										</tr>
 
-											<th	style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Special Actions: </th>
-												</tr>
-										<tr>
-											<td colspan=3><label class="checkbox-inline" style="padding-left: 20px">
-													<input icheck type="checkbox" ng-model="selectedReport.updateRiskMatrix" style="margin-left: -20px">
-													Update individual risk tolerance matrices
-											</label></td>
-										</tr>
-
 										</table>
 										<table style="float: right;margin-top:10px">	
 										<tr>

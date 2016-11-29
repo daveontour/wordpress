@@ -447,6 +447,7 @@ class QRMSample {
 		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewriskcomments');
 		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewcomments');
 		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reports');
+		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectproject');
 		
 		QRM::initReportDataInternal();
 		return ($all)?"All Quay Risk Manager Data Removed":"Sample Quay Risk Manager Data Removed";
