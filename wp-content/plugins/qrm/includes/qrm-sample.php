@@ -1,7 +1,5 @@
 <?php
-
 require_once (plugin_dir_path ( __FILE__ ) . '../qrm-db.php');
-
 class QRMSample {
 	static $effectiveness = array (
 			"Ad Hoc",
@@ -16,11 +14,10 @@ class QRMSample {
 			"Significant",
 			"Major" 
 	);
-	
 	static $emptyRiskJSON = '{"title":"Title of Risk","riskProjectCode":" New Risk ","description":"Description","cause":"Cause","consequence":"Consequence","owner":-1,"manager":-1,"inherentProb":5.5,"inherentImpact":5.5,"treatedProb":1.5,"treatedImpact":1.5,"impRep":true,"impSafety":true,"impEnviron":true,"impCost":true,"impTime":true,"impSpec":true,"treatAvoid":true,"treatRetention":true,"treatTransfer":true,"treatMinimise":true,"treated":false,"summaryRisk":false,"useCalContingency":false,"useCalProb":false,"likeType":4,"likeAlpha":1,"likeT":365,"likePostType":4,"likePostAlpha":1,"likePostT":365,"estContingency":0,"start":"2015-08-30T11:41:38.391Z","end":"2015-09-30T11:41:38.391Z","primcat":0,"seccat":0,"mitigation":{"mitPlanSummary":"Summary of the Mitigation Plan","mitPlanSummaryUpdate":"Update to the Summary of the Mitigation Plan","mitPlan":[]},"response":{"respPlanSummary":"Summary of the Response Plan","respPlanSummaryUpdate":"Update to the Summary of the Mitigation Plan","respPlan":[]},"controls":[],"objectives":{},"x":153,"y":16.999999999999996,"x1":17,"y1":153,"treatedTolerance":"1","inherentTolerance":"5","currentProb":5.5,"currentImpact":5.5,"currentTolerance":"5","inherentAbsProb":90,"treatedAbsProb":10,"comments":[],"projectID":3046,"attachments":[]}';
 	static function getSampleProject() {
-		$m = new stdClass();
-	
+		$m = new stdClass ();
+		
 		$m->maxImpact = 5;
 		$m->maxProb = 5;
 		$m->tolString = "1123312234223443345534455555555555555555555555555555555555555555";
@@ -32,7 +29,7 @@ class QRMSample {
 		$m->probVal6 = 100;
 		$m->probVal7 = 100;
 		$m->probVal8 = 100;
-	
+		
 		$p = new stdObject ();
 		$p->id = - 1;
 		$p->title = "Project Title";
@@ -48,49 +45,49 @@ class QRMSample {
 		$p->categories = array ();
 		$p->objectives = array ();
 		$p->parent_id = 0;
-	
+		
 		return $p;
-	}	
+	}
 	static function probFromMatrix($qprob, $mat) {
 		$lowerLimit = 0.0;
 		$upperLimit = 0.0;
-	
-		switch (intval(floor($qprob))) {
-			case 1:
+		
+		switch (intval ( floor ( $qprob ) )) {
+			case 1 :
 				$lowerlimit = 0.0;
 				$upperlimit = $mat->probVal1;
 				break;
-			case 2:
+			case 2 :
 				$lowerlimit = $mat->probVal1;
 				$upperlimit = $mat->probVal2;
 				break;
-			case 3:
+			case 3 :
 				$lowerlimit = $mat->probVal2;
 				$upperlimit = $mat->probVal3;
 				break;
-			case 4:
+			case 4 :
 				$lowerlimit = $mat->probVal3;
 				$upperlimit = $mat->probVal4;
 				break;
-			case 5:
+			case 5 :
 				$lowerlimit = $mat->probVal4;
 				$upperlimit = $mat->probVal5;
 				break;
-			case 6:
+			case 6 :
 				$lowerlimit = $mat->probVal5;
 				$upperlimit = $mat->probVal6;
 				break;
-			case 7:
+			case 7 :
 				$lowerlimit = $mat->probVal6;
 				$upperlimit = $mat->probVal7;
 				break;
-			case 8:
+			case 8 :
 				$lowerlimit = $mat->probVal7;
 				$upperlimit = $mat->probVal8;
 				break;
 		}
-	
-		$prob = $lowerlimit + ($upperlimit - $lowerlimit) * ($qprob - floor($qprob));
+		
+		$prob = $lowerlimit + ($upperlimit - $lowerlimit) * ($qprob - floor ( $qprob ));
 		return $prob;
 	}
 	static function installImport($filename) {
@@ -105,7 +102,6 @@ class QRMSample {
 			return "Sample Data Installed";
 		}
 	}
-	
 	static function processImport($import, $sample) {
 		$projIDMap = array ();
 		$objIDMap = array ();
@@ -130,9 +126,15 @@ class QRMSample {
 				$project->title = $project->title . "**";
 			}
 			$project->riskProjectManager = $current_user->ID;
-			$project->ownersID = array ($current_user->ID );
-			$project->mangersID = array ($current_user->ID);
-			$project->usersID = array ($current_user->ID);
+			$project->ownersID = array (
+					$current_user->ID 
+			);
+			$project->mangersID = array (
+					$current_user->ID 
+			);
+			$project->usersID = array (
+					$current_user->ID 
+			);
 			
 			$postID = wp_insert_post ( array (
 					'post_content' => $project->description,
@@ -184,7 +186,8 @@ class QRMSample {
 			update_post_meta ( $postID, "projectTitle", $project->title );
 			update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 			update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
-			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			if ($sample == true)
+				update_post_meta ( $postID, "sampleqrmdata", "sample" );
 		}
 		
 		foreach ( $projIDMap as $oldValue => $newValue ) {
@@ -248,7 +251,8 @@ class QRMSample {
 			
 			// // The Bulk of the data is held in the post's meta data
 			update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
-			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			if ($sample == true)
+				update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			update_post_meta ( $postID, "audit", json_encode ( $risk->audit ) );
 			update_post_meta ( $postID, "projectID", $risk->projectID );
 			update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
@@ -297,7 +301,8 @@ class QRMSample {
 			$reviewIDMap [$review->id] = $postID;
 			$review->id = $postID;
 			$review->reviewCode = "REVIEW-" . $review->id;
-			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			if ($sample == true)
+				update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			
 			wp_update_post ( array (
 					'ID' => $review->id,
@@ -351,7 +356,8 @@ class QRMSample {
 			$incidentIDMap [$incident->id] = $postID;
 			$incident->id = $postID;
 			$incident->incidentCode = "INCIDENT-" . $incident->id;
-			if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			if ($sample == true)
+				update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			
 			wp_update_post ( array (
 					'ID' => $incident->id,
@@ -385,107 +391,109 @@ class QRMSample {
 		return true;
 	}
 	static function removeSample($sampleOnly) {
-		
 		$args = array (
 				'posts_per_page' => - 1,
 				'post_type' => 'riskproject' 
 		);
 		
-		
 		if ($sampleOnly) {
 			$args ['meta_key'] = "sampleqrmdata";
 			$args ['meta_value'] = "sample";
-		} 
+		}
 		
-// 		$args ['post_type'] = "risk";
-// 		var_dump($sampleOnly);
-// 		var_dump($args);
-// 		foreach (get_posts ( $args ) as $post){
-// 			var_dump(get_post_meta ( $post->ID, "sampleqrmdata", true ));
-// 			var_dump($post->ID);
-// 		}
+		// $args ['post_type'] = "risk";
+		// var_dump($sampleOnly);
+		// var_dump($args);
+		// foreach (get_posts ( $args ) as $post){
+		// var_dump(get_post_meta ( $post->ID, "sampleqrmdata", true ));
+		// var_dump($post->ID);
+		// }
 		
-// 		return;
+		// return;
 		
 		$args ['post_type'] = "risk";
 		foreach ( get_posts ( $args ) as $post ) {
-			if((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
+			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
+				wp_delete_post ( $post->ID, true );
 		}
 		
 		$args ['post_type'] = "review";
 		foreach ( get_posts ( $args ) as $post ) {
-			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample"&& $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
+			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
+				wp_delete_post ( $post->ID, true );
 		}
 		$args ['post_type'] = "incident";
 		foreach ( get_posts ( $args ) as $post ) {
-			if((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
+			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
+				wp_delete_post ( $post->ID, true );
 		}
 		$args ['post_type'] = "riskproject";
 		foreach ( get_posts ( $args ) as $post ) {
-			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
+			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
+				wp_delete_post ( $post->ID, true );
 		}
 		$args ['post_type'] = "reports";
 		foreach ( get_posts ( $args ) as $post ) {
-			if((get_post_meta ( $post->ID, "sampleqrmdata", true )== "sample" && $sampleOnly == true) || $sampleOnly == false) wp_delete_post ( $post->ID, true );
-		}		
+			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
+				wp_delete_post ( $post->ID, true );
+		}
 		global $wpdb;
 		
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_risk');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_controls');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_mitplan');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_respplan');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_project');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectowners');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectmanagers');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectusers');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_objective');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_incident');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_incidentrisks');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_category');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_review');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewrisks');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewriskcomments');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reviewcomments');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_reports');
-		$wpdb->query("DELETE FROM ".$wpdb->prefix . 'qrm_projectproject');
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_risk' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_controls' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_mitplan' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_respplan' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_project' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectowners' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectmanagers' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectusers' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_objective' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_incident' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_incidentrisks' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_category' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_review' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewrisks' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewriskcomments' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewcomments' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reports' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectproject' );
 		
-		QRM::initReportDataInternal();
-		return ($all)?"All Quay Risk Manager Data Removed":"Sample Quay Risk Manager Data Removed";
+		QRM::initReportDataInternal ();
+		return ($all) ? "All Quay Risk Manager Data Removed" : "Sample Quay Risk Manager Data Removed";
 	}
-	static function make_seed(){
-		list($usec, $sec) = explode(' ', microtime());
-		return (float) $sec + ((float) $usec * 100000);
+	static function make_seed() {
+		list ( $usec, $sec ) = explode ( ' ', microtime () );
+		return ( float ) $sec + (( float ) $usec * 100000);
 	}
-
 	static function createDummyRiskEntryMultiple($topParent = null, $min, $max, $sample = false) {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		global $user_identity, $user_email, $user_ID, $current_user, $user_login;
 		get_currentuserinfo ();
-	
+		
 		if ($user_login == "guest") {
 			wp_send_json ( QRM::getGuestObject () );
 			return;
 		}
-	
+		
 		$args = array (
 				'post_type' => 'riskproject',
-				'posts_per_page' => - 1
+				'posts_per_page' => - 1 
 		);
 		global $post;
 		$the_query = new WP_Query ( $args );
 		$projects = array ();
 		
-		srand(QRMSample::make_seed());
-	
-		$risk = json_decode ( QRMSample::$emptyRiskJSON );
+		srand ( QRMSample::make_seed () );
+		
 		while ( $the_query->have_posts () ) :
 			$the_query->the_post ();
 			$project = json_decode ( get_post_meta ( $post->ID, "projectdata", true ) );
-			$risk->projectID = $post->ID;
 			$idx = rand ( $min, $max );
 			for($i = 0; $i < $idx; $i ++) {
-				QRMSample::createDummyRiskEntryCommon ($risk, $project, $topParent, $sample );
+				$risk = json_decode ( QRMSample::$emptyRiskJSON );
+				$risk->projectID = $post->ID;
+				QRMSample::createDummyRiskEntryCommon ( $risk, $project, $topParent, $sample );
 			}
 		endwhile
 		;
@@ -503,14 +511,16 @@ class QRMSample {
 			return;
 		}
 		
-		$risk = json_decode ( file_get_contents ( "php://input" ) );	
+		$risk = json_decode ( file_get_contents ( "php://input" ) );
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 		
-		return QRMSample::createDummyRiskEntryCommon($risk, $project);
-	
+		return QRMSample::createDummyRiskEntryCommon ( $risk, $project );
 	}
 	static function createDummyRiskEntryCommon($risk, $project, $topParent = null, $sample = false) {
-		srand(QRMSample::make_seed());
+
+		
+	
+		srand ( QRMSample::make_seed () );
 		$lorem = new LoremIpsumGenerator ();
 		$now = mktime ();
 		$month = 60 * 60 * 24 * 30;
@@ -518,17 +528,16 @@ class QRMSample {
 		$past = (rand ( 0, 1 ) == 1) ? 1 : - 1;
 		$start = $now + $past * rand ( 0, 300 ) * $day;
 		
-		
 		$risk->owner = $project->ownersID [array_rand ( $project->ownersID, 1 )];
-		$risk->manager = $project->managersID [array_rand ( $project->managersID, 1 )];	
+		$risk->manager = $project->managersID [array_rand ( $project->managersID, 1 )];
 		
-		if ($risk->owner == null){
+		if ($risk->owner == null) {
 			$risk->owner = $project->projectRiskManager;
 		}
-		if ($risk->manager == null){
+		if ($risk->manager == null) {
 			$risk->manager = $project->projectRiskManager;
 		}
-		$risk->title = "**".$lorem->getContent ( rand ( 6, 15 ), "plain", false );
+		$risk->title = "**" . $lorem->getContent ( rand ( 6, 15 ), "plain", false );
 		$risk->description = $lorem->getContent ( rand ( 150, 300 ), "html", false );
 		$risk->cause = $lorem->getContent ( rand ( 50, 300 ), "html", false );
 		$risk->consequence = $lorem->getContent ( rand ( 50, 300 ), "html", false );
@@ -548,6 +557,7 @@ class QRMSample {
 		$risk->estContingency = rand ( 1000, 5000 );
 		$risk->start = date ( "Y-m-d", $start );
 		$risk->end = date ( "Y-m-d", $start + rand ( 2, 24 ) * $month );
+		
 		
 		$risk->mitigation->mitPlan = array ();
 		$s = rand ( 1, 6 );
@@ -580,8 +590,8 @@ class QRMSample {
 		$risk->inherentImpact = $i + rand ( 5, 95 ) / 100;
 		$risk->treatedProb = rand ( 1, $p - 1 ) + rand ( 5, 95 ) / 100;
 		$risk->treatedImpact = rand ( 1, $i - 1 ) + rand ( 5, 95 ) / 100;
- 		$risk->inherentAbsProb = QRMSample::probFromMatrix($risk->inherentProb, $project->matrix);
- 		$risk->treatedAbsProb = QRMSample::probFromMatrix($risk->treatedProb, $project->matrix);
+		$risk->inherentAbsProb = QRMSample::probFromMatrix ( $risk->inherentProb, $project->matrix );
+		$risk->treatedAbsProb = QRMSample::probFromMatrix ( $risk->treatedProb, $project->matrix );
 		
 		$index = (floor ( $risk->treatedProb - 1 )) * $project->matrix->maxImpact + floor ( $risk->treatedImpact - 1 );
 		$index = min ( $index, strlen ( $project->matrix->tolString ) - 1 );
@@ -603,8 +613,8 @@ class QRMSample {
 			$risk->currentTolerance = $risk->inherentTolerance;
 		}
 		
-		if ($topParent != null){
-			$project->categories = array_merge($project->categories, $topParent->categories);
+		if ($topParent != null) {
+			$project->categories = array_merge ( $project->categories, $topParent->categories );
 		}
 		$primCats = array_filter ( $project->categories, function ($cat) {
 			return $cat->primCat;
@@ -613,8 +623,10 @@ class QRMSample {
 		if (count ( $primCats ) > 0) {
 			$risk->primcat = $primCats [array_rand ( $primCats, 1 )];
 			$secCats = array_filter ( $project->categories, function ($cat) use ($risk) {
-				if ($cat->primCat) return false;
-				if ($cat->parentID == $risk->primcat->id) return true;
+				if ($cat->primCat)
+					return false;
+				if ($cat->parentID == $risk->primcat->id)
+					return true;
 				return false;
 			} );
 			if (count ( $secCats ) > 0) {
@@ -655,7 +667,6 @@ class QRMSample {
 		) );
 		
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk, JSON_HEX_QUOT ) );
-		
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
@@ -666,10 +677,10 @@ class QRMSample {
 		update_post_meta ( $postID, "ownerID", $risk->owner );
 		update_post_meta ( $postID, "managerID", $risk->manager );
 		update_post_meta ( $postID, "project", $project->post_title );
-		if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
-		
-		
-		// Update the count for riskd for the impacted project
+		if ($sample == true)
+			update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			
+			// Update the count for riskd for the impacted project
 		$args = array (
 				'post_type' => 'risk',
 				'posts_per_page' => - 1,
@@ -680,112 +691,109 @@ class QRMSample {
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		
-		WPQRM_Model_Risk::replace($risk);
+		WPQRM_Model_Risk::replace ( $risk );
 		
 		return $risk->riskProjectCode;
 	}
 	/**
+	 *
 	 * @return string
 	 */
-	static function createSampleProjects(){
-	
+	static function createSampleProjects() {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		get_currentuserinfo ();
 		
-		
 		$minmax = json_decode ( file_get_contents ( "php://input" ) );
-	
-		$user_query = new WP_User_Query ( array ('fields' => 'all', ) );
+		
+		$user_query = new WP_User_Query ( array (
+				'fields' => 'all' 
+		) );
 		$userSummary = array ();
 		foreach ( $user_query->results as $user ) {
-			if ($user->caps["risk_admin"] == true || $user->caps["risk_user"] == true){
+			if ($user->caps ["risk_admin"] == true || $user->caps ["risk_user"] == true) {
 				array_push ( $userSummary, $user->ID );
 			}
 		}
-	
-		$cat = array();
-		array_push($cat, json_decode('{"title": "Vendor", "id": -1, "primCat": true, "parentID": 0, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Performance", "id": -2, "primCat": false, "parentID": -1, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Value", "id": -3, "primCat": false, "parentID": -1, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Billing", "id": -4, "primCat": false, "parentID": -1, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Delivery", "id": -5, "primCat": false, "parentID": -1, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Regulatory", "id": -6, "primCat": true, "parentID": 0, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Federal", "id": -7, "primCat": false, "parentID": -6, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "State", "id": -8, "primCat": false, "parentID": -6, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "ASIC", "id": -9, "primCat": false, "parentID": -6, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Environmental", "id": -10, "primCat": false, "parentID": -6, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Customer", "id": -11, "primCat": true, "parentID": 0, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Satisfaction", "id": -12, "primCat": false, "parentID": -11, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Relationship", "id": -13, "primCat": false, "parentID": -11, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Billing", "id": -14, "primCat": false, "parentID": -11, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Creit", "id": -15, "primCat": false, "parentID": -11, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Employee", "id": -16, "primCat": true, "parentID": 0, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Satisfaction", "id": -17, "primCat": false, "parentID": -16, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Relationship", "id": -18, "primCat": false, "parentID": -16, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Award", "id": -19, "primCat": false, "parentID": -16, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Productivity", "id": -20, "primCat": false, "parentID": -16, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Financial", "id": -21, "primCat": true, "parentID": 0, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Cashflow", "id": -22, "primCat": false, "parentID": -21, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Treasury", "id": -23, "primCat": false, "parentID": -21, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Transperancy", "id": -24, "primCat": false, "parentID": -21, "projectID": -1}'));
-		array_push($cat, json_decode('{"title": "Viability", "id": -25, "primCat": false, "parentID": -21, "projectID": -1}'));
-	
 		
-		$p1 = QRMSample::singleProject("*Quay Systems", "QS", $userSummary, 0, $cat, true);		
- 		QRMSample::singleProject("*Board of Directors", "BOD", $userSummary, $p1->id, null, true);	
-		QRMSample::singleProject("*Executive", "EXECE", $userSummary, $p1->id, null, true);
-		$it = QRMSample::singleProject("*Information Technology", "IT", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Information Technology Security", "ITSEC", $userSummary, $it->id, null, true);
-		$itops = QRMSample::singleProject("*Information Technology Operations", "ITOPS", $userSummary, $it->id, null, true);
-		QRMSample::singleProject("*Information Technology End User", "ITEUC", $userSummary, $itops->id, null, true);
-		QRMSample::singleProject("*Information Technology Data Center", "ITDC", $userSummary, $itops->id, null, true);
-		QRMSample::singleProject("*Information Technology Network", "ITNW", $userSummary, $itops->id, null, true);
+		$cat = array ();
+		array_push ( $cat, json_decode ( '{"title": "Vendor", "id": -1, "primCat": true, "parentID": 0, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Performance", "id": -2, "primCat": false, "parentID": -1, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Value", "id": -3, "primCat": false, "parentID": -1, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Billing", "id": -4, "primCat": false, "parentID": -1, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Delivery", "id": -5, "primCat": false, "parentID": -1, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Regulatory", "id": -6, "primCat": true, "parentID": 0, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Federal", "id": -7, "primCat": false, "parentID": -6, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "State", "id": -8, "primCat": false, "parentID": -6, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "ASIC", "id": -9, "primCat": false, "parentID": -6, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Environmental", "id": -10, "primCat": false, "parentID": -6, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Customer", "id": -11, "primCat": true, "parentID": 0, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Satisfaction", "id": -12, "primCat": false, "parentID": -11, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Relationship", "id": -13, "primCat": false, "parentID": -11, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Billing", "id": -14, "primCat": false, "parentID": -11, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Creit", "id": -15, "primCat": false, "parentID": -11, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Employee", "id": -16, "primCat": true, "parentID": 0, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Satisfaction", "id": -17, "primCat": false, "parentID": -16, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Relationship", "id": -18, "primCat": false, "parentID": -16, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Award", "id": -19, "primCat": false, "parentID": -16, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Productivity", "id": -20, "primCat": false, "parentID": -16, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Financial", "id": -21, "primCat": true, "parentID": 0, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Cashflow", "id": -22, "primCat": false, "parentID": -21, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Treasury", "id": -23, "primCat": false, "parentID": -21, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Transperancy", "id": -24, "primCat": false, "parentID": -21, "projectID": -1}' ) );
+		array_push ( $cat, json_decode ( '{"title": "Viability", "id": -25, "primCat": false, "parentID": -21, "projectID": -1}' ) );
 		
-		QRMSample::singleProject("*Sales", "SALE", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Marketing", "MARK", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Business Services", "BIZ", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Human Resources", "HR", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Manufacturing", "MAN", $userSummary, $p1->id, null, true);
-		QRMSample::singleProject("*Customer Support", "CUS", $userSummary, $p1->id, null, true);
+		$p1 = QRMSample::singleProject ( "*Quay Systems", "QS", $userSummary, 0, $cat, true );
+		QRMSample::singleProject ( "*Board of Directors", "BOD", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Executive", "EXECE", $userSummary, $p1->id, null, true );
+		$it = QRMSample::singleProject ( "*Information Technology", "IT", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Information Technology Security", "ITSEC", $userSummary, $it->id, null, true );
+		$itops = QRMSample::singleProject ( "*Information Technology Operations", "ITOPS", $userSummary, $it->id, null, true );
+		QRMSample::singleProject ( "*Information Technology End User", "ITEUC", $userSummary, $itops->id, null, true );
+		QRMSample::singleProject ( "*Information Technology Data Center", "ITDC", $userSummary, $itops->id, null, true );
+		QRMSample::singleProject ( "*Information Technology Network", "ITNW", $userSummary, $itops->id, null, true );
 		
-		QRMSample::createDummyRiskEntryMultiple($p1,$minmax[0],$minmax[1], true);
-			
+		QRMSample::singleProject ( "*Sales", "SALE", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Marketing", "MARK", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Business Services", "BIZ", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Human Resources", "HR", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Manufacturing", "MAN", $userSummary, $p1->id, null, true );
+		QRMSample::singleProject ( "*Customer Support", "CUS", $userSummary, $p1->id, null, true );
+		
+		QRMSample::createDummyRiskEntryMultiple ( $p1, $minmax [0], $minmax [1], true );
+		
 		return "Sample Data Installed";
 	}
-	
-	static function singleProject($title, $id, $users, $parent = 0, $cat = null, $sample = false){
-	
+	static function singleProject($title, $id, $users, $parent = 0, $cat = null, $sample = false) {
 		global $user_identity, $user_email, $user_ID, $current_user;
 		
-		$p = QRMSample::getSampleProject();
+		$p = QRMSample::getSampleProject ();
 		$p->parent_id = $parent;
 		$p->title = $title;
 		$p->projectCode = $id;
 		$p->projectRiskManager = $current_user->ID;
 		$p->ownersID = $users;
 		$p->managersID = $users;
-		if ($cat != null){
+		if ($cat != null) {
 			$p->categories = $cat;
 		}
-		$p = QRMSample::saveSampleProject($p, $sample);
-		WPQRM_Model_Project::replace($p);	
+		$p = QRMSample::saveSampleProject ( $p, $sample );
+		WPQRM_Model_Project::replace ( $p );
 		return $p;
 	}
-	static function saveSampleProject($project, $sample = false){
-	
+	static function saveSampleProject($project, $sample = false) {
 		$postID = wp_insert_post ( array (
 				'post_content' => $project->description,
 				'post_title' => $project->title,
 				'post_type' => 'riskproject',
 				'post_status' => 'publish',
 				'post_author' => $user_ID,
-				'post_parent' => $project->parent_id
+				'post_parent' => $project->parent_id 
 		) );
 		$project->id = $postID;
-	
+		
 		// Fix up any category or objective IDs (negatives ID are used to handle new IDs
 		$objID = intval ( get_option ( "qrm_objective_id" ) );
-	
+		
 		foreach ( $project->objectives as &$obj ) {
 			$obj->projectID = $project->id;
 			if ($obj->id < 0) {
@@ -799,11 +807,11 @@ class QRMSample {
 			}
 		}
 		update_option ( "qrm_objective_id", $objID );
-	
+		
 		$catID = intval ( get_option ( "qrm_category_id" ) );
-	
+		
 		foreach ( $project->categories as &$cat ) {
-				
+			
 			$cat->projectID = $project->id;
 			if ($cat->id < 0) {
 				$origID = $cat->id;
@@ -816,34 +824,34 @@ class QRMSample {
 			}
 		}
 		update_option ( "qrm_category_id", $catID );
-	
+		
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "projectdata", json_encode ( $project ) );
-	
+		
 		// Fill in all the other meta data
 		update_post_meta ( $postID, "projectRiskManager", get_user_by ( "id", $project->projectRiskManager )->display_name );
 		update_post_meta ( $postID, "projectCode", $project->projectCode );
 		update_post_meta ( $postID, "projectTitle", $project->title );
 		update_post_meta ( $postID, "maxProb", $project->matrix->maxProb );
 		update_post_meta ( $postID, "maxImpactb", $project->matrix->maxImpact );
-		if ($sample == true )update_post_meta ( $postID, "sampleqrmdata", "sample" );
-		
-		// Update number of risk
-		// Update the count for riskd for the impacted project
+		if ($sample == true)
+			update_post_meta ( $postID, "sampleqrmdata", "sample" );
+			
+			// Update number of risk
+			// Update the count for riskd for the impacted project
 		$args = array (
 				'post_type' => 'risk',
 				'posts_per_page' => - 1,
 				'meta_key' => 'projectID',
-				'meta_value' => $postID
+				'meta_value' => $postID 
 		);
-	
+		
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $postID, "numberofrisks", $the_query->found_posts );
-	
+		
 		add_post_meta ( $postID, "riskIndex", 10, true );
-	
+		
 		return $project;
-	
 	}
 }
 class LoremIpsumGenerator {
@@ -1246,10 +1254,10 @@ class LoremIpsumGenerator {
 	 * http://us.php.net/manual/en/function.rand.php#53784
 	 */
 	private function gauss() { // N(0,1)
-	  // returns random number with normal distribution:
-	  // mean=0
-	  // std dev=1
-	  
+	                           // returns random number with normal distribution:
+	                           // mean=0
+	                           // std dev=1
+	                           
 		// auxilary vars
 		$x = $this->random_0_1 ();
 		$y = $this->random_0_1 ();

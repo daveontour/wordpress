@@ -1294,6 +1294,9 @@ final class QRM {
 		
 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
 			$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
+// 			if ( $project->ownersID == null ||  $project->ownersID == null ||  $project->usersID == null ) {
+// 				return;
+// 			}
 			if (! ($current_user->ID == $project->projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
 				continue;
 			}
@@ -3291,13 +3294,13 @@ final class QuayRiskManager {
 										<td>Minimum</td>
 										<td><input style="width: 80px; margin-left: 15px"
 											class="form-control" type="number" name="input"
-											ng-model="min" min="5" max="10"></td>
+											ng-model="min" min="1" max="10"></td>
 									</tr>
 									<tr>
 										<td>Maximum</td>
 										<td><input style="width: 80px; margin-left: 15px"
 											class="form-control" type="number" name="input"
-											ng-model="max" min="10" max="20"></td>
+											ng-model="max" min="1" max="20"></td>
 										<td style="padding-left: 30px"><button type="button"
 												class="btn btn-w-m btn-sm btn-primary"
 												ng-click="installSampleProjects()">Install Sample Data</button></td>
