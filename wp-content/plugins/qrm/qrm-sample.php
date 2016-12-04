@@ -1,5 +1,5 @@
 <?php
-require_once (plugin_dir_path ( __FILE__ ) . '../qrm-db.php');
+require_once 'qrm-db.php';
 class QRMSample {
 	static $effectiveness = array (
 			"Ad Hoc",
@@ -392,8 +392,7 @@ class QRMSample {
 	}
 	static function removeSample($sampleOnly) {
 		$args = array (
-				'posts_per_page' => - 1,
-				'post_type' => 'riskproject' 
+				'posts_per_page' => - 1 
 		);
 		
 		if ($sampleOnly) {
@@ -401,22 +400,11 @@ class QRMSample {
 			$args ['meta_value'] = "sample";
 		}
 		
-		// $args ['post_type'] = "risk";
-		// var_dump($sampleOnly);
-		// var_dump($args);
-		// foreach (get_posts ( $args ) as $post){
-		// var_dump(get_post_meta ( $post->ID, "sampleqrmdata", true ));
-		// var_dump($post->ID);
-		// }
-		
-		// return;
-		
 		$args ['post_type'] = "risk";
 		foreach ( get_posts ( $args ) as $post ) {
 			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
 				wp_delete_post ( $post->ID, true );
 		}
-		
 		$args ['post_type'] = "review";
 		foreach ( get_posts ( $args ) as $post ) {
 			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
@@ -457,6 +445,7 @@ class QRMSample {
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewcomments' );
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reports' );
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectproject' );
+		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_audit' );
 		
 		QRM::initReportDataInternal ();
 		return ($all) ? "All Quay Risk Manager Data Removed" : "Sample Quay Risk Manager Data Removed";
@@ -517,9 +506,6 @@ class QRMSample {
 		return QRMSample::createDummyRiskEntryCommon ( $risk, $project );
 	}
 	static function createDummyRiskEntryCommon($risk, $project, $topParent = null, $sample = false) {
-
-		
-	
 		srand ( QRMSample::make_seed () );
 		$lorem = new LoremIpsumGenerator ();
 		$now = mktime ();
@@ -557,7 +543,6 @@ class QRMSample {
 		$risk->estContingency = rand ( 1000, 5000 );
 		$risk->start = date ( "Y-m-d", $start );
 		$risk->end = date ( "Y-m-d", $start + rand ( 2, 24 ) * $month );
-		
 		
 		$risk->mitigation->mitPlan = array ();
 		$s = rand ( 1, 6 );
@@ -691,7 +676,25 @@ class QRMSample {
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		
+		
+		$auditObjEval = new stdObject ();
+		$auditObjEval->auditComment = "Risk Entered";
+		$auditObjEval->auditDate = date ( "M j, Y" );
+		$auditObjEval->auditPerson = $current_user->ID;
+		$auditObjEval->auditType = 0;
+		
+		
+		$auditObjIdent = new stdObject ();
+		$auditObjIdent->auditComment = "Risk Entered";
+		$auditObjIdent->auditDate = date ( "M j, Y" );
+		$auditObjIdent->auditPerson = $current_user->ID;
+		$auditObjIdent->auditType = 3;
+		
+		
+		
 		WPQRM_Model_Risk::replace ( $risk );
+		WPQRM_Model_Audit::replace($auditObjEval);
+		WPQRM_Model_Audit::replace($auditObjIdent);
 		
 		return $risk->riskProjectCode;
 	}

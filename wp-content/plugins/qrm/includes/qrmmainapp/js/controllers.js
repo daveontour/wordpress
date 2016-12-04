@@ -1391,7 +1391,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
         vm.risk.comments = [];
         vm.risk.projectID = QRMDataService.project.id;
         vm.risk.attachments = [];
-        remoteService.saveRisk(vm.risk)
+         remoteService.saveRisk(vm.risk)
             .then(function (response) {
                 if (response.data.error) {
                     $scope.savingrisk = false;
@@ -1414,13 +1414,14 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
         QRM.mainController.titleBar = "Risk - " + vm.risk.riskProjectCode;
         QRM.mainController.titleBarSM = "Risk - " + vm.risk.riskProjectCode;
         // secondary risk category
-        try {
-            vm.secCatArray = jQuery.grep(vm.project.categories, function (e) {
-                return e.name == vm.risk.primcat.name
-            })[0].sec;
-        } catch (e) {
-            console.log(e.message);
-        }
+        
+//         try {
+//            vm.secCatArray = jQuery.grep(vm.project.categories, function (e) {
+//                return e.name == vm.risk.primcat.title
+//            })[0].sec;
+//        } catch (e) {
+//            console.log(e.message);
+//        }
 
         //Update the Matrix
         try {
@@ -3715,7 +3716,6 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
 
 function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngDialog) {
     var rev = this;
-    //    this.siteUsers = QRMDataService.siteUsers;
     this.siteUsers = [];
     this.sortedParents = QRMDataService.sortedParents;
     if (this.sortedParents == null) {
@@ -3945,7 +3945,7 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
                 riskComment[0].comment = riskComment[0].comment + "<p>" + rev.commonComment + "</p>";
             } else {
                 var newRiskComment = {
-                    "riskID": risk.id,
+                    "riskID": riskID,
                     "comment": "<p>" + rev.commonComment + "</p>"
                 }
                 rev.review.riskComments.push(newRiskComment);

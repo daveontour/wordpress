@@ -131,7 +131,7 @@ class WPQRM_Model_Review extends WPQRM_Model{
 
 class WPQRM_Model_RiskObjectives extends WPQRM_Model{
 
-	static function deleteRiskObjectives($reviewID){
+	static function deleteRiskObjectives($riskID){
 		global $wpdb;
 		$sql = sprintf( 'DELETE FROM %s WHERE riskID = %%s', $wpdb->prefix . 'qrm_riskobjectives', static::$primary_key );
 		return $wpdb->query( $wpdb->prepare( $sql, $riskID ) );
@@ -250,41 +250,58 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		$data->respPlanSummary = $data->response->respPlanSummary;
 		$data->respPlanSummaryUpdate = $data->response->respPlanSummaryUpdate;
 		
-		$data->auditIdentDate = $data->auditIdent->auditDate;
-		$data->auditIdentComment = $data->auditIdent->auditComment;
-		$data->auditIdentPersonID = $data->auditIdent->auditPerson;
+		if (isset($data->auditIdent )){
+			$data->auditIdentDate = $data->auditIdent->auditDate;
+			$data->auditIdentComment = $data->auditIdent->auditComment;
+			$data->auditIdentPersonID = $data->auditIdent->auditPerson;
+		}
 		
-		$data->auditIdentRevDate = $data->auditIdentRev->auditDate;
-		$data->auditIdentRevComment = $data->auditIdentRev->auditComment;
-		$data->auditIdentRevPersonID = $data->auditIdentRev->auditPerson;
+		if (isset($data->auditIdentRev)){
+			$data->auditIdentRevDate = $data->auditIdentRev->auditDate;
+			$data->auditIdentRevComment = $data->auditIdentRev->auditComment;
+			$data->auditIdentRevPersonID = $data->auditIdentRev->auditPerson;
+		}
 		
-		$data->auditIdentAppDate = $data->auditIdentApp->auditDate;
-		$data->auditIdentAppComment = $data->auditIdentApp->auditComment;
-		$data->auditIdentAppPersonID = $data->auditIdentApp->auditPerson;
+		if (isset($data->auditIdentApp )){
+			$data->auditIdentAppDate = $data->auditIdentApp->auditDate;
+			$data->auditIdentAppComment = $data->auditIdentApp->auditComment;
+			$data->auditIdentAppPersonID = $data->auditIdentApp->auditPerson;
+		}
 		
-		$data->auditEvalDate = $data->auditEval->auditDate;
-		$data->auditEvalComment = $data->auditEval->auditComment;
-		$data->auditEvalPersonID = $data->auditEval->auditPerson;
+		if (isset($data->auditEval)){
+			$data->auditEvalDate = $data->auditEval->auditDate;
+			$data->auditEvalComment = $data->auditEval->auditComment;
+			$data->auditEvalPersonID = $data->auditEval->auditPerson;
+		}		
+		if (isset($data->auditEvalRev )){
+			$data->auditEvalRevDate = $data->auditEvalRev->auditDate;
+			$data->auditEvalRevComment = $data->auditEvalRev->auditComment;
+			$data->auditEvalRevPersonID = $data->auditEvalRev->auditPerson;
+		}
 		
-		$data->auditEvalRevDate = $data->auditEvalRev->auditDate;
-		$data->auditEvalRevComment = $data->auditEvalRev->auditComment;
-		$data->auditEvalRevPersonID = $data->auditEvalRev->auditPerson;
+		if (isset($data->auditEvalApp )){
+			$data->auditEvalAppDate = $data->auditEvalApp->auditDate;
+			$data->auditEvalAppComment = $data->auditEvalApp->auditComment;
+			$data->auditEvalAppPersonID = $data->auditEvalApp->auditPerson;
+		}
 		
-		$data->auditEvalAppDate = $data->auditEvalApp->auditDate;
-		$data->auditEvalAppComment = $data->auditEvalApp->auditComment;
-		$data->auditEvalAppPersonID = $data->auditEvalApp->auditPerson;
+		if (isset($data->auditMit)){
+			$data->auditMitDate = $data->auditMit->auditDate;
+			$data->auditMitComment = $data->auditMit->auditComment;
+			$data->auditMitPersonID = $data->auditMit->auditPerson;
+		}
 		
-		$data->auditMitDate = $data->auditMit->auditDate;
-		$data->auditMitComment = $data->auditMit->auditComment;
-		$data->auditMitPersonID = $data->auditMit->auditPerson;
+		if (isset($data->auditMitRev)){
+			$data->auditMitRevDate = $data->auditMitRev->auditDate;
+			$data->auditMitRevComment = $data->auditMitRev->auditComment;
+			$data->auditMitRevPersonID = $data->auditMitRev->auditPerson;
+		}
 		
-		$data->auditMitRevDate = $data->auditMitRev->auditDate;
-		$data->auditMitRevComment = $data->auditMitRev->auditComment;
-		$data->auditMitRevPersonID = $data->auditMitRev->auditPerson;
-		
-		$data->auditMitAppDate = $data->auditMitApp->auditDate;
-		$data->auditMitAppComment = $data->auditMitApp->auditComment;
-		$data->auditMitAppPersonID = $data->auditMitApp->auditPerson;
+		if (isset($data->auditMitApp)){
+			$data->auditMitAppDate = $data->auditMitApp->auditDate;
+			$data->auditMitAppComment = $data->auditMitApp->auditComment;
+			$data->auditMitAppPersonID = $data->auditMitApp->auditPerson;
+		}
 		
 		//Get the project
 		
@@ -352,11 +369,11 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 		$data = self::_fix($data);
 		parent::insert($data);
 	}
-	static function update($data){
+	static function update($data, $where = null){
 		$data = self::_fix($data);
 		parent::update($data);
 	}
-	static function replace($data){
+	static function replace($data, $where = null){
 		global $wpdb;
 		parent::replace(self::_fix($data));
 	}
@@ -400,7 +417,11 @@ class WPQRM_Model_ProjectUsers extends WPQRM_Model{
 		parent::replace($data);
 	}
 }
-class WPQRM_Model_Audit extends WPQRM_Model{}
+class WPQRM_Model_Audit extends WPQRM_Model{
+	static function replace($data){
+		parent::replace($data);
+	}
+}
 class WPQRM_Model_Category extends WPQRM_Model{
 	static function deleteProjectCategories($projectID){
 		global $wpdb;

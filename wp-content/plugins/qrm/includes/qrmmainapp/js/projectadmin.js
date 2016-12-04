@@ -126,7 +126,9 @@ function ProjectController($scope, ngNotify, remoteService, QRMDataService, ngDi
     }
     
     $scope.parentIsNull = function(){
-    	return $scope.projMap.get($scope.proj.id).parent_id == 0;
+    	if ($scope.proj == null) return 0;
+    	p = $scope.projMap.get($scope.proj.id);
+    	return p.parent_id == 0;
     }
 
     $scope.matrixChange = function () {
