@@ -166,8 +166,8 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
     				QRMDataService.review.risks.sort(SortByProjectCode);
     			}
     			QRMDataService.reviewID = QRMDataService.review.id;
-    			QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
-    			QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+    			QRMDataService.review.actualdate = new Date(Date.parse (QRMDataService.review.actualdate));
+    			QRMDataService.review.scheddate = new Date(Date.parse(QRMDataService.review.scheddate));
     			$scope.introloading = false;
     			$state.go("qrm.review");
     		});
@@ -180,7 +180,7 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
     				QRMDataService.incident.risks.sort(SortByProjectCode);
     			}
     			QRMDataService.incidentID = QRMDataService.incident.id;
-    			QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+    			QRMDataService.incident.date = new Date(Date.parse(QRMDataService.incident.date));
     			$scope.introloading = false;
     			$state.go("qrm.incident");
     		});
@@ -3278,7 +3278,7 @@ function IncidentExplCtrl($scope, QRMDataService, $state, remoteService) {
                     QRMDataService.incident.risks.sort(SortByProjectCode);
                 }
                 QRMDataService.incidentID = QRMDataService.incident.id;
-                QRMDataService.incident.date = new Date(QRMDataService.incident.date);
+                QRMDataService.incident.date = new Date(Date.parse(QRMDataService.incident.date));
 
                 incident.loading = false;
                 $state.go("qrm.incident");
@@ -3414,7 +3414,6 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
         if (inc.incident.risks != null) {
             inc.incident.risks.sort(SortByProjectCode);
         }
-
     }
 
     this.openDescriptionEditor = function () {
@@ -3672,9 +3671,10 @@ function ReviewExplCtrl($scope, QRMDataService, $state, remoteService) {
                 if (QRMDataService.review.risks != null) {
                     QRMDataService.review.risks.sort(SortByProjectCode);
                 }
+
                 QRMDataService.reviewID = QRMDataService.review.id;
-                QRMDataService.review.actualdate = new Date(QRMDataService.review.actualdate);
-                QRMDataService.review.scheddate = new Date(QRMDataService.review.scheddate);
+                QRMDataService.review.scheddate = new Date(Date.parse(QRMDataService.review.scheddate));
+                QRMDataService.review.actualdate = new Date(Date.parse(QRMDataService.review.actualdate));
                 review.loading = false;
                 $state.go("qrm.review");
             });
@@ -4021,7 +4021,10 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify, ngD
                 $scope.savingreview = false;
                 ngNotify.dismiss();
                 ngNotify.set("Review Saved", {type:"success", duration:1000, theme:"pure"});
+                
                 rev.review = response.data;
+                rev.review.scheddate = new Date(Date.parse(rev.review.scheddate));
+                rev.review.actualdate = new Date(Date.parse(rev.review.actualdate));
                 rev.updateReview();
             });
     }

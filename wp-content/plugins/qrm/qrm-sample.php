@@ -448,7 +448,7 @@ class QRMSample {
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_audit' );
 		
 		QRM::initReportDataInternal ();
-		return ($all) ? "All Quay Risk Manager Data Removed" : "Sample Quay Risk Manager Data Removed";
+		return ($sampleOnly) ? "Sample Quay Risk Manager Data Removed":"All Quay Risk Manager Data Removed";
 	}
 	static function make_seed() {
 		list ( $usec, $sec ) = explode ( ' ', microtime () );

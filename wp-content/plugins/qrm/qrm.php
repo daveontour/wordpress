@@ -516,7 +516,7 @@ final class QRM {
 		foreach ( get_posts ( $args ) as $post ) {
 			delete_post_meta ( $post->ID, "incident", $postID );
 		}
-		if ($incident->risks != null) {
+		if (isset($incident->risks)) {
 			foreach ( $incident->risks as $risk ) {
 				add_post_meta ( $risk, "incident", intval ( $postID ) );
 			}
@@ -532,7 +532,7 @@ final class QRM {
 		) );
 		
 		WPQRM_Model_Incident::replace ( $incident );
-		
+		$incident->date = $incident->incidentDate;
 		wp_send_json ( $incident );
 	}
 	static function getRiskIncidents($riskID) {
@@ -683,7 +683,7 @@ final class QRM {
 		
 		if (($review->id > 0)) {
 			// Update the existing post
-			$post ['ID'] = $reviewt->id;
+			$post ['ID'] = $review->id;
 			wp_update_post ( array (
 					'ID' => $review->id,
 					'post_content' => $review->description,
@@ -725,7 +725,7 @@ final class QRM {
 		foreach ( get_posts ( $args ) as $post ) {
 			delete_post_meta ( $post->ID, "review", $postID );
 		}
-		if ($review->risks != null) {
+		if (isset($review->risks)) {
 			foreach ( $review->risks as $risk ) {
 				add_post_meta ( $risk, "review", intval ( $postID ) );
 			}
@@ -1271,10 +1271,12 @@ final class QRM {
 		$ids = array ();
 		array_push ( $ids, $projectID );
 		
-		if ($data->childProjects) {
+		if (isset($data->childProjects)) {
+			if ($data->childProjects){
 			$children = QRM::get_project_children ( $projectID );
 			foreach ( $children as $child ) {
 				array_push ( $ids, $child->ID );
+			}
 			}
 		}
 		
@@ -1397,13 +1399,14 @@ final class QRM {
 		) );
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
+		WPQRM_Model_Risk::replace ( $risk );
 		
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "risProjectCode", $risk->riskProjectCode );
 		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
-		update_post_meta ( $postID, "project", $project->post_title );
+//		update_post_meta ( $postID, "project", $project->post_title );
 		update_post_meta ( $postID, "pushdownparent", true );
 		
 		// Update the count for riskd for the impacted project
@@ -1504,7 +1507,7 @@ final class QRM {
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
 		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
 		update_post_meta ( $postID, "owner", get_user_by ( "id", $risk->owner )->data->display_name );
-		update_post_meta ( $postID, "project", $project->post_title );
+//		update_post_meta ( $postID, "project", $project->post_title );
 		update_post_meta ( $postID, "pushdownchild", true );
 		
 		// Update the count for riskd for the impacted project
