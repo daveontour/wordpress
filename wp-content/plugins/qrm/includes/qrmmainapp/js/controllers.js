@@ -720,30 +720,6 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
         $state.go('qrm.risk');
     }
     
-//    this.checkForReports = function(){
-//        var url = QRMDataService.reportServerURL + "/getCompletedReports?callback=JSON_CALLBACK&&sessionToken="+QRMDataService.sessionToken;
-//        $http.jsonp(url)
-//            .success(function (data) {
-//                if (data.length == 0) {
-//                	QRM.mainController.notify3("All Completed Reports Have Been Downloaded", 2000);
-//                } else {
-//					QRM.mainController.notify2("Downloading Completed Report");
-//                    for (var i = 0; i<data.length; i++){
-//                    	var id = data[i];
-//    					jQuery('input[name="userEmail"]').val(QRMDataService.userEmail);
-//    					jQuery('input[name="userLogin"]').val(QRMDataService.userLogin);
-//    					jQuery('input[name="siteKey"]').val(QRMDataService.siteKey);
-//    					jQuery('input[name="id"]').val(id);
-//    					jQuery('#getReportForm').attr('action', QRMDataService.reportServerURL+"/getReport", false);
-//    					jQuery("#getReportForm").submit();
-//                    }
-//                }
-//            })
-//            .error(function (data) {
-//                ngNotify.dismiss();
-//                ngNotify.set("Error Retrieving Available Reports", {type:"grimace", duration:1000, theme:"pure"});
-//            });
-//    }
     
     this.newPushDownRisk = function () {
 
@@ -828,10 +804,6 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
                 $state.go('qrm.risk');
                 $scope.loading = false;
             }, function(){$scope.loading = false;});
-    }
-    this.deleteRisk = function (riskID) {
-        QRMDataService.riskID = riskID;
-        alert("Delete Risk: " + riskID);
     }
     this.getAllProjectRisks = function () {
         QRM.mainController.lookingForRisks();
@@ -1873,6 +1845,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 vm.updateRisk();
                 vm.setRiskMatrixID("riskEditorMatrixID");
                 vm.setRiskMatrix();
+                vm.openDescriptionEditor();
             } else {
                 // Normal transfer from Explorer
                 this.getRisk();

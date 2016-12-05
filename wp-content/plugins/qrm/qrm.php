@@ -1363,6 +1363,8 @@ final class QRM {
 		
 		$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
 		
+		
+		
 		// Test for Project Risk Owner
 		if ($current_user->ID != $project->projectRiskManager) {
 			wp_send_json ( array (
@@ -1400,6 +1402,7 @@ final class QRM {
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
 		WPQRM_Model_Risk::replace ( $risk );
+		$risk = json_decode ( get_post_meta ( $postID, "riskdata", true ) );
 		
 		// Key Data for searching etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
@@ -1501,8 +1504,7 @@ final class QRM {
 		) );
 		// The Bulk of the data is held in the post's meta data
 		update_post_meta ( $postID, "riskdata", json_encode ( $risk ) );
-		
-		// Key Data for searching etc
+		// Key Data for searhing etc
 		update_post_meta ( $postID, "projectID", $risk->projectID );
 		update_post_meta ( $postID, "riskProjectCode", $risk->riskProjectCode );
 		update_post_meta ( $postID, "riskProjectTitle", get_post_meta ( $risk->projectID, "projectTitle", true ) );
