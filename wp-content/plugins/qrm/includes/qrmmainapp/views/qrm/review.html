@@ -1,230 +1,307 @@
 <div class="container-fluid">
-    <div>
-        <div class="col-md-12  col-lg-10 col-lg-offset-1" style="padding-left:0px;padding-right:0px">
-            <div>
-                <div class="pull-left">
-                    <h3 style="display:inline;font-weight:normal;margin-top:5px">{{rev.review.reviewCode}} - {{rev.review.title}}</h3>
-                </div>
-                <div class="pull-right">
-                      <button type="button" style="margin-left:5px;margin-top:5px" class="btn btn-w-m btn-warning pull-right" ng-click="rev.cancelReview()">Review Explorer</button>
-                    <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary pull-right"  ng-click="rev.saveReview()">Save Changes</button>
-                    <div class="dropdown pull-right" style="display:inline;margin-right:5px;margin-top:5px">
-                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-info" href="#">Reports<span class="caret"></span></a>
-                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                                <li ng-repeat="r in qrmctrl.reports | filter:{showSingleReview:true}">
-                                    <a ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()" href="#"> {{r.menuName}} </a>
-                            </li>
-                            </ul>
-            
-                    </div> 
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12  col-lg-10 col-lg-offset-1" style="clear:both">
-            <div class="row">
-                <div style="width:100%;margin-top:5px">
-                    <div class="panel panel-review">
-                        <div class="panel-heading">Purpose
-                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="rev.openDescriptionEditor()"></i>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <p ng-bind-html="rev.review.description"></p>
-                        </div>
-                        <div>
-                            <div class="row">
-                                <form method="get" class="form-horizontal">
-                                    <div class="form-group" style="margin-left:0px;margin-right:0px">
-                                        <label class="col-xs-4 col-sm-3 control-label">Scheduled Date of Review</label>
-                                        <div class="col-xs-8 col-sm-9">
-                                            <div class="control-group" style="margin-top:3px">
-                                                <div class="controls">
-                                                    <div class="input-prepend input-group">
-                                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                         <input type="date" ng-model="rev.review.scheddate" class="form-control" style="width:238px"></input>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <label class="col-xs-4 col-sm-3 control-label">Actual Date of Review</label>
-                                        <div class="col-xs-8 col-sm-9">
-                                            <div class="control-group" style="margin-top:3px">
-                                                <div class="controls">
-                                                    <div class="input-prepend input-group">
-                                                        <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                        <input type="date" ng-model="rev.review.actualdate" class="form-control" style="width:238px"></input>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="controls">
-                                            <label class="col-sm-3 control-label" style="margin-top:5px">Responsible</label>
-                                            <div class="col-sm-9" style="margin-top:5px">
-                                                <select style="max-width:300px" ng-model="rev.review.responsible" ng-options="(person | usernameFilter) for person in rev.siteUsers" class="form-control"></select>
+	<div>
+		<div class="col-md-12  col-lg-10 col-lg-offset-1"
+			style="padding-left: 0px; padding-right: 0px">
+			<div>
+				<div class="pull-left">
+					<h3 style="display: inline; font-weight: normal; margin-top: 5px">{{rev.review.reviewCode}}
+						- {{rev.review.title}}</h3>
+				</div>
+				<div class="pull-right">
+					<button type="button" style="margin-left: 5px; margin-top: 5px"
+						class="btn btn-w-m btn-warning pull-right"
+						ng-click="rev.cancelReview()">Review Explorer</button>
+					<button type="button" style="margin-top: 5px"
+						class="btn btn-w-m btn-primary pull-right"
+						ng-click="rev.saveReview()">Save Changes</button>
+					<div class="dropdown pull-right"
+						style="display: inline; margin-right: 5px; margin-top: 5px">
+						<a id="dLabel" role="button" data-toggle="dropdown"
+							class="btn btn-info" href="#">Reports<span class="caret"></span></a>
+						<ul class="dropdown-menu multi-level" role="menu"
+							aria-labelledby="dropdownMenu">
+							<li
+								ng-repeat="r in qrmctrl.reports | filter:{showSingleReview:true}">
+								<a
+								ng-click="getMyCtrlScope().reportReqID = r.id;getMyCtrlScope().reviewReport()"
+								href="#"> {{r.menuName}} </a>
+							</li>
+						</ul>
 
-                                            </div>
-                                            <label class="col-sm-3 control-label">Review Complete</label>
-                                            <div class="col-sm-9">
-                                                <label class="checkbox-inline" style="padding-left:0px">
-                                                    <input icheck type="checkbox" ng-model="rev.review.complete">
-                                                </label>
-                                            </div>
-                                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12  col-lg-10 col-lg-offset-1" style="clear: both">
+			<div class="row">
+				<div style="width: 100%; margin-top: 5px">
+					<div class="panel panel-review">
+						<div class="panel-heading">
+							Purpose
+							<div style="float: right">
+								<i class="glyphicon glyphicon-edit" style="cursor: pointer"
+									ng-click="rev.openDescriptionEditor()"></i>
+							</div>
+						</div>
+						<div class="panel-body">
+							<p ng-bind-html="rev.review.description"></p>
+						</div>
+						<div>
+							<div class="row">
+								<form method="get" class="form-horizontal">
+									<div class="form-group"
+										style="margin-left: 0px; margin-right: 0px">
+										<label class="col-xs-4 col-sm-3 control-label">Scheduled
+											Date of Review</label>
+										<div class="col-xs-8 col-sm-9">
+											<div class="control-group" style="margin-top: 3px">
+												<div class="controls">
+													<div class="input-prepend input-group">
+														<span class="add-on input-group-addon"><i
+															class="glyphicon glyphicon-calendar"></i></span> <input
+															type="date" ng-model="rev.review.scheddate"
+															class="form-control" style="width: 238px"></input>
+													</div>
+												</div>
+											</div>
+										</div>
+										<label class="col-xs-4 col-sm-3 control-label">Actual
+											Date of Review</label>
+										<div class="col-xs-8 col-sm-9">
+											<div class="control-group" style="margin-top: 3px">
+												<div class="controls">
+													<div class="input-prepend input-group">
+														<span class="add-on input-group-addon"><i
+															class="glyphicon glyphicon-calendar"></i></span> <input
+															type="date" ng-model="rev.review.actualdate"
+															class="form-control" style="width: 238px"></input>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="controls">
+											<label class="col-sm-3 control-label" style="margin-top: 5px">Responsible</label>
+											<div class="col-sm-9" style="margin-top: 5px">
+												<select style="max-width: 300px"
+													ng-model="rev.review.responsible"
+													ng-options="(person | usernameFilter) for person in rev.siteUsers"
+													class="form-control"></select>
 
-                                </form>
+											</div>
+											<label class="col-sm-3 control-label">Review Complete</label>
+											<div class="col-sm-9">
+												<label class="checkbox-inline" style="padding-left: 0px">
+													<input icheck type="checkbox"
+													ng-model="rev.review.complete">
+												</label>
+											</div>
+										</div>
+								</form>
 
-                                </div>
-                            </div>
-                        </div>
-            </div>
-                                                        <div class="panel panel-review">
-                        <div class="panel-heading">Risks Under Review</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <form>
-                                    <div class="form-group" style="margin-bottom:0px">
-                                        <label class="col-sm-3 control-label" style="margin-top:12px;text-align:right">Risks</label>
-                                        <div class="col-sm-6">
-                                            <select ng-model="rev.risk" ng-change="rev.addRisk()" ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks" class="form-control"></select>
-                                        </div>
-                                        <label class="col-sm-3 control-label" style="margin-top:12px;clear:both;text-align:right">All Risks from Project</label>
-                                        <div class="col-sm-6" style="margin-top:5px">
-                                            <ui-select ng-model="rev.projectID" on-select="rev.addProjectRisk()" theme="selectize" search-enabled=true >
-                                                <ui-select-match allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
-                                                <ui-select-choices style="color:rgb(103,106,108)" repeat="project.id as project in rev.sortedParents track by project.id">
-                                                    <div ng-style="rev.rowStyle(project)">
-                                                        <span ng-bind-html="project.title"></span>
-                                                    </div>
-                                                </ui-select-choices>
-                                            </ui-select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-review">
+					<div class="panel-heading">Risks Under Review</div>
+					<div class="panel-body">
+						<div class="row">
+							<form>
+								<div class="form-group" style="margin-bottom: 0px">
+									<label class="col-sm-3 control-label"
+										style="margin-top: 12px; text-align: right">Risks</label>
+									<div class="col-sm-6">
+										<select ng-model="rev.risk" ng-change="rev.addRisk()"
+											ng-options="'Risk '+risk.riskProjectCode+' - '+risk.title for risk in main.risks"
+											class="form-control"></select>
+									</div>
+									<label class="col-sm-3 control-label"
+										style="margin-top: 12px; clear: both; text-align: right">All
+										Risks from Project</label>
+									<div class="col-sm-6" style="margin-top: 5px">
+										<ui-select ng-model="rev.projectID"
+											on-select="rev.addProjectRisk()" theme="selectize"
+											search-enabled=true> <ui-select-match
+											allow-clear=false placeholder="Select Project...">{{$select.selected.title}}</ui-select-match>
+										<ui-select-choices style="color:rgb(103,106,108)"
+											repeat="project.id as project in rev.sortedParents track by project.id">
+										<div ng-style="rev.rowStyle(project)">
+											<span ng-bind-html="project.title"></span>
+										</div>
+										</ui-select-choices> </ui-select>
+									</div>
+								</div>
+							</form>
+						</div>
 
-                            <div style="margin-top:10px">
-                                <div ng-show="rev.review.risks.length > 0" style="max-height:200px;overflow:auto;border-style:solid;border-width:1px;border-color:lightgray">
-                                    <table class="table table-striped" style="width:100%;max-height:200px">
-                                        <tr ng-repeat="risk in rev.review.risks" style="margin-top:15px">
-                                            <td style="padding-bottom:5px;padding-left:5px;vertical-align:top">
-                                                <strong>{{risk|riskCodeFilter}}</strong>
-                                            </td>
-                                            <td style="padding-bottom:5px;padding-left:5px">
-                                                {{risk|riskTitleFilter}}
-                                                <div style="font-size:8pt;margin-top:0.5em">
-                                                    <div ng-bind-html="rev.getRiskComment(risk)"></div>
-                                                </div>
-                                            </td>
-                                            <td style="width:200px;padding-right:0px">
-                                                <button type="button" ng-click="rev.riskComment(risk)" class="btn btn-info btn-xs" style="margin-right:5px">Comment</button>
-                                                <button type="button" ng-click="rev.removeRisk(risk)" class="btn btn-danger btn-xs" style="margin-right:5px">Remove</button>
-                                            </td>
+						<div style="margin-top: 10px">
+							<div ng-show="rev.review.risks.length > 0"
+								style="max-height: 200px; overflow: auto; border-style: solid; border-width: 1px; border-color: lightgray">
+								<table class="table table-striped"
+									style="width: 100%; max-height: 200px">
+									<tr ng-repeat="risk in rev.review.risks"
+										style="margin-top: 15px">
+										<td
+											style="padding-bottom: 5px; padding-left: 5px; vertical-align: top">
+											<strong>{{risk|riskCodeFilter}}</strong>
+										</td>
+										<td style="padding-bottom: 5px; padding-left: 5px">
+											{{risk|riskTitleFilter}}
+											<div style="font-size: 8pt; margin-top: 0.5em">
+												<div ng-bind-html="rev.getRiskComment(risk)"></div>
+											</div>
+										</td>
+										<td style="width: 200px; padding-right: 0px">
+											<button type="button" ng-click="rev.riskComment(risk)"
+												class="btn btn-info btn-xs" style="margin-right: 5px">Comment</button>
+											<button type="button" ng-click="rev.removeRisk(risk)"
+												class="btn btn-danger btn-xs" style="margin-right: 5px">Remove</button>
+										</td>
 
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div style="clear:both">
-                                <form ng-show="rev.review.risks.length > 0">
-                                    <div class="form-group" style="margin-top:10px">
-                                        <label class="col-sm-3 control-label" style="min-height:67px;margin-top:5px;padding-top:3px;padding-bottom:3px;text-align:right">All Risk Comment</label>
-                                        <div class="col-sm-9" style="font-size:9pt;margin-top:5px;padding-top:3px">
-                                            <textarea style="height:60px;width:400px" ng-model="rev.commonComment"></textarea>
-                                            <button type="button" ng-click="rev.addCommonRiskComment()" class="btn btn-info btn-xs" style="margin-right:5px;margin-left:10px;vertical-align:top">Comment All</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div style="clear: both">
+							<form ng-show="rev.review.risks.length > 0">
+								<div class="form-group" style="margin-top: 10px">
+									<label class="col-sm-3 control-label"
+										style="min-height: 67px; margin-top: 5px; padding-top: 3px; padding-bottom: 3px; text-align: right">All
+										Risk Comment</label>
+									<div class="col-sm-9"
+										style="font-size: 9pt; margin-top: 5px; padding-top: 3px">
+										<textarea style="height: 60px; width: 400px"
+											ng-model="rev.commonComment"></textarea>
+										<button type="button" ng-click="rev.addCommonRiskComment()"
+											class="btn btn-info btn-xs"
+											style="margin-right: 5px; margin-left: 10px; vertical-align: top">Comment
+											All</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
 
-                    </div>
+				</div>
 
-                    <div class="panel panel-review">
-                        <div class="panel-heading">Review Notes
-                            <div style="float:right"><i class="glyphicon glyphicon-edit" style="cursor:pointer" ng-click="rev.openNotesEditor()"></i>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <p ng-bind-html="rev.review.notes"></p>
-                        </div>
-                    </div>
-                    <div ng-show="rev.review.id > 0">
-                                                <!-- Comments -->
-                    <div class="panel panel-review">
-                        <div class="panel-heading">Comments</div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-12" style="margin-bottom:15px">
-                                            <button style="float:left" style="margin-left:20px" ng-click="rev.addComment()" class="btn btn-primary btn-sm">Add Comment</button>
-                                    </div>
-                                    <div ng-show="rev.review.comments.length > 0" >
-                                        <table class="table table-striped" style="width:100%">
-                                            <tr ng-repeat="comment in rev.review.comments" style="margin-top:15px">
-                                                <td style="padding-bottom:5px;padding-left:15px;vertical-align:top">
-                                                    <strong>{{comment.comment_author}}</strong>
-                                                    <br/> {{comment.comment_author_email}}
-                                                </td>
-                                                <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                    <div style="float:left;">Submitted on: <span style="color:blue">{{comment.comment_date}}</span></div>
-                                                    <div style="float:left;clear:both" ng-bind-html="comment.comment_content"></div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                        <div class="panel panel-review">
-                            <div class="panel-heading">Attachements</div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div dropzone="dropzoneConfig" class="dropzone dz-clickable" style="width:100%">
-                                            <div class="dz-message">
-                                                Drop file here or click to attach.
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <form method="get" class="form-vertical">
-                                                <div class="form-group" style="margin-bottom:0px;margin-top:5px">
-                                                    <label class="col-lg-12 control-label" style="padding-left:0px">Attachment Description</label>
-                                                    <textarea ng-model="rev.uploadAttachmentDescription" class="col-lg-12 form-control" style="height:80px;width:100%" ng-disabled="rev.disableAttachmentButon"></textarea>
+				<div class="panel panel-review">
+					<div class="panel-heading">
+						Review Notes
+						<div style="float: right">
+							<i class="glyphicon glyphicon-edit" style="cursor: pointer"
+								ng-click="rev.openNotesEditor()"></i>
+						</div>
+					</div>
+					<div class="panel-body">
+						<p ng-bind-html="rev.review.notes"></p>
+					</div>
+				</div>
+				<div ng-show="rev.review.id > 0">
+					<!-- Comments -->
+					<div class="panel panel-review">
+						<div class="panel-heading">Comments</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-12" style="margin-bottom: 15px">
+									<button style="float: left" style="margin-left:20px"
+										ng-click="rev.addComment()" class="btn btn-primary btn-sm">Add
+										Comment</button>
+								</div>
+								<div ng-show="rev.review.comments.length > 0">
+									<table class="table table-striped" style="width: 100%">
+										<tr ng-repeat="comment in rev.review.comments"
+											style="margin-top: 15px">
+											<td
+												style="padding-bottom: 5px; padding-left: 15px; vertical-align: top">
+												<strong>{{comment.comment_author}}</strong> <br />
+												{{comment.comment_author_email}}
+											</td>
+											<td
+												style="padding-bottom: 5px; padding-left: 15px; width: 100%">
+												<div style="float: left;">
+													Submitted on: <span style="color: blue">{{comment.comment_date}}</span>
+												</div>
+												<div style="float: left; clear: both"
+													ng-bind-html="comment.comment_content"></div>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-review">
+						<div class="panel-heading">Attachements</div>
+						<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row">
+								<div style="margin: 5px" class="col-lg-6 col-md-6">
+									<table class="table table-striped" style="width: 100%">
+										<tr ng-repeat="attach in rev.review.attachments"
+											style="margin-top: 15px">
+											<td
+												style="padding-bottom: 5px; padding-left: 15px; width: 100%">
+												<div style="float: left; clear: both">{{attach.post_content}}</div>
+												<div style="float: left; clear: both">Attached by:
+													{{attach.post_excerpt}} - {{attach.post_date}}</div>
+												<div style="float: left; clear: both">
+													Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}}
+														{{attach.post_mime_type}}
+												</div>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="col-lg-5 col-md-5 pull-right">
+									<div dropzone="dropzoneConfig" class="dropzone dz-clickable"
+										style="width: 100%">
+										<div class="dz-message">Drop file here or click to
+											attach.</div>
+									</div>
+									<div>
+										<form method="get" class="form-vertical">
+											<div class="form-group"
+												style="margin-bottom: 0px; margin-top: 5px">
+												<label class="col-lg-12 control-label"
+													style="padding-left: 0px">Attachment Description</label>
+												<textarea ng-model="rev.uploadAttachmentDescription"
+													class="col-lg-12 form-control"
+													style="height: 80px; width: 100%"
+													ng-disabled="rev.disableAttachmentButon"></textarea>
 
-                                                </div>
-                                            </form>
-                                            <div style="padding-right:0px;text-align:right">
-                                                <button type="button" style="margin-top:5px; margin-right:5px" class="btn btn-w-m btn-danger" ng-click="rev.cancelAttachment()" ng-disabled="rev.disableAttachmentButon">Cancel</button>
-                                                <button type="button" style="margin-top:5px" class="btn btn-w-m btn-primary" ng-click="rev.uploadAttachment()" ng-disabled="rev.disableAttachmentButon">Upload Attachment</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="margin:5px">
-                                        <table class="table table-striped" style="width:100%">
-                                            <tr ng-repeat="attach in rev.review.attachments" style="margin-top:15px">
-                                                <td style="padding-bottom:5px;padding-left:15px;width:100%">
-                                                    <div style="float:left;clear:both">{{attach.post_content}}</div>
-                                                    <div style="float:left;clear:both">Attached by: {{attach.post_excerpt}} - {{attach.post_date}}</div>
-                                                    <div style="float:left;clear:both">Link: <a ng-href="{{attach.guid}}" download>{{attach.post_title}} {{attach.post_mime_type}}</div>
-                                                    </td>
-                                                </tr>                    
-                                            </table>
-                                        </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>            
-            </div>
-    </div>
+											</div>
+										</form>
+										<div style="padding-right: 0px; text-align: right">
+											<button type="button"
+												style="margin-top: 5px; margin-right: 5px"
+												class="btn btn-w-m btn-danger"
+												ng-click="rev.cancelAttachment()"
+												ng-disabled="rev.disableAttachmentButon">Cancel</button>
+											<button type="button" style="margin-top: 5px"
+												class="btn btn-w-m btn-primary"
+												ng-click="rev.uploadAttachment()"
+												ng-disabled="rev.disableAttachmentButon">Upload
+												Attachment</button>
+										</div>
+									</div>
+								</div>
+						
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div ng-show="savingreview" id="savingreview" class="loading">
-    <div class="loading-overlay">
-        <p class="loading-spinner">
-            <img ng-src="{{main.loaderSrc}}">
-            <span class="loading-text">saving</span>
-        </p>
-    </div>
+	<div class="loading-overlay">
+		<p class="loading-spinner">
+			<img ng-src="{{main.loaderSrc}}"> <span class="loading-text">saving</span>
+		</p>
+	</div>
 </div>
 
 <!-- Template for the textarea modal dialog boxes -->
@@ -276,47 +353,68 @@
 <!-- This is the template used by Dropzone, won't be displayed -->
 <div id="preview-template" style="display: none;">
 
-    <div class="dz-preview dz-file-preview">
-        <div class="dz-image"><img data-dz-thumbnail />
-        </div>
+	<div class="dz-preview dz-file-preview">
+		<div class="dz-image">
+			<img data-dz-thumbnail />
+		</div>
 
-        <div class="dz-details">
-            <div class="dz-size"><span data-dz-size></span>
-            </div>
-            <div class="dz-filename"><span data-dz-name></span>
-            </div>
-        </div>
-        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span>
-        </div>
-        <div class="dz-error-message"><span data-dz-errormessage></span>
-        </div>
-        <div class="dz-success-mark">
+		<div class="dz-details">
+			<div class="dz-size">
+				<span data-dz-size></span>
+			</div>
+			<div class="dz-filename">
+				<span data-dz-name></span>
+			</div>
+		</div>
+		<div class="dz-progress">
+			<span class="dz-upload" data-dz-uploadprogress></span>
+		</div>
+		<div class="dz-error-message">
+			<span data-dz-errormessage></span>
+		</div>
+		<div class="dz-success-mark">
 
-            <svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+			<svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
                 <title>Check</title>
                 <desc>Created with Sketch.</desc>
                 <defs></defs>
-                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                    <path d="M23.5,31.8431458 L17.5852419,25.9283877 C16.0248253,24.3679711 13.4910294,24.366835 11.9289322,25.9289322 C10.3700136,27.4878508 10.3665912,30.0234455 11.9283877,31.5852419 L20.4147581,40.0716123 C20.5133999,40.1702541 20.6159315,40.2626649 20.7218615,40.3488435 C22.2835669,41.8725651 24.794234,41.8626202 26.3461564,40.3106978 L43.3106978,23.3461564 C44.8771021,21.7797521 44.8758057,19.2483887 43.3137085,17.6862915 C41.7547899,16.1273729 39.2176035,16.1255422 37.6538436,17.6893022 L23.5,31.8431458 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z" id="Oval-2" stroke-opacity="0.198794158" stroke="#747474" fill-opacity="0.816519475" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <g id="Page-1" stroke="none" stroke-width="1"
+					fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                    <path
+					d="M23.5,31.8431458 L17.5852419,25.9283877 C16.0248253,24.3679711 13.4910294,24.366835 11.9289322,25.9289322 C10.3700136,27.4878508 10.3665912,30.0234455 11.9283877,31.5852419 L20.4147581,40.0716123 C20.5133999,40.1702541 20.6159315,40.2626649 20.7218615,40.3488435 C22.2835669,41.8725651 24.794234,41.8626202 26.3461564,40.3106978 L43.3106978,23.3461564 C44.8771021,21.7797521 44.8758057,19.2483887 43.3137085,17.6862915 C41.7547899,16.1273729 39.2176035,16.1255422 37.6538436,17.6893022 L23.5,31.8431458 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z"
+					id="Oval-2" stroke-opacity="0.198794158" stroke="#747474"
+					fill-opacity="0.816519475" fill="#FFFFFF"
+					sketch:type="MSShapeGroup"></path>
                 </g>
             </svg>
 
-        </div>
-        <div class="dz-error-mark">
+		</div>
+		<div class="dz-error-mark">
 
-            <svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+			<svg width="54px" height="54px" viewBox="0 0 54 54" version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <!-- Generator: Sketch 3.2.1 (9971) - http://www.bohemiancoding.com/sketch -->
                 <title>error</title>
                 <desc>Created with Sketch.</desc>
                 <defs></defs>
-                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                    <g id="Check-+-Oval-2" sketch:type="MSLayerGroup" stroke="#747474" stroke-opacity="0.198794158" fill="#FFFFFF" fill-opacity="0.816519475">
-                        <path d="M32.6568542,29 L38.3106978,23.3461564 C39.8771021,21.7797521 39.8758057,19.2483887 38.3137085,17.6862915 C36.7547899,16.1273729 34.2176035,16.1255422 32.6538436,17.6893022 L27,23.3431458 L21.3461564,17.6893022 C19.7823965,16.1255422 17.2452101,16.1273729 15.6862915,17.6862915 C14.1241943,19.2483887 14.1228979,21.7797521 15.6893022,23.3461564 L21.3431458,29 L15.6893022,34.6538436 C14.1228979,36.2202479 14.1241943,38.7516113 15.6862915,40.3137085 C17.2452101,41.8726271 19.7823965,41.8744578 21.3461564,40.3106978 L27,34.6568542 L32.6538436,40.3106978 C34.2176035,41.8744578 36.7547899,41.8726271 38.3137085,40.3137085 C39.8758057,38.7516113 39.8771021,36.2202479 38.3106978,34.6538436 L32.6568542,29 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z" id="Oval-2" sketch:type="MSShapeGroup"></path>
+                <g id="Page-1" stroke="none" stroke-width="1"
+					fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                    <g id="Check-+-Oval-2" sketch:type="MSLayerGroup"
+					stroke="#747474" stroke-opacity="0.198794158" fill="#FFFFFF"
+					fill-opacity="0.816519475">
+                        <path
+					d="M32.6568542,29 L38.3106978,23.3461564 C39.8771021,21.7797521 39.8758057,19.2483887 38.3137085,17.6862915 C36.7547899,16.1273729 34.2176035,16.1255422 32.6538436,17.6893022 L27,23.3431458 L21.3461564,17.6893022 C19.7823965,16.1255422 17.2452101,16.1273729 15.6862915,17.6862915 C14.1241943,19.2483887 14.1228979,21.7797521 15.6893022,23.3461564 L21.3431458,29 L15.6893022,34.6538436 C14.1228979,36.2202479 14.1241943,38.7516113 15.6862915,40.3137085 C17.2452101,41.8726271 19.7823965,41.8744578 21.3461564,40.3106978 L27,34.6568542 L32.6538436,40.3106978 C34.2176035,41.8744578 36.7547899,41.8726271 38.3137085,40.3137085 C39.8758057,38.7516113 39.8771021,36.2202479 38.3106978,34.6538436 L32.6568542,29 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z"
+					id="Oval-2" sketch:type="MSShapeGroup"></path>
                     </g>
                 </g>
             </svg>
 
-        </div>
-    </div>
+		</div>
+	</div>
 </div>

@@ -1005,20 +1005,22 @@ final class QRM {
 			$r->treatedImpact = $risk->newTreatedImpact;
 			
 			if ($r->treated) {
-				$r->currentProb = $risk->treatedProb;
-				$r->currentImpact = $risk->treatedImpact;
-				$r->currentTolerance = $risk->treatedTolerance;
+				$r->currentProb = $r->treatedProb;
+				$r->currentImpact = $r->treatedImpact;
+				$r->currentTolerance = $r->treatedTolerance;
 			} else {
-				$r->currentProb = $risk->inherentProb;
-				$r->currentImpact = $risk->inherentImpact;
-				$r->currentTolerance = $risk->inherentTolerance;
+				$r->currentProb = $r->inherentProb;
+				$r->currentImpact = $r->inherentImpact;
+				$r->currentTolerance = $r->inherentTolerance;
 			}
 			
 			update_post_meta ( $risk->riskID, "riskdata", json_encode ( $r ) );
 			
 			WPQRM_Model_Risk::replace ( $r );
 		}
-		exit ();
+		wp_send_json ( array (
+				"status" => "OK"
+		) );
 	}
 	static function saveSiteUsers() {
 		if (! QRM::qrmUser ())
@@ -1112,7 +1114,9 @@ final class QRM {
 			$sql = sprintf ( 'UPDATE %s SET rank = %%s WHERE id = %%s', $wpdb->prefix . 'qrm_risk' );
 			$wpdb->query ( $wpdb->prepare ( $sql, $risk->rank, $risk->id ) );
 		}
-		exit ();
+		wp_send_json ( array (
+				"status" => "OK"
+		) );
 	}
 	static function getProjects() {
 		if (! QRM::qrmUser ())
