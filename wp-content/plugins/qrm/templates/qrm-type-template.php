@@ -14,7 +14,7 @@
 		var lostPasswordURL = '<?php echo wp_lostpassword_url(); ?>';
 		var siteURL = '<?php echo site_url(); ?>';
 		var showGuestLogin = <?php if (isset($GLOBALS["showGuestLogin"])){if($GLOBALS["showGuestLogin"]){ echo $GLOBALS["showGuestLogin"]; } else {echo 'false';}}else {echo 'false';} ?>;
-		var postType = '<?php if ($type){echo $type;} else {echo "firstproject";}?>';
+		var postType = '<?php if (isset($type)){echo $type;} else {echo "firstproject";}?>';
 		<?php if(isset($projectID))echo 'var projectID = '.$projectID.';' ?>
 	</script>
 	
