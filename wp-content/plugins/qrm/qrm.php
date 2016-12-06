@@ -241,10 +241,10 @@ final class QRM {
 			$risk->projectID = get_post_meta ( $post->ID, "projectID", true );
 			$risk->rank = get_post_meta ( $post->ID, "rank", true );
 			$risk->ID = $post->ID;
-			if ($risk->primcat == 0) {
+			if ( ! isset($risk->primcat)) {
 				$risk->primcat = new stdObject ();
 			}
-			if ($risk->seccat == 0) {
+			if ( ! isset($risk->seccat)) {
 				$risk->seccat = new stdObject ();
 			}
 			if (isset ( $risk->response->respPlan )) {
@@ -2215,15 +2215,17 @@ final class QRM_AutoUpdate {
 		}
 		// Get the remote version
 		$remote_version = $this->getRemote_version ();
-		// If a newer version is available, add the update
-		if (version_compare ( $this->current_version, $remote_version->new_version, '<' )) {
-			$obj = new stdClass ();
-			$obj->slug = $this->slug;
-			$obj->new_version = $remote_version->new_version;
-			$obj->url = $remote_version->url;
-			$obj->plugin = $this->plugin_slug;
-			$obj->package = $remote_version->package;
-			$transient->response [$this->plugin_slug] = $obj;
+		if (isset ( $remote_version )) {
+			// If a newer version is available, add the update
+			if (version_compare ( $this->current_version, $remote_version->new_version, '<' )) {
+				$obj = new stdClass ();
+				$obj->slug = $this->slug;
+				$obj->new_version = $remote_version->new_version;
+				$obj->url = $remote_version->url;
+				$obj->plugin = $this->plugin_slug;
+				$obj->package = $remote_version->package;
+				$transient->response [$this->plugin_slug] = $obj;
+			}
 		}
 		return $transient;
 	}

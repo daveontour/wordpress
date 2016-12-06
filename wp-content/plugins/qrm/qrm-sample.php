@@ -189,20 +189,18 @@ class QRMSample {
 			if ($sample == true)
 				update_post_meta ( $postID, "sampleqrmdata", "sample" );
 		}
-		
 		foreach ( $projIDMap as $oldValue => $newValue ) {
 			$project = json_decode ( get_post_meta ( $newValue, "projectdata", true ) );
-			if ($project->parent_id != 0)
-				$project->parent_id = $projIDMap [$project->parent_id];
-			update_post_meta ( $newValue, "projectdata", json_encode ( $project ) );
-			wp_update_post ( array (
-					'ID' => $newValue,
-					'post_parent' => $project->parent_id 
-			) );
+			if (isset ( $project )) {
+				if ($project->parent_id != 0)
+					$project->parent_id = $projIDMap [$project->parent_id];
+				update_post_meta ( $newValue, "projectdata", json_encode ( $project ) );
+				wp_update_post ( array (
+						'ID' => $newValue,
+						'post_parent' => $project->parent_id 
+				) );
+			}
 		}
-		
-		$rs = file_get_contents ( __DIR__ . "/risks.json" );
-		$risks = json_decode ( $rs );
 		
 		foreach ( $import->risks as $risk ) {
 			
@@ -215,7 +213,7 @@ class QRMSample {
 			if ($risk->primcat != null) {
 				$risk->primcat->id = $catIDMap [$risk->primcat->id];
 				$risk->primcat->parentID = $catIDMap [$risk->primcat->parentID];
-				$risk->primcat->projectID = $projIDMap [$risk->primat->projectID];
+				$risk->primcat->projectID = $projIDMap [$risk->primcat->projectID];
 			}
 			if ($risk->seccat != null) {
 				$risk->seccat->id = $catIDMap [$risk->seccat->id];
@@ -261,7 +259,7 @@ class QRMSample {
 			update_post_meta ( $postID, "manager", get_user_by ( "id", $risk->manager )->data->display_name );
 			update_post_meta ( $postID, "ownerID", $risk->owner );
 			update_post_meta ( $postID, "managerID", $risk->manager );
-			update_post_meta ( $postID, "project", $project->post_title );
+			// update_post_meta ( $postID, "project", $project->post_title );
 			
 			if ($risk->reviews != null) {
 				foreach ( $risk->reviews as $reviewID ) {
@@ -448,7 +446,7 @@ class QRMSample {
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_audit' );
 		
 		QRM::initReportDataInternal ();
-		return ($sampleOnly) ? "Sample Quay Risk Manager Data Removed":"All Quay Risk Manager Data Removed";
+		return ($sampleOnly) ? "Sample Quay Risk Manager Data Removed" : "All Quay Risk Manager Data Removed";
 	}
 	static function make_seed() {
 		list ( $usec, $sec ) = explode ( ' ', microtime () );
@@ -506,9 +504,10 @@ class QRMSample {
 		return QRMSample::createDummyRiskEntryCommon ( $risk, $project );
 	}
 	static function createDummyRiskEntryCommon($risk, $project, $topParent = null, $sample = false) {
+		global $user_identity, $user_email, $user_ID, $current_user;
 		srand ( QRMSample::make_seed () );
 		$lorem = new LoremIpsumGenerator ();
-		$now = mktime ();
+		$now = time ();
 		$month = 60 * 60 * 24 * 30;
 		$day = 60 * 60 * 24;
 		$past = (rand ( 0, 1 ) == 1) ? 1 : - 1;
@@ -661,7 +660,6 @@ class QRMSample {
 		update_post_meta ( $postID, "manager", get_user_by ( "id", $risk->manager )->data->display_name );
 		update_post_meta ( $postID, "ownerID", $risk->owner );
 		update_post_meta ( $postID, "managerID", $risk->manager );
-		update_post_meta ( $postID, "project", $project->post_title );
 		if ($sample == true)
 			update_post_meta ( $postID, "sampleqrmdata", "sample" );
 			
@@ -676,13 +674,11 @@ class QRMSample {
 		$the_query = new WP_Query ( $args );
 		update_post_meta ( $risk->projectID, "numberofrisks", $the_query->found_posts );
 		
-		
 		$auditObjEval = new stdObject ();
 		$auditObjEval->auditComment = "Risk Entered";
 		$auditObjEval->auditDate = date ( "M j, Y" );
 		$auditObjEval->auditPerson = $current_user->ID;
 		$auditObjEval->auditType = 0;
-		
 		
 		$auditObjIdent = new stdObject ();
 		$auditObjIdent->auditComment = "Risk Entered";
@@ -690,11 +686,9 @@ class QRMSample {
 		$auditObjIdent->auditPerson = $current_user->ID;
 		$auditObjIdent->auditType = 3;
 		
-		
-		
 		WPQRM_Model_Risk::replace ( $risk );
-		WPQRM_Model_Audit::replace($auditObjEval);
-		WPQRM_Model_Audit::replace($auditObjIdent);
+		WPQRM_Model_Audit::replace ( $auditObjEval );
+		WPQRM_Model_Audit::replace ( $auditObjIdent );
 		
 		return $risk->riskProjectCode;
 	}
@@ -713,7 +707,7 @@ class QRMSample {
 		) );
 		$userSummary = array ();
 		foreach ( $user_query->results as $user ) {
-			if ($user->caps ["risk_admin"] == true || $user->caps ["risk_user"] == true) {
+			if (isset ( $user->caps ["risk_admin"] ) || isset ( $user->caps ["risk_user"] )) {
 				array_push ( $userSummary, $user->ID );
 			}
 		}
@@ -784,6 +778,7 @@ class QRMSample {
 		return $p;
 	}
 	static function saveSampleProject($project, $sample = false) {
+		global $user_identity, $user_email, $user_ID, $current_user;
 		$postID = wp_insert_post ( array (
 				'post_content' => $project->description,
 				'post_title' => $project->title,
