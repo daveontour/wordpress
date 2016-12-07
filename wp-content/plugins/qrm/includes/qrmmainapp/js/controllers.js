@@ -1067,7 +1067,7 @@ function ExplorerCtrl($scope, QRMDataService, $state,  remoteService, ngDialog, 
                 	// This indicates that a risk was selected as entry into the application, so select the projec that it came from
                     exp.projectSelect(null, projectID);
                     postType = null;
-                }  else if (postType == "firstproject") {
+                }  else if (postType == "firstproject"  || postType == "incidentfirst" || postType == "reviewfirst") {
                     exp.projectSelect(null, QRMDataService.sortedParents[0].id);
                     postType = null;
                 } else {
@@ -3481,6 +3481,10 @@ function IncidentCtrl($scope,  QRMDataService, $state, remoteService, ngNotify, 
 
 	this.init = function() {
 		
+		if (postType == "incident"){
+			postType = "incidentfirst";
+		}
+		
 	    inc.siteUsers = [];
 	    $scope.data = {};
 	    $scope.savingincident = false;
@@ -4021,6 +4025,10 @@ function ReviewCtrl($scope, QRMDataService, $state, remoteService, ngNotify,
 	}
 
 	this.init = function() {
+		
+		if (postType == "review"){
+			postType = "reviewfirst";
+		}
 		if (QRMDataService.reviewID == -1) {
 			rev.review = {
 				title : "Review Title",

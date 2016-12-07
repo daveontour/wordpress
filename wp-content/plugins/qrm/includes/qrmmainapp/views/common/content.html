@@ -25,6 +25,8 @@
                 <span ng-show="main.sideOpen"  style="font-size:1.2em"><strong>QRM</strong></span>
                 <span class="hidden-xs hidden-sm"  id="qrm-subtitle"  ng-show="!main.sideOpen" style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBar"></span>
                 <span class="hidden-md hidden-lg"  ng-show="!main.sideOpen" style="margin-left:20px;font-size:1.2em" ng-bind-html="main.titleBarSM"></span>
+                <button  ng-click="main.go('qrm.explorer')" id="menu-home" class="btn btn-sm qrmSecMenu" style="border-radius:5px;color:white;float:right;margin-top:7px" dropdown-toggle><i class="fa fa-home"></i>
+                </button>
             </div>
         </div>
 
