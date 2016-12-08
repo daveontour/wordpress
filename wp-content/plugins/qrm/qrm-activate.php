@@ -24,10 +24,14 @@
 			set_transient ( 'qrm_about_page_activated', 1, 30 );
 			
 			global $wpdb;
-			$charset_collate = $wpdb->get_charset_collate();
+			$charset_collate = $wpdb->get_charset_collate() . "  ENGINE = INNODB";
 			$table_name = $wpdb->prefix . 'qrm_risk';
 			
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			require_once 'qrm-sample.php';
+			
+			QRMSample::deleteReportTables();
+			
 			$sql = "CREATE TABLE $table_name (
 			 id INT(11) NOT NULL,
 			 cause TEXT,

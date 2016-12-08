@@ -423,6 +423,12 @@ class QRMSample {
 			if ((get_post_meta ( $post->ID, "sampleqrmdata", true ) == "sample" && $sampleOnly == true) || $sampleOnly == false)
 				wp_delete_post ( $post->ID, true );
 		}
+
+		QRMSample::deleteReportTables();
+		QRM::initReportDataInternal ();
+		return ($sampleOnly) ? "Sample Quay Risk Manager Data Removed" : "All Quay Risk Manager Data Removed";
+	}
+	static function deleteReportTables(){
 		global $wpdb;
 		
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_risk' );
@@ -444,9 +450,6 @@ class QRMSample {
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reports' );
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectproject' );
 		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_audit' );
-		
-		QRM::initReportDataInternal ();
-		return ($sampleOnly) ? "Sample Quay Risk Manager Data Removed" : "All Quay Risk Manager Data Removed";
 	}
 	static function make_seed() {
 		list ( $usec, $sec ) = explode ( ' ', microtime () );
