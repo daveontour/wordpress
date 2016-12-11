@@ -2125,6 +2125,10 @@ final class QuayRiskManager {
 				$this,
 				'qrmplugin_activate' 
 		) );
+		register_deactivation_hook ( __FILE__, array (
+				$this,
+				'qrmplugin_deactivate'
+		) );
 	}
 	public function qrm_start_session() {
 		if (! session_id ()) {
@@ -2226,7 +2230,12 @@ final class QuayRiskManager {
 		$role->add_cap ( 'risk_admin' );
 	}
 	public function qrmplugin_activate() {
+		$this->qrmplugin_deactivate();
 		require_once 'qrm-activate.php';
+	}
+	public function qrmplugin_deactivate() {
+		require_once 'qrm-db.php';
+		dropReportTables();				
 	}
 	public function get_custom_post_type_template($single_template) {
 		global $post;

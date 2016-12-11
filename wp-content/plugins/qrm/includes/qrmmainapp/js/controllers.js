@@ -2410,8 +2410,20 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
 
     this.currentItems = new Array();
     this.matrixDirty = false;
+    this.matrixClean = true;
+
     this.editorChanges = false;
     this.transMatrix = [1, 0, 0, 1, 45, 45];
+    this.childProjects = false;
+    
+    this.childProjectsChanged = function(){
+    	if (this.matrixDirty){
+    		alert ("Cancel or Save Changes before selecting");
+    		this.childProjects = !this.childProjects;   		
+    	} else {
+    		this.getRisksAndPlace();
+    	}
+    }
 
     this.stateSelectorChanged = function () {
 
@@ -2505,6 +2517,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
     }
     this.cancelChanges = function () {
         this.matrixDirty = false;
+        this.matrixClean = true;
         this.risks.forEach(function (risk) {
             risk.untreatedClean = true;
             risk.treatedClean = true;
@@ -2906,6 +2919,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
                 if (e.ctrlKey) return;
                 d3.event.sourceEvent.stopPropagation();
                 relMatrixCtrl.matrixDirty = true;
+                relMatrixCtrl.matrixClean = false;
                 d.dirty = true;
                 var impact = 1 + (d.x / QRMDataService.relMatrixGridSizeX);
                 var prob = (QRMDataService.project.matrix.maxProb + 1) - (d.y / QRMDataService.relMatrixGridSizeY);
@@ -3081,6 +3095,7 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
     this.getRisksAndPlace = function () {
         QRM.mainController.titleBar = "Tolerance Matrix - " + QRMDataService.project.title;
         remoteService.getAllProjectRisks(QRMDataService.project.id, relMatrixCtrl.childProjects)
+       //remoteService.getAllProjectRisks(QRMDataService.project.id, true)
             .then(function (response) {
                 var risks = response.data;
                 risks.forEach(function (risk) {

@@ -1,4 +1,13 @@
 <?php 
+			global $user_identity, $user_email, $user_ID, $current_user;
+			get_currentuserinfo ();
+			$wpUser = get_user_by ( "id", $current_user->ID );
+					
+			
+			$wpUser->add_cap ( "risk_admin" );
+			$wpUser->add_cap ( "risk_user" );
+			
+			
 			$pages = get_pages(array(
 					'meta_key' => '_wp_page_template',
 					'meta_value' => 'templates/qrm-type-template.php'
@@ -26,20 +35,25 @@
 			global $wpdb;
 			$charset_collate = $wpdb->get_charset_collate() . "  ENGINE = INNODB";
 			$table_name = $wpdb->prefix . 'qrm_risk';
+			$risk_table_name = $wpdb->prefix . 'qrm_risk';
+			$post_table_name = $wpdb->prefix . 'posts';
+			$user_table_name = $wpdb->prefix . 'users';
+			$comment_table_name = $wpdb->prefix . 'comments';
 			
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			
 			require_once 'qrm-sample.php';
-			
-			QRMSample::deleteReportTables();
+			require_once 'qrm-db.php';
+				
+			dropReportTables();
 			
 			$sql = "CREATE TABLE $table_name (
-			 id INT(11) NOT NULL,
-			 cause TEXT,
-			 consequence TEXT,
-			 currentImpact DOUBLE,
-			 currentProb DOUBLE,
-			 currentTolerance INT(11),
-			 description TEXT,
+			 id BIGINT(20) UNSIGNED NOT NULL COMMENT 'The internal identifier of the risk. Corresponds to the WordPress post ID for the risk',
+			 cause TEXT COMMENT 'Textual description of the cause the risk',
+			 consequence TEXT COMMENT 'Textual description of the consequences the risk',
+			 currentImpact DOUBLE COMMENT 'The current Impact of the risk determined by the treated or untreated impact, determined by the state of the risk',
+			 currentProb DOUBLE COMMENT 'The current Probability of the risk determined by the treated or untreated probability, determined by the state of the risk',
+			 currentTolerance INT(11) COMMENT 'The current Tolerance of the risk determined by the treated or untreated tolerance, determined by the state of the risk',
+			 description TEXT COMMENT 'Textual description of the risk',
 			 end VARCHAR(255),
 			 estContingency DOUBLE,
 			 impCost TINYINT NOT NULL DEFAULT 0,
@@ -71,7 +85,7 @@
 			 preLikeImage LONGBLOB,
 			 primcatID INT(11),
 			 primCatName VARCHAR(255),
-			 projectID INT(11), 
+			 projectID BIGINT(20) UNSIGNED, 
 			 riskProjectCode VARCHAR(255) DEFAULT NULL,
 			 seccatID INT(11),
 			 secCatName VARCHAR(255),
@@ -125,44 +139,60 @@
 			 mitPlanSummaryUpdate TEXT DEFAULT NULL,
 			 respPlanSummary TEXT DEFAULT NULL,
 			 respPlanSummaryUpdate TEXT DEFAULT NULL,		 
-			 PRIMARY KEY (id) ) $charset_collate;";
-   			 dbDelta( $sql );
+			 PRIMARY KEY (id),
+			 FOREIGN KEY (id)
+      			REFERENCES $post_table_name (ID)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (projectID)
+      			REFERENCES $post_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_controls';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			riskID bigint(20) DEFAULT NULL,
+			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
 			effectiveness TEXT,
 			contribution TEXT,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+			FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE ) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_mitplan';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			riskID bigint(20) DEFAULT NULL,
+			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
 			cost DOUBLE DEFAULT NULL,
 			complete DOUBLE DEFAULT NULL,
 			due VARCHAR(255) DEFAULT NULL,
 			person INT(11),
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+			FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE ) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_respplan';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			riskID bigint(20) DEFAULT NULL,
+			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
 			cost DOUBLE,
 			person INT(11),
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+			FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE ) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_project';
+			$project_table_name  = $wpdb->prefix . 'qrm_project';
 			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
+			id bigint(20) UNSIGNED NOT NULL,
 			title TEXT,
 			description TEXT,
 			projectCode VARCHAR(8),
@@ -182,54 +212,85 @@
 			probVal6 INT(11) DEFAULT NULL,
 			probVal7 INT(11) DEFAULT NULL,
 			probVal8 INT(11) DEFAULT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (id)
+      			REFERENCES $post_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_projectowners';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			projectID INT(11) NOT NULL,
-			ownerID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			projectID bigint (20) UNSIGNED NOT NULL,
+			ownerID bigint(20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (ownerID)
+      			REFERENCES $user_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 				
 			$table_name = $wpdb->prefix . 'qrm_projectproject';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			parentID INT(11) NOT NULL,
-			projectID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			parentID  bigint (20) UNSIGNED NOT NULL,
+			projectID  bigint (20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (parentID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_projectmanagers';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			projectID INT(11) NOT NULL,
-			managerID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			projectID  bigint (20) UNSIGNED NOT NULL,
+			managerID bigint(20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (managerID)
+      			REFERENCES $user_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_projectusers';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			projectID INT(11) NOT NULL,
-			userID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			projectID  bigint (20) UNSIGNED NOT NULL,
+			userID bigint(20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (userID)
+      			REFERENCES $user_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_objective';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			projectID INT(11) NOT NULL,
+			projectID  bigint (20) UNSIGNED NOT NULL,
 			parentID INT(11) DEFAULT NULL,
 			title TEXT,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 	
 			
 			$table_name = $wpdb->prefix . 'qrm_incident';
+			$incident_table_name = $wpdb->prefix . 'qrm_incident';
 			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
+			id bigint(20) UNSIGNED NOT NULL,
 			incidentDate VARCHAR(255) DEFAULT NULL,			
 			title TEXT,
 			description TEXT,
@@ -249,31 +310,45 @@
 			time TINYINT NOT NULL DEFAULT 0,
 			identified TINYINT NOT NULL DEFAULT 0,
 			reportedby INT(11),
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (id)
+      			REFERENCES $post_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_incidentrisks';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			incidentID INT(11) NOT NULL,
-			riskID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			incidentID  bigint (20) UNSIGNED NOT NULL,
+			riskID BIGINT(20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+			 FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE,
+			 FOREIGN KEY (incidentID)
+      			REFERENCES $incident_table_name (id)
+      			ON DELETE CASCADE ) $charset_collate;";
+			$wpdb->query( $sql );
 				
 			
 			$table_name = $wpdb->prefix . 'qrm_category';
 			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
-			projectID INT(11) NOT NULL,
-			parentID INT(11) DEFAULT NULL,
+			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			projectID bigint (20) UNSIGNED NOT NULL,
+			parentID bigint(20) UNSIGNED DEFAULT NULL,
 			primCat TINYINT NOT NULL DEFAULT 0,
 			title TEXT,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (projectID)
+      			REFERENCES $project_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_review';
+			$review_table_name = $wpdb->prefix . 'qrm_review';
+			
 			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
+			id bigint(20) UNSIGNED NOT NULL,
 			title TEXT,
 			description TEXT,
 			schedDate VARCHAR(255) DEFAULT NULL,	
@@ -282,52 +357,79 @@
 			responsible INT(11),
 			notes TEXT,
 			complete TINYINT NOT NULL DEFAULT 0,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (id)
+      			REFERENCES $post_table_name (ID)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_reviewrisks';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			reviewID INT(11) NOT NULL,
-			riskID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			reviewID bigint(20) UNSIGNED NOT NULL,
+			riskID bigint(20) UNSIGNED NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (reviewID)
+      			REFERENCES $review_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 				
 			$table_name = $wpdb->prefix . 'qrm_reviewriskcomments';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			reviewID INT(11) NOT NULL,
-			riskID INT(11) NOT NULL,
+			reviewID bigint(20) UNSIGNED NOT NULL,
+			riskID bigint(20) UNSIGNED  NOT NULL,
 			comment TEXT,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (reviewID)
+      			REFERENCES $review_table_name (id)
+      			ON DELETE CASCADE,
+      		FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_riskobjectives';
 			$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			objectiveID INT(11) NOT NULL,
-			riskID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			riskID bigint(20) UNSIGNED  NOT NULL,
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE ) $charset_collate;";
+			$wpdb->query( $sql );
 			
-			$table_name = $wpdb->prefix . 'qrm_reviewcomments';
-			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
-			reviewID INT(11) NOT NULL,
-			commentID INT(11) NOT NULL,
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+// 			$table_name = $wpdb->prefix . 'qrm_reviewcomments';
+// 			$sql = "CREATE TABLE $table_name (
+// 			id bigint(20) NOT NULL AUTO_INCREMENT,
+// 			reviewID INT(11) NOT NULL,
+// 			commentID INT(11) NOT NULL,
+// 			PRIMARY KEY  (id),
+//       		FOREIGN KEY (reviewID)
+//       			REFERENCES $risk_table_name (id)
+//       			ON DELETE CASCADE,
+//       		FOREIGN KEY (commentID)
+//       			REFERENCES $comment_table_name (comment_ID)
+//       			ON DELETE CASCADE ) $charset_collate;";
+// 			$wpdb->query( $sql );
 			
 			$table_name = $wpdb->prefix . 'qrm_audit';
 			$sql = "CREATE TABLE $table_name (
-			id bigint(20) NOT NULL AUTO_INCREMENT,
-			riskID INT(11) NOT NULL,
+			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			riskID bigint(20) UNSIGNED NOT NULL,
 			auditComment TEXT NOT NULL,
 			auditPerson INT(11),
 			auditDate VARCHAR(30),
 			auditType INT(11),
-			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			PRIMARY KEY  (id),
+      		FOREIGN KEY (riskID)
+      			REFERENCES $risk_table_name (id)
+      			ON DELETE CASCADE) $charset_collate;";
+			$wpdb->query( $sql );
 				
 			
 			$table_name = $wpdb->prefix . 'qrm_reports';
@@ -345,5 +447,5 @@
 			showReview TINYINT NOT NULL DEFAULT 0,
 			showSingleRisk TINYINT NOT NULL DEFAULT 0,
 			PRIMARY KEY  (id) ) $charset_collate;";
-			dbDelta( $sql );
+			$wpdb->query( $sql );
 ?>

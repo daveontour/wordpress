@@ -1,4 +1,31 @@
 <?php
+function dropReportTables() {
+
+	global $wpdb;
+
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_controls' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_mitplan' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_respplan' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_projectusers' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_objective' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_incidentrisks' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_category' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_reviewrisks' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_reviewriskcomments' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_reviewcomments' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_reports' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_projectproject' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_audit' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_riskobjectives' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_risk' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_review' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_incident' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_projectowners' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_projectmanagers' );
+	$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_project' );
+	
+}
+
 abstract class WPQRM_Model {
 	static $primary_key = 'id';
 	private static function _table() {
@@ -164,54 +191,8 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 				$data->seccatID = $data->seccat->id;
 			}
 			
-			$data->description = str_replace ( "<p>", "", $data->description );
-			$data->description = str_replace ( "</p>", "<br/><br/>", $data->description );
-			
-			$data->cause = str_replace ( "<p>", "", $data->cause );
-			$data->cause = str_replace ( "</p>", "<br/><br/>", $data->cause );
-			
-			$data->consequence = str_replace ( "<p>", "", $data->consequence );
-			$data->consequence = str_replace ( "</p>", "<br/><br/>", $data->consequence );
-			
-			$data->mitigation->mitPlanSummary = str_replace ( "<p>", "", $data->mitigation->mitPlanSummary );
-			$data->mitigation->mitPlanSummaryUpdate = str_replace ( "<p>", "", $data->mitigation->mitPlanSummaryUpdate );
-			
-			$data->response->respPlanSummary = str_replace ( "<p>", "", $data->response->respPlanSummary );
-			$data->response->respPlanSummaryUpdate = str_replace ( "<p>", "", $data->response->respPlanSummaryUpdate );
-			
-			$data->mitigation->mitPlanSummary = str_replace ( "</p>", "<br/><br/>", $data->mitigation->mitPlanSummary );
-			$data->mitigation->mitPlanSummaryUpdate = str_replace ( "</p>", "<br/><br/>", $data->mitigation->mitPlanSummaryUpdate );
-			
-			$data->response->respPlanSummary = str_replace ( "</p>", "<br/><br/>", $data->response->respPlanSummary );
-			$data->response->respPlanSummaryUpdate = str_replace ( "</p>", "<br/><br/>", $data->response->respPlanSummaryUpdate );
-			
-			WPQRM_Model_RiskObjectives::deleteRiskObjectives ( $data->id );
-			foreach ( $data->objectives as $key => $value ) {
-				if ($value) {
-					$o = new stdObject ();
-					$o->riskID = $data->id;
-					$o->objectiveID = $key;
-					WPQRM_Model_RiskObjectives::replace ( $o );
-				}
-			}
-			
-			WPQRM_Model_Controls::deleteRiskControls ( $data->id );
-			foreach ( $data->controls as $control ) {
-				$control->riskID = $data->id;
-				WPQRM_Model_Controls::replace ( $control );
-			}
-			
-			WPQRM_Model_Mitplan::deleteRiskMitPlan ( $data->id );
-			foreach ( $data->mitigation->mitPlan as $plan ) {
-				$plan->riskID = $data->id;
-				WPQRM_Model_Mitplan::replace ( $plan );
-			}
-			
-			WPQRM_Model_Respplan::deleteRiskRespPlan ( $data->id );
-			foreach ( $data->response->respPlan as $plan ) {
-				$plan->riskID = $data->id;
-				WPQRM_Model_Respplan::replace ( $plan );
-			}
+		
+
 			if ($data->impCost != 1)
 				$data->impCost = 0;
 			if ($data->impRep != 1)
@@ -389,7 +370,63 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 	}
 	static function replace($data, $where = null) {
 		global $wpdb;
+		
+		$data->description = str_replace ( "<p>", "", $data->description );
+		$data->description = str_replace ( "</p>", "<br/><br/>", $data->description );
+			
+		$data->cause = str_replace ( "<p>", "", $data->cause );
+		$data->cause = str_replace ( "</p>", "<br/><br/>", $data->cause );
+			
+		$data->consequence = str_replace ( "<p>", "", $data->consequence );
+		$data->consequence = str_replace ( "</p>", "<br/><br/>", $data->consequence );
+			
+		$data->mitigation->mitPlanSummary = str_replace ( "<p>", "", $data->mitigation->mitPlanSummary );
+		$data->mitigation->mitPlanSummaryUpdate = str_replace ( "<p>", "", $data->mitigation->mitPlanSummaryUpdate );
+			
+		$data->response->respPlanSummary = str_replace ( "<p>", "", $data->response->respPlanSummary );
+		$data->response->respPlanSummaryUpdate = str_replace ( "<p>", "", $data->response->respPlanSummaryUpdate );
+			
+		$data->mitigation->mitPlanSummary = str_replace ( "</p>", "<br/><br/>", $data->mitigation->mitPlanSummary );
+		$data->mitigation->mitPlanSummaryUpdate = str_replace ( "</p>", "<br/><br/>", $data->mitigation->mitPlanSummaryUpdate );
+			
+		$data->response->respPlanSummary = str_replace ( "</p>", "<br/><br/>", $data->response->respPlanSummary );
+		$data->response->respPlanSummaryUpdate = str_replace ( "</p>", "<br/><br/>", $data->response->respPlanSummaryUpdate );
+		
+		
+		$objs = $data->objectives;
+		$controls = $data->controls;
+		$mitplan = $data->mitigation->mitPlan;
+		$respplan = $data->response->respPlan;
+		
 		parent::replace ( self::_fix ( $data ) );
+		
+		WPQRM_Model_RiskObjectives::deleteRiskObjectives ( $data->id );
+		foreach ( $objs as $key => $value ) {
+			if ($value) {
+				$o = new stdObject ();
+				$o->riskID = $data->id;
+				$o->objectiveID = $key;
+				WPQRM_Model_RiskObjectives::replace ( $o );
+			}
+		}
+			
+		WPQRM_Model_Controls::deleteRiskControls ( $data->id );
+		foreach ( $controls as $control ) {
+			$control->riskID = $data->id;
+			WPQRM_Model_Controls::replace ( $control );
+		}
+			
+		WPQRM_Model_Mitplan::deleteRiskMitPlan ( $data->id );
+		foreach ( $mitplan as $plan ) {
+			$plan->riskID = $data->id;
+			WPQRM_Model_Mitplan::replace ( $plan );
+		}
+			
+		WPQRM_Model_Respplan::deleteRiskRespPlan ( $data->id );
+		foreach ( $respplan as $plan ) {
+			$plan->riskID = $data->id;
+			WPQRM_Model_Respplan::replace ( $plan );
+		}
 	}
 	static function delete($data) {
 		$data = self::_fix ( $data );
@@ -533,21 +570,38 @@ class WPQRM_Model_Project extends WPQRM_Model {
 		$data->probVal7 = $data->matrix->probVal7;
 		$data->probVal8 = $data->matrix->probVal8;
 		
+
+		$var = '$$treeLevel';
+		unset ( $data->$var );
+		return $data;
+	}
+	static function replace($data) {
+		global $wpdb;
+		
+		$cats = $data->categories;
+		$objectives = $data->objectives;
+		$ownersID = $data->ownersID;
+		$managersID = $data->managersID;
+		$usersID = $data->usersID;
+		
+		parent::replace ( self::_fix ( $data ) );
+		
+		
 		WPQRM_Model_Category::deleteProjectCategories ( $data->id );
-		foreach ( $data->categories as $cat ) {
+		foreach ( $cats as $cat ) {
 			if ($cat->projectID == $data->id) {
 				WPQRM_Model_Category::replace ( $cat );
 			}
 		}
 		WPQRM_Model_Objective::deleteProjectObjectives ( $data->id );
-		foreach ( $data->objectives as $obj ) {
+		foreach ( $objectives as $obj ) {
 			if ($obj->projectID == $data->id) {
 				WPQRM_Model_Objective::replace ( $obj );
 			}
 		}
 		
 		WPQRM_Model_ProjectOwners::deleteProjectRiskOwners ( $data->id );
-		foreach ( $data->ownersID as $ID ) {
+		foreach ( $ownersID as $ID ) {
 			$o = new stdClass ();
 			$o->projectID = $data->id;
 			$o->ownerID = $ID;
@@ -555,7 +609,7 @@ class WPQRM_Model_Project extends WPQRM_Model {
 		}
 		
 		WPQRM_Model_ProjectManagers::deleteProjectRiskManagers ( $data->id );
-		foreach ( $data->managersID as $ID ) {
+		foreach ( $managersID as $ID ) {
 			$o = new stdClass ();
 			$o->projectID = $data->id;
 			$o->managerID = $ID;
@@ -563,19 +617,14 @@ class WPQRM_Model_Project extends WPQRM_Model {
 		}
 		
 		WPQRM_Model_ProjectUsers::deleteProjectRiskUsers ( $data->id );
-		foreach ( $data->usersID as $ID ) {
+		foreach ( $usersID as $ID ) {
 			$o = new stdClass ();
 			$o->projectID = $data->id;
 			$o->userID = $ID;
 			WPQRM_Model_ProjectUsers::replace ( $o );
 		}
-		$var = '$$treeLevel';
-		unset ( $data->$var );
-		return $data;
-	}
-	static function replace($data) {
-		global $wpdb;
-		parent::replace ( self::_fix ( $data ) );
+		
+		
 		WPQRM_Model_ProjectProject::updateRelationships ();
 	}
 }

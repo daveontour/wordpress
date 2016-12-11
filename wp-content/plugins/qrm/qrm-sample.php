@@ -431,26 +431,27 @@ class QRMSample {
 	static function deleteReportTables(){
 		global $wpdb;
 		
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_risk' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_controls' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_mitplan' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_respplan' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_project' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectowners' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectmanagers' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectusers' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_objective' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_incident' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_incidentrisks' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_category' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_review' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewrisks' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewriskcomments' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reviewcomments' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_reports' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_projectproject' );
-		$wpdb->query ( "DELETE FROM " . $wpdb->prefix . 'qrm_audit' );
-	}
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_risk' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_controls' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_mitplan' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_respplan' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_project' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_projectowners' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_projectmanagers' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_projectusers' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_objective' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_incident' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_incidentrisks' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_category' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_review' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_reviewrisks' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_reviewriskcomments' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_reviewcomments' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_reports' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_projectproject' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_audit' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_riskobjectives' );
+		}
 	static function make_seed() {
 		list ( $usec, $sec ) = explode ( ' ', microtime () );
 		return ( float ) $sec + (( float ) $usec * 100000);
@@ -516,8 +517,8 @@ class QRMSample {
 		$past = (rand ( 0, 1 ) == 1) ? 1 : - 1;
 		$start = $now + $past * rand ( 0, 300 ) * $day;
 		
-		$risk->owner = $project->ownersID [array_rand ( $project->ownersID, 1 )];
-		$risk->manager = $project->managersID [array_rand ( $project->managersID, 1 )];
+		$risk->owner = $project->ownersID [array_rand ( $project->ownersID )];
+		$risk->manager = $project->managersID [array_rand ( $project->managersID)];
 		
 		if ($risk->owner == null) {
 			$risk->owner = $project->projectRiskManager;
@@ -690,8 +691,8 @@ class QRMSample {
 		$auditObjIdent->auditType = 3;
 		
 		WPQRM_Model_Risk::replace ( $risk );
-		WPQRM_Model_Audit::replace ( $auditObjEval );
-		WPQRM_Model_Audit::replace ( $auditObjIdent );
+// 		WPQRM_Model_Audit::replace ( $auditObjEval );
+// 		WPQRM_Model_Audit::replace ( $auditObjIdent );
 		
 		return $risk->riskProjectCode;
 	}
@@ -709,6 +710,7 @@ class QRMSample {
 				'fields' => 'all' 
 		) );
 		$userSummary = array ();
+		array_push ( $userSummary, $user_ID );
 		foreach ( $user_query->results as $user ) {
 			if (isset ( $user->caps ["risk_admin"] ) || isset ( $user->caps ["risk_user"] )) {
 				array_push ( $userSummary, $user->ID );
