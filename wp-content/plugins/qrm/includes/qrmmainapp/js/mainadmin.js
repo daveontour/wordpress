@@ -157,10 +157,9 @@ function ReportController($scope, remoteService, ngNotify) {
     	
     	var options = new Object();
     	
-        options.url = $scope.url = $scope.url;
-        options.siteName = $scope.siteName;
-        options.siteID = $scope.siteID;
-        options.siteKey = $scope.siteKey;
+        options.url = $scope.url;
+        options.reportParam1 = $scope.reportParam1;
+        options.reportParam2 = $scope.reportParam2;
     	
         remoteService.saveReportOptions(options)
             .then(function (response) {
@@ -196,9 +195,8 @@ function ReportController($scope, remoteService, ngNotify) {
     remoteService.getReportOptions()
         .then(function (response) {          
             $scope.url = response.data.url;
-            $scope.siteName = response.data.siteName;
-            $scope.siteID = response.data.siteID;
-            $scope.siteKey = response.data.siteKey;
+            $scope.reportParam1 = response.data.reportParam1;
+            $scope.reportParam2 = response.data.reportParam2;
         });
     remoteService.getReports().then(function (response) {          
         $scope.reports = response.data;

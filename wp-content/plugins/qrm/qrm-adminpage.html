@@ -222,6 +222,20 @@
 													Server URL</th>
 												<td><input ng-model="url" style="width: 100%" required></td>
 											</tr>
+											<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em" >Input Parameter 1</th>
+												<td colspan=3><input ng-model="reportParam1" style="width: 100%" placeholder="Suggestion: A security token or similar"></td>
+											</tr>
+											<tr valign="top">
+												<th
+													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Input Parameter 2</th>
+												<td colspan=3><input ng-model="reportParam2" style="width: 100%"  placeholder="Suggestion: Token to distinguish or identify the particular site"></td>
+											</tr>
+											<tr valign="top">
+												<th></th>
+												<td colspan=3>The Input Parameters are sent in POST data as "reportParam1" and "reportParam2" respectively. If you use https protocol, this psarasmeters will be encrypted and hence can be used to send a password to the reporting system</td>
+											</tr>
 											<tr>
 											<th></th>
 												<td align="right" style="padding-top: 0.75em;"><button
@@ -252,6 +266,7 @@
 													style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">URL Parameters</th>
 												<td colspan=3><input ng-model="selectedReport.urlParams" style="width: 100%"></td>
 											</tr>
+										<tr>
 											<th	style="width: 150px; padding-top: 0.5em; padding-bottom: 0.5em">Show in Pages: </th>
 												</tr>
 										<tr>

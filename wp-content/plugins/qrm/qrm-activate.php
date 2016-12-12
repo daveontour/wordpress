@@ -1,52 +1,53 @@
-<?php 
-			global $user_identity, $user_email, $user_ID, $current_user;
-			get_currentuserinfo ();
-			$wpUser = get_user_by ( "id", $current_user->ID );
-					
-			
-			$wpUser->add_cap ( "risk_admin" );
-			$wpUser->add_cap ( "risk_user" );
-			
-			
-			$pages = get_pages(array(
-					'meta_key' => '_wp_page_template',
-					'meta_value' => 'templates/qrm-type-template.php'
-			));
-			
-			if (sizeof($pages) == 0) {
-				// Create the page to access the application
-				$postdata = array (
-						'post_parent' => 0,
-						'post_status' => 'publish',
-						'post_title' => 'Quay Risk Manager',
-						'post_name' => 'riskmanager',
-						'page_template' => 'templates/qrm-type-template.php',
-						'post_type' => 'page' 
-				);
-				$pageID = wp_insert_post ( $postdata );
-				update_post_meta ( $pageID, '_wp_page_template', 'templates/qrm-type-template.php' );
-			}
-			
-			$this->register_types ();
-			flush_rewrite_rules ();
-			
-			set_transient ( 'qrm_about_page_activated', 1, 30 );
-			
-			global $wpdb;
-			$charset_collate = $wpdb->get_charset_collate() . "  ENGINE = INNODB";
-			$table_name = $wpdb->prefix . 'qrm_risk';
-			$risk_table_name = $wpdb->prefix . 'qrm_risk';
-			$post_table_name = $wpdb->prefix . 'posts';
-			$user_table_name = $wpdb->prefix . 'users';
-			$comment_table_name = $wpdb->prefix . 'comments';
-			
-			
-			require_once 'qrm-sample.php';
-			require_once 'qrm-db.php';
-				
-			dropReportTables();
-			
-			$sql = "CREATE TABLE $table_name (
+<?php
+class QRMActivate {
+	
+	static function activate() {
+		
+		global $user_identity, $user_email, $user_ID, $current_user;
+		get_currentuserinfo ();
+		$wpUser = get_user_by ( "id", $current_user->ID );
+		
+		$wpUser->add_cap ( "risk_admin" );
+		$wpUser->add_cap ( "risk_user" );
+		
+		$pages = get_pages ( array (
+				'meta_key' => '_wp_page_template',
+				'meta_value' => 'templates/qrm-type-template.php' 
+		) );
+		
+		if (sizeof ( $pages ) == 0) {
+			// Create the page to access the application
+			$postdata = array (
+					'post_parent' => 0,
+					'post_status' => 'publish',
+					'post_title' => 'Quay Risk Manager',
+					'post_name' => 'riskmanager',
+					'page_template' => 'templates/qrm-type-template.php',
+					'post_type' => 'page' 
+			);
+			$pageID = wp_insert_post ( $postdata );
+			update_post_meta ( $pageID, '_wp_page_template', 'templates/qrm-type-template.php' );
+		}
+		
+		QRMActivate::register_types ();
+		flush_rewrite_rules ();
+		
+		set_transient ( 'qrm_about_page_activated', 1, 30 );
+		
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate () . "  ENGINE = INNODB";
+		$table_name = $wpdb->prefix . 'qrm_risk';
+		$risk_table_name = $wpdb->prefix . 'qrm_risk';
+		$post_table_name = $wpdb->prefix . 'posts';
+		$user_table_name = $wpdb->prefix . 'users';
+		$comment_table_name = $wpdb->prefix . 'comments';
+		
+		require_once 'qrm-sample.php';
+		require_once 'qrm-db.php';
+		
+		QRMUtil::dropReportTables ();
+		
+		$sql = "CREATE TABLE $table_name (
 			 id BIGINT(20) UNSIGNED NOT NULL COMMENT 'The internal identifier of the risk. Corresponds to the WordPress post ID for the risk',
 			 cause TEXT COMMENT 'Textual description of the cause the risk',
 			 consequence TEXT COMMENT 'Textual description of the consequences the risk',
@@ -141,15 +142,15 @@
 			 respPlanSummaryUpdate TEXT DEFAULT NULL,		 
 			 PRIMARY KEY (id),
 			 FOREIGN KEY (id)
-      			REFERENCES $post_table_name (ID)
+      			REFERENCES $wpdb->posts (ID)
       			ON DELETE CASCADE,
       		FOREIGN KEY (projectID)
-      			REFERENCES $post_table_name (ID)
+      			REFERENCES $wpdb->posts (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_controls';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_controls';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
@@ -159,10 +160,10 @@
 			FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE ) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_mitplan';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_mitplan';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
@@ -174,10 +175,10 @@
 			FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE ) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_respplan';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_respplan';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			riskID bigint(20) UNSIGNED DEFAULT NULL,
 			description TEXT,
@@ -187,11 +188,11 @@
 			FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE ) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_project';
-			$project_table_name  = $wpdb->prefix . 'qrm_project';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_project';
+		$project_table_name = $wpdb->prefix . 'qrm_project';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) UNSIGNED NOT NULL,
 			title TEXT,
 			description TEXT,
@@ -214,12 +215,12 @@
 			probVal8 INT(11) DEFAULT NULL,
 			PRIMARY KEY  (id),
       		FOREIGN KEY (id)
-      			REFERENCES $post_table_name (ID)
+      			REFERENCES $wpdb->posts (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_projectowners';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_projectowners';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			projectID bigint (20) UNSIGNED NOT NULL,
 			ownerID bigint(20) UNSIGNED NOT NULL,
@@ -228,12 +229,12 @@
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE,
       		FOREIGN KEY (ownerID)
-      			REFERENCES $user_table_name (ID)
+      			REFERENCES $wpdb->users (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-				
-			$table_name = $wpdb->prefix . 'qrm_projectproject';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_projectproject';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			parentID  bigint (20) UNSIGNED NOT NULL,
 			projectID  bigint (20) UNSIGNED NOT NULL,
@@ -244,10 +245,10 @@
       		FOREIGN KEY (parentID)
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_projectmanagers';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_projectmanagers';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			projectID  bigint (20) UNSIGNED NOT NULL,
 			managerID bigint(20) UNSIGNED NOT NULL,
@@ -256,12 +257,12 @@
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE,
       		FOREIGN KEY (managerID)
-      			REFERENCES $user_table_name (ID)
+      			REFERENCES $wpdb->users (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_projectusers';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_projectusers';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			projectID  bigint (20) UNSIGNED NOT NULL,
 			userID bigint(20) UNSIGNED NOT NULL,
@@ -270,12 +271,12 @@
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE,
       		FOREIGN KEY (userID)
-      			REFERENCES $user_table_name (ID)
+      			REFERENCES $wpdb->users (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_objective';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_objective';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			projectID  bigint (20) UNSIGNED NOT NULL,
 			parentID INT(11) DEFAULT NULL,
@@ -284,12 +285,11 @@
       		FOREIGN KEY (projectID)
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-	
-			
-			$table_name = $wpdb->prefix . 'qrm_incident';
-			$incident_table_name = $wpdb->prefix . 'qrm_incident';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_incident';
+		$incident_table_name = $wpdb->prefix . 'qrm_incident';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) UNSIGNED NOT NULL,
 			incidentDate VARCHAR(255) DEFAULT NULL,			
 			title TEXT,
@@ -312,12 +312,12 @@
 			reportedby INT(11),
 			PRIMARY KEY  (id),
       		FOREIGN KEY (id)
-      			REFERENCES $post_table_name (ID)
+      			REFERENCES $wpdb->posts (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_incidentrisks';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_incidentrisks';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			incidentID  bigint (20) UNSIGNED NOT NULL,
 			riskID BIGINT(20) UNSIGNED NOT NULL,
@@ -328,11 +328,10 @@
 			 FOREIGN KEY (incidentID)
       			REFERENCES $incident_table_name (id)
       			ON DELETE CASCADE ) $charset_collate;";
-			$wpdb->query( $sql );
-				
-			
-			$table_name = $wpdb->prefix . 'qrm_category';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_category';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			projectID bigint (20) UNSIGNED NOT NULL,
 			parentID bigint(20) UNSIGNED DEFAULT NULL,
@@ -342,12 +341,12 @@
       		FOREIGN KEY (projectID)
       			REFERENCES $project_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_review';
-			$review_table_name = $wpdb->prefix . 'qrm_review';
-			
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_review';
+		$review_table_name = $wpdb->prefix . 'qrm_review';
+		
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) UNSIGNED NOT NULL,
 			title TEXT,
 			description TEXT,
@@ -359,12 +358,12 @@
 			complete TINYINT NOT NULL DEFAULT 0,
 			PRIMARY KEY  (id),
       		FOREIGN KEY (id)
-      			REFERENCES $post_table_name (ID)
+      			REFERENCES $wpdb->posts (ID)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_reviewrisks';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_reviewrisks';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			reviewID bigint(20) UNSIGNED NOT NULL,
 			riskID bigint(20) UNSIGNED NOT NULL,
@@ -375,10 +374,10 @@
       		FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-				
-			$table_name = $wpdb->prefix . 'qrm_reviewriskcomments';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_reviewriskcomments';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			reviewID bigint(20) UNSIGNED NOT NULL,
 			riskID bigint(20) UNSIGNED  NOT NULL,
@@ -390,10 +389,10 @@
       		FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_riskobjectives';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_riskobjectives';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			objectiveID INT(11) NOT NULL,
 			riskID bigint(20) UNSIGNED  NOT NULL,
@@ -401,24 +400,10 @@
       		FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE ) $charset_collate;";
-			$wpdb->query( $sql );
-			
-// 			$table_name = $wpdb->prefix . 'qrm_reviewcomments';
-// 			$sql = "CREATE TABLE $table_name (
-// 			id bigint(20) NOT NULL AUTO_INCREMENT,
-// 			reviewID INT(11) NOT NULL,
-// 			commentID INT(11) NOT NULL,
-// 			PRIMARY KEY  (id),
-//       		FOREIGN KEY (reviewID)
-//       			REFERENCES $risk_table_name (id)
-//       			ON DELETE CASCADE,
-//       		FOREIGN KEY (commentID)
-//       			REFERENCES $comment_table_name (comment_ID)
-//       			ON DELETE CASCADE ) $charset_collate;";
-// 			$wpdb->query( $sql );
-			
-			$table_name = $wpdb->prefix . 'qrm_audit';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_audit';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			riskID bigint(20) UNSIGNED NOT NULL,
 			auditComment TEXT NOT NULL,
@@ -429,11 +414,10 @@
       		FOREIGN KEY (riskID)
       			REFERENCES $risk_table_name (id)
       			ON DELETE CASCADE) $charset_collate;";
-			$wpdb->query( $sql );
-				
-			
-			$table_name = $wpdb->prefix . 'qrm_reports';
-			$sql = "CREATE TABLE $table_name (
+		$wpdb->query ( $sql );
+		
+		$table_name = $wpdb->prefix . 'qrm_reports';
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
 			reportID VARCHAR(40) NOT NULL,
 			menuName VARCHAR(20) NOT NULL,
@@ -447,5 +431,167 @@
 			showReview TINYINT NOT NULL DEFAULT 0,
 			showSingleRisk TINYINT NOT NULL DEFAULT 0,
 			PRIMARY KEY  (id) ) $charset_collate;";
-			$wpdb->query( $sql );
+		$wpdb->query ( $sql );
+	}
+	
+	public static function register_types() {
+		/*
+		 * Project Post Type
+		 */
+		$labels = array (
+				'name' => __ ( 'Risk Projects', 'riskproject-post-type' ),
+				'singular_name' => __ ( 'Risk Project', 'riskproject-post-type' ),
+				'add_new' => __ ( 'Add Risk Project', 'riskproject-post-type' ),
+				'add_new_item' => __ ( 'Add Risk Project', 'riskproject-post-type' ),
+				'edit_item' => __ ( 'Edit Risk Project', 'riskproject-post-type' ),
+				'new_item' => __ ( 'New Risk Project', 'riskproject-post-type' ),
+				'view_item' => __ ( 'View Risk Project', 'riskproject-post-type' ),
+				'search_items' => __ ( 'Search Risk Project', 'riskproject-post-type' ),
+				'not_found' => __ ( 'No risk projects found', 'riskproject-post-type' ),
+				'not_found_in_trash' => __ ( 'No risk projects in the trash', 'riskproject-post-type' )
+		);
+	
+		$supports = array (
+				'page-attributes'
+		)
+		;
+	
+		$args = array (
+				'labels' => $labels,
+				'supports' => $supports,
+				'public' => true,
+				'capability_type' => 'post',
+				'rewrite' => array (
+						'slug' => 'riskproject'
+				), // Permalinks format
+				'menu_position' => 30,
+				'hierarchical' => true,
+				'show_ui' => true,
+				'show_in_menu' => true,
+				'menu_icon' => 'dashicons-portfolio'
+		);
+	
+		$args = apply_filters ( 'riskproject_post_type_args', $args );
+		register_post_type ( 'riskproject', $args );
+		/*
+		 * Risk Post Type
+		 */
+	
+		$labels = array (
+				'name' => __ ( 'Risks', 'risk-post-type' ),
+				'singular_name' => __ ( 'Risk', 'risk-post-type' ),
+				'search_items' => __ ( 'Search Risks', 'risk-post-type' ),
+				'not_found' => __ ( 'No risks found', 'risk-post-type' ),
+				'not_found_in_trash' => __ ( 'No risks in the trash', 'risk-post-type' )
+		);
+	
+		$supports = array (
+				'comments',
+				'title'
+		);
+	
+		$args = array (
+				'labels' => $labels,
+				'supports' => $supports,
+				'public' => true,
+				'capability_type' => 'post',
+				'rewrite' => array (
+						'slug' => 'risk'
+				), // Permalinks format
+				'menu_position' => 30,
+				'menu_icon' => 'dashicons-sos',
+				// 'show_in_menu' => 'edit.php?post_type=riskproject',
+				'show_in_menu' => true,
+				'capabilities' => array (
+						'create_posts' => false
+				) // Removes support for the "Add New" function
+				,
+				'map_meta_cap' => true
+		) // Allows editting and trashing which above disables
+		;
+	
+		$args = apply_filters ( 'risk_post_type_args', $args );
+		register_post_type ( 'risk', $args );
+	
+		/*
+		 * Incident Post Type
+		 */
+	
+		$labels = array (
+				'name' => __ ( 'Risk Incidents', 'incident-post-type' ),
+				'singular_name' => __ ( 'Risk Incident', 'incident-post-type' ),
+				'search_items' => __ ( 'Search Incidents', 'incident-post-type' ),
+				'not_found' => __ ( 'No incidents found', 'incident-post-type' ),
+				'not_found_in_trash' => __ ( 'No incidents in the trash', 'incident-post-type' )
+		);
+	
+		$supports = array (
+				'comments',
+				'title'
+		);
+	
+		$args = array (
+				'labels' => $labels,
+				'supports' => $supports,
+				'public' => true,
+				'capability_type' => 'post',
+				'rewrite' => array (
+						'slug' => 'incident'
+				), // Permalinks format
+				'menu_position' => 30,
+				'menu_icon' => 'dashicons-sos',
+				'show_in_menu' => true,
+				'capabilities' => array (
+						'create_posts' => false
+				) // Removes support for the "Add New" function
+				,
+				'map_meta_cap' => true
+		) // Allows editting and trashing which above disables
+		;
+	
+		$args = apply_filters ( 'incident_post_type_args', $args );
+		register_post_type ( 'incident', $args );
+	
+		/*
+		 * Review Post Type
+		 */
+	
+		$labels = array (
+				'name' => __ ( 'Risk Reviews', 'review-post-type' ),
+				'singular_name' => __ ( 'Risk Review', 'review-post-type' ),
+				'search_items' => __ ( 'Search Reviews', 'review-post-type' ),
+				'not_found' => __ ( 'No reviews found', 'review-post-type' ),
+				'not_found_in_trash' => __ ( 'No reviews in the trash', 'review-post-type' )
+		);
+	
+		$supports = array (
+				'comments',
+				'title'
+		);
+	
+		$args = array (
+				'labels' => $labels,
+				'supports' => $supports,
+				'public' => true,
+				'capability_type' => 'post',
+				'rewrite' => array (
+						'slug' => 'review'
+				), // Permalinks format
+				'menu_position' => 30,
+				'menu_icon' => 'dashicons-sos',
+				// 'show_in_menu' => 'edit.php?post_type=riskproject',
+				'show_in_menu' => true,
+				'capabilities' => array (
+						'create_posts' => false
+				) // Removes support for the "Add New" function
+				,
+				'map_meta_cap' => true
+		) // Allows editting and trashing which above disables
+		;
+	
+		$args = apply_filters ( 'review_post_type_args', $args );
+		register_post_type ( 'review', $args );
+	}
+}
+
 ?>

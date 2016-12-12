@@ -94,7 +94,8 @@ function IntroCtrl($scope, QRMDataService, remoteService, $state, $q, $http) {
         .then(function (response) {
 
             QRMDataService.reportServerURL = response.data.reportServerURL;
-            QRMDataService.siteKey = response.data.siteKey;
+            QRMDataService.reportParam1 = response.data.reportParam1;
+            QRMDataService.reportParam2 = response.data.reportParam2;
             QRMDataService.siteName = response.data.siteName;
             QRMDataService.siteID = response.data.siteID;
             QRMDataService.userEmail = response.data.userEmail;
@@ -244,37 +245,36 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
         })[0];
         
         var url = QRMDataService.reportServerURL+report.urlParams+"&dbprefix="+QRMDataService.dbPrefix;
-        url = url+"&projectID="+QRMDataService.project.id;
-        url = url+"&userID="+QRMDataService.currentUser.ID;
         
-        if (report.showSingleRisk){
-        	url = url+"&riskID="+QRMDataService.riskID;
-        }
+    	jQuery('input[name="projectID"]').val(QRMDataService.project.id);
+    	jQuery('input[name="userID"]').val(QRMDataService.currentUser.ID);
+    	jQuery('input[name="riskID"]').val(QRMDataService.riskID);
+    	jQuery('input[name="incidentID"]').val(QRMDataService.incidentID);
+       	jQuery('input[name="reviewID"]').val(QRMDataService.reviewID);
+
+    	
+    	jQuery('input[name="prob"]').val(QRM.expController.filterOptions.matrixProb);
+    	jQuery('input[name="impact"]').val(QRM.expController.filterOptions.matrixImpact);
+    	jQuery('input[name="manager"]').val(QRM.expController.filterOptions.manager);
+    	jQuery('input[name="owner"]').val(QRM.expController.filterOptions.owner);
+    	jQuery('input[name="subprojects"]').val(QRM.expController.filterOptions.childProjects);
+    	jQuery('input[name="treated"]').val(QRM.expController.filterOptions.treated);
+    	jQuery('input[name="untreated"]').val(QRM.expController.filterOptions.untreated);
+    	jQuery('input[name="inactive"]').val(QRM.expController.filterOptions.expInactive);
+    	jQuery('input[name="active"]').val(QRM.expController.filterOptions.expActive);
+    	jQuery('input[name="pending"]').val(QRM.expController.filterOptions.expPending);
+    	jQuery('input[name="extreme"]').val(QRM.expController.filterOptions.tolEx);
+    	jQuery('input[name="high"]').val(QRM.expController.filterOptions.tolHigh);
+    	jQuery('input[name="significant"]').val(QRM.expController.filterOptions.tolSig);
+    	jQuery('input[name="moderate"]').val(QRM.expController.filterOptions.tolModerate);
+    	jQuery('input[name="low"]').val(QRM.expController.filterOptions.tolLow);
+    	
+        jQuery('input[name="reportParam1"]').val(QRMDataService.reportParam1);
+        jQuery('input[name="reportParam2"]').val(QRMDataService.reportParam2);
+        jQuery('#reportForm').attr('action', url);
+        jQuery("#reportForm").submit();
         
-        if (report.showIncident){
-        	url = url+"&incidentID="+QRMDataService.incidentID;
-        }
-        if (report.showReview){
-        	url = url+"&reviewID="+QRMDataService.reviewID;
-        }
-        if (report.showRiskExplorer){
-        	url = url+"&prob="+QRM.expController.filterOptions.matrixImpact
-        	url = url+"&impact="+QRM.expController.filterOptions.matrixImpact
-        	url = url+"&manager="+QRM.expController.filterOptions.manager;
-        	url = url+"&owner="+QRM.expController.filterOptions.owner
-        	url = url+"&subprojects="+QRM.expController.childProjects;
-        	url = url+"&treated="+QRM.expController.filterOptions.treated;
-        	url = url+"&untreated="+QRM.expController.filterOptions.untreated;
-        	url = url+"&inactive="+QRM.expController.filterOptions.expInactive;
-        	url = url+"&active="+QRM.expController.filterOptions.expActive;
-        	url = url+"&pending="+QRM.expController.filterOptions.expPending;
-        	url = url+"&extreme="+QRM.expController.filterOptions.tolEx;
-        	url = url+"&high="+QRM.expController.filterOptions.tolHigh;
-        	url = url+"&significant="+QRM.expController.filterOptions.tolSig;
-        	url = url+"&moderate="+QRM.expController.filterOptions.tolModerate;
-        	url = url+"&low="+QRM.expController.filterOptions.tolLow;
-        }
-        window.open(encodeURI(url), "_blank");
+        //window.open(encodeURI(url), "_blank");
     }
 
     this.go = function (state) {
@@ -476,6 +476,8 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
         var e = remoteService.getServerMeta()
             .then(function (response) {
                 QRMDataService.reportServerURL = response.data.reportServerURL;
+                QRMDataService.reportParam1 = response.data.reportParam1;
+                QRMDataService.reportParam2 = response.data.reportParam2;
                 QRMDataService.siteKey = response.data.siteKey;
                 QRMDataService.siteName = response.data.siteName;
                 QRMDataService.siteID = response.data.siteID;
@@ -2585,6 +2587,8 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
                     item.untreatedClean = true;
                     item.dirty = false;
                 });
+                relMatrixCtrl.matrixDirty = false;
+                relMatrixCtrl.matrixClean = true;
 
                 ngNotify.dismiss();
                 ngNotify.set("Changes to Probability/Impact Have Been Saved", {type:"success", duration:1000, theme:"pure"});
@@ -2882,6 +2886,8 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
 
         var drag = d3.behavior.drag()
             .on("dragstart", function () {
+                relMatrixCtrl.matrixDirty = true;
+                relMatrixCtrl.matrixClean = false;
                 var e = d3.event.sourceEvent;
                 if (e.ctrlKey) return;
                 d3.event.sourceEvent.stopPropagation();
@@ -3113,24 +3119,24 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
         return $scope;
     }
     
-    $scope.riskReport = function (reportID) {
-       if ($scope.reportReqID < 0) return;
-        QRM.mainController.notify("Assembling Data for Report", 5000);
-        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
-            .then(function (response) {
-            	if (response.data == "OK"){
-            		QRM.mainController.notify("Data sent to server", 5000);
-            	} else {
-                  QRM.mainController.notify("Sending Data for Processing", 5000);
-                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-                  jQuery('input[name="action"]').val("execute_report");
-                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-                  jQuery('input[name="reportID"]').val($scope.reportReqID);
-                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-                  jQuery("#reportForm").submit();            		
-            	}
-            })
-    }
+//    $scope.riskReport = function (reportID) {
+//       if ($scope.reportReqID < 0) return;
+//        QRM.mainController.notify("Assembling Data for Report", 5000);
+//        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
+//            .then(function (response) {
+//            	if (response.data == "OK"){
+//            		QRM.mainController.notify("Data sent to server", 5000);
+//            	} else {
+//                  QRM.mainController.notify("Sending Data for Processing", 5000);
+//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
+//                  jQuery('input[name="action"]').val("execute_report");
+//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
+//                  jQuery('input[name="reportID"]').val($scope.reportReqID);
+//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
+//                  jQuery("#reportForm").submit();            		
+//            	}
+//            })
+//    }
     
     var winWidth = jQuery(window).innerWidth() - 10;
     jQuery("#container").css("width", winWidth + "px");
