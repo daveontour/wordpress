@@ -278,6 +278,19 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
     }
 
     this.go = function (state) {
+    	
+    	
+    	if ($state.current.name == "qrm.matrix" && qrm.matrixController.matrixDirty){
+            ngNotify.dismiss();
+            ngNotify.set("Unsaved Changes. Please save or cancel changes first", {type:"warn", sticky:true,duration:3000, theme:"pure"});
+    		return;
+    	}
+    	if ($state.current.name == "qrm.rank" && qrm.rankController.dirty){
+            ngNotify.dismiss();
+            ngNotify.set("Unsaved Changes. Please save or cancel changes first", {type:"warn", sticky:true,duration:3000, theme:"pure"});
+    		return;
+    	}
+
         $state.go(state);
     }
 
@@ -1565,8 +1578,8 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
     this.dragEnd = function (d) {
 
         vm.risk.useCalProb = false;
-        vm.risk.liketype = 4;
-        vm.risk.likepostType = 4;
+        vm.risk.likeType = 4;
+        vm.risk.likePostType = 4;
 
         if (d.treated) {
             vm.risk.treatedProb = Number(d.prob);
@@ -1584,8 +1597,8 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
     this.dragStart = function (d) {
         vm.risk.useCalProb = false;
         vm.risk.useCalProb = false;
-        vm.risk.liketype = 4;
-        vm.risk.likepostType = 4;
+        vm.risk.likeType = 4;
+        vm.risk.likePostType = 4;
 
     }
     this.drag = function () {
@@ -2064,6 +2077,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
                 alert(response.data.msg);
                 return;
             }
+            rank.dirty = false;
             ngNotify.dismiss();
             ngNotify.set("Rank Order Saved", {type:"success", duration:1000, theme:"pure"});
         })
@@ -2071,32 +2085,13 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
 
     this.cancelChanges = function () {
         this.loadGrid();
+        rank.dirty = false;
     }
 
     $scope.getMyCtrlScope = function () {
         return $scope;
     }
-//
-//
-//    $scope.riskReport = function (reportID) {
-//       if ($scope.reportReqID < 0) return;
-//        QRM.mainController.notify("Assembling Data for Report", 5000);
-//        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
-//            .then(function (response) {
-//                QRM.mainController.notify("Sending Data for Processing", 5000);
-//            	if (response.data == "OK"){
-//            		QRM.mainController.notify("Data sent to server", 5000);
-//            	} else {
-//                  QRM.mainController.notify("Sending Data for Processing", 5000);
-//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-//                  jQuery('input[name="action"]').val("execute_report");
-//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-//                  jQuery('input[name="reportID"]').val($scope.reportReqID);
-//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-//                  jQuery("#reportForm").submit();            		
-//            	}
-//            })
-//    }
+
     this.loadGrid = function () {
         QRM.mainController.titleBar = "Risk Ranking - " + QRMDataService.project.title;
         remoteService.getAllProjectRisks(QRMDataService.project.id, rank.childProjects)
@@ -2129,6 +2124,7 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
     jQuery("#container").css("width", winWidth + "px");
 
     this.loadGrid();
+    rank.dirty = false;
 
     this.resize = function () {
         myLayout.setHeight(jQuery('#subRankSVGDiv').height());

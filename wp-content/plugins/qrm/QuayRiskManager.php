@@ -12,106 +12,36 @@ final class QuayRiskManager {
 		$this->defineAJAXFunctions ();
 	}
 	private function init_hooks() {
-		add_filter ( 'user_has_cap', array (
-				$this,
-				'qrm_prevent_riskproject_parent_deletion'
-		), 10, 3 );
-		add_filter ( 'manage_riskproject_posts_columns', array (
-				$this,
-				'qrm_riskproject_table_head'
-		) );
-		add_filter ( 'manage_risk_posts_columns', array (
-				$this,
-				'qrm_risk_table_head'
-		) );
+		add_filter ( 'user_has_cap', array ($this,'qrm_prevent_riskproject_parent_deletion'	), 10, 3 );
+		add_filter ( 'manage_riskproject_posts_columns', array ($this,'qrm_riskproject_table_head') );
+		add_filter ( 'manage_risk_posts_columns', array ($this,'qrm_risk_table_head') );
+		add_filter ( 'upload_mimes', array ($this,'add_custom_mime_types') );
+		add_filter ( 'single_template', array (	$this,'get_custom_post_type_template') );
+		add_filter ( 'plugin_row_meta', array ($this,'plugin_row_meta'	), 10, 2 );
+		add_filter ( 'plugin_action_links_' . plugin_basename ( __FILE__ ), array (	$this,	'qrm_add_plugin_action_links') );
+		
+		
+		add_action ( 'manage_riskproject_posts_custom_column', array ($this,'qrm_riskproject_table_content'), 10, 2 );
+		add_action ( 'manage_risk_posts_custom_column', array (	$this,'qrm_risk_table_content'), 10, 2 );
+		add_action ( 'admin_menu', array ($this,'qrm_admin_menu_config'	) );
+		add_action ( 'admin_init', array ($this,'redirect_about_page'), 1 );
+		add_action ( 'add_meta_boxes', array ($this,'riskproject_meta_boxes') );
+		add_action ( 'plugins_loaded', array ('PageTemplater','get_instance') );
+		add_action ( 'init', array ($this,'register_types') );
+		add_action ( 'init', array ($this,'qrm_init_options') );
+		add_action ( 'init', array ($this,'qrm_scripts_styles'	) );
+		add_action ( 'init', array ($this, 'qrm_init_user_cap'	) );
+		add_action ( 'init', array ($this,'qrm_start_session') );
+		add_action ( 'trashed_post', array ($this,'qrm_trashed_post') );
 
-		add_action ( 'manage_riskproject_posts_custom_column', array (
-				$this,
-				'qrm_riskproject_table_content'
-		), 10, 2 );
-		add_action ( 'manage_risk_posts_custom_column', array (
-				$this,
-				'qrm_risk_table_content'
-		), 10, 2 );
+		add_option ( "qrm_reportServerURL", "http://127.0.0.1:8080/reportEngineURL" );
+		add_option ( "qrm_displayUser", "userlogin" );
 
-		add_action ( 'admin_menu', array (
-				$this,
-				'qrm_admin_menu_config'
-		) );
-		add_action ( 'admin_init', array (
-				$this,
-				'redirect_about_page'
-		), 1 );
-
-		add_action ( 'add_meta_boxes', array (
-				$this,
-				'riskproject_meta_boxes'
-		) );
-
-		add_filter ( 'upload_mimes', array (
-				$this,
-				'add_custom_mime_types'
-		) );
-		add_filter ( 'single_template', array (
-				$this,
-				'get_custom_post_type_template'
-		) );
-		add_action ( 'plugins_loaded', array (
-				'PageTemplater',
-				'get_instance'
-		) );
-
-		add_action ( 'init', array (
-				$this,
-				'register_types'
-		) );
-		add_action ( 'init', array (
-				$this,
-				'qrm_init_options'
-		) );
-		add_action ( 'init', array (
-				$this,
-				'qrm_scripts_styles'
-		) );
-		add_action ( 'init', array (
-				$this,
-				'qrm_init_user_cap'
-		) );
-		add_action ( 'init', array (
-				$this,
-				'qrm_start_session'
-		) );
-
-		add_action ( 'trashed_post', array (
-				$this,
-				'qrm_trashed_post'
-		) );
-
-		add_filter ( 'plugin_row_meta', array (
-				$this,
-				'plugin_row_meta'
-		), 10, 2 );
-		add_filter ( 'plugin_action_links_' . plugin_basename ( __FILE__ ), array (
-				$this,
-				'qrm_add_plugin_action_links'
-		) );
-
-// 		add_option ( "qrm_siteName", "Quay Risk Manager Site" );
-// 		add_option ( "qrm_reportServerURL", "http://report.quaysystems.com.au:8080" );
-// 		add_option ( "qrm_siteID", "Unregistered Site" );
-// 		add_option ( "qrm_siteKey", "Unregistered Site" );
-// 		add_option ( "qrm_displayUser", "userlogin" );
-
+		register_activation_hook ( __FILE__, array ($this,	'qrmplugin_activate') );
+		register_deactivation_hook ( __FILE__, array ($this,'qrmplugin_deactivate') );
+		
 		$this->activate_au ();
 
-		register_activation_hook ( __FILE__, array (
-				$this,
-				'qrmplugin_activate'
-		) );
-		register_deactivation_hook ( __FILE__, array (
-				$this,
-				'qrmplugin_deactivate'
-		) );
 	}
 	public function qrm_start_session() {
 		if (! session_id ()) {
@@ -122,7 +52,9 @@ final class QuayRiskManager {
 		$plugin_current_version = QRM_VERSION;
 		$plugin_remote_path = 'http://www.quaysystems.com.au/wp-admin/admin-ajax.php?action=getUpdateInfo';
 		$plugin_slug = plugin_basename ( __FILE__ );
-		new QRM_AutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug );
+		
+		require_once 'QRMAutoUpdate.php';
+		new QRMAutoUpdate ( $plugin_current_version, $plugin_remote_path, $plugin_slug );
 	}
 	public static function plugin_row_meta($links, $file) {
 		if (strpos ( $file, 'qrm.php' ) !== false) {
@@ -213,14 +145,14 @@ final class QuayRiskManager {
 		$role->add_cap ( 'risk_admin' );
 	}
 	public function qrmplugin_activate() {
-		require_once 'qrm-activate.php';
-		require_once 'qrm-util.php';
+		require_once 'QRMActivate.php';
+		require_once 'QRMUtil.php';
 
 		QRMUtil::dropReportTables();
 		QRMActivate::activate ();
 	}
 	public function qrmplugin_deactivate() {
-		require_once 'qrm-util.php';
+		require_once 'QRMUtil.php';
 
 		QRMUtil::dropReportTables();
 	}
@@ -243,190 +175,52 @@ final class QuayRiskManager {
 		return $single_template;
 	}
 	public function defineAJAXFunctions() {
-		add_action ( "wp_ajax_getProject", array (
-				'QRM',
-				"getProject"
-		) );
-		add_action ( "wp_ajax_getAllRisks", array (
-				'QRM',
-				"getAllRisks"
-		) );
-		add_action ( "wp_ajax_getProjects", array (
-				'QRM',
-				"getProjects"
-		) );
-		add_action ( "wp_ajax_getSiteUsersCap", array (
-				'QRM',
-				"getSiteUsersCap"
-		) );
-		add_action ( "wp_ajax_getSiteUsers", array (
-				'QRM',
-				"getSiteUsers"
-		) );
-		add_action ( "wp_ajax_saveSiteUsers", array (
-				'QRM',
-				"saveSiteUsers"
-		) );
-		add_action ( "wp_ajax_saveProject", array (
-				'QRM',
-				"saveProject"
-		) );
-		add_action ( "wp_ajax_getAllProjectRisks", array (
-				'QRM',
-				"getAllProjectRisks"
-		) );
-		add_action ( "wp_ajax_getRisk", array (
-				'QRM',
-				"getRisk"
-		) );
-		add_action ( "wp_ajax_saveRisk", array (
-				'QRM',
-				"saveRisk"
-		) );
-		add_action ( "wp_ajax_updateRisksRelMatrix", array (
-				'QRM',
-				"updateRisksRelMatrix"
-		) );
-		add_action ( "wp_ajax_getAttachments", array (
-				'QRM',
-				"getAttachments"
-		) );
-		add_action ( "wp_ajax_uploadFile", array (
-				'QRM',
-				"uploadFile"
-		) );
-		add_action ( "wp_ajax_uploadImport", array (
-				'QRM',
-				"uploadImport"
-		) );
-		add_action ( "wp_ajax_getCurrentUser", array (
-				'QRM',
-				"getCurrentUser"
-		) );
-		add_action ( "wp_ajax_saveRankOrder", array (
-				'QRM',
-				"saveRankOrder"
-		) );
-		add_action ( "wp_ajax_registerAudit", array (
-				'QRM',
-				"registerAudit"
-		) );
-		add_action ( "wp_ajax_getAllIncidents", array (
-				'QRM',
-				"getAllIncidents"
-		) );
-		add_action ( "wp_ajax_getIncident", array (
-				'QRM',
-				"getIncident"
-		) );
-		add_action ( "wp_ajax_saveIncident", array (
-				'QRM',
-				"saveIncident"
-		) );
-		add_action ( "wp_ajax_addGeneralComment", array (
-				'QRM',
-				"addGeneralComment"
-		) );
-		add_action ( "wp_ajax_getAllReviews", array (
-				'QRM',
-				"getAllReviews"
-		) );
-		add_action ( "wp_ajax_getReview", array (
-				'QRM',
-				"getReview"
-		) );
-		add_action ( "wp_ajax_saveReview", array (
-				'QRM',
-				"saveReview"
-		) );
-		add_action ( "wp_ajax_nopriv_login", array (
-				'QRM',
-				"login"
-		) );
-		add_action ( "wp_ajax_login", array (
-				'QRM',
-				"login"
-		) );
-		add_action ( "wp_ajax_logout", array (
-				'QRM',
-				"logout"
-		) );
-		add_action ( "wp_ajax_checkSession", array (
-				'QRM',
-				"checkSession"
-		) );
-		add_action ( "wp_ajax_newPushDown", array (
-				'QRM',
-				"newPushDown"
-		) );
-		add_action ( "wp_ajax_installSample", array (
-				'QRM',
-				"installSample"
-		) );
-		add_action ( "wp_ajax_installSampleProjects", array (
-				'QRM',
-				"installSampleProjects"
-		) );
-		add_action ( "wp_ajax_removeSample", array (
-				'QRM',
-				"removeSample"
-		) );
-		add_action ( "wp_ajax_downloadJSON", array (
-				'QRM',
-				"downloadJSON"
-		) );
-		add_action ( "wp_ajax_getJSON", array (
-				'QRM',
-				"downloadJSON"
-		) );
-		add_action ( "wp_ajax_getReportOptions", array (
-				'QRM',
-				"getReportOptions"
-		) );
-		add_action ( "wp_ajax_saveReportOptions", array (
-				'QRM',
-				"saveReportOptions"
-		) );
-		add_action ( "wp_ajax_getServerMeta", array (
-				'QRM',
-				"getServerMeta"
-		) );
-		add_action ( "wp_ajax_createDummyRiskEntry", array (
-				'QRM',
-				"createDummyRiskEntry"
-		) );
-		add_action ( "wp_ajax_createDummyRiskEntryMultiple", array (
-				'QRM',
-				"createDummyRiskEntryMultiple"
-		) );
-		add_action ( "wp_ajax_reindexRiskCount", array (
-				'QRM',
-				"reindexRiskCount"
-		) );
-		add_action ( "wp_ajax_saveDisplayUser", array (
-				'QRM',
-				"saveDisplayUser"
-		) );
-		add_action ( "wp_ajax_getDisplayUser", array (
-				'QRM',
-				"getDisplayUser"
-		) );
-		add_action ( "wp_ajax_getReports", array (
-				'QRM',
-				"getReports"
-		) );
-		add_action ( "wp_ajax_updateReport", array (
-				'QRM',
-				"updateReport"
-		) );
-		add_action ( "wp_ajax_deleteReport", array (
-				'QRM',
-				"deleteReport"
-		) );
-		add_action ( "wp_ajax_initReportData", array (
-				'QRM',
-				"initReportData"
-		) );
+		add_action ( "wp_ajax_getProject", array ('QRM',"getProject") );
+		add_action ( "wp_ajax_getAllRisks", array ('QRM',"getAllRisks") );
+		add_action ( "wp_ajax_getProjects", array ('QRM',"getProjects") );
+		add_action ( "wp_ajax_getSiteUsersCap", array ('QRM',"getSiteUsersCap") );
+		add_action ( "wp_ajax_getSiteUsers", array ('QRM',"getSiteUsers") );
+		add_action ( "wp_ajax_saveSiteUsers", array ('QRM',"saveSiteUsers") );
+		add_action ( "wp_ajax_saveProject", array ('QRM',"saveProject"	) );
+		add_action ( "wp_ajax_getAllProjectRisks", array ('QRM',"getAllProjectRisks"	) );
+		add_action ( "wp_ajax_getRisk", array ('QRM',"getRisk"	) );
+		add_action ( "wp_ajax_saveRisk", array ('QRM',"saveRisk") );
+		add_action ( "wp_ajax_updateRisksRelMatrix", array ('QRM',"updateRisksRelMatrix") );
+		add_action ( "wp_ajax_getAttachments", array ('QRM',"getAttachments") );
+		add_action ( "wp_ajax_uploadFile", array ('QRM',"uploadFile") );
+		add_action ( "wp_ajax_uploadImport", array ('QRM',"uploadImport") );
+		add_action ( "wp_ajax_getCurrentUser", array ('QRM',"getCurrentUser") );
+		add_action ( "wp_ajax_saveRankOrder", array ('QRM',"saveRankOrder") );
+		add_action ( "wp_ajax_registerAudit", array ('QRM',"registerAudit"	) );
+		add_action ( "wp_ajax_getAllIncidents", array ('QRM',"getAllIncidents") );
+		add_action ( "wp_ajax_getIncident", array ('QRM',"getIncident") );
+		add_action ( "wp_ajax_saveIncident", array ('QRM',"saveIncident") );
+		add_action ( "wp_ajax_addGeneralComment", array ('QRM',	"addGeneralComment") );
+		add_action ( "wp_ajax_getAllReviews", array ('QRM',	"getAllReviews") );
+		add_action ( "wp_ajax_getReview", array ('QRM',	"getReview") );
+		add_action ( "wp_ajax_saveReview", array ('QRM',"saveReview") );
+		add_action ( "wp_ajax_nopriv_login", array ('QRM',	"login"	) );
+		add_action ( "wp_ajax_login", array ('QRM',	"login"	) );
+		add_action ( "wp_ajax_logout", array ('QRM',"logout") );
+		add_action ( "wp_ajax_checkSession", array ('QRM',"checkSession") );
+		add_action ( "wp_ajax_newPushDown", array ('QRM',"newPushDown") );
+		add_action ( "wp_ajax_installSample", array ('QRM',"installSample") );
+		add_action ( "wp_ajax_installSampleProjects", array ('QRM',"installSampleProjects") );
+		add_action ( "wp_ajax_removeSample", array ('QRM',"removeSample") );
+		add_action ( "wp_ajax_downloadJSON", array ('QRM',"downloadJSON") );
+		add_action ( "wp_ajax_getJSON", array ('QRM',"downloadJSON"	) );
+		add_action ( "wp_ajax_getReportOptions", array ('QRM',"getReportOptions") );
+		add_action ( "wp_ajax_saveReportOptions", array ('QRM',	"saveReportOptions") );
+		add_action ( "wp_ajax_getServerMeta", array ('QRM',	"getServerMeta") );
+		add_action ( "wp_ajax_createDummyRiskEntry", array ('QRM',"createDummyRiskEntry") );
+		add_action ( "wp_ajax_createDummyRiskEntryMultiple", array ('QRM',"createDummyRiskEntryMultiple") );
+		add_action ( "wp_ajax_reindexRiskCount", array ('QRM',	"reindexRiskCount") );
+		add_action ( "wp_ajax_saveDisplayUser", array ('QRM',"saveDisplayUser") );
+		add_action ( "wp_ajax_getDisplayUser", array ('QRM',"getDisplayUser") );
+		add_action ( "wp_ajax_getReports", array ('QRM',"getReports") );
+		add_action ( "wp_ajax_updateReport", array ('QRM',"updateReport") );
+		add_action ( "wp_ajax_deleteReport", array ('QRM',"deleteReport") );
+		add_action ( "wp_ajax_initReportData", array ('QRM',"initReportData") );
 	}
 	public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
 		// Prevent the deletion of any riskproject post that has children projects
@@ -515,7 +309,7 @@ final class QuayRiskManager {
 		) );
 	}
 	public function register_types(){
-		require_once 'qrm-activate.php';
+		require_once 'QRMActivate.php';
 		QRMActivate::register_types();
 	}
 	public function qrm_scripts_styles() {

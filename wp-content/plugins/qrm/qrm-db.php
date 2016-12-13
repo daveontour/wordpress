@@ -1,6 +1,6 @@
 <?php
 
-require_once 'qrm-util.php';
+require_once 'QRMUtil.php';
 
 abstract class WPQRM_Model {
 	static $primary_key = 'id';
@@ -290,6 +290,8 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 			
 			// $str = getMatImageString (200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact);
 			// var_dump($str);
+			require_once 'QRMMatrix.php';
+			
 			$data->matImage = QRMMatrix::getMatImageString ( 200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact );
 			
 			// Get the preferred user display
@@ -336,6 +338,7 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 			unset ( $data->y1 );
 			unset ( $data->primcat );
 			unset ( $data->seccat );
+			unset ( $data->dirty );
 		} catch ( Exception $e ) {
 			echo $e->getMessage ();
 		}
