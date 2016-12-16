@@ -252,12 +252,17 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
     	jQuery('input[name="incidentID"]').val(QRMDataService.incidentID);
        	jQuery('input[name="reviewID"]').val(QRMDataService.reviewID);
 
-    	
+    	if (QRM.expController.filterOptions.manager == null || QRM.expController.filterOptions.manager == "" || typeof QRM.expController.filterOptions.manager == 'undefined'){
+    		QRM.expController.filterOptions.manager = -1;
+    	}
+    	if (QRM.expController.filterOptions.owner == null || QRM.expController.filterOptions.owner == "" || typeof QRM.expController.filterOptions.owner == 'undefined'){
+    		QRM.expController.filterOptions.owner = -1;
+    	}
     	jQuery('input[name="prob"]').val(QRM.expController.filterOptions.matrixProb);
     	jQuery('input[name="impact"]').val(QRM.expController.filterOptions.matrixImpact);
     	jQuery('input[name="manager"]').val(QRM.expController.filterOptions.manager);
-    	jQuery('input[name="owner"]').val(QRM.expController.filterOptions.owner);
-    	jQuery('input[name="subprojects"]').val(QRM.expController.filterOptions.childProjects);
+    	jQuery('input[name="owner"]').val(QRM.expController.filterOptions.owner );
+    	jQuery('input[name="subprojects"]').val(QRM.expController.childProjects);
     	jQuery('input[name="treated"]').val(QRM.expController.filterOptions.treated);
     	jQuery('input[name="untreated"]').val(QRM.expController.filterOptions.untreated);
     	jQuery('input[name="inactive"]').val(QRM.expController.filterOptions.expInactive);
@@ -273,6 +278,14 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
         jQuery('input[name="reportParam2"]').val(QRMDataService.reportParam2);
         jQuery('#reportForm').attr('action', url);
         jQuery("#reportForm").submit();
+        
+    	if (QRM.expController.filterOptions.owner == -1 ){
+    		QRM.expController.filterOptions.owner = "";
+    	}
+    	if (QRM.expController.filterOptions.manager == -1 ){
+    		QRM.expController.filterOptions.manager = "";
+    	}
+
         
         //window.open(encodeURI(url), "_blank");
     }
@@ -2415,12 +2428,12 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
     this.childProjects = false;
     
     this.childProjectsChanged = function(){
-    	if (this.matrixDirty){
-    		alert ("Cancel or Save Changes before selecting");
-    		this.childProjects = !this.childProjects;   		
-    	} else {
+//    	if (this.matrixDirty){
+//    		alert ("Cancel or Save Changes before selecting");
+//    		this.childProjects = !this.childProjects;   		
+//    	} else {
     		this.getRisksAndPlace();
-    	}
+//    	}
     }
 
     this.stateSelectorChanged = function () {

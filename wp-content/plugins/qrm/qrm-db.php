@@ -1,6 +1,7 @@
 <?php
 
-require_once 'QRMUtil.php';
+defined ( 'ABSPATH' ) or die ();
+
 
 abstract class WPQRM_Model {
 	static $primary_key = 'id';
@@ -290,7 +291,6 @@ class WPQRM_Model_Risk extends WPQRM_Model {
 			
 			// $str = getMatImageString (200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact);
 			// var_dump($str);
-			require_once 'QRMMatrix.php';
 			
 			$data->matImage = QRMMatrix::getMatImageString ( 200, 200, $data->tolString, $data->maxProb, $data->maxImpact, $data->inherentProb, $data->inherentImpact, $data->treatedProb, $data->treatedImpact );
 			
