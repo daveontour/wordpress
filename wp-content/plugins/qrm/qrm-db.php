@@ -87,36 +87,36 @@ class WPQRM_Model_Respplan extends WPQRM_Model {
 class WPQRM_Model_Review extends WPQRM_Model {
 	static function _fix($review) {
 		WPQRM_Model_ReviewRisks::deleteReviewRisks ( $review->id );
-		WPQRM_Model_ReviewComments::deleteReviewComments ( $review->id );
+// 		WPQRM_Model_ReviewComments::deleteReviewComments ( $review->id );
 		WPQRM_Model_ReviewRiskComments::deleteReviewRiskComments ( $review->id );
 		
 		global $wpdb;
-		$sql = sprintf ( 'DELETE FROM %s WHERE reviewID = %%s', $wpdb->prefix . 'qrm_reviewcomments', static::$primary_key );
-		$wpdb->query ( $wpdb->prepare ( $sql, $review->id ) );
+// 		$sql = sprintf ( 'DELETE FROM %s WHERE reviewID = %%s', $wpdb->prefix . 'qrm_reviewcomments', static::$primary_key );
+// 		$wpdb->query ( $wpdb->prepare ( $sql, $review->id ) );
 		
-		if (isset ( $review->risks )) {
-			foreach ( $review->risks as $risk ) {
-				$o = new stdObject ();
-				$o->riskID = $risk;
-				$o->reviewID = $review->id;
-				WPQRM_Model_ReviewRisks::replace ( $o );
-			}
-		}
+// 		if (isset ( $review->risks )) {
+// 			foreach ( $review->risks as $risk ) {
+// 				$o = new stdObject ();
+// 				$o->riskID = $risk;
+// 				$o->reviewID = $review->id;
+// 				WPQRM_Model_ReviewRisks::replace ( $o );
+// 			}
+// 		}
 		
-		if (isset ( $review->comments )) {
-			foreach ( $review->comments as $comment ) {
-				$o = new stdObject ();
-				$o->reviewID = $review->id;
-				$o->commentID = $comment->comment_id;
-				WPQRM_Model_ReviewComments::replace ( $o );
-			}
-		}
-		if (isset ( $review->riskComments )) {
-			foreach ( $review->riskComments as $riskcomment ) {
-				$riskcomment->reviewID = $review->id;
-				WPQRM_Model_ReviewRiskComments::replace ( $riskcomment );
-			}
-		}
+// 		if (isset ( $review->comments )) {
+// 			foreach ( $review->comments as $comment ) {
+// 				$o = new stdObject ();
+// 				$o->reviewID = $review->id;
+// 				$o->commentID = $comment->comment_id;
+// 				WPQRM_Model_ReviewComments::replace ( $o );
+// 			}
+// 		}
+// 		if (isset ( $review->riskComments )) {
+// 			foreach ( $review->riskComments as $riskcomment ) {
+// 				$riskcomment->reviewID = $review->id;
+// 				WPQRM_Model_ReviewRiskComments::replace ( $riskcomment );
+// 			}
+// 		}
 		
 		unset ( $review->risks );
 		unset ( $review->risksComments );
@@ -124,8 +124,31 @@ class WPQRM_Model_Review extends WPQRM_Model {
 		unset ( $review->attachments );
 	}
 	static function replace($review) {
+		$risks = $review->risks;
+		$riskComments = $review->riskComments;
+		
+		error_log(json_encode($review));
+		error_log(json_encode($risks));
+		error_log(json_encode($riskComments));
+		
 		self::_fix ( $review );
 		parent::replace ( $review );
+		
+		if (isset ( $risks )) {
+			foreach ( $risks as $risk ) {
+				$o = new stdObject ();
+				$o->riskID = $risk;
+				$o->reviewID = $review->id;
+				WPQRM_Model_ReviewRisks::replace ( $o );
+			}
+		}
+		
+		if (isset ( $riskComments )) {
+			foreach ( $riskComments as $riskcomment ) {
+				$riskcomment->reviewID = $review->id;
+				WPQRM_Model_ReviewRiskComments::replace ( $riskcomment );
+			}
+		}
 	}
 }
 class WPQRM_Model_RiskObjectives extends WPQRM_Model {

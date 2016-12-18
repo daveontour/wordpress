@@ -237,57 +237,100 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 		ngNotify.set("Unable To Connect To The Report Server", {type:"warn", sticky:true, theme:"pure"});
 	}
 	
-    this.executeReport = function (repID) {
-    	
-        var report = jQuery.grep(QRMDataService.reports, function (value) {
-            if (value.id == repID) return true;
-            return false;
-        })[0];
-        
-        var url = QRMDataService.reportServerURL+report.urlParams+"&dbprefix="+QRMDataService.dbPrefix;
-        
-    	jQuery('input[name="projectID"]').val(QRMDataService.project.id);
-    	jQuery('input[name="userID"]').val(QRMDataService.currentUser.ID);
-    	jQuery('input[name="riskID"]').val(QRMDataService.riskID);
-    	jQuery('input[name="incidentID"]').val(QRMDataService.incidentID);
-       	jQuery('input[name="reviewID"]').val(QRMDataService.reviewID);
 
-    	if (QRM.expController.filterOptions.manager == null || QRM.expController.filterOptions.manager == "" || typeof QRM.expController.filterOptions.manager == 'undefined'){
-    		QRM.expController.filterOptions.manager = -1;
-    	}
-    	if (QRM.expController.filterOptions.owner == null || QRM.expController.filterOptions.owner == "" || typeof QRM.expController.filterOptions.owner == 'undefined'){
-    		QRM.expController.filterOptions.owner = -1;
-    	}
-    	jQuery('input[name="prob"]').val(QRM.expController.filterOptions.matrixProb);
-    	jQuery('input[name="impact"]').val(QRM.expController.filterOptions.matrixImpact);
-    	jQuery('input[name="manager"]').val(QRM.expController.filterOptions.manager);
-    	jQuery('input[name="owner"]').val(QRM.expController.filterOptions.owner );
-    	jQuery('input[name="subprojects"]').val(QRM.expController.childProjects);
-    	jQuery('input[name="treated"]').val(QRM.expController.filterOptions.treated);
-    	jQuery('input[name="untreated"]').val(QRM.expController.filterOptions.untreated);
-    	jQuery('input[name="inactive"]').val(QRM.expController.filterOptions.expInactive);
-    	jQuery('input[name="active"]').val(QRM.expController.filterOptions.expActive);
-    	jQuery('input[name="pending"]').val(QRM.expController.filterOptions.expPending);
-    	jQuery('input[name="extreme"]').val(QRM.expController.filterOptions.tolEx);
-    	jQuery('input[name="high"]').val(QRM.expController.filterOptions.tolHigh);
-    	jQuery('input[name="significant"]').val(QRM.expController.filterOptions.tolSig);
-    	jQuery('input[name="moderate"]').val(QRM.expController.filterOptions.tolModerate);
-    	jQuery('input[name="low"]').val(QRM.expController.filterOptions.tolLow);
-    	
-        jQuery('input[name="reportParam1"]').val(QRMDataService.reportParam1);
-        jQuery('input[name="reportParam2"]').val(QRMDataService.reportParam2);
-        jQuery('#reportForm').attr('action', url);
-        jQuery("#reportForm").submit();
-        
-    	if (QRM.expController.filterOptions.owner == -1 ){
-    		QRM.expController.filterOptions.owner = "";
-    	}
-    	if (QRM.expController.filterOptions.manager == -1 ){
-    		QRM.expController.filterOptions.manager = "";
-    	}
+	this.executeReport = function(repID) {
+		var report = jQuery.grep(QRMDataService.reports, function(value) {
+			if (value.id == repID)
+				return true;
+			return false;
+		})[0];
 
-        
-        //window.open(encodeURI(url), "_blank");
+		if (report.prepareAnalytics) {
+	        ngNotify.set("Preparing Analytics", {type:"info", sticky:true, theme:"pure"});
+	        remoteService.prepareAnalytics([QRMDataService.project.id, QRM.expController.childProjects])
+	            .then(function (response) {
+	                ngNotify.set("Preparing Report", {type:"success", duration:1000, theme:"pure"});
+	                QRM.mainController.executeReportStage2(repID);
+	            });
+
+		} else {
+			QRM.mainController.executeReportStage2(repID);
+		}
+	}
+	
+	this.executeReportStage2 = function (repID) {
+
+
+		var report = jQuery.grep(QRMDataService.reports, function (value) {
+			if (value.id == repID) return true;
+			return false;
+		})[0];
+
+		var url = QRMDataService.reportServerURL+report.urlParams+"&dbprefix="+QRMDataService.dbPrefix;
+
+		jQuery('input[name="projectID"]').val(QRMDataService.project.id);
+		jQuery('input[name="userID"]').val(QRMDataService.currentUser.ID);
+		jQuery('input[name="riskID"]').val(QRMDataService.riskID);
+		jQuery('input[name="incidentID"]').val(QRMDataService.incidentID);
+		jQuery('input[name="reviewID"]').val(QRMDataService.reviewID);
+
+		if (typeof QRM.expController != "undefined"){
+
+			if (QRM.expController.filterOptions.manager == null || QRM.expController.filterOptions.manager == "" || typeof QRM.expController.filterOptions.manager == 'undefined'){
+				QRM.expController.filterOptions.manager = -1;
+			}
+			if (QRM.expController.filterOptions.owner == null || QRM.expController.filterOptions.owner == "" || typeof QRM.expController.filterOptions.owner == 'undefined'){
+				QRM.expController.filterOptions.owner = -1;
+			}
+			jQuery('input[name="prob"]').val(QRM.expController.filterOptions.matrixProb);
+			jQuery('input[name="impact"]').val(QRM.expController.filterOptions.matrixImpact);
+			jQuery('input[name="manager"]').val(QRM.expController.filterOptions.manager);
+			jQuery('input[name="owner"]').val(QRM.expController.filterOptions.owner );
+			jQuery('input[name="subprojects"]').val(QRM.expController.childProjects);
+			jQuery('input[name="treated"]').val(QRM.expController.filterOptions.treated);
+			jQuery('input[name="untreated"]').val(QRM.expController.filterOptions.untreated);
+			jQuery('input[name="inactive"]').val(QRM.expController.filterOptions.expInactive);
+			jQuery('input[name="active"]').val(QRM.expController.filterOptions.expActive);
+			jQuery('input[name="pending"]').val(QRM.expController.filterOptions.expPending);
+			jQuery('input[name="extreme"]').val(QRM.expController.filterOptions.tolEx);
+			jQuery('input[name="high"]').val(QRM.expController.filterOptions.tolHigh);
+			jQuery('input[name="significant"]').val(QRM.expController.filterOptions.tolSig);
+			jQuery('input[name="moderate"]').val(QRM.expController.filterOptions.tolModerate);
+			jQuery('input[name="low"]').val(QRM.expController.filterOptions.tolLow);
+
+		} else {
+			jQuery('input[name="manager"]').val(-1);
+			jQuery('input[name="owner"]').val(-1 );			
+			jQuery('input[name="prob"]').val(null);
+			jQuery('input[name="impact"]').val(null);
+			jQuery('input[name="subprojects"]').val(false);
+			jQuery('input[name="treated"]').val(true);
+			jQuery('input[name="untreated"]').val(true);
+			jQuery('input[name="inactive"]').val(true);
+			jQuery('input[name="active"]').val(true);
+			jQuery('input[name="pending"]').val(true);
+			jQuery('input[name="extreme"]').val(true);
+			jQuery('input[name="high"]').val(true);
+			jQuery('input[name="significant"]').val(true);
+			jQuery('input[name="moderate"]').val(true);
+			jQuery('input[name="low"]').val(true);
+
+
+		}
+		
+		jQuery('input[name="reportParam1"]').val(QRMDataService.reportParam1);
+		jQuery('input[name="reportParam2"]').val(QRMDataService.reportParam2);
+		jQuery('#reportForm').attr('action', url);
+		jQuery("#reportForm").submit();
+
+		if (typeof QRM.expController != "undefined"){
+			if (QRM.expController.filterOptions.owner == -1 ){
+				QRM.expController.filterOptions.owner = "";
+			}
+			if (QRM.expController.filterOptions.manager == -1 ){
+				QRM.expController.filterOptions.manager = "";
+			}
+		}
     }
 
     this.go = function (state) {
@@ -512,6 +555,7 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
                 QRMDataService.displayUser = response.data.displayUser;
                 QRMDataService.sessionToken = response.data.sessionToken;
                 QRMDataService.displayUser = response.data.displayUser;
+                QRMDataService.reports = response.data.reports;
                 QRMDataService.dbPrefix = response.data.dbprefix;
                 
             });

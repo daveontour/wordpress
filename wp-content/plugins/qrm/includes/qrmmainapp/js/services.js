@@ -440,6 +440,17 @@ function RemoteService($http) {
             cache: false
         });
     };
+    this.prepareAnalytics = function (data) {
+        return $http({
+            method: 'POST',
+            url: ajaxurl,
+            params: {
+                action: "prepareAnalytics"
+            },
+            cache: false,
+            data:data
+        });
+    };
     this.saveRisk = function (risk) {
 
         return $http({

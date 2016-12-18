@@ -250,6 +250,15 @@ final class QRM {
 		;
 		wp_send_json ( $incs );
 	}
+	static function prepareAnalytics(){
+		$params = json_decode ( file_get_contents ( "php://input" ) );
+		$msg = new stdObject ();
+		
+		$msg->msg = "Prepare Analytics";
+		$msg->params = $params;
+		
+		wp_send_json ( $msg );
+	}
 	static function getIncident() {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
@@ -579,9 +588,9 @@ final class QRM {
 				"post_parent" => $postID,
 				"post_type" => "attachment" 
 		) );
-		
+		$risks = $review->risks;
 		WPQRM_Model_Review::replace ( $review );
-		
+		$review->risks = $risks;
 		wp_send_json ( $review );
 	}
 	static function getCurrentUser() {
@@ -2000,7 +2009,8 @@ final class QuayRiskManager {
 		add_action ( "wp_ajax_updateReport", array ('QRM',"updateReport") );
 		add_action ( "wp_ajax_deleteReport", array ('QRM',"deleteReport") );
 		add_action ( "wp_ajax_initReportData", array ('QRM',"initReportData") );
-	}
+		add_action ( "wp_ajax_prepareAnalytics", array ('QRM',"prepareAnalytics") );
+		}
 	public function qrm_prevent_riskproject_parent_deletion($allcaps, $caps, $args) {
 		// Prevent the deletion of any riskproject post that has children projects
 		// Accomplished by checking for a non-zero count of projects with this as a parent
