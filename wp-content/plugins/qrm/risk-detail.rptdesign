@@ -2,10 +2,6 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.6.0.v201606072122</property>
     <property name="units">in</property>
-    <method name="beforeFactory"><![CDATA[if (!params["useWatermark"].value){
-    reportContext.getDesignHandle().findMasterPage("QRM Report Master Page").setProperty("backgroundImage", "");
-}
-]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">96</property>
@@ -245,7 +241,1010 @@
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="COMMENTS" id="8871"
  extends="QRM.COMMENTS"/>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="REVIEWRISKS" id="9157"
- extends="QRM.REVIEWRISKS"/>
+ extends="QRM.REVIEWRISKS">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">reviewID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">riskID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">id_1</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">cause</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">consequence</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">currentImpact</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">currentProb</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">currentTolerance</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">end</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">enteredBy</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">enteredDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">estContingency</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">impCost</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">impEnviron</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">impRep</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">impSafety</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">impSpec</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">impTime</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">inherentAbsProb</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">inherentImpact</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">inherentProb</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">inherentTolerance</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">likeAlpha</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">likePostAlpha</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">likePostT</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">likePostType</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">likeT</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">likeType</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">manager</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">managerName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">matImage</property>
+                        <property name="dataType">blob</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">tolString</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">35</property>
+                        <property name="name">maxProb</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">36</property>
+                        <property name="name">maxImpact</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">37</property>
+                        <property name="name">owner</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">38</property>
+                        <property name="name">ownerName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">39</property>
+                        <property name="name">rank</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">40</property>
+                        <property name="name">postLikeImage</property>
+                        <property name="dataType">blob</property>
+                    </structure>
+                    <structure>
+                        <property name="position">41</property>
+                        <property name="name">preLikeImage</property>
+                        <property name="dataType">blob</property>
+                    </structure>
+                    <structure>
+                        <property name="position">42</property>
+                        <property name="name">primcatID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">43</property>
+                        <property name="name">primCatName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">44</property>
+                        <property name="name">projectID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">45</property>
+                        <property name="name">riskProjectCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">46</property>
+                        <property name="name">seccatID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">47</property>
+                        <property name="name">secCatName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">48</property>
+                        <property name="name">start</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">49</property>
+                        <property name="name">summaryRisk</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">50</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">51</property>
+                        <property name="name">treatAvoid</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">52</property>
+                        <property name="name">treatMinimise</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">53</property>
+                        <property name="name">treatRetention</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">54</property>
+                        <property name="name">treatTransfer</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">55</property>
+                        <property name="name">treated</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">56</property>
+                        <property name="name">treatedAbsProb</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">57</property>
+                        <property name="name">treatedImpact</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">58</property>
+                        <property name="name">treatedProb</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">59</property>
+                        <property name="name">treatedTolerance</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">60</property>
+                        <property name="name">type</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">61</property>
+                        <property name="name">pushdownparent</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">62</property>
+                        <property name="name">pushdownchild</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">63</property>
+                        <property name="name">parentRiskID</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">64</property>
+                        <property name="name">parentRiskProjectCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">65</property>
+                        <property name="name">useCalContingency</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">66</property>
+                        <property name="name">useCalProb</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">67</property>
+                        <property name="name">mitPlanSummary</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">68</property>
+                        <property name="name">mitPlanSummaryUpdate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">69</property>
+                        <property name="name">respPlanSummary</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">70</property>
+                        <property name="name">respPlanSummaryUpdate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">71</property>
+                        <property name="name">id_2</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">72</property>
+                        <property name="name">title_1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">73</property>
+                        <property name="name">description_1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">74</property>
+                        <property name="name">schedDate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">75</property>
+                        <property name="name">actualDate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">76</property>
+                        <property name="name">reviewCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">77</property>
+                        <property name="name">responsible</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">78</property>
+                        <property name="name">notes</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">79</property>
+                        <property name="name">complete</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">80</property>
+                        <property name="name">id_3</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">81</property>
+                        <property name="name">reviewID_1</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">82</property>
+                        <property name="name">riskID_1</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">83</property>
+                        <property name="name">comment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">reviewID</property>
+                    <property name="nativeName">reviewID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">riskID</property>
+                    <property name="nativeName">riskID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">id_1</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">cause</property>
+                    <property name="nativeName">cause</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">consequence</property>
+                    <property name="nativeName">consequence</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">currentImpact</property>
+                    <property name="nativeName">currentImpact</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">currentProb</property>
+                    <property name="nativeName">currentProb</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">currentTolerance</property>
+                    <property name="nativeName">currentTolerance</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">description</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">end</property>
+                    <property name="nativeName">end</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">enteredBy</property>
+                    <property name="nativeName">enteredBy</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">enteredDate</property>
+                    <property name="nativeName">enteredDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">estContingency</property>
+                    <property name="nativeName">estContingency</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">impCost</property>
+                    <property name="nativeName">impCost</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">impEnviron</property>
+                    <property name="nativeName">impEnviron</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">impRep</property>
+                    <property name="nativeName">impRep</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">impSafety</property>
+                    <property name="nativeName">impSafety</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">impSpec</property>
+                    <property name="nativeName">impSpec</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">impTime</property>
+                    <property name="nativeName">impTime</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">inherentAbsProb</property>
+                    <property name="nativeName">inherentAbsProb</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">inherentImpact</property>
+                    <property name="nativeName">inherentImpact</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">inherentProb</property>
+                    <property name="nativeName">inherentProb</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">inherentTolerance</property>
+                    <property name="nativeName">inherentTolerance</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">likeAlpha</property>
+                    <property name="nativeName">likeAlpha</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">likePostAlpha</property>
+                    <property name="nativeName">likePostAlpha</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">likePostT</property>
+                    <property name="nativeName">likePostT</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">likePostType</property>
+                    <property name="nativeName">likePostType</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">likeT</property>
+                    <property name="nativeName">likeT</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">likeType</property>
+                    <property name="nativeName">likeType</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">manager</property>
+                    <property name="nativeName">manager</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">managerName</property>
+                    <property name="nativeName">managerName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">matImage</property>
+                    <property name="nativeName">matImage</property>
+                    <property name="dataType">blob</property>
+                    <property name="nativeDataType">-4</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">tolString</property>
+                    <property name="nativeName">tolString</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">35</property>
+                    <property name="name">maxProb</property>
+                    <property name="nativeName">maxProb</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">36</property>
+                    <property name="name">maxImpact</property>
+                    <property name="nativeName">maxImpact</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">owner</property>
+                    <property name="nativeName">owner</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">38</property>
+                    <property name="name">ownerName</property>
+                    <property name="nativeName">ownerName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">39</property>
+                    <property name="name">rank</property>
+                    <property name="nativeName">rank</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">40</property>
+                    <property name="name">postLikeImage</property>
+                    <property name="nativeName">postLikeImage</property>
+                    <property name="dataType">blob</property>
+                    <property name="nativeDataType">-4</property>
+                </structure>
+                <structure>
+                    <property name="position">41</property>
+                    <property name="name">preLikeImage</property>
+                    <property name="nativeName">preLikeImage</property>
+                    <property name="dataType">blob</property>
+                    <property name="nativeDataType">-4</property>
+                </structure>
+                <structure>
+                    <property name="position">42</property>
+                    <property name="name">primcatID</property>
+                    <property name="nativeName">primcatID</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">43</property>
+                    <property name="name">primCatName</property>
+                    <property name="nativeName">primCatName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">44</property>
+                    <property name="name">projectID</property>
+                    <property name="nativeName">projectID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">45</property>
+                    <property name="name">riskProjectCode</property>
+                    <property name="nativeName">riskProjectCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">46</property>
+                    <property name="name">seccatID</property>
+                    <property name="nativeName">seccatID</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">47</property>
+                    <property name="name">secCatName</property>
+                    <property name="nativeName">secCatName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">48</property>
+                    <property name="name">start</property>
+                    <property name="nativeName">start</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">49</property>
+                    <property name="name">summaryRisk</property>
+                    <property name="nativeName">summaryRisk</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">50</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">51</property>
+                    <property name="name">treatAvoid</property>
+                    <property name="nativeName">treatAvoid</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">52</property>
+                    <property name="name">treatMinimise</property>
+                    <property name="nativeName">treatMinimise</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">53</property>
+                    <property name="name">treatRetention</property>
+                    <property name="nativeName">treatRetention</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">54</property>
+                    <property name="name">treatTransfer</property>
+                    <property name="nativeName">treatTransfer</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">55</property>
+                    <property name="name">treated</property>
+                    <property name="nativeName">treated</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">56</property>
+                    <property name="name">treatedAbsProb</property>
+                    <property name="nativeName">treatedAbsProb</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">57</property>
+                    <property name="name">treatedImpact</property>
+                    <property name="nativeName">treatedImpact</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">58</property>
+                    <property name="name">treatedProb</property>
+                    <property name="nativeName">treatedProb</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">59</property>
+                    <property name="name">treatedTolerance</property>
+                    <property name="nativeName">treatedTolerance</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">60</property>
+                    <property name="name">type</property>
+                    <property name="nativeName">type</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">61</property>
+                    <property name="name">pushdownparent</property>
+                    <property name="nativeName">pushdownparent</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">62</property>
+                    <property name="name">pushdownchild</property>
+                    <property name="nativeName">pushdownchild</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">63</property>
+                    <property name="name">parentRiskID</property>
+                    <property name="nativeName">parentRiskID</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">64</property>
+                    <property name="name">parentRiskProjectCode</property>
+                    <property name="nativeName">parentRiskProjectCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">65</property>
+                    <property name="name">useCalContingency</property>
+                    <property name="nativeName">useCalContingency</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">66</property>
+                    <property name="name">useCalProb</property>
+                    <property name="nativeName">useCalProb</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">67</property>
+                    <property name="name">mitPlanSummary</property>
+                    <property name="nativeName">mitPlanSummary</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">68</property>
+                    <property name="name">mitPlanSummaryUpdate</property>
+                    <property name="nativeName">mitPlanSummaryUpdate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">69</property>
+                    <property name="name">respPlanSummary</property>
+                    <property name="nativeName">respPlanSummary</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">70</property>
+                    <property name="name">respPlanSummaryUpdate</property>
+                    <property name="nativeName">respPlanSummaryUpdate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">71</property>
+                    <property name="name">id_2</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">72</property>
+                    <property name="name">title_1</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">73</property>
+                    <property name="name">description_1</property>
+                    <property name="nativeName">description</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">74</property>
+                    <property name="name">schedDate</property>
+                    <property name="nativeName">schedDate</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">75</property>
+                    <property name="name">actualDate</property>
+                    <property name="nativeName">actualDate</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">76</property>
+                    <property name="name">reviewCode</property>
+                    <property name="nativeName">reviewCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">77</property>
+                    <property name="name">responsible</property>
+                    <property name="nativeName">responsible</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">78</property>
+                    <property name="name">notes</property>
+                    <property name="nativeName">notes</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">79</property>
+                    <property name="name">complete</property>
+                    <property name="nativeName">complete</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-6</property>
+                </structure>
+                <structure>
+                    <property name="position">80</property>
+                    <property name="name">id_3</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">81</property>
+                    <property name="name">reviewID_1</property>
+                    <property name="nativeName">reviewID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">82</property>
+                    <property name="name">riskID_1</property>
+                    <property name="nativeName">riskID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">83</property>
+                    <property name="name">comment</property>
+                    <property name="nativeName">comment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -285,26 +1284,67 @@
         </style>
     </styles>
     <page-setup>
-        <simple-master-page name="QRM Report Master Page" id="7827" extends="QRM.QRM Report Master Page">
+        <simple-master-page name="NewSimpleMasterPage" id="9229">
+            <property name="type">a4</property>
             <property name="orientation">portrait</property>
-            <property name="leftMargin">10mm</property>
+            <property name="topMargin">10mm</property>
             <property name="rightMargin">10mm</property>
-            <property name="backgroundImage">watermark.png</property>
-            <overridden-values>
-                <ref-entry baseId="7882" name="NewGrid7" id="7882"/>
-                <ref-entry baseId="7883" id="7883"/>
-                <ref-entry baseId="7884" id="7884"/>
-                <ref-entry baseId="7885" id="7885"/>
-                <ref-entry baseId="7886" id="7886"/>
-                <ref-entry baseId="7888" name="NewText" id="7888"/>
-                <ref-entry baseId="7887" id="7887"/>
-                <ref-entry baseId="7873" name="NewGrid6" id="7873"/>
-                <ref-entry baseId="7874" id="7874"/>
-                <ref-entry baseId="7875" id="7875"/>
-                <ref-entry baseId="7876" id="7876"/>
-                <ref-entry baseId="7877" id="7877"/>
-                <ref-entry baseId="7878" id="7878"/>
-            </overridden-values>
+            <page-header>
+                <label id="9272">
+                    <property name="fontWeight">bold</property>
+                    <text-property name="text">Quay Risk Manager - Risk Detail Report</text-property>
+                </label>
+            </page-header>
+            <page-footer>
+                <grid id="9241">
+                    <column id="9242"/>
+                    <column id="9243"/>
+                    <column id="9244"/>
+                    <row id="9245">
+                        <cell id="9246"/>
+                        <cell id="9247"/>
+                        <cell id="9248">
+                            <property name="textAlign">right</property>
+                            <grid id="9253">
+                                <property name="textAlign">center</property>
+                                <property name="width">20mm</property>
+                                <column id="9254">
+                                    <property name="width">8mm</property>
+                                </column>
+                                <column id="9255">
+                                    <property name="width">4mm</property>
+                                </column>
+                                <column id="9256">
+                                    <property name="width">8mm</property>
+                                </column>
+                                <row id="9257">
+                                    <cell id="9258">
+                                        <auto-text id="9259">
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="9260">
+                                        <text id="9261">
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="9262">
+                                        <auto-text id="9263">
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="9249">
+                        <cell id="9250"/>
+                        <cell id="9251"/>
+                        <cell id="9252"/>
+                    </row>
+                </grid>
+            </page-footer>
         </simple-master-page>
     </page-setup>
     <body>
@@ -332,7 +1372,7 @@
             <list-property name="filter">
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(params["subprojects"].value == false &amp;&amp; row["parentID"] == params["projectID"].value)&#13;
+                    <expression name="expr" type="javascript">(params["subprojects"].value == false &amp;&amp; row["parentID"] == params["projectID"].value &amp;&amp; row["parentID"] ==row["projectID"])&#13;
 || (params["subprojects"].value == true &amp;&amp; params["projectID"].value == row["parentID"] )</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
@@ -349,6 +1389,12 @@
                             <property name="pageBreakBefore">always</property>
                             <property name="width">190mm</property>
                             <property name="dataSet">RISKS</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">Total.count() == 0</expression>
+                                </structure>
+                            </list-property>
                             <list-property name="boundDataColumns">
                                 <structure>
                                     <property name="name">id</property>
@@ -820,7 +1866,7 @@
                                 <structure>
                                     <property name="operator">is-true</property>
                                     <expression name="expr" type="javascript">(params["singleRisk"].value == true &amp;&amp; row["id"] == params["riskID"].value) &#13;
-|| (params["singleRisk"].value == false &amp;&amp; row["projectID"] == row._outer["projectID"])</expression>
+|| (params["singleRisk"].value == false &amp;&amp;  row["projectID"] == row._outer["projectID"])</expression>
                                     <property name="updateAggregation">true</property>
                                 </structure>
                                 <structure>
@@ -1287,6 +2333,8 @@
                                                                 <label id="8770">
                                                                     <property name="fontSize">9pt</property>
                                                                     <property name="fontWeight">bold</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <property name="paddingRight">5pt</property>
                                                                     <property name="textAlign">center</property>
                                                                     <text-property name="text">Identified</text-property>
@@ -1297,6 +2345,8 @@
                                                                 <property name="borderLeftWidth">thin</property>
                                                                 <data id="8782">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1311,6 +2361,8 @@
                                                                 <property name="borderRightWidth">thin</property>
                                                                 <data id="8783">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1321,6 +2373,8 @@
                                                             <cell id="8759">
                                                                 <data id="8784">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1340,6 +2394,8 @@
                                                                 <label id="8771">
                                                                     <property name="fontSize">9pt</property>
                                                                     <property name="fontWeight">bold</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <property name="paddingRight">5pt</property>
                                                                     <property name="textAlign">center</property>
                                                                     <text-property name="text">Evaluated</text-property>
@@ -1352,6 +2408,8 @@
                                                                 <property name="borderRightWidth">thin</property>
                                                                 <data id="8777">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1364,6 +2422,8 @@
                                                                 <property name="borderRightWidth">thin</property>
                                                                 <data id="8781">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1374,6 +2434,8 @@
                                                             <cell id="8764">
                                                                 <data id="8776">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1389,6 +2451,8 @@
                                                                 <label id="8772">
                                                                     <property name="fontSize">9pt</property>
                                                                     <property name="fontWeight">bold</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <property name="paddingRight">5pt</property>
                                                                     <property name="textAlign">center</property>
                                                                     <text-property name="text">Mitiugation</text-property>
@@ -1401,6 +2465,8 @@
                                                                 <property name="borderRightWidth">thin</property>
                                                                 <data id="8780">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1413,6 +2479,8 @@
                                                                 <property name="borderRightWidth">thin</property>
                                                                 <data id="8779">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1423,6 +2491,8 @@
                                                             <cell id="8769">
                                                                 <data id="8778">
                                                                     <property name="fontSize">9pt</property>
+                                                                    <property name="paddingTop">3pt</property>
+                                                                    <property name="paddingBottom">3pt</property>
                                                                     <structure name="dateTimeFormat">
                                                                         <property name="category">Medium Date</property>
                                                                         <property name="pattern">Medium Date</property>
@@ -1518,7 +2588,7 @@
                                                 </cell>
                                                 <cell id="7825">
                                                     <property name="paddingLeft">10pt</property>
-                                                    <property name="textAlign">left</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6488">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1594,6 +2664,7 @@
                                                 </cell>
                                                 <cell id="7792">
                                                     <property name="paddingLeft">10pt</property>
+                                                    <property name="textAlign">center</property>
                                                     <property name="verticalAlign">top</property>
                                                     <image id="6494">
                                                         <list-property name="visibility">
@@ -1630,7 +2701,7 @@
                                                 </cell>
                                                 <cell id="3702">
                                                     <property name="paddingLeft">10pt</property>
-                                                    <property name="textAlign">left</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6490">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1701,6 +2772,7 @@
                                                 </cell>
                                                 <cell id="7793">
                                                     <property name="paddingLeft">10pt</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6495">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1736,7 +2808,7 @@
                                                 </cell>
                                                 <cell id="3715">
                                                     <property name="paddingLeft">10pt</property>
-                                                    <property name="textAlign">left</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6492">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1807,6 +2879,7 @@
                                                 </cell>
                                                 <cell id="7794">
                                                     <property name="paddingLeft">10pt</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6496">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1856,6 +2929,7 @@
                                                 </cell>
                                                 <cell id="8324">
                                                     <property name="paddingLeft">10pt</property>
+                                                    <property name="textAlign">center</property>
                                                     <image id="6497">
                                                         <list-property name="visibility">
                                                             <structure>
@@ -1949,11 +3023,34 @@
                                                     <cell id="8832">
                                                         <data id="8833">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <property name="resultSetColumn">title</property>
                                                         </data>
                                                     </cell>
                                                 </row>
                                             </detail>
+                                            <footer>
+                                                <row id="9222">
+                                                    <cell id="9223">
+                                                        <label name="NewLabel8012" id="9224">
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">9pt</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">italic</property>
+                                                            <property name="color">#FF0000</property>
+                                                            <property name="textAlign">center</property>
+                                                            <list-property name="visibility">
+                                                                <structure>
+                                                                    <property name="format">all</property>
+                                                                    <expression name="valueExpr">Total.count()>0</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <text-property name="text">No Impacted Objectives Specified</text-property>
+                                                        </label>
+                                                    </cell>
+                                                </row>
+                                            </footer>
                                         </table>
                                     </cell>
                                 </row>
@@ -2198,12 +3295,14 @@
                                                     <cell id="8719">
                                                         <text-data id="8720">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
                                                             <expression name="valueExpr">row["description"]</expression>
                                                             <property name="contentType">html</property>
                                                         </text-data>
                                                     </cell>
                                                     <cell id="9004">
                                                         <data id="9014">
+                                                            <property name="paddingTop">3pt</property>
                                                             <property name="textAlign">center</property>
                                                             <property name="resultSetColumn">cost</property>
                                                         </data>
@@ -2225,6 +3324,7 @@
                                                             <property name="fontSize">9pt</property>
                                                             <property name="fontWeight">bold</property>
                                                             <property name="fontStyle">italic</property>
+                                                            <property name="paddingTop">3pt</property>
                                                             <property name="resultSetColumn">user_email</property>
                                                         </data>
                                                     </cell>
@@ -2253,6 +3353,12 @@
                                             </detail>
                                             <footer>
                                                 <row id="8850">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">Total.count() == 0</expression>
+                                                        </structure>
+                                                    </list-property>
                                                     <cell id="8851">
                                                         <label id="9016">
                                                             <property name="fontSize">9pt</property>
@@ -2270,6 +3376,27 @@
                                                             <expression name="valueExpr">row["SUM_MITIGATION_COST"]</expression>
                                                             <property name="contentType">html</property>
                                                         </text-data>
+                                                    </cell>
+                                                </row>
+                                                <row id="9208">
+                                                    <cell id="9209">
+                                                        <property name="colSpan">2</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <label name="NewLabel80" id="6246">
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">9pt</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">italic</property>
+                                                            <property name="color">#FF0000</property>
+                                                            <property name="textAlign">center</property>
+                                                            <list-property name="visibility">
+                                                                <structure>
+                                                                    <property name="format">all</property>
+                                                                    <expression name="valueExpr">Total.count()>0</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <text-property name="text">No Mitigation Actions Specified</text-property>
+                                                        </label>
                                                     </cell>
                                                 </row>
                                             </footer>
@@ -2493,12 +3620,14 @@
                                                         <property name="rowSpan">1</property>
                                                         <data id="9001">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
                                                             <property name="resultSetColumn">description</property>
                                                         </data>
                                                     </cell>
                                                     <cell id="8991">
                                                         <data id="8995">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
                                                             <property name="textAlign">center</property>
                                                             <property name="resultSetColumn">cost</property>
                                                         </data>
@@ -2522,6 +3651,7 @@
                                                             <property name="fontSize">9pt</property>
                                                             <property name="fontWeight">bold</property>
                                                             <property name="fontStyle">italic</property>
+                                                            <property name="paddingTop">3pt</property>
                                                             <property name="resultSetColumn">user_email</property>
                                                         </data>
                                                     </cell>
@@ -2530,6 +3660,12 @@
                                             </detail>
                                             <footer>
                                                 <row id="8854">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">Total.count() == 0</expression>
+                                                        </structure>
+                                                    </list-property>
                                                     <cell id="8855">
                                                         <label id="9002">
                                                             <property name="fontSize">9pt</property>
@@ -2547,6 +3683,27 @@
                                                             <expression name="valueExpr">row["SUM_RESPONSE_COST"]</expression>
                                                             <property name="contentType">html</property>
                                                         </text-data>
+                                                    </cell>
+                                                </row>
+                                                <row id="9211">
+                                                    <cell id="9212">
+                                                        <property name="colSpan">2</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <label name="NewLabel801" id="9214">
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">9pt</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">italic</property>
+                                                            <property name="color">#FF0000</property>
+                                                            <property name="textAlign">center</property>
+                                                            <list-property name="visibility">
+                                                                <structure>
+                                                                    <property name="format">all</property>
+                                                                    <expression name="valueExpr">Total.count()>0</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <text-property name="text">No Response Actions Specified</text-property>
+                                                        </label>
                                                     </cell>
                                                 </row>
                                             </footer>
@@ -2661,12 +3818,16 @@
                                                     <cell id="8797">
                                                         <data id="8800">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <property name="resultSetColumn">description</property>
                                                         </data>
                                                     </cell>
                                                     <cell id="8976">
                                                         <data id="8990">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <property name="textAlign">center</property>
                                                             <property name="resultSetColumn">effectiveness</property>
                                                         </data>
@@ -2674,9 +3835,42 @@
                                                     <cell id="8981">
                                                         <data id="8989">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <property name="textAlign">center</property>
                                                             <property name="resultSetColumn">contribution</property>
                                                         </data>
+                                                    </cell>
+                                                </row>
+                                                <row id="9215">
+                                                    <list-property name="highlightRules">
+                                                        <structure>
+                                                            <property name="operator">eq</property>
+                                                            <property name="backgroundColor">#C0C0C0</property>
+                                                            <expression name="testExpr" type="javascript">row.__rownum % 2</expression>
+                                                            <simple-property-list name="value1">
+                                                                <value type="javascript">0</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                    </list-property>
+                                                    <cell id="9216">
+                                                        <property name="colSpan">3</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <label name="NewLabel8011" id="9219">
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">9pt</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">italic</property>
+                                                            <property name="color">#FF0000</property>
+                                                            <property name="textAlign">center</property>
+                                                            <list-property name="visibility">
+                                                                <structure>
+                                                                    <property name="format">all</property>
+                                                                    <expression name="valueExpr">Total.count()>0</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <text-property name="text">No Controls Specified</text-property>
+                                                        </label>
                                                     </cell>
                                                 </row>
                                             </detail>
@@ -2720,13 +3914,15 @@
                                                     <property name="name">schedDate</property>
                                                     <text-property name="displayName">schedDate</text-property>
                                                     <expression name="expression" type="javascript">dataSetRow["schedDate"]</expression>
-                                                    <property name="dataType">string</property>
+                                                    <property name="dataType">date-time</property>
+                                                    <property name="allowExport">true</property>
                                                 </structure>
                                                 <structure>
                                                     <property name="name">actualDate</property>
                                                     <text-property name="displayName">actualDate</text-property>
                                                     <expression name="expression" type="javascript">dataSetRow["actualDate"]</expression>
-                                                    <property name="dataType">string</property>
+                                                    <property name="dataType">date-time</property>
+                                                    <property name="allowExport">true</property>
                                                 </structure>
                                                 <structure>
                                                     <property name="name">reviewCode</property>
@@ -2812,27 +4008,41 @@
                                                     <cell id="9175">
                                                         <text-data id="9201">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <expression name="valueExpr">row["reviewCode"]+" - "+row["title_1"]</expression>
                                                             <property name="contentType">html</property>
                                                         </text-data>
                                                     </cell>
                                                     <cell id="9177">
-                                                        <text-data id="9203">
+                                                        <data id="9274">
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
+                                                            <structure name="dateTimeFormat">
+                                                                <property name="category">Medium Date</property>
+                                                                <property name="pattern">Medium Date</property>
+                                                            </structure>
                                                             <property name="textAlign">center</property>
-                                                            <expression name="valueExpr">BirtDateTime.day(new Date(row["schedDate"]))+" "+BirtDateTime.month(new Date(row["schedDate"]))+" "+BirtDateTime.year(new Date(row["schedDate"]))+" "</expression>
-                                                            <property name="contentType">html</property>
-                                                        </text-data>
+                                                            <property name="resultSetColumn">schedDate</property>
+                                                        </data>
                                                     </cell>
                                                     <cell id="9179">
-                                                        <text-data id="9204">
+                                                        <data id="9273">
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
+                                                            <structure name="dateTimeFormat">
+                                                                <property name="category">Medium Date</property>
+                                                                <property name="pattern">Medium Date</property>
+                                                            </structure>
                                                             <property name="textAlign">center</property>
-                                                            <expression name="valueExpr">BirtDateTime.day(new Date(row["actualDate"]))+" "+BirtDateTime.month(new Date(row["actualDate"]))+" "+BirtDateTime.year(new Date(row["actualDate"]))+" "</expression>
-                                                            <property name="contentType">html</property>
-                                                        </text-data>
+                                                            <property name="resultSetColumn">actualDate</property>
+                                                        </data>
                                                     </cell>
                                                     <cell id="9181">
                                                         <text id="9202">
                                                             <property name="fontSize">9pt</property>
+                                                            <property name="paddingTop">3pt</property>
+                                                            <property name="paddingBottom">3pt</property>
                                                             <property name="contentType">html</property>
                                                             <text-property name="content"><![CDATA[<value-of format=html>row["comment"]</value-of>]]></text-property>
                                                         </text>
@@ -2925,6 +4135,8 @@
                                                     <label id="8937">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Risk Identification</text-property>
                                                     </label>
                                                 </cell>
@@ -2935,6 +4147,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8960">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentDate</property>
                                                     </data>
                                                 </cell>
@@ -2943,6 +4157,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8961">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentComment</property>
                                                     </data>
                                                 </cell>
@@ -2960,6 +4176,8 @@
                                                     <label id="8938">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Identification Reviewed</text-property>
                                                     </label>
                                                 </cell>
@@ -2970,6 +4188,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8959">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentRevDate</property>
                                                     </data>
                                                 </cell>
@@ -2978,6 +4198,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8958">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentRevComment</property>
                                                     </data>
                                                 </cell>
@@ -2995,6 +4217,8 @@
                                                     <label id="8939">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Identification Approved</text-property>
                                                     </label>
                                                 </cell>
@@ -3005,6 +4229,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8951">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentAppDate</property>
                                                     </data>
                                                 </cell>
@@ -3013,6 +4239,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8956">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditIdentAppComment</property>
                                                     </data>
                                                 </cell>
@@ -3030,6 +4258,8 @@
                                                     <label id="8940">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Risk Evaluated</text-property>
                                                     </label>
                                                 </cell>
@@ -3039,6 +4269,8 @@
                                                     <property name="borderRightStyle">solid</property>
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8972">
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalDate</property>
                                                     </data>
                                                 </cell>
@@ -3047,6 +4279,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8948">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalComment</property>
                                                     </data>
                                                 </cell>
@@ -3064,6 +4298,8 @@
                                                     <label id="8941">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Evaluation Reviewed</text-property>
                                                     </label>
                                                 </cell>
@@ -3074,6 +4310,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8949">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalRevDate</property>
                                                     </data>
                                                 </cell>
@@ -3082,6 +4320,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8962">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalRevComment</property>
                                                     </data>
                                                 </cell>
@@ -3099,6 +4339,8 @@
                                                     <label id="8942">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Evaluation Approved</text-property>
                                                     </label>
                                                 </cell>
@@ -3109,6 +4351,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8947">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalAppDate</property>
                                                     </data>
                                                 </cell>
@@ -3117,6 +4361,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8946">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditEvalAppComment</property>
                                                     </data>
                                                 </cell>
@@ -3134,6 +4380,8 @@
                                                     <label id="8943">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Mitigation Plan</text-property>
                                                     </label>
                                                 </cell>
@@ -3144,6 +4392,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8950">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitDate</property>
                                                     </data>
                                                 </cell>
@@ -3152,6 +4402,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8955">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitComment</property>
                                                     </data>
                                                 </cell>
@@ -3169,6 +4421,8 @@
                                                     <label id="8944">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Mitigation Reviewed</text-property>
                                                     </label>
                                                 </cell>
@@ -3179,6 +4433,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8963">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitRevDate</property>
                                                     </data>
                                                 </cell>
@@ -3187,6 +4443,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8953">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitRevComment</property>
                                                     </data>
                                                 </cell>
@@ -3204,6 +4462,8 @@
                                                     <label id="8945">
                                                         <property name="fontSize">9pt</property>
                                                         <property name="fontWeight">bold</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <text-property name="text">Mitigation Approved</text-property>
                                                     </label>
                                                 </cell>
@@ -3214,6 +4474,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8954">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitAppDate</property>
                                                     </data>
                                                 </cell>
@@ -3222,6 +4484,8 @@
                                                     <property name="borderRightWidth">thin</property>
                                                     <data id="8952">
                                                         <property name="fontSize">9pt</property>
+                                                        <property name="paddingTop">3pt</property>
+                                                        <property name="paddingBottom">3pt</property>
                                                         <property name="resultSetColumn">auditMitAppComment</property>
                                                     </data>
                                                 </cell>
@@ -3432,6 +4696,29 @@
                                                     <cell id="9146"/>
                                                 </row>
                                             </detail>
+                                            <footer>
+                                                <row id="9225">
+                                                    <cell id="9226">
+                                                        <property name="colSpan">2</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <label name="NewLabel8013" id="9228">
+                                                            <property name="fontFamily">sans-serif</property>
+                                                            <property name="fontSize">9pt</property>
+                                                            <property name="fontWeight">bold</property>
+                                                            <property name="fontStyle">italic</property>
+                                                            <property name="color">#FF0000</property>
+                                                            <property name="textAlign">center</property>
+                                                            <list-property name="visibility">
+                                                                <structure>
+                                                                    <property name="format">all</property>
+                                                                    <expression name="valueExpr">Total.count()>0</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <text-property name="text">No Comments</text-property>
+                                                        </label>
+                                                    </cell>
+                                                </row>
+                                            </footer>
                                         </table>
                                     </cell>
                                 </row>

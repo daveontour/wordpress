@@ -250,21 +250,15 @@ function MainCtrl(QRMDataService, remoteService, $state, ngNotify, $http, $q) {
 	        remoteService.prepareAnalytics([QRMDataService.project.id, QRM.expController.childProjects])
 	            .then(function (response) {
 	                ngNotify.set("Preparing Report", {type:"success", duration:1000, theme:"pure"});
-	                QRM.mainController.executeReportStage2(repID);
+	                QRM.mainController.executeReportStage2(report);
 	            });
 
 		} else {
-			QRM.mainController.executeReportStage2(repID);
+			QRM.mainController.executeReportStage2(report);
 		}
 	}
 	
-	this.executeReportStage2 = function (repID) {
-
-
-		var report = jQuery.grep(QRMDataService.reports, function (value) {
-			if (value.id == repID) return true;
-			return false;
-		})[0];
+	this.executeReportStage2 = function (report) {
 
 		var url = QRMDataService.reportServerURL+report.urlParams+"&dbprefix="+QRMDataService.dbPrefix;
 
@@ -1451,7 +1445,7 @@ function RiskCtrl($scope,  QRMDataService, $state, $timeout, remoteService, ngNo
                 }
                 vm.risk = response.data;
                 // Update the risk with changes that may have been made by the host.
-                QRMDataService.riskID = vm.risk.riskID;
+                QRMDataService.riskID = vm.risk.id;
                 QRMDataService.risk = vm.risk;
                 vm.updateRisk();
                 ngNotify.dismiss();

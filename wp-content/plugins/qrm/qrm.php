@@ -1063,6 +1063,9 @@ final class QRM {
 		
 		$postdata = file_get_contents ( "php://input" );
 		$report = json_decode ( $postdata );
+		if ($report->description == null){
+			$report->description = "Description of Report";
+		}
 		
 		$postID = null;
 		
@@ -2690,6 +2693,7 @@ class QRMSample {
 		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_projectproject' );
 		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_audit' );
 		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_riskobjectives' );
+		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_analytics' );
 		$wpdb->query ( "SET FOREIGN_KEY_CHECKS = 0;" );
 		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_review' );
 		$wpdb->query ( "TRUNCATE " . $wpdb->prefix . 'qrm_incident' );
@@ -3242,6 +3246,12 @@ class QRMActivate {
 		ON DELETE CASCADE ) $charset_collate;";
 		$wpdb->query ( $sql );
 
+		$table_name = $wpdb->prefix . 'qrm_analytics';
+		$sql = "CREATE TABLE $table_name (
+		id bigint(20) NOT NULL AUTO_INCREMENT,
+		relMatrix LONBLOB ) $charset_collate;";
+		$wpdb->query ( $sql );
+		
 		$table_name = $wpdb->prefix . 'qrm_mitplan';
 		$sql = "CREATE TABLE $table_name (
 		id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -3677,6 +3687,46 @@ class QRMActivate {
 class QRMMatrix {
 
 	static function mat($w, $h, $tolString, $maxProb, $maxImpact, $uProb = null, $uImpact = null, $tProb = null, $tImpact = null) {
+		
+		
+		
+		$im = QRMMatrix::drawMatOutline($w, $h, $tolString, $maxProb, $maxImpact);
+		
+		$cw = $w / $maxImpact;
+		$ch = $h / $maxProb;
+		$black = imagecolorallocate ( $im, 0, 0, 0 );
+		$white = imagecolorallocate ( $im, 255, 255, 255 );
+		$blue = imagecolorallocate ( $im, 0, 0, 255 );
+		$red = imagecolorallocate ( $im, 255, 0, 0 );
+		$green = imagecolorallocate ( $im, 0, 255, 0 );
+		$yellow = imagecolorallocate ( $im, 255, 255, 0 );
+		$orange = imagecolorallocate ( $im, 255, 165, 0 );
+
+		if ($uProb != null) {
+			imagesetthickness ( $im, 3 );
+			$p = (floor ( $uProb ) - 1) * $ch;
+			$i = (floor ( $uImpact ) - 1) * $cw;
+			imagefilledellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 6, $ch - 6, $white );
+			imageellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 8, $ch - 8, $red );
+			imageline ( $im, $i + $cw * 0.25, $p + $ch / 4, $i + $cw * 0.75, $p + $ch * 0.75, $red );
+			imageline ( $im, $i + $cw * 0.25, $p + $ch * 0.75, $i + $cw * 0.75, $p + $ch * 0.25, $red );
+
+			$p = (floor ( $tProb ) - 1) * $ch;
+			$i = (floor ( $tImpact ) - 1) * $cw;
+			imagefilledellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 6, $ch - 6, $white );
+			imageellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 8, $ch - 8, $blue );
+			imageline ( $im, $i + $cw * 0.25, $p + $ch / 4, $i + $cw * 0.75, $p + $ch * 0.75, $blue );
+			imageline ( $im, $i + $cw * 0.25, $p + $ch * 0.75, $i + $cw * 0.75, $p + $ch * 0.25, $blue );
+		}
+
+		// Put it in the correct orientation
+		imageflip ( $im, IMG_FLIP_VERTICAL );
+
+		return $im;
+	}
+	
+	static function drawMatOutline($w, $h, $tolString, $maxProb, $maxImpact) {
+		
 		$cw = $w / $maxImpact;
 		$ch = $h / $maxProb;
 		$im = imagecreatetruecolor ( $w, $h );
@@ -3687,7 +3737,7 @@ class QRMMatrix {
 		$green = imagecolorallocate ( $im, 0, 255, 0 );
 		$yellow = imagecolorallocate ( $im, 255, 255, 0 );
 		$orange = imagecolorallocate ( $im, 255, 165, 0 );
-
+		
 		$x = 0;
 		// Draw the cells
 		for($i = 0; $i < $maxProb; $i ++) {
@@ -3712,7 +3762,7 @@ class QRMMatrix {
 				$x = $x + 1;
 			}
 		}
-
+		
 		// Draw vertical lines
 		for($j = 0; $j < $maxImpact; $j ++) {
 			imageline ( $im, $j * $cw, 0, $j * $cw, $h, $black );
@@ -3724,29 +3774,10 @@ class QRMMatrix {
 		// Draw border lines
 		imageline ( $im, 0, $h - 1, $w, $h - 1, $black );
 		imageline ( $im, $w - 1, 0, $w - 1, $h, $black );
-
-		if ($uProb != null) {
-			imagesetthickness ( $im, 3 );
-			$p = (floor ( $uProb ) - 1) * $ch;
-			$i = (floor ( $uImpact ) - 1) * $cw;
-			imagefilledellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 6, $ch - 6, $white );
-			imageellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 8, $ch - 8, $red );
-			imageline ( $im, $i + $cw * 0.25, $p + $ch / 4, $i + $cw * 0.75, $p + $ch * 0.75, $red );
-			imageline ( $im, $i + $cw * 0.25, $p + $ch * 0.75, $i + $cw * 0.75, $p + $ch * 0.25, $red );
-
-			$p = (floor ( $tProb ) - 1) * $ch;
-			$i = (floor ( $tImpact ) - 1) * $cw;
-			imagefilledellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 6, $ch - 6, $white );
-			imageellipse ( $im, $i + $cw / 2, $p + $ch / 2, $cw - 8, $ch - 8, $blue );
-			imageline ( $im, $i + $cw * 0.25, $p + $ch / 4, $i + $cw * 0.75, $p + $ch * 0.75, $blue );
-			imageline ( $im, $i + $cw * 0.25, $p + $ch * 0.75, $i + $cw * 0.75, $p + $ch * 0.25, $blue );
-		}
-
-		// Put it in the correct orientation
-		imageflip ( $im, IMG_FLIP_VERTICAL );
-
+		
 		return $im;
 	}
+	
 	static function getMatImageString($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact) {
 		$mat = QRMMatrix::mat ( $w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact );
 		ob_start ();
@@ -3872,7 +3903,8 @@ class QRMUtil {
 		$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_incident' );
 		$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_risk' );
 		$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_project' );
-
+		$wpdb->query ( "DROP TABLE IF EXISTS " . $wpdb->prefix . 'qrm_analytics' );
+		
 	}
 
 	static function commonJSON($projectIDs = array(), $riskIDs = array(), $basicsOnly = false) {
