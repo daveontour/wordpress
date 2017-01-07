@@ -2120,6 +2120,10 @@ function RankController($scope, QRMDataService, $state, remoteService, ngNotify)
 
     this.showInstructions = true;
 
+    $scope.riskReport = function (repID) {
+    	QRM.mainController.executeReport($scope.reportReqID);
+    }
+    
     this.saveChanges = function () {
     	ngNotify.set("Saving Rank Order Changes", {type:"info", sticky:true, theme:"pure"});
         myLayout.normaliseRanks();
@@ -2466,12 +2470,8 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
     this.childProjects = false;
     
     this.childProjectsChanged = function(){
-//    	if (this.matrixDirty){
-//    		alert ("Cancel or Save Changes before selecting");
-//    		this.childProjects = !this.childProjects;   		
-//    	} else {
+    	    QRM.expController.childProjects = relMatrixCtrl.childProjects;
     		this.getRisksAndPlace();
-//    	}
     }
 
     this.stateSelectorChanged = function () {
@@ -3166,24 +3166,9 @@ function RelMatrixController($scope, QRMDataService, remoteService, ngNotify) {
         return $scope;
     }
     
-//    $scope.riskReport = function (reportID) {
-//       if ($scope.reportReqID < 0) return;
-//        QRM.mainController.notify("Assembling Data for Report", 5000);
-//        remoteService.getReportRiskJSON([], QRMDataService.project.id, false, true,$scope.reportReqID)
-//            .then(function (response) {
-//            	if (response.data == "OK"){
-//            		QRM.mainController.notify("Data sent to server", 5000);
-//            	} else {
-//                  QRM.mainController.notify("Sending Data for Processing", 5000);
-//                  jQuery('input[name="reportData"]').val(JSON.stringify(response.data));
-//                  jQuery('input[name="action"]').val("execute_report");
-//                  jQuery('input[name="reportEmail"]').val(QRMDataService.userEmail);
-//                  jQuery('input[name="reportID"]').val($scope.reportReqID);
-//                  jQuery('#reportForm').attr('action', response.data.reportServerURL+"/report");
-//                  jQuery("#reportForm").submit();            		
-//            	}
-//            })
-//    }
+    $scope.riskReport = function (repID) {
+    	QRM.mainController.executeReport($scope.reportReqID);
+    }
     
     var winWidth = jQuery(window).innerWidth() - 10;
     jQuery("#container").css("width", winWidth + "px");

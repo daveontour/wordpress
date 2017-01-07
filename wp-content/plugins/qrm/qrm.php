@@ -251,9 +251,27 @@ final class QRM {
 		wp_send_json ( $incs );
 	}
 	static function prepareAnalytics(){
-		$params = json_decode ( file_get_contents ( "php://input" ) );
-		$msg = new stdObject ();
+
+
+		$data = json_decode ( file_get_contents ( "php://input" ) );
 		
+		$params = new stdObject ();
+		$params->projectID = $data[0];
+		$params->childProjects = $data[1];
+		
+		$project = WPQRM_Model_Project::get ( $params->projectID  );
+		$risks = QRM::getAllProjectRisksInternal($params);
+
+
+		$relMatrixCurrent = QRMMatrix::getMultiRiskMatImageString(190*2.83465,190*2.83465, $project->tolString, $project->maxProb, $project->maxImpact, $risks, "current");
+		$relMatrixInherent = QRMMatrix::getMultiRiskMatImageString(190*2.83465,190*2.83465, $project->tolString, $project->maxProb, $project->maxImpact, $risks, "inherent");
+		$relMatrixTreated = QRMMatrix::getMultiRiskMatImageString(190*2.83465,190*2.83465, $project->tolString, $project->maxProb, $project->maxImpact, $risks, "treated");
+		
+		global $wpdb;
+		
+		$wpdb->replace ( $wpdb->prefix . 'qrm_analytics', array("id"=>1,"relMatrixCurrent" => $relMatrixCurrent,"relMatrixInherent" => $relMatrixInherent,"relMatrixTreated" => $relMatrixTreated) );
+		
+		$msg = new stdObject ();		
 		$msg->msg = "Prepare Analytics";
 		$msg->params = $params;
 		
@@ -862,6 +880,33 @@ final class QRM {
 				$r->currentTolerance = $r->inherentTolerance;
 			}
 			
+			$project = $project = json_decode ( get_post_meta ( $r->projectID, "projectdata", true ) );
+			
+			$index = (floor ( $r->treatedProb - 1 )) * $project->matrix->maxImpact + floor ( $r->treatedImpact - 1 );
+			$index = min ( $index, strlen ( $project->matrix->tolString ) - 1 );
+			
+			$r->treatedTolerance = intval ( substr ( $project->matrix->tolString, $index, 1 ) );
+				
+			
+			$index = (floor ( $r->inherentProb - 1 )) * $project->matrix->maxImpact + floor ( $r->inherentImpact - 1 );
+			$index = min ( $index, strlen ( $project->matrix->tolString ) - 1 );
+			
+			$r->inherentTolerance = intval ( substr ( $project->matrix->tolString, $index, 1 ) );
+			
+			if ($r->treated) {
+				$r->currentImpact = $r->treatedImpact;
+				$r->currentProb = $r->treatedProb;
+				$r->currentTolerance = $r->treatedTolerance;
+			} else {
+				$r->currentImpact = $r->inherentImpact;
+				$r->currentProb = $r->inherentProb;
+				$r->currentTolerance = $r->inherentTolerance;
+			}
+			
+			if ($topParent != null) {
+				$project->categories = array_merge ( $project->categories, $topParent->categories );
+			}
+			
 			update_post_meta ( $risk->riskID, "riskdata", json_encode ( $r ) );
 			
 			WPQRM_Model_Risk::replace ( $r );
@@ -1116,48 +1161,121 @@ final class QRM {
 		if (! QRM::qrmUser ())
 			wp_die ( - 3 );
 		$data = json_decode ( file_get_contents ( "php://input" ) );
-		$projectID = $data->projectID;
-		if ($projectID == null) {
-			wp_send_json ( array () );
-		}
-		global $user_identity, $user_email, $user_ID, $current_user;
-		get_currentuserinfo ();
+		$risks = QRM::getAllProjectRisksInternal($data);
+// 		$projectID = $data->projectID;
+// 		if ($projectID == null) {
+// 			wp_send_json ( array () );
+// 		}
+// 		global $user_identity, $user_email, $user_ID, $current_user;
+// 		get_currentuserinfo ();
 		
-		$ids = array ();
-		array_push ( $ids, $projectID );
+// 		$ids = array ();
+// 		array_push ( $ids, $projectID );
 		
-		if (isset($data->childProjects)) {
-			if ($data->childProjects){
-			$children = QRM::get_project_children ( $projectID );
-			foreach ( $children as $child ) {
-				array_push ( $ids, $child->ID );
-			}
-			}
-		}
+// 		if (isset($data->childProjects)) {
+// 			if ($data->childProjects){
+// 			$children = QRM::get_project_children ( $projectID );
+// 			foreach ( $children as $child ) {
+// 				array_push ( $ids, $child->ID );
+// 			}
+// 			}
+// 		}
 		
-		global $post;
-		$args = array (
-				'post_type' => 'risk',
-				'posts_per_page' => - 1,
-				'meta_query' => array (
-						array (
-								'key' => 'projectID',
-								'value' => $ids,
-								'compare' => 'IN' 
-						) 
-				) 
-		);
+// 		global $post;
+// 		$args = array (
+// 				'post_type' => 'risk',
+// 				'posts_per_page' => - 1,
+// 				'meta_query' => array (
+// 						array (
+// 								'key' => 'projectID',
+// 								'value' => $ids,
+// 								'compare' => 'IN' 
+// 						) 
+// 				) 
+// 		);
 		
-		$the_query = new WP_Query ( $args );
-		$risks = array ();
+// 		$the_query = new WP_Query ( $args );
+// 		$risks = array ();
 		
-		while ( $the_query->have_posts () ) :
-			$the_query->the_post ();
+// 		while ( $the_query->have_posts () ) :
+// 			$the_query->the_post ();
 			
+// 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
+// 			$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
+			
+			
+// 			if ($project == null){
+// 				//var_dump($risk->projectID);
+// 				continue;
+// 			}
+// 			if ( $project->ownersID == null ) {
+// 				$project->ownersID = array(-1);
+// 			}
+// 			if ( $project->managersID == null  ) {
+// 				$project->managersID = array(-1);
+// 			}
+// 			if ( $project->usersID == null ) {
+// 				$project->usersID = array(-1);
+// 			}
+				
+// 			if (! ($current_user->ID == $project->projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
+// 				continue;
+// 			}
+			
+// 			$risk->rank = get_post_meta ( $post->ID, "rank", true );
+			
+// 			array_push ( $risks, $risk );
+// 		endwhile
+// 		;
+		
+		// $data = new Data ();
+		// $data->data = $risks;
+		wp_send_json ( $risks );
+	}
+	static function getAllProjectRisksInternal($data) {
+
+		$projectID = $data->projectID;
+			if ($projectID == null) {
+				wp_send_json ( array () );
+			}
+			global $user_identity, $user_email, $user_ID, $current_user;
+			get_currentuserinfo ();
+	
+			$ids = array ();
+			array_push ( $ids, $projectID );
+	
+			if (isset($data->childProjects)) {
+				if ($data->childProjects){
+					$children = QRM::get_project_children ( $projectID );
+					foreach ( $children as $child ) {
+						array_push ( $ids, $child->ID );
+					}
+				}
+			}
+	
+			global $post;
+			$args = array (
+					'post_type' => 'risk',
+					'posts_per_page' => - 1,
+					'meta_query' => array (
+							array (
+									'key' => 'projectID',
+									'value' => $ids,
+									'compare' => 'IN'
+							)
+					)
+			);
+	
+			$the_query = new WP_Query ( $args );
+			$risks = array ();
+	
+			while ( $the_query->have_posts () ) :
+			$the_query->the_post ();
+				
 			$risk = json_decode ( get_post_meta ( $post->ID, "riskdata", true ) );
 			$project = json_decode ( get_post_meta ( $risk->projectID, "projectdata", true ) );
-			
-			
+				
+				
 			if ($project == null){
 				//var_dump($risk->projectID);
 				continue;
@@ -1171,20 +1289,20 @@ final class QRM {
 			if ( $project->usersID == null ) {
 				$project->usersID = array(-1);
 			}
-				
+	
 			if (! ($current_user->ID == $project->projectRiskManager || in_array ( $current_user->ID, $project->ownersID ) || in_array ( $current_user->ID, $project->managersID ) || in_array ( $current_user->ID, $project->usersID ))) {
 				continue;
 			}
-			
+				
 			$risk->rank = get_post_meta ( $post->ID, "rank", true );
-			
+				
 			array_push ( $risks, $risk );
-		endwhile
-		;
-		
-		// $data = new Data ();
-		// $data->data = $risks;
-		wp_send_json ( $risks );
+			endwhile
+			;
+	
+			// $data = new Data ();
+			// $data->data = $risks;
+			return  $risks;
 	}
 	static function get_project_children($parent_id) {
 		$children = array ();
@@ -3249,7 +3367,10 @@ class QRMActivate {
 		$table_name = $wpdb->prefix . 'qrm_analytics';
 		$sql = "CREATE TABLE $table_name (
 		id bigint(20) NOT NULL AUTO_INCREMENT,
-		relMatrix LONBLOB ) $charset_collate;";
+		relMatrixCurrent LONGBLOB,
+		relMatrixInherent LONGBLOB,
+		relMatrixTreated LONGBLOB,
+		PRIMARY KEY  (id)) $charset_collate;";
 		$wpdb->query ( $sql );
 		
 		$table_name = $wpdb->prefix . 'qrm_mitplan';
@@ -3686,7 +3807,7 @@ class QRMActivate {
 
 class QRMMatrix {
 
-	static function mat($w, $h, $tolString, $maxProb, $maxImpact, $uProb = null, $uImpact = null, $tProb = null, $tImpact = null) {
+	static function singleRiskMat($w, $h, $tolString, $maxProb, $maxImpact, $uProb = null, $uImpact = null, $tProb = null, $tImpact = null) {
 		
 		
 		
@@ -3725,10 +3846,76 @@ class QRMMatrix {
 		return $im;
 	}
 	
-	static function drawMatOutline($w, $h, $tolString, $maxProb, $maxImpact) {
+	static function multiRiskMat($w, $h, $tolString, $maxProb, $maxImpact, $risks = null, $state = "current") {
+	
+		$margin = 20;
+	
+		$im = QRMMatrix::drawMatOutline($w, $h, $tolString, $maxProb, $maxImpact,$margin);
+		imageflip ( $im, IMG_FLIP_VERTICAL );
+	
+
+		$cw = ($w - 2*$margin) / $maxImpact;
+		$ch = ($h - 2*$margin)/ $maxProb;
 		
-		$cw = $w / $maxImpact;
-		$ch = $h / $maxProb;
+		$matHeight = $h - 2*$margin;
+		$matWidth = $w - 2*$margin;
+		
+		$black = imagecolorallocate ( $im, 0, 0, 0 );
+		$white = imagecolorallocate ( $im, 255, 255, 255 );
+		$blue = imagecolorallocate ( $im, 0, 0, 255 );
+		$red = imagecolorallocate ( $im, 255, 0, 0 );
+		$green = imagecolorallocate ( $im, 0, 255, 0 );
+		$yellow = imagecolorallocate ( $im, 255, 255, 0 );
+		$orange = imagecolorallocate ( $im, 255, 165, 0 );
+		
+		
+		
+		foreach ( $risks as $risk ) {			
+
+			if ($state == "inherent") {
+				$prob = max($risk->inherentProb-1, 0);
+				$impact = max($risk->inherentImpact-1, 0);
+			} else if ($state == "treated") {
+				$prob = max($risk->treatedProb-1, 0);
+				$impact = max($risk->treatedImpact-1, 0);
+			} else {
+				$prob = max($risk->currentProb-1, 0);
+				$impact = max($risk->currentImpact-1, 0);
+			}
+			
+			$p = $h - ($prob * $ch+$margin);
+			$i = $impact * $cw+$margin;
+			
+			$color = $red; 
+			if ($risk->treated == true){
+				$color = $blue;
+			}
+			
+			$font_size = 4;
+			$text_height = imagefontheight($font_size);
+			$text_width = imagefontwidth($font_size);
+			$string_width = $text_width * strlen($risk->riskProjectCode);
+			
+			$ex1 = $cw/1.5;
+			$ey1 = $ex1 * 0.7;
+			
+			$ex2 = $ex1 - 4;
+			$ey2 = $ey1 - 4;
+				
+			imagesetthickness ( $im, 3 );
+			imagefilledellipse ( $im, $i, $p, $ex1, $ey1, $white );
+			imageellipse ( $im, $i, $p, $ex2, $ey2, $color );
+			imagefilledrectangle ( $im, $i - $string_width/2-2, $p-$text_height/2-2,$i + $string_width/2+2, $p+$text_height/2+2, $white );
+			imagestring($im, $font_size, $i - $string_width/2, $p-$text_height/2, $risk->riskProjectCode, $color);
+		}
+	
+		return $im;
+	}
+	
+	static function drawMatOutline($w, $h, $tolString, $maxProb, $maxImpact, $margin = 0) {
+		
+		$cw = ($w - 2*$margin) / $maxImpact;
+		$ch = ($h - 2*$margin)/ $maxProb;
 		$im = imagecreatetruecolor ( $w, $h );
 		$black = imagecolorallocate ( $im, 0, 0, 0 );
 		$white = imagecolorallocate ( $im, 255, 255, 255 );
@@ -3738,25 +3925,28 @@ class QRMMatrix {
 		$yellow = imagecolorallocate ( $im, 255, 255, 0 );
 		$orange = imagecolorallocate ( $im, 255, 165, 0 );
 		
+		imagefilledrectangle ( $im, 0, 0, $w, $h, $white );
+		
+		
 		$x = 0;
 		// Draw the cells
 		for($i = 0; $i < $maxProb; $i ++) {
 			for($j = 0; $j < $maxImpact; $j ++) {
 				switch (substr ( $tolString, $x, 1 )) {
 					case "1" :
-						imagefilledrectangle ( $im, $j * $cw, $i * $ch, ($j + 1) * $cw, ($i + 1) * $ch, $blue );
+						imagefilledrectangle ( $im, $j * $cw + $margin, $i * $ch + $margin, ($j + 1) * $cw + $margin, ($i + 1) * $ch + $margin, $blue );
 						break;
 					case "2" :
-						imagefilledrectangle ( $im, $j * $cw, $i * $ch, ($j + 1) * $cw, ($i + 1) * $ch, $green );
+						imagefilledrectangle ( $im, $j * $cw + $margin, $i * $ch + $margin, ($j + 1) * $cw + $margin, ($i + 1) * $ch + $margin, $green );
 						break;
 					case "3" :
-						imagefilledrectangle ( $im, $j * $cw, $i * $ch, ($j + 1) * $cw, ($i + 1) * $ch, $yellow );
+						imagefilledrectangle ( $im, $j * $cw + $margin, $i * $ch + $margin, ($j + 1) * $cw + $margin, ($i + 1) * $ch + $margin, $yellow );
 						break;
 					case "4" :
-						imagefilledrectangle ( $im, $j * $cw, $i * $ch, ($j + 1) * $cw, ($i + 1) * $ch, $orange );
+						imagefilledrectangle ( $im, $j * $cw + $margin, $i * $ch + $margin, ($j + 1) * $cw + $margin, ($i + 1) * $ch + $margin, $orange );
 						break;
 					case "5" :
-						imagefilledrectangle ( $im, $j * $cw, $i * $ch, ($j + 1) * $cw, ($i + 1) * $ch, $red );
+						imagefilledrectangle ( $im, $j * $cw + $margin, $i * $ch + $margin, ($j + 1) * $cw + $margin, ($i + 1) * $ch + $margin, $red );
 						break;
 				}
 				$x = $x + 1;
@@ -3764,22 +3954,32 @@ class QRMMatrix {
 		}
 		
 		// Draw vertical lines
-		for($j = 0; $j < $maxImpact; $j ++) {
-			imageline ( $im, $j * $cw, 0, $j * $cw, $h, $black );
+		for($j = 0; $j <= $maxImpact; $j ++) {
+			imageline ( $im, $j * $cw + $margin, 0 + $margin, $j * $cw + $margin, $h - $margin, $black );
 		}
 		// Draw horizontal lines
-		for($j = 0; $j < $maxProb; $j ++) {
-			imageline ( $im, 0, $j * $ch, $w, $j * $ch, $black );
+		for($j = 0; $j <= $maxProb; $j ++) {
+			imageline ( $im, 0 + $margin, $j * $ch + $margin, $w - $margin, $j * $ch + $margin, $black );
 		}
 		// Draw border lines
-		imageline ( $im, 0, $h - 1, $w, $h - 1, $black );
-		imageline ( $im, $w - 1, 0, $w - 1, $h, $black );
+		imageline ( $im, 0 + $margin, $h - 1 + $margin, $w + $margin, $h - 1 + $margin, $black );
+		imageline ( $im, $w - 1 + $margin, 0 + $margin, $w - 1 + $margin, $h + $margin, $black );
 		
 		return $im;
 	}
 	
 	static function getMatImageString($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact) {
-		$mat = QRMMatrix::mat ( $w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact );
+		$mat = QRMMatrix::singleRiskMat ( $w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact );
+		ob_start ();
+		imagepng ( $mat );
+		imagedestroy ( $mat );
+		$stringdata = ob_get_contents (); // read from buffer
+		ob_end_clean (); // delete buffer
+		return $stringdata;
+	}
+	
+	static function getMultiRiskMatImageString($w, $h, $tolString, $maxProb, $maxImpact, $risks, $state) {
+		$mat = QRMMatrix::multiRiskMat($w, $h, $tolString, $maxProb, $maxImpact, $risks, $state);
 		ob_start ();
 		imagepng ( $mat );
 		imagedestroy ( $mat );
@@ -3788,7 +3988,7 @@ class QRMMatrix {
 		return $stringdata;
 	}
 	static function outputMatImage($w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact) {
-		$mat = QRMMatrix::mat ( $w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact );
+		$mat = QRMMatrix::singleRiskMat ( $w, $h, $tolString, $maxProb, $maxImpact, $uProb, $uImpact, $tProb, $tImpact );
 
 		header ( 'Content-Type: image/png' );
 		imagepng ( $mat );

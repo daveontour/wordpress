@@ -306,6 +306,84 @@
             <property name="controlType">check-box</property>
             <structure name="format"/>
         </scalar-parameter>
+        <scalar-parameter name="managerAllocationFormat" id="10547">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="ownerAllocationFormat" id="10548">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="treatmentAllocationFormat" id="10836">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="impactFormat" id="11089">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="projectAllocationFormat" id="11091">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
+        <scalar-parameter name="riskRanking" id="11410">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">boolean</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">check-box</property>
+            <structure name="format"/>
+        </scalar-parameter>
     </parameters>
     <data-sets>
         <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RISKS" id="7672"
@@ -386,7 +464,66 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <table id="8463">
+        <table name="Analytics" id="11781" extends="QRM.Analytics">
+            <overridden-values>
+                <ref-entry baseId="11030" id="11782"/>
+                <ref-entry baseId="11031" id="11783"/>
+                <ref-entry baseId="11036" name="NewImage" id="11784"/>
+                <ref-entry baseId="11037" name="NewImage1" id="11785"/>
+                <ref-entry baseId="11038" name="NewImage2" id="11786"/>
+                <ref-entry baseId="11033" id="11787"/>
+                <ref-entry baseId="11034" id="11788"/>
+                <ref-entry baseId="11035" id="11789"/>
+            </overridden-values>
+        </table>
+        <table name="Subjective Ranking" id="11272" extends="QRM.Subjective Ranking">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["riskRanking"].value</expression>
+                </structure>
+            </list-property>
+            <overridden-values>
+                <ref-entry baseId="11012" id="11713"/>
+                <ref-entry baseId="11013" id="11714"/>
+                <ref-entry baseId="11011" name="NewLabel" id="11715"/>
+                <ref-entry baseId="11016" id="11716"/>
+                <ref-entry baseId="11017" id="11717"/>
+                <ref-entry baseId="11020" name="NewTextData3" id="11718"/>
+                <ref-entry baseId="11018" id="11719"/>
+                <ref-entry baseId="11019" id="11720"/>
+                <ref-entry baseId="7854" id="7854">
+                    <property name="groupName">project</property>
+                </ref-entry>
+                <ref-entry baseId="7855" id="7855"/>
+                <ref-entry baseId="7856" id="7856"/>
+                <ref-entry baseId="7868" name="NewTextData23" id="7868"/>
+                <ref-entry baseId="7857" id="7857"/>
+                <ref-entry baseId="7858" id="7858"/>
+                <ref-entry baseId="7864" id="7864"/>
+                <ref-entry baseId="7865" id="7865"/>
+                <ref-entry baseId="6321" name="NewLabel3" id="6321"/>
+                <ref-entry baseId="7866" id="7866"/>
+                <ref-entry baseId="6376" name="NewLabel5" id="6376"/>
+                <ref-entry baseId="7867" id="7867"/>
+                <ref-entry baseId="6377" name="NewLabel6" id="6377"/>
+                <ref-entry baseId="6446" id="6446"/>
+                <ref-entry baseId="6447" id="6447"/>
+                <ref-entry baseId="6349" name="NewTextData14" id="6349"/>
+                <ref-entry baseId="6449" id="6449"/>
+                <ref-entry baseId="10974" name="NewTextData1" id="10974"/>
+                <ref-entry baseId="6459" id="6459"/>
+                <ref-entry baseId="10975" name="NewTextData2" id="10975"/>
+                <ref-entry baseId="6425" id="6425"/>
+                <ref-entry baseId="6426" id="6426"/>
+                <ref-entry baseId="6428" id="6428"/>
+                <ref-entry baseId="6460" id="6460"/>
+                <ref-entry baseId="6436" id="6436"/>
+                <ref-entry baseId="6438" id="6438"/>
+                <ref-entry baseId="6461" id="6461"/>
+            </overridden-values>
+        </table>
+        <table name="Risk Summary - Category" id="8463">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -1223,7 +1360,7 @@
                 </row>
             </detail>
         </table>
-        <table id="10223">
+        <table name="Risk Summary - Tolerance" id="10223">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -2155,7 +2292,7 @@
                 </row>
             </detail>
         </table>
-        <table id="10133">
+        <table name="Risk Summary - Exposure" id="10133">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -3006,7 +3143,7 @@
                 </row>
             </detail>
         </table>
-        <table id="9888">
+        <table name="Risk Summary - Managers" id="9888">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -3907,7 +4044,7 @@
                 </row>
             </detail>
         </table>
-        <table id="10071">
+        <table name="Risk Summary - Owners" id="10071">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -4808,7 +4945,7 @@
                 </row>
             </detail>
         </table>
-        <table id="10316">
+        <table name="Risk Summary - Treatment Strategy" id="10316">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
@@ -5724,13 +5861,19 @@
             </detail>
         </table>
         <table name="Risk Manager Allocation Summary" id="10464" extends="QRM.Risk Manager Allocation Summary">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["managerAllocationFormat"].value</expression>
+                </structure>
+            </list-property>
             <overridden-values>
                 <ref-entry baseId="5240" id="5240"/>
                 <ref-entry baseId="5241" id="5241"/>
                 <ref-entry baseId="5247" name="NewLabel9" id="5247"/>
                 <ref-entry baseId="6541" id="6541"/>
                 <ref-entry baseId="6542" id="6542"/>
-                <ref-entry baseId="9785" name="NewLabel115" id="10507"/>
+                <ref-entry baseId="9785" name="NewLabel115" id="11721"/>
                 <ref-entry baseId="5286" id="5286"/>
                 <ref-entry baseId="5290" name="NewLabel10" id="5290"/>
                 <ref-entry baseId="6543" id="6543"/>
@@ -5748,7 +5891,7 @@
                 </ref-entry>
                 <ref-entry baseId="5125" id="5125"/>
                 <ref-entry baseId="5126" id="5126"/>
-                <ref-entry baseId="9784" name="NewTextData34" id="10508"/>
+                <ref-entry baseId="9784" name="NewTextData34" id="11722"/>
                 <ref-entry baseId="5287" id="5287"/>
                 <ref-entry baseId="7488" name="NewData2" id="7488"/>
                 <ref-entry baseId="5127" id="5127"/>
@@ -5785,18 +5928,24 @@
                 <ref-entry baseId="5083" id="5083"/>
             </overridden-values>
         </table>
-        <table name="Risk Owner Allocation Summary" id="10494" extends="QRM.Risk Owner Allocation Summary">
+        <table name="Risk Owner Allocation Summary" id="10993" extends="QRM.Risk Owner Allocation Summary">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["ownerAllocationFormat"].value</expression>
+                </structure>
+            </list-property>
             <overridden-values>
-                <ref-entry baseId="9787" id="10509"/>
-                <ref-entry baseId="9788" id="10510"/>
-                <ref-entry baseId="9789" name="NewLabel99" id="10511"/>
-                <ref-entry baseId="9790" id="10512"/>
-                <ref-entry baseId="9791" id="10513"/>
-                <ref-entry baseId="9792" name="NewLabel1151" id="10514"/>
+                <ref-entry baseId="9787" id="11723"/>
+                <ref-entry baseId="9788" id="11724"/>
+                <ref-entry baseId="9789" name="NewLabel99" id="11725"/>
+                <ref-entry baseId="9790" id="11726"/>
+                <ref-entry baseId="9791" id="11727"/>
+                <ref-entry baseId="9792" name="NewLabel1151" id="11728"/>
                 <ref-entry baseId="9793" id="9793"/>
-                <ref-entry baseId="9794" name="NewLabel102" id="10515"/>
+                <ref-entry baseId="9794" name="NewLabel102" id="11729"/>
                 <ref-entry baseId="9795" id="9795"/>
-                <ref-entry baseId="9796" name="NewLabel112" id="10516"/>
+                <ref-entry baseId="9796" name="NewLabel112" id="11730"/>
                 <ref-entry baseId="9797" id="9797"/>
                 <ref-entry baseId="9798" name="NewLabel142" id="9798"/>
                 <ref-entry baseId="9799" id="9799"/>
@@ -5806,7 +5955,7 @@
                 <ref-entry baseId="9803" id="9803"/>
                 <ref-entry baseId="9804" name="NewLabel172" id="9804"/>
                 <ref-entry baseId="9805" id="9805">
-                    <property name="groupName">managers</property>
+                    <property name="groupName">ownersGroup</property>
                 </ref-entry>
                 <ref-entry baseId="9806" id="9806"/>
                 <ref-entry baseId="9807" id="9807"/>
@@ -5817,10 +5966,10 @@
                 <ref-entry baseId="9812" name="NewData310" id="9812"/>
                 <ref-entry baseId="9813" id="9813"/>
                 <ref-entry baseId="9814" name="NewData47" id="9814"/>
-                <ref-entry baseId="9815" id="10517"/>
-                <ref-entry baseId="9816" name="NewData51" id="10518"/>
-                <ref-entry baseId="9817" id="10519"/>
-                <ref-entry baseId="9818" name="NewData61" id="10520"/>
+                <ref-entry baseId="9815" id="11731"/>
+                <ref-entry baseId="9816" name="NewData51" id="11732"/>
+                <ref-entry baseId="9817" id="11733"/>
+                <ref-entry baseId="9818" name="NewData61" id="11734"/>
                 <ref-entry baseId="9819" id="9819"/>
                 <ref-entry baseId="9820" name="NewData71" id="9820"/>
                 <ref-entry baseId="9821" id="9821"/>
@@ -5846,6 +5995,1125 @@
                 <ref-entry baseId="9841" id="9841"/>
                 <ref-entry baseId="9842" id="9842"/>
             </overridden-values>
+        </table>
+        <table name="Risk Treatment State Allocation Summary" id="10897" extends="QRM.Risk Treatment State Allocation Summary">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["treatmentAllocationFormat"].value</expression>
+                </structure>
+            </list-property>
+            <overridden-values>
+                <ref-entry baseId="9901" id="9901"/>
+                <ref-entry baseId="9902" id="9902"/>
+                <ref-entry baseId="9903" name="NewLabel9911" id="9903"/>
+                <ref-entry baseId="9904" id="9904"/>
+                <ref-entry baseId="9905" id="9905"/>
+                <ref-entry baseId="9906" name="NewLabel115111" id="9906"/>
+                <ref-entry baseId="9907" id="9907"/>
+                <ref-entry baseId="9908" name="NewLabel10211" id="9908"/>
+                <ref-entry baseId="9909" id="9909"/>
+                <ref-entry baseId="9910" name="NewLabel11211" id="9910"/>
+                <ref-entry baseId="9911" id="9911"/>
+                <ref-entry baseId="9912" name="NewLabel14211" id="9912"/>
+                <ref-entry baseId="9913" id="9913"/>
+                <ref-entry baseId="9914" name="NewLabel15211" id="9914"/>
+                <ref-entry baseId="9915" id="11735"/>
+                <ref-entry baseId="9916" name="NewLabel16211" id="9916"/>
+                <ref-entry baseId="9917" id="11736"/>
+                <ref-entry baseId="9918" name="NewLabel17211" id="9918"/>
+                <ref-entry baseId="9919" id="11737">
+                    <property name="groupName">treatmentState</property>
+                </ref-entry>
+                <ref-entry baseId="9920" id="9920"/>
+                <ref-entry baseId="9921" id="9921"/>
+                <ref-entry baseId="9957" name="NewTextData" id="9957"/>
+                <ref-entry baseId="9923" id="9923"/>
+                <ref-entry baseId="9924" name="NewData21011" id="9924"/>
+                <ref-entry baseId="9925" id="9925"/>
+                <ref-entry baseId="9926" name="NewData31011" id="11738"/>
+                <ref-entry baseId="9927" id="11739"/>
+                <ref-entry baseId="9928" name="NewData4711" id="9928"/>
+                <ref-entry baseId="9929" id="9929"/>
+                <ref-entry baseId="9930" name="NewData5111" id="9930"/>
+                <ref-entry baseId="9931" id="9931"/>
+                <ref-entry baseId="9932" name="NewData6111" id="9932"/>
+                <ref-entry baseId="9933" id="9933"/>
+                <ref-entry baseId="9934" name="NewData7111" id="9934"/>
+                <ref-entry baseId="9935" id="9935"/>
+                <ref-entry baseId="9936" id="9936"/>
+                <ref-entry baseId="9937" name="NewLabel19111" id="9937"/>
+                <ref-entry baseId="9938" id="9938"/>
+                <ref-entry baseId="9939" name="NewData21111" id="11740"/>
+                <ref-entry baseId="9940" id="11741"/>
+                <ref-entry baseId="9941" name="NewData31111" id="11742"/>
+                <ref-entry baseId="9942" id="9942"/>
+                <ref-entry baseId="9943" name="NewData39111" id="11743"/>
+                <ref-entry baseId="9944" id="11744"/>
+                <ref-entry baseId="9945" name="NewData40111" id="9945"/>
+                <ref-entry baseId="9946" id="9946"/>
+                <ref-entry baseId="9947" name="NewData41111" id="9947"/>
+                <ref-entry baseId="9948" id="9948"/>
+                <ref-entry baseId="9949" name="NewData46111" id="9949"/>
+                <ref-entry baseId="9950" id="9950"/>
+                <ref-entry baseId="9951" id="9951"/>
+                <ref-entry baseId="9952" id="11745"/>
+                <ref-entry baseId="9953" id="11746"/>
+                <ref-entry baseId="9954" id="11747"/>
+                <ref-entry baseId="9955" id="9955"/>
+                <ref-entry baseId="9956" id="9956"/>
+            </overridden-values>
+        </table>
+        <table name="Risk Project Allocation Summary" id="10911" extends="QRM.Risk Project Allocation Summary">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["projectAllocationFormat"].value</expression>
+                </structure>
+            </list-property>
+            <overridden-values>
+                <ref-entry baseId="9844" id="9844"/>
+                <ref-entry baseId="9845" id="9845"/>
+                <ref-entry baseId="9846" name="NewLabel991" id="9846"/>
+                <ref-entry baseId="9847" id="11748"/>
+                <ref-entry baseId="9848" id="11749"/>
+                <ref-entry baseId="9849" name="NewLabel11511" id="11750"/>
+                <ref-entry baseId="9850" id="11751"/>
+                <ref-entry baseId="9851" name="NewLabel1021" id="11752"/>
+                <ref-entry baseId="9852" id="11753"/>
+                <ref-entry baseId="9853" name="NewLabel1121" id="11754"/>
+                <ref-entry baseId="9854" id="11755"/>
+                <ref-entry baseId="9855" name="NewLabel1421" id="11756"/>
+                <ref-entry baseId="9856" id="11757"/>
+                <ref-entry baseId="9857" name="NewLabel1521" id="11758"/>
+                <ref-entry baseId="9858" id="9858"/>
+                <ref-entry baseId="9859" name="NewLabel1621" id="9859"/>
+                <ref-entry baseId="9860" id="9860"/>
+                <ref-entry baseId="9861" name="NewLabel1721" id="9861"/>
+                <ref-entry baseId="9862" id="9862">
+                    <property name="groupName">project</property>
+                </ref-entry>
+                <ref-entry baseId="9863" id="9863"/>
+                <ref-entry baseId="9864" id="9864"/>
+                <ref-entry baseId="9865" name="NewTextData3411" id="9865"/>
+                <ref-entry baseId="9866" id="9866"/>
+                <ref-entry baseId="9867" name="NewData2101" id="9867"/>
+                <ref-entry baseId="9868" id="9868"/>
+                <ref-entry baseId="9869" name="NewData3101" id="9869"/>
+                <ref-entry baseId="9870" id="11759"/>
+                <ref-entry baseId="9871" name="NewData471" id="11760"/>
+                <ref-entry baseId="9872" id="11761"/>
+                <ref-entry baseId="9873" name="NewData511" id="11762"/>
+                <ref-entry baseId="9874" id="11763"/>
+                <ref-entry baseId="9875" name="NewData611" id="11764"/>
+                <ref-entry baseId="9876" id="11765"/>
+                <ref-entry baseId="9877" name="NewData711" id="11766"/>
+                <ref-entry baseId="9878" id="11767"/>
+                <ref-entry baseId="9879" id="11768"/>
+                <ref-entry baseId="9880" name="NewLabel1911" id="11769"/>
+                <ref-entry baseId="9881" id="11770"/>
+                <ref-entry baseId="9882" name="NewData2111" id="11771"/>
+                <ref-entry baseId="9883" id="9883"/>
+                <ref-entry baseId="9884" name="NewData3111" id="9884"/>
+                <ref-entry baseId="9885" id="9885"/>
+                <ref-entry baseId="9886" name="NewData3911" id="9886"/>
+                <ref-entry baseId="9887" id="9887"/>
+                <ref-entry baseId="9888" name="NewData4011" id="11772"/>
+                <ref-entry baseId="9889" id="11773"/>
+                <ref-entry baseId="9890" name="NewData4111" id="11774"/>
+                <ref-entry baseId="9891" id="11775"/>
+                <ref-entry baseId="9892" name="NewData4611" id="11776"/>
+                <ref-entry baseId="9893" id="11777"/>
+                <ref-entry baseId="9894" id="11778"/>
+                <ref-entry baseId="9895" id="9895"/>
+                <ref-entry baseId="9896" id="9896"/>
+                <ref-entry baseId="9897" id="9897"/>
+                <ref-entry baseId="9898" id="11779"/>
+                <ref-entry baseId="9899" id="11780"/>
+            </overridden-values>
+        </table>
+        <table name="Risk Impact Summary" id="11008">
+            <property name="pageBreakBefore">always</property>
+            <property name="pageBreakInside">avoid</property>
+            <property name="canShrink">true</property>
+            <property name="width">277mm</property>
+            <property name="dataSet">PROJECTPROJECT</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">!params["impactFormat"].value</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">parentID</property>
+                    <text-property name="displayName">parentID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["parentID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">projectID</property>
+                    <text-property name="displayName">projectID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["projectID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">title</property>
+                    <text-property name="displayName">title</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">10000</property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">(params["subprojects"].value == false &amp;&amp; row["parentID"] == params["projectID"].value &amp;&amp; row["parentID"] ==row["projectID"])&#13;
+|| (params["subprojects"].value == true &amp;&amp; params["projectID"].value == row["parentID"] )</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="11062"/>
+            <column id="11074">
+                <property name="width">20mm</property>
+            </column>
+            <column id="11063">
+                <property name="width">25mm</property>
+            </column>
+            <column id="11064">
+                <property name="width">20mm</property>
+            </column>
+            <column id="11065">
+                <property name="width">25mm</property>
+            </column>
+            <column id="11066">
+                <property name="width">25mm</property>
+            </column>
+            <column id="11079">
+                <property name="width">20mm</property>
+            </column>
+            <header>
+                <row id="11009">
+                    <cell id="11010">
+                        <label id="11011">
+                            <property name="fontSize">14pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Risk Summary Report - Impacted Areas</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11070"/>
+                    <cell id="11012"/>
+                    <cell id="11013"/>
+                    <cell id="11014"/>
+                    <cell id="11015"/>
+                    <cell id="11075"/>
+                </row>
+                <row id="11016">
+                    <cell id="11017">
+                        <text-data id="11018">
+                            <property name="marginBottom">10pt</property>
+                            <property name="textAlign">left</property>
+                            <expression name="valueExpr">new Date();</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                    <cell id="11071"/>
+                    <cell id="11019"/>
+                    <cell id="11020"/>
+                    <cell id="11021"/>
+                    <cell id="11022"/>
+                    <cell id="11076"/>
+                </row>
+            </header>
+            <detail>
+                <row id="11023">
+                    <cell id="11024">
+                        <text-data id="11025">
+                            <property name="fontSize">12pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <property name="textAlign">left</property>
+                            <expression name="valueExpr">"Risk Project: "+row["title"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                    <cell id="11072">
+                        <property name="textAlign">center</property>
+                        <label id="11081">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Cost</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11026">
+                        <property name="textAlign">center</property>
+                        <label id="11027">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Specification</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11028">
+                        <property name="textAlign">center</property>
+                        <label id="11029">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Schedule</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11030">
+                        <property name="textAlign">center</property>
+                        <label id="11031">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Environment</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11032">
+                        <property name="textAlign">center</property>
+                        <label id="11033">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Reputation</text-property>
+                        </label>
+                    </cell>
+                    <cell id="11077">
+                        <property name="textAlign">center</property>
+                        <label id="11080">
+                            <property name="fontWeight">bold</property>
+                            <property name="marginTop">10pt</property>
+                            <property name="marginBottom">5pt</property>
+                            <text-property name="text">Safety</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="11034">
+                    <cell id="11035">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <table id="11036">
+                            <property name="dataSet">RISKS</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">id</property>
+                                    <text-property name="displayName">id</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">cause</property>
+                                    <text-property name="displayName">cause</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["cause"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">consequence</property>
+                                    <text-property name="displayName">consequence</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["consequence"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentImpact</property>
+                                    <text-property name="displayName">currentImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentProb</property>
+                                    <text-property name="displayName">currentProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">currentTolerance</property>
+                                    <text-property name="displayName">currentTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["currentTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">end</property>
+                                    <text-property name="displayName">end</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["end"]</expression>
+                                    <property name="dataType">date-time</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">enteredBy</property>
+                                    <text-property name="displayName">enteredBy</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["enteredBy"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">enteredDate</property>
+                                    <text-property name="displayName">enteredDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["enteredDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">estContingency</property>
+                                    <text-property name="displayName">estContingency</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["estContingency"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impCost</property>
+                                    <text-property name="displayName">impCost</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impCost"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impEnviron</property>
+                                    <text-property name="displayName">impEnviron</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impEnviron"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impRep</property>
+                                    <text-property name="displayName">impRep</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impRep"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impSafety</property>
+                                    <text-property name="displayName">impSafety</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impSafety"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impSpec</property>
+                                    <text-property name="displayName">impSpec</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impSpec"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">impTime</property>
+                                    <text-property name="displayName">impTime</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["impTime"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentAbsProb</property>
+                                    <text-property name="displayName">inherentAbsProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentAbsProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentImpact</property>
+                                    <text-property name="displayName">inherentImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentProb</property>
+                                    <text-property name="displayName">inherentProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">inherentTolerance</property>
+                                    <text-property name="displayName">inherentTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["inherentTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeAlpha</property>
+                                    <text-property name="displayName">likeAlpha</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeAlpha"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostAlpha</property>
+                                    <text-property name="displayName">likePostAlpha</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostAlpha"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostT</property>
+                                    <text-property name="displayName">likePostT</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostT"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likePostType</property>
+                                    <text-property name="displayName">likePostType</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likePostType"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeT</property>
+                                    <text-property name="displayName">likeT</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeT"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">likeType</property>
+                                    <text-property name="displayName">likeType</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["likeType"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">manager</property>
+                                    <text-property name="displayName">manager</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["manager"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">managerName</property>
+                                    <text-property name="displayName">managerName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["managerName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">matImage</property>
+                                    <text-property name="displayName">matImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["matImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">tolString</property>
+                                    <text-property name="displayName">tolString</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["tolString"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">maxProb</property>
+                                    <text-property name="displayName">maxProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["maxProb"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">maxImpact</property>
+                                    <text-property name="displayName">maxImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["maxImpact"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">owner</property>
+                                    <text-property name="displayName">owner</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["owner"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ownerName</property>
+                                    <text-property name="displayName">ownerName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ownerName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rank</property>
+                                    <text-property name="displayName">rank</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rank"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">postLikeImage</property>
+                                    <text-property name="displayName">postLikeImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["postLikeImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">preLikeImage</property>
+                                    <text-property name="displayName">preLikeImage</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["preLikeImage"]</expression>
+                                    <property name="dataType">blob</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">primcatID</property>
+                                    <text-property name="displayName">primcatID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["primcatID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">primCatName</property>
+                                    <text-property name="displayName">primCatName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["primCatName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">projectID</property>
+                                    <text-property name="displayName">projectID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["projectID"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">riskProjectCode</property>
+                                    <text-property name="displayName">riskProjectCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["riskProjectCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">seccatID</property>
+                                    <text-property name="displayName">seccatID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["seccatID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">secCatName</property>
+                                    <text-property name="displayName">secCatName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["secCatName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">start</property>
+                                    <text-property name="displayName">start</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["start"]</expression>
+                                    <property name="dataType">date</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">summaryRisk</property>
+                                    <text-property name="displayName">summaryRisk</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["summaryRisk"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">title</property>
+                                    <text-property name="displayName">title</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatAvoid</property>
+                                    <text-property name="displayName">treatAvoid</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatAvoid"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatMinimise</property>
+                                    <text-property name="displayName">treatMinimise</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatMinimise"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatRetention</property>
+                                    <text-property name="displayName">treatRetention</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatRetention"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatTransfer</property>
+                                    <text-property name="displayName">treatTransfer</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatTransfer"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treated</property>
+                                    <text-property name="displayName">treated</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treated"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedAbsProb</property>
+                                    <text-property name="displayName">treatedAbsProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedAbsProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedImpact</property>
+                                    <text-property name="displayName">treatedImpact</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedImpact"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedProb</property>
+                                    <text-property name="displayName">treatedProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedProb"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">treatedTolerance</property>
+                                    <text-property name="displayName">treatedTolerance</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["treatedTolerance"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">type</property>
+                                    <text-property name="displayName">type</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["type"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">pushdownparent</property>
+                                    <text-property name="displayName">pushdownparent</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["pushdownparent"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">pushdownchild</property>
+                                    <text-property name="displayName">pushdownchild</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["pushdownchild"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">parentRiskID</property>
+                                    <text-property name="displayName">parentRiskID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["parentRiskID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">parentRiskProjectCode</property>
+                                    <text-property name="displayName">parentRiskProjectCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["parentRiskProjectCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">useCalContingency</property>
+                                    <text-property name="displayName">useCalContingency</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["useCalContingency"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">useCalProb</property>
+                                    <text-property name="displayName">useCalProb</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["useCalProb"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">mitPlanSummary</property>
+                                    <text-property name="displayName">mitPlanSummary</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["mitPlanSummary"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">mitPlanSummaryUpdate</property>
+                                    <text-property name="displayName">mitPlanSummaryUpdate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["mitPlanSummaryUpdate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">respPlanSummary</property>
+                                    <text-property name="displayName">respPlanSummary</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["respPlanSummary"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">respPlanSummaryUpdate</property>
+                                    <text-property name="displayName">respPlanSummaryUpdate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["respPlanSummaryUpdate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentComment</property>
+                                    <text-property name="displayName">auditIdentComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentPersonID</property>
+                                    <text-property name="displayName">auditIdentPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentPersonID"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentDate</property>
+                                    <text-property name="displayName">auditIdentDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentRevComment</property>
+                                    <text-property name="displayName">auditIdentRevComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentRevComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentRevPersonID</property>
+                                    <text-property name="displayName">auditIdentRevPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentRevPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentRevDate</property>
+                                    <text-property name="displayName">auditIdentRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentAppComment</property>
+                                    <text-property name="displayName">auditIdentAppComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentAppComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentAppPersonID</property>
+                                    <text-property name="displayName">auditIdentAppPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentAppPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditIdentAppDate</property>
+                                    <text-property name="displayName">auditIdentAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditIdentAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalComment</property>
+                                    <text-property name="displayName">auditEvalComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalPersonID</property>
+                                    <text-property name="displayName">auditEvalPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalPersonID"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalDate</property>
+                                    <text-property name="displayName">auditEvalDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalRevComment</property>
+                                    <text-property name="displayName">auditEvalRevComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalRevComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalRevPersonID</property>
+                                    <text-property name="displayName">auditEvalRevPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalRevPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalRevDate</property>
+                                    <text-property name="displayName">auditEvalRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalAppComment</property>
+                                    <text-property name="displayName">auditEvalAppComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalAppComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalAppPersonID</property>
+                                    <text-property name="displayName">auditEvalAppPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalAppPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditEvalAppDate</property>
+                                    <text-property name="displayName">auditEvalAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditEvalAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitComment</property>
+                                    <text-property name="displayName">auditMitComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitPersonID</property>
+                                    <text-property name="displayName">auditMitPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitDate</property>
+                                    <text-property name="displayName">auditMitDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitRevComment</property>
+                                    <text-property name="displayName">auditMitRevComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitRevComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitRevPersonID</property>
+                                    <text-property name="displayName">auditMitRevPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitRevPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitRevDate</property>
+                                    <text-property name="displayName">auditMitRevDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitRevDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitAppComment</property>
+                                    <text-property name="displayName">auditMitAppComment</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitAppComment"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitAppPersonID</property>
+                                    <text-property name="displayName">auditMitAppPersonID</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitAppPersonID"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">auditMitAppDate</property>
+                                    <text-property name="displayName">auditMitAppDate</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["auditMitAppDate"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">endDate</property>
+                                    <expression name="expression" type="javascript">new Date(dataSetRow["end"])</expression>
+                                    <property name="dataType">date</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">end_1</property>
+                                    <text-property name="displayName">end</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["end"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["currentTolerance"]</expression>
+                                    <property name="direction">desc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">is-true</property>
+                                    <expression name="expr" type="javascript">(params["singleRisk"].value == true &amp;&amp; row["id"] == params["riskID"].value) &#13;
+|| (params["singleRisk"].value == false &amp;&amp; row["projectID"] == row._outer["projectID"])</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["extreme"].value == false &amp;&amp; Math.floor(row["currentTolerance"]) == 5</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["high"].value == false &amp;&amp; Math.floor(row["currentTolerance"]) == 4</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["significant"].value == false &amp;&amp; Math.floor(row["currentTolerance"]) == 3</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["moderate"].value == false &amp;&amp; Math.floor(row["currentTolerance"]) == 2</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["low"].value == false &amp;&amp; Math.floor(row["currentTolerance"]) == 1</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["treated"].value == false &amp;&amp; row["treated"]</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-false</property>
+                                    <expression name="expr" type="javascript">params["untreated"].value  == false &amp;&amp; !row["treated"]</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-true</property>
+                                    <expression name="expr" type="javascript">(params["pending"].value &amp;&amp; BirtDateTime.diffDay(new Date(row["start"]), BirtDateTime.now()) &lt; 0 ) || &#13;
+(params["inactive"].value &amp;&amp; BirtDateTime.diffDay(new Date(row["end"]), BirtDateTime.now()) > 0 ) ||&#13;
+(params["active"].value &amp;&amp; BirtDateTime.diffDay(new Date(row["end"]), BirtDateTime.now()) &lt; 0 &amp;&amp; BirtDateTime.diffDay(new Date(row["start"]), BirtDateTime.now()) > 0 )</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-true</property>
+                                    <expression name="expr" type="javascript">params["manager"].value &lt; 0 || params["manager"].value == row["manager"]</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="operator">is-true</property>
+                                    <expression name="expr" type="javascript">params["owner"].value &lt; 0 || params["owner"].value == row["owner"]</expression>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="11056">
+                                <property name="width">30mm</property>
+                            </column>
+                            <column id="11057"/>
+                            <column id="11069">
+                                <property name="width">20mm</property>
+                            </column>
+                            <column id="11058">
+                                <property name="width">25mm</property>
+                            </column>
+                            <column id="11059">
+                                <property name="width">20mm</property>
+                            </column>
+                            <column id="11060">
+                                <property name="width">25mm</property>
+                            </column>
+                            <column id="11061">
+                                <property name="width">25mm</property>
+                            </column>
+                            <column id="11087">
+                                <property name="width">20mm</property>
+                            </column>
+                            <group id="11037">
+                                <property name="groupName">owners</property>
+                                <expression name="keyExpr" type="javascript">row["ownerName"]</expression>
+                                <structure name="toc">
+                                    <expression name="expressionValue" type="javascript">row["ownerName"]</expression>
+                                </structure>
+                                <property name="hideDetail">false</property>
+                            </group>
+                            <detail>
+                                <row id="11038">
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">eq</property>
+                                            <property name="backgroundColor">#C0C0C0</property>
+                                            <expression name="testExpr" type="javascript">row.__rownum % 2</expression>
+                                            <simple-property-list name="value1">
+                                                <value type="javascript">0</value>
+                                            </simple-property-list>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="11039">
+                                        <property name="colSpan">2</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <text-data id="11040">
+                                            <expression name="valueExpr">row["riskProjectCode"]+" - "+row["title"]</expression>
+                                            <property name="contentType">html</property>
+                                        </text-data>
+                                    </cell>
+                                    <cell id="11067">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11082">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["impCost"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                    <cell id="11041">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11042">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["impSpec"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                    <cell id="11043">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11044">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["impTime"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                    <cell id="11045">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11046">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["impEnviron"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                    <cell id="11047">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11048">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["impRep"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                    <cell id="11085">
+                                        <property name="paddingTop">4pt</property>
+                                        <property name="paddingBottom">4pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <image id="11088">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">!row["treatMinimise"]</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="source">embed</property>
+                                            <property name="imageName">accept.png</property>
+                                        </image>
+                                    </cell>
+                                </row>
+                            </detail>
+                            <footer>
+                                <row id="11049">
+                                    <cell id="11050"/>
+                                    <cell id="11051"/>
+                                    <cell id="11068"/>
+                                    <cell id="11052"/>
+                                    <cell id="11053"/>
+                                    <cell id="11054"/>
+                                    <cell id="11055"/>
+                                    <cell id="11086"/>
+                                </row>
+                            </footer>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
         </table>
     </body>
     <list-property name="images">

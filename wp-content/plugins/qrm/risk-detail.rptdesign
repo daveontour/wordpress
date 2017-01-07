@@ -1348,7 +1348,7 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <table id="8463">
+        <table name="Risk Detail" id="8463">
             <property name="pageBreakBefore">always</property>
             <property name="pageBreakInside">avoid</property>
             <property name="canShrink">true</property>
